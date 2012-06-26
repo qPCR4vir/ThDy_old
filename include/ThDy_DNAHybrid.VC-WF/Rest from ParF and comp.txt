@@ -1,0 +1,367 @@
+
+			//	"";
+	//Sec			=       Sec->Format("{0,6:f1} |{1,6:f1} |{2,6:f1} ||",
+	//				Decimal(_Pr._TmCal._TmS.Min()),Decimal(_Pr._TmCal._TmS.Ave()),Decimal(_Pr._TmCal._TmS.Max()))
+	//				+ (_Pr._TmCal._GS.Min() > 999 ? ">999,0" : Sec->Format("{0,6:f1}", Decimal(_Pr._TmCal._GS.Min() ) ) )+" |"
+	//				+ (_Pr._TmCal._GS.Ave() > 999 ? ">999,0" : Sec->Format("{0,6:f1}", Decimal(_Pr._TmCal._GS.Ave() ) ) )+" |"
+	//				+ (_Pr._TmCal._GS.Max() > 999 ? ">999,0" : Sec->Format("{0,6:f1}", Decimal(_Pr._TmCal._GS.Max() ) ) ) ;
+	//Sec2Align	= Sec2Align->Format("{0,6:f1} |{1,6:f1} |{2,6:f1} ||",
+	//				Decimal(_Pr._TmCal._Tm2A.Min()),Decimal(_Pr._TmCal._Tm2A.Ave()),Decimal(_Pr._TmCal._Tm2A.Max()))
+	//				+ (_Pr._TmCal._G2A.Min() > 999 ? ">999,0" : Sec2Align->Format("{0,6:f1}", Decimal(_Pr._TmCal._G2A.Min() ) ) )+" |"
+	//				+ (_Pr._TmCal._G2A.Ave() > 999 ? ">999,0" : Sec2Align->Format("{0,6:f1}", Decimal(_Pr._TmCal._G2A.Ave() ) ) )+" |"
+	//				+ (_Pr._TmCal._G2A.Max() > 999 ? ">999,0" : Sec2Align->Format("{0,6:f1}", Decimal(_Pr._TmCal._G2A.Max() ) ) ) ; 
+	//Hyb			=       Hyb->Format("{0,6:f1} |{1,6:f1} |{2,6:f1} ||",
+	//				Decimal(_Pr._TmCal._TmHy.Min()),Decimal(_Pr._TmCal._TmHy.Ave()),Decimal(_Pr._TmCal._TmHy.Max()))
+	//				+ (_Pr._TmCal._GHy.Min() > 999 ? ">999,0" : Hyb->Format("{0,6:f1}", Decimal(_Pr._TmCal._GHy.Min() ) ) )+" |"
+	//				+ (_Pr._TmCal._GHy.Ave() > 999 ? ">999,0" : Hyb->Format("{0,6:f1}", Decimal(_Pr._TmCal._GHy.Ave() ) ) )+" |"
+	//				+ (_Pr._TmCal._GHy.Max() > 999 ? ">999,0" : Hyb->Format("{0,6:f1}", Decimal(_Pr._TmCal._GHy.Max() ) ) ) ; 
+
+		 	//private: System::Void commandOpenTargetsSecFile(System::Object^  sender, System::EventArgs^  e) {
+	//		 this->openFileDialog_targets->ShowDialog();
+	//		 this->textBoxTargetsFile->Text = this->openFileDialog_targets->FileName;
+	//		 this->textBoxTargetsFile->Update();
+	//		 }
+		 //private: System::Void commandOpenExeFile(System::Object^  sender, System::EventArgs^  e) {
+//		 	 this->openFileDialog_exe->ShowDialog();
+//			 this->textBox_OpenExe->Text = this->openFileDialog_exe->FileName;
+//			 this->textBox_OpenExe->Update();
+//		 }
+		 			//	 ;
+			//this->textBox_Parametr->Text = 
+			//	("" != this->textBox_OpenExe->Text				?					  "\""	+ this->textBox_OpenExe->Text	+ "\""		: "") +
+			//	("" != this->textBoxTargetsFile->Text			? " -tf "			+ "\""	+ this->textBoxTargetsFile->Text+ "\""		: "") +
+			//	("" != this->textBoxNonTargetsFile->Text		? " -nf "			+ "\""	+ this->textBoxNonTargetsFile->Text	+ "\""	: "") +				
+			//	(15 <= this->numericUpDown_MinPrimerLength->Value ? " -minPrimerLength "	+ this->numericUpDown_MinPrimerLength->Value		: "") +
+			//	(15 <  this->numericUpDown_MaxPrimerLength->Value ? " -maxPrimerLength "	+ this->numericUpDown_MaxPrimerLength->Value		: "") +
+			//	(40 <= this->numericUpDown_MinProdLength->Value	? " -minProdLength "	+ this->numericUpDown_MinProdLength->Value		: "") +
+			//	(40 <  this->numericUpDown_MaxProdLength->Value	? " -maxProdLength "	+ this->numericUpDown_MaxProdLength->Value		: "") +
+			//	(40 <  this->numericUpDown_MinTargCov->Value	? " -minCoverageTargets "	+ this->numericUpDown_MinTargCov->Value		: "") +
+			//	(40 <  this->numericUpDown_MinPrimerTm->Value	? " -minTempTargets "	+ this->numericUpDown_MinPrimerTm->Value		: "") +
+			//	(40 <  this->numericUpDown_MaxPrimerTm->Value	? " -maxTempTargets "	+ this->numericUpDown_MaxPrimerTm->Value		: "") +
+
+//			Sec->Name = L"Sec";
+
+//		Tag_C_str^	_Sec ;
+	//	const char	*_defPr ;
+
+			//property	String^		Text {	void    set(String^ s)	{						_str.Take (  CreateCharFromManString(s)	) ; }
+			//								String^ get()			{ return  gcnew String(	_str.Get()								) ; }}
+
+			 //((ITag^)((Control^)(sender))->Tag)->set( ((Control^)(sender))->Text ) ;
+		//txtBx_Sec->Tag->_Sec.Txt = txtBx_Sec->Text ; /*Sec = txtBx_Sec->Text ; */
+
+
+													//this->loadPrFileDialog->FileName = this->textBoxPrFile->Text;
+													//this->loadPrFileDialog->ShowDialog();
+
+													//this->textBoxPrFile->Text = this->loadPrFileDialog->FileName;
+													//this->textBoxPrFile->Update(); 
+
+
+	//private: void UpDateTextP		(Object^  sender){ ((ITag^)((Control^)(sender))->Tag)->set( ((Control^)(sender))->Text ) ;}
+	//private: void UpDateTextForm	(Control^ c)	 { c->Text = (String^ )(((ITag^)(c->Tag))->get()) ;}
+
+	//private: void UpDateDecP		(Object^  sender){ ((ITag^)((NumericUpDown^)(sender))->Tag)->set( ((NumericUpDown^)(sender))->Value ) ;}
+	//private: void UpDateDecForm		(NumericUpDown^ c)	 { c->Value = *(Decimal^ )(((ITag^)(c->Tag))->get()) ;}
+
+	//property String^ Sec { void    set(String^ s) {							_Pr._TmCal.Set_Sec (  CreateCharFromManString(s)	) ; }
+	//					   String^ get()		  { return  gcnew String(	_Pr._TmCal._Sec.Get()								) ; }}
+
+//	private: void Update_TmCalThDyP					()
+//{	//_TmCalThDyP->UpDateP();		// UpDateForm	(txtBx_Sec);	UpDateForm	(txtBx_Sec2Align);
+//
+//	UpDateP(txtBx_Sec		);	//	_Pr._TmCal.Set_Sec		( CreateCharFromManString(this->txtBx_Sec->Text			))  ;
+//		UpDateP(txtBx_Sec2Align	);	//	_Pr._TmCal.Set_Sec2Align( CreateCharFromManString(this->txtBx_Sec2Align->Text   ))  ;
+//			_Pr._TmCal._save		= this->chkBx_Tm_save_asPCR->Checked ;
+//			_Pr._TmCal._align		= this->chkBx_align->Checked ;
+//}	
+//
+		//_Pr._cp.SetOutputFile( CreateCharFromManString(this->textBoxSaveResultFile->Text) ) ;	
+		//_Pr._cp._ConcSd	 = 1e-9f*Decimal::ToSingle( this->numUpDowSdConc->Value );
+		//_Pr._cp._ConcTg	 = 1e-9f*Decimal::ToSingle( this->numUpDowTgConc->Value );
+		//_Pr._cp._ConcSalt= 1e-3f*Decimal::ToSingle( this->numUpDowSalConc->Value );
+//	private: void UpdateCommThDyForm				()		//  -------------------- UpdateCommThDyForm.  Parametros comunes		------
+//{	_CommThDyP->UpDateForm();
+//	//UpDateForm	(textBoxTgScF4uA ); //this->textBoxTgScF4uA->Text= gcnew String(_Pr._cp._InputTargetFile.Get()) ;//this->textBoxTgScF4uA->Update(); 
+//	this->comBoxSalMeth->SelectedIndex	=			_Pr._cp._SaltCorr  ;			//this->comBoxSalMeth->Update(); 
+//	this->comBoxTAMeth->SelectedIndex	=			_Pr._cp._TAMeth  ;				//this->comBoxTAMeth->Update(); 
+//	//UpDateForm	(numUpDowTa);//	this->numUpDowTa->Value		= Decimal(	_Pr._cp._Ta ) ;	//this->numUpDowTa->Update(); 
+//	this->numUpDwMaxTgId->Value			= Decimal(	_Pr._cp._MaxTgId ) ;			//
+//	this->numUpDw_TgBeg->Value			= Decimal(	_Pr._cp._SecLim.Min() ) ;	// = Decimal(	_Pr._cp._SecBeg ) ;				//
+//	this->numUpDw_TgEnd->Value			= Decimal(	_Pr._cp._SecLim.Max() ) ;	//		= Decimal(	_Pr._cp._SecEnd ) ;		
+//	this->numUpDw_MinLen->Value			= Decimal(	_Pr._cp._MinSecLen ) ;			//
+//
+//	this->ckBx_savNNParam->Checked		= _Pr._cp._saveNNPar	 ;
+//	this->ckBx_loadNNParam->Checked		= _Pr._cp._loadNNPar	;
+//	this->textBoxNNParamFile->Text		= gcnew String(_Pr._cp._InputNNFile.Get()) ; 	
+//
+//	this->ckBx_savTm->Checked	= _Pr._cp._st_savTm	 ;
+//	this->ckBx_savPos->Checked	= _Pr._cp._st_savPos	 ;
+//	this->ckBx_savG->Checked	= _Pr._cp._st_savG	 ;
+//	this->ckBx_savAlign->Checked	= _Pr._cp._st_savAlign	 ;
+//	this->ckBx_savProj->Checked	= _Pr._cp._st_savProj	 ;
+//	this->ckBx_savG_Plasm->Checked	= _Pr._cp._st_savG_Plasm	 ;
+//	this->ckBx_savTm_Plasm->Checked	= _Pr._cp._st_savTm_Plasm	 ;
+//	this->ckBx_savLog->Checked			= _Pr._cp._st_savLog	 ;
+//	this->ckBx_savExportSond->Checked	= _Pr._cp._st_Exp_sond	 ;
+//	this->ckBx_savExportTarg->Checked	= _Pr._cp._st_ExpTarg	 ;
+//}
+	//private: void UpdateCommThDyP					()
+//{		_CommThDyP->UpDateP();
+//		_Pr._cp._SaltCorr= SaltCorrecP(this->comBoxSalMeth->SelectedIndex ) ;
+//		_Pr._cp._TAMeth	 = AlignMeth  (this->comBoxTAMeth->SelectedIndex ) ;
+//		_Pr._cp._MaxTgId = Decimal::ToSingle	( this->numUpDwMaxTgId->Value );
+//		_Pr._cp._SecLim.Set( Decimal::ToInt32	( this->numUpDw_TgBeg->Value) , //_Pr._cp._SecBeg	 = Decimal::ToInt32( this->numUpDw_TgBeg->Value );	
+//							 Decimal::ToInt32	( this->numUpDw_TgEnd->Value) );	//_Pr._cp._SecEnd	 = Decimal::ToInt32( this->numUpDw_TgEnd->Value );
+//		_Pr._cp._MinSecLen = Decimal::ToInt32	( this->numUpDw_MinLen->Value );
+//
+//		_Pr._cp._loadNNPar	 = this->ckBx_loadNNParam->Checked ;
+//		_Pr._cp._saveNNPar	 = this->ckBx_savNNParam->Checked ;
+//		_Pr._cp.SetNNParaFile( CreateCharFromManString(this->textBoxNNParamFile->Text   ) ) ;	
+//
+//		_Pr._cp._st_savTm	 = this->ckBx_savTm->Checked ;
+//		_Pr._cp._st_savPos	 = this->ckBx_savPos->Checked ;
+//		_Pr._cp._st_savG	 = this->ckBx_savG->Checked ;
+//		_Pr._cp._st_savAlign = this->ckBx_savAlign->Checked ;
+//		_Pr._cp._st_savProj	 = this->ckBx_savProj->Checked ;
+//		_Pr._cp._st_savG_Plasm	 = this->ckBx_savG_Plasm->Checked ;
+//		_Pr._cp._st_savTm_Plasm	 = this->ckBx_savTm_Plasm->Checked ;
+//		_Pr._cp._st_savLog	 = this->ckBx_savLog->Checked ;
+//		_Pr._cp._st_Exp_sond = this->ckBx_savExportSond->Checked ;
+//		_Pr._cp._st_ExpTarg	 = this->ckBx_savExportTarg->Checked ;
+//}
+//	private: void Update_uArrThDyForm				()
+//{	this->textBoxSondesFile->Text		= gcnew String(_Pr._uArr._InputSondeFile.Get()) ; 	// para uA
+//}
+//
+//	private: void Update_uArrThDyP					()
+//{		_Pr._uArr.SetSondeFile ( CreateCharFromManString(this->textBoxSondesFile->Text    ) );
+//}
+//	private: void UI_uA_Create(){
+//			Results^ rsTm=gcnew Results(*_Pr._uArr._tlTm);
+//				rsTm->Text += L". Tm-µArry. ( " + gcnew String ( _Pr._cp._OutputFile.Get() ) + L" )";
+//				rsTm->Show(this);
+////				delete _Pr._uArr._tlTm ; _Pr._uArr._tlTm =nullptr ;		// seguro ????? quien y donde hacerlo??????			 
+//			 
+//			 }
+			//char *pr = clone_c_str(_Pr._ProjetFileName.Get()) ;
+			//_Pr.save(  CreateCharFromManString(this->textBoxSaveResultFile->Text + L".ThDy.txt" )      );
+			//_Pr.SetProjetFile(pr);
+
+
+
+
+
+	//this->nUpDowMaxSd_TgG->Value					= Decimal(	_Pr._SdDes._G_sig ) ;		// sonde  - target
+	//this->nUpDowMinSd_TgTm->Value					= Decimal(	_Pr._SdDes._Tm_sig ) ;		// sonde  - target
+	//this->nUpDowMinSd_nonTgG->Value					= Decimal(	_Pr._SdDes._MinSd_nTgG ) ;	// sonde  - non target	
+	//this->nUpDowMaxSd_nonTgTm->Value				= Decimal(	_Pr._SdDes._MaxSd_nTgTm ) ;	// sonde  - non target		
+	//this->numUpDwMinSelfG->Value					= Decimal(	_Pr._SdDes._MinSelfG ) ;
+	//this->numUpDwMaxSelfTm->Value					= Decimal(	_Pr._SdDes._MaxSelfTm ) ;	
+	//
+	//this->numUpDw_MinTargCov->Value					= Decimal(	_Pr._SdDes._MinTgCov ) ;	
+
+
+//
+//	private: void Update_mPCRThDyForm				()
+//{	this->textBoxSdSecFilePCR->Text		= gcnew String(_Pr._mPCR._InputSondeFile.Get() ) ; 	// para mPCR
+//}
+//	private: void Update_mPCRThDyP					()
+//{		_Pr._mPCR.SetSondeFile ( CreateCharFromManString(this->textBoxSdSecFilePCR->Text    ) );
+//}
+
+
+
+void			UpDateP		(Control^  control);
+void			UpDateForm	(Control^  control);
+System::Void	Validated_TB(System::Object^  senderControl, System::EventArgs^  e);
+
+
+enum  PriorizeDefault {Form, Parametr, NoDef};
+ref		  class TagBindGroup;
+interface class IUpDatable 						{	void UpDateP(),			UpDateForm(), /*AddToTagBindGr(TagBindGroup ^tbg)*/;	
+													static  PriorizeDefault _def=PriorizeDefault::Form;		};
+interface class ITagBinding : public IUpDatable	{	Object^ get(); 	void	set(Object^ o);	 };
+
+ITagBinding^	isTagBinding	(Control^ c);
+ITagBinding^	getTagBinding	(Control^ c);
+				
+
+
+ref		  class TagBinding : public ITagBinding // Objeto temporal, para crear y dejar instalado indirectamente las especializadas.
+{ protected:	Control^			_c; 
+				enum class RestoreOldTag {NotRestore, Restore};
+				RestoreOldTag		_RestoreOldTag ;
+				TagBinding(Control^ c, RestoreOldTag NotTemporal)	: _c(c),  _OldTag(c->Tag),	_RestoreOldTag(NotTemporal )				{}
+				TagBinding()										:							_RestoreOldTag(RestoreOldTag::NotRestore)	{}
+				TagBinding(Control^ c)								: _c(c),  _OldTag(c->Tag),	_RestoreOldTag(RestoreOldTag::Restore )			
+				{ 
+					//_c->Validated += gcnew System::EventHandler( _c->Parent , &ParF::Validated);
+					_c->Validated += gcnew System::EventHandler( Validated_TB) ;		
+
+				}
+				void SetDef(void){  switch (IUpDatable::_def){	case PriorizeDefault::Form:			UpDateP();		break;		
+																case PriorizeDefault::Parametr:		UpDateForm();	break;
+																case PriorizeDefault::NoDef:						default:		
+								 }						     }
+																	//	TagBinding(Control^ c, C_str &s):_c(c) {c->Tag=gcnew TagBinding_strTrim	(s,c);}
+	public:		TagBinding(Control^		  c	, C_str &s			);	//:_c(c), _RestoreOldTag(NotRestore) {c->Tag=gcnew TagBinding_C_str	(s,c);}		
+				TagBinding(NumericUpDown^ c	, float &p			);	//:_c(c), _RestoreOldTag(NotRestore) {c->Tag=gcnew TagBinding_Dec(p,c,1);}
+				TagBinding(NumericUpDown^ c	, float &p, float k	);	//:_c(c), _RestoreOldTag(NotRestore) {c->Tag=gcnew TagBinding_Dec(p,c,k);}
+				TagBinding(CheckBox^	  c , bool  &p			);	//:_c(c), _RestoreOldTag(NotRestore) {c->Tag=gcnew TagBinding_bool(p,c);}
+
+
+
+	Object^		_OldTag;
+				~TagBinding() {if (_RestoreOldTag==RestoreOldTag::Restore )  _c->Tag = _OldTag ; }
+
+
+	ITagBinding^		getTagBinding()	{ return	TagBindingNS::getTagBinding(_c)		;}	
+	Control^			getControl()	{ return	_c									;}
+
+	virtual void		set(Object^ s)	{			getTagBinding()->set(s)			;}
+	virtual Object^		get(		 )	{ return	getTagBinding()->get( )			;}
+
+	virtual void		UpDateForm(	 )	{			getTagBinding()->UpDateForm(	 )	;}
+	virtual void		UpDateP(	 )	{			getTagBinding()->UpDateP(	 )		;}
+
+};
+
+
+ref		  class TagBinding_C_str : public TagBinding //    Bind a Control.Text with a C_str variable ---- TagBinding_C_str    :
+{ 	protected:	C_str	&_p ;
+	public:				TagBinding_C_str (C_str &s, Control^ c):TagBinding(c)							, _p(s){SetDef()		;} 
+						TagBinding_C_str (Control^ c, C_str &s):TagBinding(c,RestoreOldTag::NotRestore)	, _p(s){c->Tag=gcnew TagBinding_C_str(s,c);}
+
+	virtual void		set(Object^ s)	override{						_p.Take (  CreateCharFromManString((String^ )s)	) ; }
+	virtual Object^		get(		 )	override{ return  gcnew String(	_p.Get()								) ; }
+	virtual void		UpDateForm(	 )	override{ _c->Text = (String^)get()	;}
+	virtual void		UpDateP(	 )	override{ set (_c->Text)				;}
+};
+
+ref		  class TagBinding_strTrim  : public TagBinding  //    Bind a Control.Text with a C_str variable using Trim ---- TagBinding_strTrim    :
+{ 	protected:	C_str	&_p ;
+	public:				TagBinding_strTrim (Control^ c, C_str &s):TagBinding(c,RestoreOldTag::NotRestore), _p(s){c->Tag=gcnew TagBinding_strTrim(s,c);}
+						TagBinding_strTrim (C_str &s, Control^ c):TagBinding(c		)					 , _p(s){SetDef()		;}
+	virtual void		set(Object^ s)	override{						_p.TakeTrim (  CreateCharFromManString((String^ )s)	) ; }
+	virtual Object^		get(		 )	override{ return  gcnew String(	_p.Get()								) ; }
+	virtual void		UpDateForm(	 )	override{ _c->Text = (String^)get()	;}
+	virtual void		UpDateP(	 )	override{ set (_c->Text)				;}	
+};
+
+ref		  class TagBinding_Dec    : public TagBinding //    Bind a NumericUpDown.Value with a float variable ---- TagBinding_Dec    :
+{ 	protected:	float	&_p, _k ;
+	public:				TagBinding_Dec (NumericUpDown^ c, float &p		   ):TagBinding(c,RestoreOldTag::NotRestore), _p(p), _k(1){c->Tag=gcnew TagBinding_Dec(p,c,_k);}
+						TagBinding_Dec (NumericUpDown^ c, float &p, float k):TagBinding(c,RestoreOldTag::NotRestore), _p(p), _k(k){c->Tag=gcnew TagBinding_Dec(p,c,_k);}
+						TagBinding_Dec (float &p, NumericUpDown^ c, float k):TagBinding(c			)				, _p(p), _k(k){SetDef()		;}
+	virtual void		set(Object^ f)	override{	_p	 = _k * Decimal::ToSingle( *(Decimal^)(f) ); }
+	virtual Object^		get(		 )	override{ return  gcnew Decimal(	_p / _k) ; }
+	virtual void		UpDateForm(	 )	override{	   ((NumericUpDown^)(_c))->Value =  *(Decimal^) get()	;}
+	virtual void		UpDateP(	 )	override{ set( ((NumericUpDown^)(_c))->Value )  					;}	
+};
+
+ref		  class TagBinding_Rang    : public TagBinding //    Bind a NumericUpDown.Value with a float variable ---- TagBinding_Dec    :
+{ 	protected:	float	 _k ;
+				NumRang<float> &_p;
+	protected:	Control^ _cmax; 
+	public:				TagBinding_Rang (NumericUpDown^ cmin, NumericUpDown^ cmax, NumRang<float> &p)	
+														:TagBinding(cmin,RestoreOldTag::NotRestore), _p(p),_cmax(cmax), _k(1)
+																			{   cmin->Tag=gcnew TagBinding_Rang_Min(p,cmin,_k);
+																				cmax->Tag=gcnew TagBinding_Rang_Max(p,cmax,_k);}
+
+						TagBinding_Rang (NumericUpDown^ cmin, NumericUpDown^ cmax, NumRang<float> &p, float k)
+														:TagBinding(cmin,RestoreOldTag::NotRestore), _p(p),_cmax(cmax), _k(k)
+																			{   cmin->Tag=gcnew TagBinding_Rang_Min(p,cmin,_k);
+																				cmax->Tag=gcnew TagBinding_Rang_Max(p,cmax,_k);}
+
+
+	virtual void		set(Object^ f)	override{	_p	 = _k * Decimal::ToSingle( *(Decimal^)(f) ); }
+	virtual Object^		get(		 )	override{ return  gcnew Decimal(	_p / _k) ; }
+	virtual void		UpDateForm(	 )	override{ TagBindingNS::UpDateForm(_c);		TagBindingNS::UpDateForm(_cmax);  					;}
+	virtual void		UpDateP(	 )	override{ TagBindingNS::UpDateP(_c);		TagBindingNS::UpDateP(_cmax);  						;}
+
+	virtual void		AddToTagBindGr(TagBindGroup ^tbg){ tbg->Add(%*this);}
+
+};
+
+ref		  class TagBinding_Rang_Min    : public TagBinding //    Bind a NumericUpDown.Value with a float variable ---- TagBinding_Dec    :
+{ 	protected:	float	_k ;
+				NumRang<float> &_p;
+
+	public:				TagBinding_Rang_Min (NumericUpDown^ cmin, NumRang<float> &p		)	:TagBinding(cmin,RestoreOldTag::NotRestore), _p(p), _k(1) 
+																							{ cmin->Tag = gcnew TagBinding_Rang_Min (p,cmin,_k) ;}
+
+						TagBinding_Rang_Min (NumericUpDown^ c, NumRang<float> &p, float k)	:TagBinding(c,RestoreOldTag::NotRestore), _p(p), _k(k)
+																							{ c->Tag=gcnew TagBinding_Rang_Min(p,c,_k);}
+
+						TagBinding_Rang_Min (NumRang<float> &p, NumericUpDown^ c, float k)	:TagBinding(c			)				 , _p(p), _k(k)
+																							{ SetDef()		;}
+
+	virtual void		set(Object^ f)	override{	_p.SetMin(_k * Decimal::ToSingle( *(Decimal^)(f) )); }
+	virtual Object^		get(		 )	override{ return  gcnew Decimal(	_p.Min() / _k) ; }
+	virtual void		UpDateForm(	 )	override{	   ((NumericUpDown^)(_c))->Value =  *(Decimal^) get()	;}
+	virtual void		UpDateP(	 )	override{ set( ((NumericUpDown^)(_c))->Value )  					;}	
+};
+ref		  class TagBinding_Rang_Max    : public TagBinding //    Bind a NumericUpDown.Value with a float variable ---- TagBinding_Dec    :
+{ 	protected:	float	_k ;
+				NumRang<float> &_p;
+
+	public:				TagBinding_Rang_Max (NumericUpDown^ cmax, NumRang<float> &p		)	:TagBinding(cmax,RestoreOldTag::NotRestore), _p(p), _k(1) 
+																							{ cmax->Tag = gcnew TagBinding_Rang_Max (p,cmax,_k) ;}
+
+						TagBinding_Rang_Max (NumericUpDown^ c, NumRang<float> &p, float k)	:TagBinding(c,RestoreOldTag::NotRestore), _p(p), _k(k)
+																							{ c->Tag=gcnew TagBinding_Rang_Max(p,c,_k);}
+
+						TagBinding_Rang_Max (NumRang<float> &p, NumericUpDown^ c, float k)	:TagBinding(c			)				 , _p(p), _k(k)
+																							{ SetDef()		;}
+
+	virtual void		set(Object^ f)	override{	_p.SetMax(_k * Decimal::ToSingle( *(Decimal^)(f) )); }
+	virtual Object^		get(		 )	override{ return  gcnew Decimal(	_p.Max() / _k) ; }
+	virtual void		UpDateForm(	 )	override{	   ((NumericUpDown^)(_c))->Value =  *(Decimal^) get()	;}
+	virtual void		UpDateP(	 )	override{ set( ((NumericUpDown^)(_c))->Value )  					;}	
+};
+
+
+ref		  class TagBinding_bool : public TagBinding //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
+{ 	protected:	bool	&_p ;
+	public:				TagBinding_bool (bool &p, CheckBox^ c):TagBinding(c)								, _p(p){SetDef()		;} 
+						TagBinding_bool (CheckBox^ c, bool &p):TagBinding(c,RestoreOldTag::NotRestore)	, _p(p){c->Tag=gcnew TagBinding_bool(p,c);}
+
+	virtual void		set(bool p	 )			{						_p= p		; }// OJO  nuevas get y set !!! no las virtuales heredadas
+	virtual	bool		get(		 )	new		{ return  _p						; }
+	virtual void		UpDateForm(	 )	override{ ((CheckBox^ )_c)->Checked = get()	;}
+	virtual void		UpDateP(	 )	override{ set (((CheckBox^ )_c)->Checked)	;}
+};
+
+TagBinding::TagBinding(Control^ c, C_str &s):_c(c), _RestoreOldTag(RestoreOldTag::NotRestore) {c->Tag=gcnew TagBinding_C_str	(s,c);}
+	//		TagBinding(Control^ c, C_str &s):_c(c), _RestoreOldTag(RestoreOldTag::NotRestore) {c->Tag=gcnew TagBinding_strTrim	(s,c);}
+
+TagBinding::TagBinding(NumericUpDown^ c, float &p		  ):_c(c),_RestoreOldTag(RestoreOldTag::NotRestore){c->Tag=gcnew TagBinding_Dec(p,c,1);}
+TagBinding::TagBinding(NumericUpDown^ c, float &p, float k):_c(c),_RestoreOldTag(RestoreOldTag::NotRestore){c->Tag=gcnew TagBinding_Dec(p,c,k);}
+TagBinding::TagBinding(CheckBox^	  c, bool &p		  ):_c(c),_RestoreOldTag(RestoreOldTag::NotRestore){c->Tag=gcnew TagBinding_bool(p,c);}
+
+
+//	public: virtual event PropertyChangedEventHandler^ PropertyChanged ;//{	 void add	(PropertyChangedEventHandler^ value);
+	//																	 void remove (PropertyChangedEventHandler^ value);
+	//																}
+//	private:  property String^ OutputFile {		String^ get()			{	return gcnew String(_Pr._cp._OutputFile.Get())       ;}
+//												void    set(String^ fn)	{	_Pr._cp.SetOutputFile( CreateCharFromManString(fn) ) ;
+//																			PropertyChanged(this, gcnew PropertyChangedEventArgs("OutputFile") );}	
+//										  }
+
+//private: System::Void			Validated(System::Object^  sender, System::EventArgs^  e) { Validated_TB(sender, e) ;}	
+//private: System::Void txtBx_Sec_Validated(System::Object^  sender, System::EventArgs^  e) { Validated_TB(sender, e) ;}
+
+//					_uArrThDyP->UpDateP() ;
+//					_mPCRThDyP->UpDateP() ;
+		_Pr._SdDes._sL._G.Set	( Decimal::ToSingle( this->nUpDw_MinSd_G->Value)  ,   		  Decimal::ToSingle( this->nUpDw_MaxSd_G->Value ) ); 
+			_Pr._SdDes._sL._Tm.Set	( Decimal::ToSingle( this->nUpDowMinSdTm->Value ) ,			  Decimal::ToSingle( this->nUpDowMaxSdTm->Value ) ); 
+
+private: System::Void txtBx_Sec2Align_TextChanged(System::Object^  sender, System::EventArgs^  e) 
+		 {  // Ya nadie lo usa !!!!!!!!		// Hacer rev and cpl  - false
+			this->chkBx_rev->Checked  = false;
+			this->chkBx_rev->Update();
+			this->chkBx_compl->Checked  = false;
+			this->chkBx_compl->Update();
+		 }
+

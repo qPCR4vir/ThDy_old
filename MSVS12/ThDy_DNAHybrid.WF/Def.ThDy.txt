@@ -1,0 +1,44 @@
+TargetFile: C:\Users\Rodriguez\Documents\ThDySec\targets\
+OutputFile: C:\Users\Rodriguez\Documents\ThDySec\results\
+SaltCorrMt: 0
+ConcSonden: 5e-008
+ConcTarget: 5e-008
+ConcenSalt: 0.05
+TempAnnelg: 55
+AlignMethd: -1
+MaxTgIdent: 99
+SecBeginng: 1
+SecuencEnd: 0
+MinSeqLeng: 0
+LoadNNPara: false
+SaveNNPara: false
+iNNParFile: 
+SavTmTable: true
+SavPosTabl: true
+SaveGTable: true
+SavAlignTb: true
+SavProject: true
+SavG_Plasm: true
+SavTmPlasm: true
+Save_Logfi: false
+Exp_probes: false
+Exp_target: false
+iSonde_uAr: C:\Users\Rodriguez\Documents\ThDySec\sonden\
+iSonde_PCR: C:\Users\Rodriguez\Documents\ThDySec\sonden\
+MinSonde_G: -5
+MaxSonde_G: -1
+MinSondeTm: 57
+MaxSondeTm: 63
+MinSondeLn: 20
+MaxSondeLn: 35
+MaxSd_Tg_G: 10
+MinSd_TgTm: 30
+MinSdnTg_G: 15
+MaxSdnTgTm: 10
+MinSdSlf_G: 10
+MaxSdSlfTm: 10
+Min_Tg_Cov: 100
+TmCalc_Sec: 
+TmC_Sec2Al: 
+TmCsaveRes: false
+TmUseAlign: true

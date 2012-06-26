@@ -1,0 +1,24 @@
+Target name
+$(ProjectName)_VC$(PlatformToolset)_$(Configuration)
+
+
+Output\lib   directtory:
+..\..\bin\
+..\..\lib\VC$(PlatformToolset)_$(Configuration)\
+
+
+Include directory
+
+..\..\include
+
+
+Intellisence source directory
+
+..\..\scr\ThDySec
+..\..\scr\ThDy_programs
+
+
+Add library dependency
+
+ThDySec.lib
+ThDy_programs.lib
