@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "file_chooser_win32.h"
+#include "file_chooser.h"
 #include <Windows.h>
 #include <Shobjidl.h>
 HRESULT BasicFileOpen()
@@ -9,19 +9,19 @@ HRESULT BasicFileOpen()
     IFileDialog *pfd = NULL;
     HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, 
                       NULL, 
-                      CLSCTX_INPROC_SERVER, 
+                      CLSCTX_LOCAL_SERVER, /*CLSCTX_INPROC_SERVER, */
                       IID_PPV_ARGS(&pfd));
-    if (!SUCCEEDED(hr))
+    if (SUCCEEDED(hr))
     {
         // Create an event handling object, and hook it up to the dialog.
         // IFileDialogEvents *pfde = NULL;
         //hr = CDialogEventHandler_CreateInstance(IID_PPV_ARGS(&pfde));
-        if (!SUCCEEDED(hr))
+        if (SUCCEEDED(hr))
         {
             // Hook up the event handler.
             // DWORD dwCookie;
             //hr = pfd->Advise(pfde, &dwCookie);
-            if (!SUCCEEDED(hr))
+            if (SUCCEEDED(hr))
             {
                 // Set the options on the dialog.
                 DWORD dwFlags;

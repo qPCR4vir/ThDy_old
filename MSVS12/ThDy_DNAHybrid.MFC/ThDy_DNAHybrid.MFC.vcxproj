@@ -394,7 +394,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -405,14 +405,14 @@
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTdebug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -423,14 +423,14 @@
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTdfebug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -441,14 +441,14 @@
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -459,14 +459,14 @@
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='_MDdebug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -477,14 +477,14 @@
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='_MTdebug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -495,14 +495,14 @@
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='_MTd|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -513,7 +513,7 @@
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
@@ -523,11 +523,11 @@
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
@@ -541,11 +541,11 @@
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTrelease|x64'">
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
@@ -559,11 +559,11 @@
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDrelease|x64'">
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
@@ -577,11 +577,11 @@
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='_MDrelease|x64'">
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
@@ -595,11 +595,11 @@
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='_MTrelease|x64'">
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
@@ -613,11 +613,11 @@
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='_MT|x64'">
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform) </TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)\;$(LibraryPath)</LibraryPath>

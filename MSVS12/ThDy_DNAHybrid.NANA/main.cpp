@@ -1,5 +1,6 @@
 #include <nana/gui/wvl.hpp>
 #include <nana/gui/widgets/button.hpp>
+#include "ThDy_programs\init_prog_param.h" 
 //#include "ThDy_Form.h"
 //#include <nana/gui/wvl.hpp>
 //#include <nana/gui/widgets/button.hpp>
@@ -11,42 +12,67 @@ class ThDy_Form : public nana::gui::form
 	ThDy_Form ():	gui::form  ( rectangle(   point(100,100),  nana::size(600,700)   )/*, 
 								gui::appear::decorate<gui::appear::minimize, gui::appear::maximize>()*/)
 	{	rectangle r(   point(5,5),  nana::size(100,20) ), bOpP(r);
-		_butOpenProject.create (*this, r.x,r.y,r.width,r.height);
+		_butOpenProject.create (*this, r);
 		_butOpenProject.caption(STR("Open Project"));
 
-		r = rectangle( point (r.x + r.width + 2,  r.y ) ,  nana::size( 400, r.height)   );
-		_cbProject.create (*this, r.x,r.y,r.width,r.height);
+		//r = rectangle( point (r.x + r.width + 2,  r.y ) ,  nana::size( 400, r.height)   );
+		_cbProject.create (*this, r=r.left_at(20).w(200));
 		_cbProject.caption(STR("Open Project"));
 		rectangle cbP(r);
-
+		
 		caption(STR("ThDy"));
 	}
 
  private:
 	gui::button _butOpenProject;
 	gui::combox _cbProject;
-
+	ThDyProjet		_Pr;
 	
 }	;
 
-#include "C:\Prog\ThDySec\MSVS12\FileChosserWin32\file_chooser_win32.h"
+#include "C:\Prog\ThDySec\MSVS12\FileChosserWin32\file_chooser.h"
 
 
 int main()
 {
+
+	typedef CFileFiltre<std::string> ff ;
+	ff txt_filtres= ff( "Plain txt") << "*.txt" << "*.ascii",   all_filtre=ff ("All files")<<"*.*";
+	// CFileFiltre<std::string> txt_filtres ("Plain txt",{"*.txt","*.ascii"}), all_filtre=ff ("All files",{"*.*"}); 
+
+	typedef CFileChooser<std::string> fch ;  // no vector initialize list in VC++ yet
+	fch Txt_open (fch::FileChosserType::open, "Chosse your txt file:", "../dir/default.txt");
+	    Txt_open.addFiltre(txt_filtres).addFiltre(all_filtre);
+
+	//CFileChooser<std::string> Txt_open (CFileChooser<std::string>::open, "Chosse your txt file:", "../dir/default.txt",
+	//											{    "Plain txt",{"*.txt","*.ascii"},   "All files",{*.*}     }); 
+
+	std::ofstream ofs_txt ;
+	try 	
+	//{ ofs_txt.open( fch (fch::FileChosserType::open, "Chosse your txt file:", "../dir/default.txt",
+	//							{    "Plain txt",{"*.txt","*.ascii"},   "All files",{*.*}     }     ).AskOne());}	
+	{ ofs_txt.open( Txt_open.AskOne());}
+	catch   (...)
+	{}
+
+
+
 	using namespace nana;
 	ThDy_Form tdf;
 	
 	tdf.show();
 
-	typedef CFileChooser<char *> fch ;
-	fch fc(fch::FileChosserType::open , "open");
-	fc.Ask();
-
 	gui::exec();
-
+	
 	return 0;
 }
+
+
+
+
+
+
+
 
 ////#define NANA_UNICODE
 //#include<nana/gui/wvl.hpp>

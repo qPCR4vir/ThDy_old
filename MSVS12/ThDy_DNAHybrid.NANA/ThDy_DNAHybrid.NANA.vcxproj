@@ -366,7 +366,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -376,13 +376,13 @@
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTrelease|Win32'">
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -392,13 +392,13 @@
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDrelease|Win32'">
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -408,13 +408,13 @@
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='_MDrelease|Win32'">
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -424,13 +424,13 @@
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='_MTrelease|Win32'">
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -440,13 +440,13 @@
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='_MT|Win32'">
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -456,13 +456,13 @@
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -472,13 +472,13 @@
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTdebug|Win32'">
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -488,13 +488,13 @@
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTdfebug|Win32'">
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -504,13 +504,13 @@
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|Win32'">
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -520,13 +520,13 @@
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='_MDdebug|Win32'">
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -536,13 +536,13 @@
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='_MTdebug|Win32'">
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -552,13 +552,13 @@
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='_MTd|Win32'">
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -568,7 +568,7 @@
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\lib\VC$(PlatformToolset)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset);..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
@@ -580,7 +580,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -591,7 +591,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MTdebug|Win32'">
@@ -602,7 +602,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MTdebug|x64'">
@@ -613,7 +613,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MTdfebug|Win32'">
@@ -624,7 +624,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MTdfebug|x64'">
@@ -635,7 +635,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|Win32'">
@@ -646,7 +646,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|x64'">
@@ -657,7 +657,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='_MDdebug|Win32'">
@@ -668,7 +668,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='_MDdebug|x64'">
@@ -679,7 +679,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='_MTdebug|Win32'">
@@ -690,7 +690,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='_MTdebug|x64'">
@@ -701,7 +701,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='_MTd|Win32'">
@@ -712,7 +712,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='_MTd|x64'">
@@ -723,7 +723,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -738,7 +738,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -753,7 +753,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MTrelease|Win32'">
@@ -768,7 +768,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MTrelease|x64'">
@@ -783,7 +783,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MDrelease|Win32'">
@@ -798,7 +798,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MDrelease|x64'">
@@ -813,7 +813,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='_MDrelease|Win32'">
@@ -828,7 +828,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='_MDrelease|x64'">
@@ -843,7 +843,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='_MTrelease|Win32'">
@@ -858,7 +858,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='_MTrelease|x64'">
@@ -873,7 +873,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='_MT|Win32'">
@@ -888,7 +888,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='_MT|x64'">
@@ -903,7 +903,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$nana_$(Configuration)_$(EmbedManifestBy)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalDependencies>FileChosser_$(Configuration)_$(Platform).lib;nana_$(Configuration)_$(Platform).lib;ThDySec_$(Configuration)_$(Platform).lib;ThDy_programs_$(Configuration)_$(Platform).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

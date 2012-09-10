@@ -21,7 +21,7 @@ using namespace std ;
 
 #include "..\ThDySec\common_basics.h" 
 //#include "..\ThDySec\matrix.h" 
-//  PROBLEMA : como organizar estos parametros si usamos procesos? Hacer copia de ellos !!!!!!!!
+// TODO:  PROBLEMA : como organizar estos parametros si usamos procesos? Hacer copia de ellos !!!!!!!!
 
 class	CEspProgParam ;
 typedef CEspProgParam *pCEspProgParam ;
