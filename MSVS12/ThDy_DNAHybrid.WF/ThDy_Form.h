@@ -27,6 +27,11 @@ namespace ThDy_DNAHybridWF {
 					TagBindGroup	^_CommThDyP, ^_uArrThDyP, ^_TmCalThDyP,  ^_mPCRThDyP ,  ^_SdDesThDyP		 ;
 	private: System::Windows::Forms::Button^  btPCRfiltrFile;
 	private: System::Windows::Forms::TextBox^  txtBoxPCRfiltr;
+	private: System::Windows::Forms::Label^  label1;
+	private: System::Windows::Forms::GroupBox^  groBox_ComUnic;
+	private: System::Windows::Forms::RadioButton^  radBut_UnicSond;
+	private: System::Windows::Forms::RadioButton^  radBut_CommSond;
+	private: System::Windows::Forms::FlowLayoutPanel^  flowLayoutPanel1;
 
 
 
@@ -392,7 +397,7 @@ private: System::Windows::Forms::CheckBox^		ckBx_savProj;
 
 	private: System::Windows::Forms::NumericUpDown^  nUpDowMaxSdTm;
 
-	private: System::Windows::Forms::Label^  label_MinTargCov;
+
 	private: System::Windows::Forms::NumericUpDown^  numUpDw_MinTargCov;
 
 	private: System::Windows::Forms::TabControl^  tabControl;
@@ -530,13 +535,13 @@ private: System::ComponentModel::IContainer^  components;
 			this->nUpDw_MinSdLength = (gcnew System::Windows::Forms::NumericUpDown());
 			this->nUpDw_MaxSdLength = (gcnew System::Windows::Forms::NumericUpDown());
 			this->nUpDowMaxSdTm = (gcnew System::Windows::Forms::NumericUpDown());
-			this->label_MinTargCov = (gcnew System::Windows::Forms::Label());
 			this->numUpDw_MinTargCov = (gcnew System::Windows::Forms::NumericUpDown());
 			this->tabControl = (gcnew System::Windows::Forms::TabControl());
 			this->tabPagFindSonden = (gcnew System::Windows::Forms::TabPage());
 			this->but_Compare = (gcnew System::Windows::Forms::Button());
 			this->labMinSelfG = (gcnew System::Windows::Forms::Label());
 			this->labMaxSelfTm = (gcnew System::Windows::Forms::Label());
+			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->labelMinSd_nonTgG = (gcnew System::Windows::Forms::Label());
 			this->labelMaxSd_TgG = (gcnew System::Windows::Forms::Label());
@@ -556,6 +561,9 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox_SdTg = (gcnew System::Windows::Forms::GroupBox());
 			this->groupBox_Sd_Min_Max = (gcnew System::Windows::Forms::GroupBox());
 			this->lab_sMax = (gcnew System::Windows::Forms::Label());
+			this->groBox_ComUnic = (gcnew System::Windows::Forms::GroupBox());
+			this->radBut_UnicSond = (gcnew System::Windows::Forms::RadioButton());
+			this->radBut_CommSond = (gcnew System::Windows::Forms::RadioButton());
 			this->microArray = (gcnew System::Windows::Forms::TabPage());
 			this->radioButton2 = (gcnew System::Windows::Forms::RadioButton());
 			this->radioButton1 = (gcnew System::Windows::Forms::RadioButton());
@@ -677,6 +685,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->openFDial_NNParam = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->oFileExp = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->opPCRfiltrFDlg = (gcnew System::Windows::Forms::OpenFileDialog());
+			this->flowLayoutPanel1 = (gcnew System::Windows::Forms::FlowLayoutPanel());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMinSdTm))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDw_MinSdLength))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDw_MaxSdLength))->BeginInit();
@@ -693,7 +702,10 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox_Sd_selft->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDwMinSelfG))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDwMaxSelfTm))->BeginInit();
+			this->groupBox_Sd_nTg->SuspendLayout();
+			this->groupBox_SdTg->SuspendLayout();
 			this->groupBox_Sd_Min_Max->SuspendLayout();
+			this->groBox_ComUnic->SuspendLayout();
 			this->microArray->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDown5))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDown4))->BeginInit();
@@ -717,6 +729,7 @@ private: System::ComponentModel::IContainer^  components;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDw_MinLen))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDw_TgBeg))->BeginInit();
 			this->grBoxTargets->SuspendLayout();
+			this->flowLayoutPanel1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// openFileDialog_targets
@@ -757,10 +770,12 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// textBoxNonTargetsFile
 			// 
+			this->textBoxNonTargetsFile->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->textBoxNonTargetsFile->Enabled = false;
 			this->textBoxNonTargetsFile->Location = System::Drawing::Point(123, 9);
 			this->textBoxNonTargetsFile->Name = L"textBoxNonTargetsFile";
-			this->textBoxNonTargetsFile->Size = System::Drawing::Size(334, 20);
+			this->textBoxNonTargetsFile->Size = System::Drawing::Size(419, 20);
 			this->textBoxNonTargetsFile->TabIndex = 1;
 			this->textBoxNonTargetsFile->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
@@ -772,7 +787,7 @@ private: System::ComponentModel::IContainer^  components;
 			// label_MinSdTm
 			// 
 			this->label_MinSdTm->AutoSize = true;
-			this->label_MinSdTm->Location = System::Drawing::Point(61, 102);
+			this->label_MinSdTm->Location = System::Drawing::Point(61, 90);
 			this->label_MinSdTm->Name = L"label_MinSdTm";
 			this->label_MinSdTm->Size = System::Drawing::Size(22, 13);
 			this->label_MinSdTm->TabIndex = 3;
@@ -792,7 +807,7 @@ private: System::ComponentModel::IContainer^  components;
 			// label_MinPrimerLength
 			// 
 			this->label_MinPrimerLength->AutoSize = true;
-			this->label_MinPrimerLength->Location = System::Drawing::Point(52, 128);
+			this->label_MinPrimerLength->Location = System::Drawing::Point(52, 116);
 			this->label_MinPrimerLength->Name = L"label_MinPrimerLength";
 			this->label_MinPrimerLength->Size = System::Drawing::Size(40, 13);
 			this->label_MinPrimerLength->TabIndex = 3;
@@ -802,7 +817,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			this->nUpDowMinSdTm->DecimalPlaces = 2;
 			this->nUpDowMinSdTm->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->nUpDowMinSdTm->Location = System::Drawing::Point(90, 100);
+			this->nUpDowMinSdTm->Location = System::Drawing::Point(90, 88);
 			this->nUpDowMinSdTm->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {90, 0, 0, 0});
 			this->nUpDowMinSdTm->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {30, 0, 0, 0});
 			this->nUpDowMinSdTm->MinimumSize = System::Drawing::Size(30, 0);
@@ -813,7 +828,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// nUpDw_MinSdLength
 			// 
-			this->nUpDw_MinSdLength->Location = System::Drawing::Point(99, 126);
+			this->nUpDw_MinSdLength->Location = System::Drawing::Point(99, 114);
 			this->nUpDw_MinSdLength->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {15, 0, 0, 0});
 			this->nUpDw_MinSdLength->Name = L"nUpDw_MinSdLength";
 			this->nUpDw_MinSdLength->Size = System::Drawing::Size(43, 20);
@@ -822,7 +837,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// nUpDw_MaxSdLength
 			// 
-			this->nUpDw_MaxSdLength->Location = System::Drawing::Point(153, 126);
+			this->nUpDw_MaxSdLength->Location = System::Drawing::Point(153, 114);
 			this->nUpDw_MaxSdLength->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {20, 0, 0, 0});
 			this->nUpDw_MaxSdLength->Name = L"nUpDw_MaxSdLength";
 			this->nUpDw_MaxSdLength->Size = System::Drawing::Size(43, 20);
@@ -833,7 +848,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			this->nUpDowMaxSdTm->DecimalPlaces = 2;
 			this->nUpDowMaxSdTm->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->nUpDowMaxSdTm->Location = System::Drawing::Point(153, 100);
+			this->nUpDowMaxSdTm->Location = System::Drawing::Point(153, 88);
 			this->nUpDowMaxSdTm->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {90, 0, 0, 0});
 			this->nUpDowMaxSdTm->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {30, 0, 0, 0});
 			this->nUpDowMaxSdTm->MinimumSize = System::Drawing::Size(30, 0);
@@ -842,22 +857,11 @@ private: System::ComponentModel::IContainer^  components;
 			this->nUpDowMaxSdTm->TabIndex = 4;
 			this->nUpDowMaxSdTm->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {63, 0, 0, 0});
 			// 
-			// label_MinTargCov
-			// 
-			this->label_MinTargCov->AutoSize = true;
-			this->label_MinTargCov->Enabled = false;
-			this->label_MinTargCov->Location = System::Drawing::Point(26, 191);
-			this->label_MinTargCov->Name = L"label_MinTargCov";
-			this->label_MinTargCov->Size = System::Drawing::Size(124, 13);
-			this->label_MinTargCov->TabIndex = 3;
-			this->label_MinTargCov->Text = L"Min Target Coverage (%)";
-			// 
 			// numUpDw_MinTargCov
 			// 
 			this->numUpDw_MinTargCov->DecimalPlaces = 1;
-			this->numUpDw_MinTargCov->Enabled = false;
 			this->numUpDw_MinTargCov->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->numUpDw_MinTargCov->Location = System::Drawing::Point(156, 189);
+			this->numUpDw_MinTargCov->Location = System::Drawing::Point(222, 15);
 			this->numUpDw_MinTargCov->MinimumSize = System::Drawing::Size(30, 0);
 			this->numUpDw_MinTargCov->Name = L"numUpDw_MinTargCov";
 			this->numUpDw_MinTargCov->Size = System::Drawing::Size(52, 20);
@@ -866,6 +870,8 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// tabControl
 			// 
+			this->tabControl->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->tabControl->Controls->Add(this->tabPagFindSonden);
 			this->tabControl->Controls->Add(this->microArray);
 			this->tabControl->Controls->Add(this->tabPagPCRDesing);
@@ -875,7 +881,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->tabControl->Location = System::Drawing::Point(1, 35);
 			this->tabControl->Name = L"tabControl";
 			this->tabControl->SelectedIndex = 0;
-			this->tabControl->Size = System::Drawing::Size(542, 281);
+			this->tabControl->Size = System::Drawing::Size(556, 281);
 			this->tabControl->TabIndex = 5;
 			// 
 			// tabPagFindSonden
@@ -883,46 +889,35 @@ private: System::ComponentModel::IContainer^  components;
 			this->tabPagFindSonden->Controls->Add(this->but_Compare);
 			this->tabPagFindSonden->Controls->Add(this->Design);
 			this->tabPagFindSonden->Controls->Add(this->nUpDw_MaxSdLength);
-			this->tabPagFindSonden->Controls->Add(this->labMinSelfG);
-			this->tabPagFindSonden->Controls->Add(this->labMaxSelfTm);
+			this->tabPagFindSonden->Controls->Add(this->label1);
 			this->tabPagFindSonden->Controls->Add(this->label3);
-			this->tabPagFindSonden->Controls->Add(this->labelMinSd_nonTgG);
-			this->tabPagFindSonden->Controls->Add(this->labelMaxSd_TgG);
-			this->tabPagFindSonden->Controls->Add(this->labelMaxSd_nonTgTm);
-			this->tabPagFindSonden->Controls->Add(this->labelMinSd_TgTm);
 			this->tabPagFindSonden->Controls->Add(this->lab_sG);
 			this->tabPagFindSonden->Controls->Add(this->label_MinSdTm);
 			this->tabPagFindSonden->Controls->Add(this->nUpDw_MinSdLength);
-			this->tabPagFindSonden->Controls->Add(this->label_MinTargCov);
 			this->tabPagFindSonden->Controls->Add(this->nUpDw_MaxSd_G);
 			this->tabPagFindSonden->Controls->Add(this->nUpDowMaxSdTm);
 			this->tabPagFindSonden->Controls->Add(this->label_MinPrimerLength);
-			this->tabPagFindSonden->Controls->Add(this->numUpDw_MinTargCov);
-			this->tabPagFindSonden->Controls->Add(this->nUpDowMinSd_nonTgG);
-			this->tabPagFindSonden->Controls->Add(this->nUpDowMaxSd_TgG);
-			this->tabPagFindSonden->Controls->Add(this->nUpDowMaxSd_nonTgTm);
-			this->tabPagFindSonden->Controls->Add(this->nUpDowMinSd_TgTm);
 			this->tabPagFindSonden->Controls->Add(this->nUpDw_MinSd_G);
 			this->tabPagFindSonden->Controls->Add(this->nUpDowMinSdTm);
 			this->tabPagFindSonden->Controls->Add(this->buttonOpenNonTargetsSecFile);
 			this->tabPagFindSonden->Controls->Add(this->textBoxNonTargetsFile);
-			this->tabPagFindSonden->Controls->Add(this->groupBox_Sd_selft);
-			this->tabPagFindSonden->Controls->Add(this->groupBox_Sd_nTg);
-			this->tabPagFindSonden->Controls->Add(this->groupBox_SdTg);
 			this->tabPagFindSonden->Controls->Add(this->groupBox_Sd_Min_Max);
+			this->tabPagFindSonden->Controls->Add(this->groBox_ComUnic);
+			this->tabPagFindSonden->Controls->Add(this->flowLayoutPanel1);
 			this->tabPagFindSonden->Location = System::Drawing::Point(4, 22);
 			this->tabPagFindSonden->Name = L"tabPagFindSonden";
 			this->tabPagFindSonden->Padding = System::Windows::Forms::Padding(3);
-			this->tabPagFindSonden->Size = System::Drawing::Size(534, 255);
+			this->tabPagFindSonden->Size = System::Drawing::Size(548, 255);
 			this->tabPagFindSonden->TabIndex = 0;
 			this->tabPagFindSonden->Text = L"Find Sonden";
 			this->tabPagFindSonden->UseVisualStyleBackColor = true;
 			// 
 			// but_Compare
 			// 
-			this->but_Compare->Location = System::Drawing::Point(343, 226);
+			this->but_Compare->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+			this->but_Compare->Location = System::Drawing::Point(380, 225);
 			this->but_Compare->Name = L"but_Compare";
-			this->but_Compare->Size = System::Drawing::Size(75, 23);
+			this->but_Compare->Size = System::Drawing::Size(83, 23);
 			this->but_Compare->TabIndex = 2;
 			this->but_Compare->Text = L"Compare !";
 			this->but_Compare->UseVisualStyleBackColor = true;
@@ -931,37 +926,50 @@ private: System::ComponentModel::IContainer^  components;
 			// labMinSelfG
 			// 
 			this->labMinSelfG->AutoSize = true;
-			this->labMinSelfG->Location = System::Drawing::Point(348, 170);
+			this->labMinSelfG->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->labMinSelfG->Location = System::Drawing::Point(115, 16);
 			this->labMinSelfG->Name = L"labMinSelfG";
-			this->labMinSelfG->Size = System::Drawing::Size(35, 13);
+			this->labMinSelfG->Size = System::Drawing::Size(38, 15);
 			this->labMinSelfG->TabIndex = 3;
 			this->labMinSelfG->Text = L"Min G";
 			// 
 			// labMaxSelfTm
 			// 
 			this->labMaxSelfTm->AutoSize = true;
-			this->labMaxSelfTm->Location = System::Drawing::Point(338, 193);
+			this->labMaxSelfTm->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
+			this->labMaxSelfTm->Location = System::Drawing::Point(109, 39);
 			this->labMaxSelfTm->Name = L"labMaxSelfTm";
-			this->labMaxSelfTm->Size = System::Drawing::Size(45, 13);
+			this->labMaxSelfTm->Size = System::Drawing::Size(52, 15);
 			this->labMaxSelfTm->TabIndex = 3;
 			this->labMaxSelfTm->Text = L"Max Tm";
 			this->toolTip->SetToolTip(this->labMaxSelfTm, L"Max. Tm for sonde secundary structure");
 			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(214, 65);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(54, 13);
+			this->label1->TabIndex = 3;
+			this->label1->Text = L"  Tm ( °C )";
+			// 
 			// label3
 			// 
 			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(52, 168);
+			this->label3->Location = System::Drawing::Point(214, 47);
 			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(121, 13);
+			this->label3->Size = System::Drawing::Size(71, 13);
 			this->label3->TabIndex = 3;
-			this->label3->Text = L"G ( kcal/mol ),  Tm ( °C )";
+			this->label3->Text = L"G ( kcal/mol )";
 			// 
 			// labelMinSd_nonTgG
 			// 
 			this->labelMinSd_nonTgG->AutoSize = true;
-			this->labelMinSd_nonTgG->Location = System::Drawing::Point(345, 108);
+			this->labelMinSd_nonTgG->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
+			this->labelMinSd_nonTgG->Location = System::Drawing::Point(130, 15);
 			this->labelMinSd_nonTgG->Name = L"labelMinSd_nonTgG";
-			this->labelMinSd_nonTgG->Size = System::Drawing::Size(35, 13);
+			this->labelMinSd_nonTgG->Size = System::Drawing::Size(38, 15);
 			this->labelMinSd_nonTgG->TabIndex = 3;
 			this->labelMinSd_nonTgG->Text = L"Min G";
 			this->toolTip->SetToolTip(this->labelMinSd_nonTgG, L"Only sonde with weak interaction with non-target \r\n(larger G by selected Ta) will" 
@@ -970,9 +978,10 @@ private: System::ComponentModel::IContainer^  components;
 			// labelMaxSd_TgG
 			// 
 			this->labelMaxSd_TgG->AutoSize = true;
-			this->labelMaxSd_TgG->Location = System::Drawing::Point(344, 45);
+			this->labelMaxSd_TgG->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
+			this->labelMaxSd_TgG->Location = System::Drawing::Point(122, 15);
 			this->labelMaxSd_TgG->Name = L"labelMaxSd_TgG";
-			this->labelMaxSd_TgG->Size = System::Drawing::Size(38, 13);
+			this->labelMaxSd_TgG->Size = System::Drawing::Size(42, 15);
 			this->labelMaxSd_TgG->TabIndex = 3;
 			this->labelMaxSd_TgG->Text = L"Max G";
 			this->toolTip->SetToolTip(this->labelMaxSd_TgG, L"Only sonde with stronger interaction with target  (smaller G by selected Ta) will" 
@@ -981,18 +990,20 @@ private: System::ComponentModel::IContainer^  components;
 			// labelMaxSd_nonTgTm
 			// 
 			this->labelMaxSd_nonTgTm->AutoSize = true;
-			this->labelMaxSd_nonTgTm->Location = System::Drawing::Point(340, 131);
+			this->labelMaxSd_nonTgTm->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
+			this->labelMaxSd_nonTgTm->Location = System::Drawing::Point(116, 38);
 			this->labelMaxSd_nonTgTm->Name = L"labelMaxSd_nonTgTm";
-			this->labelMaxSd_nonTgTm->Size = System::Drawing::Size(45, 13);
+			this->labelMaxSd_nonTgTm->Size = System::Drawing::Size(52, 15);
 			this->labelMaxSd_nonTgTm->TabIndex = 3;
 			this->labelMaxSd_nonTgTm->Text = L"Max Tm";
 			// 
 			// labelMinSd_TgTm
 			// 
 			this->labelMinSd_TgTm->AutoSize = true;
-			this->labelMinSd_TgTm->Location = System::Drawing::Point(339, 68);
+			this->labelMinSd_TgTm->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
+			this->labelMinSd_TgTm->Location = System::Drawing::Point(119, 38);
 			this->labelMinSd_TgTm->Name = L"labelMinSd_TgTm";
-			this->labelMinSd_TgTm->Size = System::Drawing::Size(42, 13);
+			this->labelMinSd_TgTm->Size = System::Drawing::Size(48, 15);
 			this->labelMinSd_TgTm->TabIndex = 3;
 			this->labelMinSd_TgTm->Text = L"Min Tm";
 			this->toolTip->SetToolTip(this->labelMinSd_TgTm, L"Only sonde with longer sonde-target Tm will \"include\"");
@@ -1000,7 +1011,7 @@ private: System::ComponentModel::IContainer^  components;
 			// lab_sG
 			// 
 			this->lab_sG->AutoSize = true;
-			this->lab_sG->Location = System::Drawing::Point(67, 77);
+			this->lab_sG->Location = System::Drawing::Point(67, 65);
 			this->lab_sG->Name = L"lab_sG";
 			this->lab_sG->Size = System::Drawing::Size(15, 13);
 			this->lab_sG->TabIndex = 3;
@@ -1010,7 +1021,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			this->nUpDw_MaxSd_G->DecimalPlaces = 2;
 			this->nUpDw_MaxSd_G->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->nUpDw_MaxSd_G->Location = System::Drawing::Point(153, 75);
+			this->nUpDw_MaxSd_G->Location = System::Drawing::Point(153, 63);
 			this->nUpDw_MaxSd_G->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {5, 0, 0, 0});
 			this->nUpDw_MaxSd_G->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, System::Int32::MinValue});
 			this->nUpDw_MaxSd_G->MinimumSize = System::Drawing::Size(30, 0);
@@ -1022,8 +1033,9 @@ private: System::ComponentModel::IContainer^  components;
 			// nUpDowMinSd_nonTgG
 			// 
 			this->nUpDowMinSd_nonTgG->DecimalPlaces = 2;
+			this->nUpDowMinSd_nonTgG->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F));
 			this->nUpDowMinSd_nonTgG->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->nUpDowMinSd_nonTgG->Location = System::Drawing::Point(387, 106);
+			this->nUpDowMinSd_nonTgG->Location = System::Drawing::Point(175, 13);
 			this->nUpDowMinSd_nonTgG->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {30, 0, 0, 0});
 			this->nUpDowMinSd_nonTgG->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, System::Int32::MinValue});
 			this->nUpDowMinSd_nonTgG->MinimumSize = System::Drawing::Size(30, 0);
@@ -1037,8 +1049,9 @@ private: System::ComponentModel::IContainer^  components;
 			// nUpDowMaxSd_TgG
 			// 
 			this->nUpDowMaxSd_TgG->DecimalPlaces = 2;
+			this->nUpDowMaxSd_TgG->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F));
 			this->nUpDowMaxSd_TgG->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->nUpDowMaxSd_TgG->Location = System::Drawing::Point(386, 43);
+			this->nUpDowMaxSd_TgG->Location = System::Drawing::Point(172, 13);
 			this->nUpDowMaxSd_TgG->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {30, 0, 0, 0});
 			this->nUpDowMaxSd_TgG->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, System::Int32::MinValue});
 			this->nUpDowMaxSd_TgG->MinimumSize = System::Drawing::Size(30, 0);
@@ -1052,8 +1065,9 @@ private: System::ComponentModel::IContainer^  components;
 			// nUpDowMaxSd_nonTgTm
 			// 
 			this->nUpDowMaxSd_nonTgTm->DecimalPlaces = 2;
+			this->nUpDowMaxSd_nonTgTm->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F));
 			this->nUpDowMaxSd_nonTgTm->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->nUpDowMaxSd_nonTgTm->Location = System::Drawing::Point(387, 129);
+			this->nUpDowMaxSd_nonTgTm->Location = System::Drawing::Point(175, 36);
 			this->nUpDowMaxSd_nonTgTm->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {70, 0, 0, 0});
 			this->nUpDowMaxSd_nonTgTm->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {273, 0, 0, System::Int32::MinValue});
 			this->nUpDowMaxSd_nonTgTm->MinimumSize = System::Drawing::Size(30, 0);
@@ -1065,8 +1079,9 @@ private: System::ComponentModel::IContainer^  components;
 			// nUpDowMinSd_TgTm
 			// 
 			this->nUpDowMinSd_TgTm->DecimalPlaces = 2;
+			this->nUpDowMinSd_TgTm->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F));
 			this->nUpDowMinSd_TgTm->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->nUpDowMinSd_TgTm->Location = System::Drawing::Point(386, 66);
+			this->nUpDowMinSd_TgTm->Location = System::Drawing::Point(172, 36);
 			this->nUpDowMinSd_TgTm->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {70, 0, 0, 0});
 			this->nUpDowMinSd_TgTm->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {273, 0, 0, System::Int32::MinValue});
 			this->nUpDowMinSd_TgTm->MinimumSize = System::Drawing::Size(30, 0);
@@ -1080,7 +1095,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			this->nUpDw_MinSd_G->DecimalPlaces = 2;
 			this->nUpDw_MinSd_G->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->nUpDw_MinSd_G->Location = System::Drawing::Point(90, 75);
+			this->nUpDw_MinSd_G->Location = System::Drawing::Point(90, 63);
 			this->nUpDw_MinSd_G->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {5, 0, 0, 0});
 			this->nUpDw_MinSd_G->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, System::Int32::MinValue});
 			this->nUpDw_MinSd_G->MinimumSize = System::Drawing::Size(30, 0);
@@ -1091,13 +1106,18 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// groupBox_Sd_selft
 			// 
+			this->groupBox_Sd_selft->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->groupBox_Sd_selft->Controls->Add(this->numUpDwMinSelfG);
 			this->groupBox_Sd_selft->Controls->Add(this->numUpDwMaxSelfTm);
+			this->groupBox_Sd_selft->Controls->Add(this->labMinSelfG);
+			this->groupBox_Sd_selft->Controls->Add(this->labMaxSelfTm);
 			this->groupBox_Sd_selft->Font = (gcnew System::Drawing::Font(L"Arial", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox_Sd_selft->Location = System::Drawing::Point(227, 154);
+			this->groupBox_Sd_selft->Location = System::Drawing::Point(1, 128);
+			this->groupBox_Sd_selft->Margin = System::Windows::Forms::Padding(1);
 			this->groupBox_Sd_selft->Name = L"groupBox_Sd_selft";
-			this->groupBox_Sd_selft->Size = System::Drawing::Size(230, 62);
+			this->groupBox_Sd_selft->Size = System::Drawing::Size(237, 62);
 			this->groupBox_Sd_selft->TabIndex = 5;
 			this->groupBox_Sd_selft->TabStop = false;
 			this->groupBox_Sd_selft->Text = L"Sonde-selft ";
@@ -1109,7 +1129,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->numUpDwMinSelfG->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->numUpDwMinSelfG->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->numUpDwMinSelfG->Location = System::Drawing::Point(160, 14);
+			this->numUpDwMinSelfG->Location = System::Drawing::Point(175, 11);
 			this->numUpDwMinSelfG->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {30, 0, 0, 0});
 			this->numUpDwMinSelfG->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, System::Int32::MinValue});
 			this->numUpDwMinSelfG->MinimumSize = System::Drawing::Size(30, 0);
@@ -1124,7 +1144,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->numUpDwMaxSelfTm->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->numUpDwMaxSelfTm->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->numUpDwMaxSelfTm->Location = System::Drawing::Point(160, 37);
+			this->numUpDwMaxSelfTm->Location = System::Drawing::Point(175, 35);
 			this->numUpDwMaxSelfTm->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {70, 0, 0, 0});
 			this->numUpDwMaxSelfTm->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {273, 0, 0, System::Int32::MinValue});
 			this->numUpDwMaxSelfTm->MinimumSize = System::Drawing::Size(30, 0);
@@ -1135,11 +1155,18 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// groupBox_Sd_nTg
 			// 
+			this->groupBox_Sd_nTg->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->groupBox_Sd_nTg->Controls->Add(this->nUpDowMaxSd_nonTgTm);
+			this->groupBox_Sd_nTg->Controls->Add(this->nUpDowMinSd_nonTgG);
+			this->groupBox_Sd_nTg->Controls->Add(this->labelMaxSd_nonTgTm);
+			this->groupBox_Sd_nTg->Controls->Add(this->labelMinSd_nonTgG);
 			this->groupBox_Sd_nTg->Font = (gcnew System::Drawing::Font(L"Arial", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox_Sd_nTg->Location = System::Drawing::Point(227, 92);
+			this->groupBox_Sd_nTg->Location = System::Drawing::Point(1, 64);
+			this->groupBox_Sd_nTg->Margin = System::Windows::Forms::Padding(1);
 			this->groupBox_Sd_nTg->Name = L"groupBox_Sd_nTg";
-			this->groupBox_Sd_nTg->Size = System::Drawing::Size(230, 62);
+			this->groupBox_Sd_nTg->Size = System::Drawing::Size(237, 62);
 			this->groupBox_Sd_nTg->TabIndex = 5;
 			this->groupBox_Sd_nTg->TabStop = false;
 			this->groupBox_Sd_nTg->Text = L"Sonde-non-target";
@@ -1147,11 +1174,18 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// groupBox_SdTg
 			// 
+			this->groupBox_SdTg->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->groupBox_SdTg->Controls->Add(this->nUpDowMinSd_TgTm);
+			this->groupBox_SdTg->Controls->Add(this->nUpDowMaxSd_TgG);
+			this->groupBox_SdTg->Controls->Add(this->labelMinSd_TgTm);
+			this->groupBox_SdTg->Controls->Add(this->labelMaxSd_TgG);
 			this->groupBox_SdTg->Font = (gcnew System::Drawing::Font(L"Arial", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox_SdTg->Location = System::Drawing::Point(226, 29);
+			this->groupBox_SdTg->Location = System::Drawing::Point(1, 1);
+			this->groupBox_SdTg->Margin = System::Windows::Forms::Padding(1);
 			this->groupBox_SdTg->Name = L"groupBox_SdTg";
-			this->groupBox_SdTg->Size = System::Drawing::Size(230, 62);
+			this->groupBox_SdTg->Size = System::Drawing::Size(237, 61);
 			this->groupBox_SdTg->TabIndex = 5;
 			this->groupBox_SdTg->TabStop = false;
 			this->groupBox_SdTg->Text = L"Sonde-target";
@@ -1163,9 +1197,9 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox_Sd_Min_Max->Controls->Add(this->lab_sMin);
 			this->groupBox_Sd_Min_Max->Font = (gcnew System::Drawing::Font(L"Arial", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox_Sd_Min_Max->Location = System::Drawing::Point(8, 45);
+			this->groupBox_Sd_Min_Max->Location = System::Drawing::Point(8, 33);
 			this->groupBox_Sd_Min_Max->Name = L"groupBox_Sd_Min_Max";
-			this->groupBox_Sd_Min_Max->Size = System::Drawing::Size(208, 111);
+			this->groupBox_Sd_Min_Max->Size = System::Drawing::Size(200, 111);
 			this->groupBox_Sd_Min_Max->TabIndex = 5;
 			this->groupBox_Sd_Min_Max->TabStop = false;
 			this->groupBox_Sd_Min_Max->Text = L"Sonde (PM)";
@@ -1180,6 +1214,40 @@ private: System::ComponentModel::IContainer^  components;
 			this->lab_sMax->Size = System::Drawing::Size(30, 13);
 			this->lab_sMax->TabIndex = 3;
 			this->lab_sMax->Text = L"Max.";
+			// 
+			// groBox_ComUnic
+			// 
+			this->groBox_ComUnic->Controls->Add(this->radBut_UnicSond);
+			this->groBox_ComUnic->Controls->Add(this->radBut_CommSond);
+			this->groBox_ComUnic->Controls->Add(this->numUpDw_MinTargCov);
+			this->groBox_ComUnic->Location = System::Drawing::Point(8, 148);
+			this->groBox_ComUnic->Name = L"groBox_ComUnic";
+			this->groBox_ComUnic->Size = System::Drawing::Size(286, 67);
+			this->groBox_ComUnic->TabIndex = 6;
+			this->groBox_ComUnic->TabStop = false;
+			this->groBox_ComUnic->Text = L"Find Sondes";
+			// 
+			// radBut_UnicSond
+			// 
+			this->radBut_UnicSond->AutoSize = true;
+			this->radBut_UnicSond->Location = System::Drawing::Point(11, 39);
+			this->radBut_UnicSond->Name = L"radBut_UnicSond";
+			this->radBut_UnicSond->Size = System::Drawing::Size(52, 17);
+			this->radBut_UnicSond->TabIndex = 5;
+			this->radBut_UnicSond->Text = L"Unics";
+			this->radBut_UnicSond->UseVisualStyleBackColor = true;
+			// 
+			// radBut_CommSond
+			// 
+			this->radBut_CommSond->AutoSize = true;
+			this->radBut_CommSond->Checked = true;
+			this->radBut_CommSond->Location = System::Drawing::Point(11, 16);
+			this->radBut_CommSond->Name = L"radBut_CommSond";
+			this->radBut_CommSond->Size = System::Drawing::Size(211, 17);
+			this->radBut_CommSond->TabIndex = 5;
+			this->radBut_CommSond->TabStop = true;
+			this->radBut_CommSond->Text = L"Common, with Min Target Coverage (%)";
+			this->radBut_CommSond->UseVisualStyleBackColor = true;
 			// 
 			// microArray
 			// 
@@ -1836,7 +1904,7 @@ private: System::ComponentModel::IContainer^  components;
 			// txtBx_Sec2Align
 			// 
 			this->txtBx_Sec2Align->CharacterCasing = System::Windows::Forms::CharacterCasing::Upper;
-			this->txtBx_Sec2Align->Font = (gcnew System::Drawing::Font(L"Lucida Sans Typewriter", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->txtBx_Sec2Align->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->txtBx_Sec2Align->Location = System::Drawing::Point(13, 32);
 			this->txtBx_Sec2Align->MaxLength = 1000;
@@ -1847,7 +1915,7 @@ private: System::ComponentModel::IContainer^  components;
 			// txtBx_ResultSec2Align
 			// 
 			this->txtBx_ResultSec2Align->CharacterCasing = System::Windows::Forms::CharacterCasing::Upper;
-			this->txtBx_ResultSec2Align->Font = (gcnew System::Drawing::Font(L"Lucida Sans Typewriter", 9, System::Drawing::FontStyle::Regular, 
+			this->txtBx_ResultSec2Align->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->txtBx_ResultSec2Align->Location = System::Drawing::Point(13, 222);
 			this->txtBx_ResultSec2Align->MaxLength = 1000;
@@ -1859,7 +1927,7 @@ private: System::ComponentModel::IContainer^  components;
 			// txtBx_Sec
 			// 
 			this->txtBx_Sec->CharacterCasing = System::Windows::Forms::CharacterCasing::Upper;
-			this->txtBx_Sec->Font = (gcnew System::Drawing::Font(L"Lucida Sans Typewriter", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->txtBx_Sec->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->txtBx_Sec->Location = System::Drawing::Point(13, 6);
 			this->txtBx_Sec->MaxLength = 1000;
@@ -1871,7 +1939,7 @@ private: System::ComponentModel::IContainer^  components;
 			// txtBx_ResultSec
 			// 
 			this->txtBx_ResultSec->CharacterCasing = System::Windows::Forms::CharacterCasing::Upper;
-			this->txtBx_ResultSec->Font = (gcnew System::Drawing::Font(L"Lucida Sans Typewriter", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->txtBx_ResultSec->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->txtBx_ResultSec->Location = System::Drawing::Point(13, 196);
 			this->txtBx_ResultSec->MaxLength = 1000;
@@ -2170,18 +2238,22 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// textBoxSaveResultFile
 			// 
+			this->textBoxSaveResultFile->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->textBoxSaveResultFile->Location = System::Drawing::Point(128, 467);
 			this->textBoxSaveResultFile->Name = L"textBoxSaveResultFile";
-			this->textBoxSaveResultFile->Size = System::Drawing::Size(401, 20);
+			this->textBoxSaveResultFile->Size = System::Drawing::Size(425, 20);
 			this->textBoxSaveResultFile->TabIndex = 9;
 			this->textBoxSaveResultFile->Text = L"C:\\Users\\Rodriguez\\Documents\\ThDySec\\results\\";
 			this->textBoxSaveResultFile->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
 			// textBoxTgScF4uA
 			// 
+			this->textBoxTgScF4uA->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->textBoxTgScF4uA->Location = System::Drawing::Point(84, 13);
 			this->textBoxTgScF4uA->Name = L"textBoxTgScF4uA";
-			this->textBoxTgScF4uA->Size = System::Drawing::Size(432, 20);
+			this->textBoxTgScF4uA->Size = System::Drawing::Size(449, 20);
 			this->textBoxTgScF4uA->TabIndex = 8;
 			this->textBoxTgScF4uA->Text = L"C:\\Users\\Rodriguez\\Documents\\ThDySec\\targets\\";
 			this->textBoxTgScF4uA->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
@@ -2514,6 +2586,8 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// grBoxTargets
 			// 
+			this->grBoxTargets->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->grBoxTargets->Controls->Add(this->numUpDw_TgEnd);
 			this->grBoxTargets->Controls->Add(this->numUpDw_MinLen);
 			this->grBoxTargets->Controls->Add(this->numUpDw_TgBeg);
@@ -2528,7 +2602,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->grBoxTargets->Controls->Add(this->labMaxTgId);
 			this->grBoxTargets->Location = System::Drawing::Point(13, 320);
 			this->grBoxTargets->Name = L"grBoxTargets";
-			this->grBoxTargets->Size = System::Drawing::Size(526, 106);
+			this->grBoxTargets->Size = System::Drawing::Size(540, 106);
 			this->grBoxTargets->TabIndex = 15;
 			this->grBoxTargets->TabStop = false;
 			// 
@@ -2555,9 +2629,11 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// txtBoxPCRfiltr
 			// 
+			this->txtBoxPCRfiltr->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->txtBoxPCRfiltr->Location = System::Drawing::Point(82, 72);
 			this->txtBoxPCRfiltr->Name = L"txtBoxPCRfiltr";
-			this->txtBoxPCRfiltr->Size = System::Drawing::Size(434, 20);
+			this->txtBoxPCRfiltr->Size = System::Drawing::Size(451, 20);
 			this->txtBoxPCRfiltr->TabIndex = 8;
 			this->txtBoxPCRfiltr->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
@@ -2582,11 +2658,22 @@ private: System::ComponentModel::IContainer^  components;
 			this->opPCRfiltrFDlg->InitialDirectory = L"C:\\Users\\Rodriguez\\Documents\\ThDySec\\sonden";
 			this->opPCRfiltrFDlg->Title = L"Open Sondes File";
 			// 
+			// flowLayoutPanel1
+			// 
+			this->flowLayoutPanel1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+			this->flowLayoutPanel1->Controls->Add(this->groupBox_SdTg);
+			this->flowLayoutPanel1->Controls->Add(this->groupBox_Sd_nTg);
+			this->flowLayoutPanel1->Controls->Add(this->groupBox_Sd_selft);
+			this->flowLayoutPanel1->Location = System::Drawing::Point(302, 25);
+			this->flowLayoutPanel1->Name = L"flowLayoutPanel1";
+			this->flowLayoutPanel1->Size = System::Drawing::Size(241, 194);
+			this->flowLayoutPanel1->TabIndex = 16;
+			// 
 			// ThPr_Form
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(555, 642);
+			this->ClientSize = System::Drawing::Size(564, 642);
 			this->Controls->Add(this->richTextBox2);
 			this->Controls->Add(this->textBoxPrFile);
 			this->Controls->Add(this->richTextBox1);
@@ -2626,10 +2713,17 @@ private: System::ComponentModel::IContainer^  components;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMinSd_TgTm))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDw_MinSd_G))->EndInit();
 			this->groupBox_Sd_selft->ResumeLayout(false);
+			this->groupBox_Sd_selft->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDwMinSelfG))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDwMaxSelfTm))->EndInit();
+			this->groupBox_Sd_nTg->ResumeLayout(false);
+			this->groupBox_Sd_nTg->PerformLayout();
+			this->groupBox_SdTg->ResumeLayout(false);
+			this->groupBox_SdTg->PerformLayout();
 			this->groupBox_Sd_Min_Max->ResumeLayout(false);
 			this->groupBox_Sd_Min_Max->PerformLayout();
+			this->groBox_ComUnic->ResumeLayout(false);
+			this->groBox_ComUnic->PerformLayout();
 			this->microArray->ResumeLayout(false);
 			this->microArray->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDown5))->EndInit();
@@ -2660,6 +2754,7 @@ private: System::ComponentModel::IContainer^  components;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDw_TgBeg))->EndInit();
 			this->grBoxTargets->ResumeLayout(false);
 			this->grBoxTargets->PerformLayout();
+			this->flowLayoutPanel1->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 

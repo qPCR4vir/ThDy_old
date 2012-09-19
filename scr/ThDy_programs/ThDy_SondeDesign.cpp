@@ -46,8 +46,8 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 
 			osNCand	<<endl<< msCand._TNumPosCand << sep<< msCand._TNumCand  
 					<<sep<< tgN				<<sep<<	compN	
-					<<sep<<	newtg._Sec.Name()	<<sep<<	newtg._NumPosCandIn  << sep<< newtg._NumCandIn	
-					<<sep<<	curtg._Sec.Name()	<<sep<<	curtg._NumPosCandIn  << sep<< curtg._NumCandIn;	
+					<<sep<<	newtg._Sec.Name()	<<sep<<	newtg._NumPosCand/*In*/  << sep<< newtg._NumCand/*In*/	
+					<<sep<<	curtg._Sec.Name()	<<sep<<	curtg._NumPosCand/*In */ << sep<< curtg._NumCand/*In*/;	
 					//<<sep<< msCand._TDATmC->_THits<< sep<< msCand._TDATmC->_HitsOK 
 			
 			msCand.FindCommon	( newtg, curtg, IPrgPar_SdDes->_design )	;
@@ -65,8 +65,10 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 		//		<< sep<<	msCand._TNumPosCand	<< sep<<	((CSecCand *)msCand._LSecCand.Last())->_NumPosCand
 		//		<< sep<<	msCand._TNumCand	<< sep<<	((CSecCand *)msCand._LSecCand.Last())->_NumCand; 
 	}
-	if (IPrgPar_SdDes->_design) 
-		msCand.ExportCommonSonden(IPrgPar_SdDes->_cp._OutputFile.Get(), fasta | csv);
+	if (IPrgPar_SdDes->_MinTgCov) 
+		msCand.ExportCommonSonden(IPrgPar_SdDes->_cp._OutputFile.Get(), IPrgPar_SdDes->_design, IPrgPar_SdDes->_MinTgCov, fasta | csv);
+
+
 
 	time_t t_tm_cal = time(NULL);
 	osNCand<< endl << endl <<"Time sec= "			<< sep<< t_sec			- t_0		

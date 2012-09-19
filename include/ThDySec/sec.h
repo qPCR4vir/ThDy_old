@@ -54,7 +54,7 @@ class CSecBasInfo : public ISec
 	Base		operator[](int i)const{return _c[i];}
 	int			ID()const		{return _ID;}
 	char		*Name()const	{return _name;}
-	long		Len()const		{return _len;}
+	long		Len()const		{return _len;} //
 	long		Degeneracy()const{return _GrDeg;}
 	long		*BaseCount()    {return _Count;}
 	long		BaseCount(Base b){ if(is_degbase[b]) return _Count[db2nu[b]]; else return 0;}
@@ -302,25 +302,62 @@ class CSecGBtxt : public CSec // ---------------------------------------   CSecG
 								delete []_ORGANISM;		}	
 };
 
-class CRang // ---------------------------------------   CRang	: AMPLIAR y mejorar !!!  ---------------------------------------
+
+class CRangBase : public NumRang<long> // ---------------------------------------   CRang	: AMPLIAR y mejorar !!!  ---------------------------------------
 {public:	
-	CRang (long i,long icur, long f,long fcur) : _pi(i),_picur(icur),_pf(f),_pfcur(fcur) /*, _p(i,f),_pcur(icur,fcur)*/ {} 
-	long			_pi,_picur, _pf,_pfcur; // 
+	CRangBase (long i,long f) : NumRang<long>(i,f), _c(   f+1, i-1   )  { /* open();*/} 		// NumRang<long> _p;
+
+public:
+	CRangBase MatchRange() {return CRangBase( _c.Min(), _c.Max() );} // NO ME GUSTA ASI  !!!!!! pensar algo mas eficiente
+	void open(void){  _c.Set(   Max()+1, Min()-1   )     ;}
+						//    pi      pf                fi
+											//----|++++++++|-----------------|--------			El rango inicial, y como va quedando
+											// pfcur                        fi					El rango para calculo ("cur"), antes del comienzo	
+											//---|----------|----------------|--------			Asi se queda si no hibridan entre si las sec en esta zona,
+											//             picur            fi					y entonces "colapsa" el rango
+											//            pfcur             fi					En este caso encontro 5 "cand" comunes	
+											//--------|+++|------------------|--------			
+											//       picur                  fi					
 	//NumRang<long>	_p, _pcur ;
+	void adjustCur(long p){ _c.Expand(p); } //if( _c.Min()>p ) 	_c.Min()=p;		if( _c.Max()<p )	_c.Max()=p;}
+	bool isOpen  ()const{ return _c.Min() > _c.Max() ;}
+	bool hasMatch()const{ return !isOpen   ()    ;}
+	long NumMatch()const{ return _c.length() + 1;}
+	void SchrinkToMatch(){Set(_c);}					// scheck if open????  
+	//long length()const  { return Max() - Min() ;}
+	void schift(int s) { Min()+=s;Max()+=s;_c.Min()+=s;_c.Max()+=s;}   //{ _pf+=s;_pi+=s;_pfcur+=s;_picur+=s;}
+	bool addMatch(long i){ if (inRang(i)) {adjustCur(i);return true;} else return false;}
+
+ protected:
+	NumRang<long> _c;		//	long			_pi,_picur, _pf,_pfcur; //  _picur= _pf+1; _pfcur= _pi-1;}	
+} ; 
+
+
+
+class CRang : public CRangBase// ---------------------------------------   CRang	: AMPLIAR y mejorar !!!  ---------------------------------------
+{public:		//NumRang<long>	_p, _pcur ;
+
+	       CRang (long i,long f) : CRangBase ( i, f),	 matchs(new int[length()+1])    { for (int i=0 ; i<= length() ; ++i) matchs[i]=0;} 
+		   CRang (CRangBase  &R) : CRangBase ( R ),	     matchs(new int[length()+1])    { for (int i=0 ; i<= length() ; ++i) matchs[i]=0;} 
+	int	   *matchs;
+	      ~CRang  ( )  { delete []matchs; }
+    void  IncrMatchs() { 	for (int pi_pos=_c.Min()    ; pi_pos <= _c.Max() ; pi_pos++ ) 	matchs[pi_pos - Min() ]++;		}
+
 } ; typedef CRang *pCRang ;
 
-class CSecCand : public CLink // ---------------------------------------------   CSecCand	-------------------------------------
-{public:						// destinado a formar parte de una lista en un busq de sondas comunes.
+
+//! destinado a formar parte de una lista en un busq de sondas.-------------------------   CSecCand	-------------------------------
+class CSecCand : public CLink 
+{public:						
 	long _NumPosCand, _NumCand  , _NumPosCandIn, _NumCandIn  ,_NumCandExact ;	
 	CSec &_Sec ;	// ref a la sec, que ni se modifica ni se cambia de lugar
 	pCRang *_rg;
 
 	//CSecCand(CSec &sec, float Tm_min, float Tm_max, int L_min, int L_max);
-	CSecCand(CSec &sec, 	SondeLimits sL
+	CSecCand(CSec &sec, 	SondeLimits sL		);
 							//float	G_min	, float G_max ,					// en kcal ...
 							//float	Tm_min	, float Tm_max ,  
 							//int		L_min	, int L_max 
-							);
 
 	long ColapseRangs(bool colapse=true);
 

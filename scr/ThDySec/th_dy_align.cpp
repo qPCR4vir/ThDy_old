@@ -499,29 +499,34 @@ void CMSecCand::Use(CMultSec *MSec)
 	if (! _TDATmC ) _TDATmC=new ThDyAlign_TmCand(_MSec->_TMaxLen,*_MSec->_NNPar);  // Por  que????
 	else	_TDATmC->ResizeTable(_MSec->_TMaxLen, _MSec->_TMaxLen) ;
 	
+	_TNumPosCand= _TNumCand = 0;        // AQUI ???????????
+	_NumPosCand = _NumCand  = 0;        // AQUI ???????????
+
 	_TDATmC->SetSig(_Tm_sig, _G_sig);	//_TDATmC->SetTmLimits(_Tm_sig, _Tm_min, _Tm_max);
 }
 
 
 CSecCand	&CMSecCand::AddBeging(CSec &sec)
-{	_TNumPosCand= _TNumCand = 0;
-	CSecCand *newtg = new CSecCand( sec ,	_sL
-/*											_G_min,		_G_max, 
-											_Tm_min,	_Tm_max,
-											_L_min,		_L_max	*/	
-											);
+{	
+	CSecCand *newtg = new CSecCand( sec ,	_sL		);/*			_G_min,		_G_max, 								
+																	_Tm_min,	_Tm_max,
+																	_L_min,		_L_max	*/	
 
+	_TNumCand	+=newtg->_NumCand;    // sobreestima la cantidad total de candidatos (porque se pueden repetir en varias sec.)
+	_TNumPosCand+=newtg->_NumPosCand;
+	_NumCand	+=newtg->_NumCand;    // sobreestima la cantidad total de candidatos (porque se pueden repetir en varias sec.)
+	_NumPosCand +=newtg->_NumPosCand;
 	_LSecCand.goBeging() ;		// cur = first
 	_TDATmC->_cs=newtg;
 	return *newtg;
 }
-
+// _TNumPosCand= _TNumCand = 0;
 bool		CMSecCand::NotFinisch() 
 {	if (_LSecCand.NotEnd())
 		return true;
 	CSecCand *newtg = _TDATmC->_cs ;
-	_TNumCand	+=newtg->_NumCand;
-	_TNumPosCand+=newtg->_NumPosCand;
+	//_TNumCand	+=newtg->_NumCand;    // sobreestima la cantidad total de candidatos (porque se pueden repetir en varias sec.)
+	//_TNumPosCand+=newtg->_NumPosCand;
 	_LSecCand.Add(newtg);
 	return false  ;
 }
@@ -529,137 +534,114 @@ bool		CMSecCand::NotFinisch()
 CSecCand	*CMSecCand::CompNext() {return (CSecCand *)_LSecCand.goNext() 	;}
 
 void   CMSecCand::FindCommon	(CSecCand  &newtg, CSecCand &curtg, bool design)	
-{		_TDATmC->FindCommon(&newtg, &curtg, design );
-		_TNumCand	+=curtg._NumCand;
-		_TNumPosCand+=curtg._NumPosCand;
+{	long 	dec_NumCand		= newtg._NumCand	+ curtg._NumCand ; 
+	long 	dec_NumPosCand	= newtg._NumPosCand + curtg._NumPosCand ; 
+
+	_TDATmC->FindCommon(&newtg, &curtg, design );
+
+	if (design)									//  REVISAR   !!!!!!!!!!!!!!!!!!!!!!!!!
+	{
+	dec_NumCand		-= newtg._NumCand	 + curtg._NumCand ; 
+ 	dec_NumPosCand	-= newtg._NumPosCand + curtg._NumPosCand ; 
+
+		_TNumCand		-=  dec_NumCand ;   
+		_NumCand		-=  dec_NumCand ;   
+		_TNumPosCand	-=	dec_NumPosCand ;   
+		_NumPosCand		-=	dec_NumPosCand ;   
+	}
+		// sobreestima la cantidad total de candidatos (porque se pueden repetir en varias sec.)
+		//_TNumPosCand+=curtg._NumPosCand;
 }
 
 CSecCand *CMSecCand::Add(CSec &sec)
-{	_TNumPosCand= _TNumCand = 0;
-	CSecCand *newtg = new CSecCand( sec ,	_sL
-/*											_G_min,		_G_max, 
-											_Tm_min,	_Tm_max,
-											_L_min,		_L_max	*/	
-											);
+{	
+	CSecCand *newtg = new CSecCand( sec ,	_sL		);/*			_G_min,		_G_max, 								
+																	_Tm_min,	_Tm_max,
+																	_L_min,		_L_max	*/	
+
+	_TNumCand	+=newtg->_NumCand;    // sobreestima la cantidad total de candidatos (porque se pueden repetir en varias sec.)
+	_TNumPosCand+=newtg->_NumPosCand;
+	_NumCand	+=newtg->_NumCand;    // sobreestima la cantidad total de candidatos (porque se pueden repetir en varias sec.)
+	_NumPosCand +=newtg->_NumPosCand;
 
 	for ( _LSecCand.goBeging() ;  _LSecCand.NotEnd() ;   _LSecCand.goNext()  )	
 	{	CSecCand *tg=(CSecCand *)_LSecCand.Cur();
 
 		_TDATmC->FindCommon(newtg, tg );
 
-		_TNumCand	+=tg->_NumCand;
-		_TNumPosCand+=tg->_NumPosCand;
 	}
-	_TNumCand	+=newtg->_NumCand;
-	_TNumPosCand+=newtg->_NumPosCand;
 	_LSecCand.Add(newtg);
 
 	return newtg;
 }
+		//_TNumCand	+=tg->_NumCand;
+		//_TNumPosCand+=tg->_NumPosCand;
+	//_TNumCand	+=newtg->_NumCand;
+	//_TNumPosCand+=newtg->_NumPosCand;
 
-bool	ThDyAlign_TmCand::AddIfHit(long fi, long fj)// ---fi y fj en la DPMz usan las pos finales-inclus fi-2 y fj-2 en la sec !!!!!!
-{	if (fi<2 || fj<2) return false;   assert (fi>=2);assert (fj>=2);// como pueden ser < 2 y tener Tm > sig ???? 
-	CRang	*ri=_cs->_rg[fi-2] , 
-			*rj=_ct->_rg[fj-2] ;
+
+/// ---fi (sonda) y fj (target) en la DPMz usan las pos finales-inclus fi-2 y fj-2 en la sec !!!!!!
+bool	ThDyAlign_TmCand::AddIfHit(long fi, long fj)
+{	
+	if (fi<2 || fj<2) return false;   assert (fi>=2);assert (fj>=2);// como pueden ser < 2 y tener Tm > sig ???? 
+
+	CRang	*ri=_cs->_rg[fi-2] ,   // Candidato - Sonda  -termina en fi  (o sea -- i )
+			*rj=_ct->_rg[fj-2] ;   // Candidato - Target -termina en fj  (o sea -- j )
 	if(! ri && ! rj) return false;						// En al menos una de las sec todavia esta disp
 //  puede haber una sec intermedia bena para todas---	// algun cand en estas pos. Eso incluye que no estan demaciado cerca del comienzo de las sec.
 		// solucion TEMPORAL, no muy eficiente : mejor duplicar codigo para cada caso de que una de los rang=0
 		
 	LonSecPos i  = fi, j=fj    /*, 	l=0, i0=-1, j0=-1*/;	
 	if (ri && rj)	
-	{	
-		LonSecPos   pii, pij, pfi, pfj;					// En este rango la Tm y "calidad" de las sondas esta garantizada desde el principio
-		LonSecPos  cpii,cpij,cpfi,cpfj;					// solo resta comprobar la Th. Todas estas son pos inic. Por eso el -1. Mejor cambiar ??? que??
-
-		 pii=ri->_pi   +2-1;		// ---fi y fj en la DPMz usan las pos fi-2 y fj-2 en la sec !!!!!!
-		cpii=ri->_picur+2-1;		// pos inic NOT INCLUSIV !!!!!!!! y en la sec si !!!
-
-		 pij=rj->_pi   +2-1;		//    pii      pfi               fi
-		cpij=rj->_picur+2-1;		//----|++++++++|-----------------|--------
-
-		 pfi=ri->_pf   +2-1;
-		cpfi=ri->_pfcur+2-1;
-
-		 pfj=rj->_pf   +2-1;
-		cpfj=rj->_pfcur+2-1;
-
-		assert(pii>=2);assert(cpii>=2);assert(pij>=2);assert(cpij>=2);
-		assert(pfi>=2);assert(cpfi>=2);assert(pfj>=2);assert(cpfj>=2);
-
-
-		Step st; 	
-		while (i > pfi && j > pfj )			// saltar rapido el tramo de Al con corresp sondas "cortas" en ambas sec
+	{	CRangBase &Ri(*ri),&Rj(*rj); Ri.schift(2-1); Rj.schift(2-1);
+		Step st; 							// i-sonda, j-target. pos de comienzo de la zona de hibrid analizandose
+		while (i > Ri.Max() && j > Rj.Max() )	// saltar rapido el tramo de Al con corresp sondas "cortas" en ambas sec  (i > pfi && j > pfj )	
 		{	st= step(i,j);					// hasta que alguno de los dos entre en rango
 			if (! st ) 
-				return false;
+				{Ri.schift(-2+1);Rj.schift(-2+1);return false;}
 			i-= sti1[ st ];    //     i-= sti[ st ];  2 pasos de una vez   ---comparar !!!!!!!
 			j-= stj1[ st ];		//			l+=1;	
 		}
 		Energy		H= Get_H(fi,fj,step(fi,fj)) ,H0,Gh;   // Pasar S y H como argumentos ???? - acaban de ser calculados
 		Entropy		S= Get_S(fi,fj,step(fi,fj)), S0  , S00=_NNpar.GetInitialEntropy();
 		Temperature	last_Th_OK=0, Th=0;		
-		while (i > pii || j > pij )			// mientras que alguno de los dos este en rango
-		{	//assert(i < 0 || j < 0 );
-			if (i < 0 || j < 0 ) break ;	// y el otro no se haga "neg." no debe pasar nunca. Dejarlo en 1 ?, ...or 2  ???
+		while (i >= Ri.Min() || j >= Rj.Min() )			// mientras que alguno de los dos este en rango//assert(i < 0 || j < 0 );
+		{	
+			if (i < 0 || j < 0 ) break ;			// y el otro no se haga "neg." no debe pasar nunca. Dejarlo en 1 ?, ...or 2  ???
 			S0= Get_S(i,j,step(i,j)) ;
-			H0= Get_H(i,j,step(i,j)) ;		// no se toma el maximo, sino segun el step ??????????????????
+			H0= Get_H(i,j,step(i,j)) ;				// no se toma el maximo, sino segun el step ??????????????????
 			Th= CalcParamTm( S-S0 +S00,  H-H0); Gh= CalcParamG( S-S0 +S00,  H-H0);  // pos inic NOT INCLUSIV !!!!!!!!
 			if (Th>_Tm_sig   && Gh<_G_sig)							// Th -OK
 			{	last_Th_OK=Th;
-				if	(pii<=i && i<=pfi)				// y sonda 1 tambien  -- modif los curr rg
-				{			if (cpfi<i)
-								cpfi=i;
-					if (i<cpii)
-						cpii=i;
-				}
-
-				if  (pij<=j && j<=pfj)				// y sonda 2 tambien  -- modif los curr rg
-				{			if (cpfj<j)
-								cpfj=j;
-					if (j<cpij)
-						cpij=j;
-				}
-			}			//l+=1;				//l+=2;  2 pasos de una vez   ---comparar !!!!!!!		
+				Ri.addMatch(i);
+				Rj.addMatch(j);
+			}						//l+=1;		//l+=2;  2 pasos de una vez   ---comparar !!!!!!!		
 			st= step(i,j);
 			if (! st ) 
 				break;
 			i-= sti1[ st ];
 			j-= stj1[ st ];
 		}
-
-		if (last_Th_OK==0) return false;
-
-		assert(pii>=2);assert(cpii>=2);assert(pij>=2);assert(cpij>=2);
-		assert(pfi>=2);assert(cpfi>=2);assert(pfj>=2);assert(cpfj>=2);
-
-		ri->_picur	= cpii  -2+1 ;				// ---fi y fj en la DPMz usan las pos fi-2 y fj-2 en la sec !!!!!!
-		rj->_picur	= cpij	-2+1 ;		// pos inic NOT INCLUSIV !!!!!!!! y en la sec si !!!
-		ri->_pfcur	= cpfi	-2+1 ;		//    pii      pfi               fi
-		rj->_pfcur	= cpfj	-2+1 ;		//----|++++++++|-----------------|--------
-
-		//_Hits.Add( new CHit( fi, fj, i0, j0,l, H-H0,S-S0,Th_max,step(fi,fj) ) );		//	i,j ???? Th_max??
+		if (last_Th_OK==0) {Ri.schift(-2+1);Rj.schift(-2+1);return false;}
+		Ri.schift(-2+1);
+		Rj.schift(-2+1);
 		return true;
 	}
-
 	if (!rj)	
 	{	assert (ri);			//   ?????
-		LonSecPos   pi, pf, cpi,cpf;					
-		pi=ri->_pi   +2-1;		// ---fi y fj en la DPMz usan las pos fi-2 y fj-2 en la sec !!!!!!
-	   cpi=ri->_picur+2-1;		// pos inic NOT INCLUSIV !!!!!!!! y en la sec si !!!
-		pf=ri->_pf   +2-1;
-	   cpf=ri->_pfcur+2-1;
+		CRangBase &Ri(*ri); Ri.schift(2-1); 
 		Step st; 	
-		while (i > pf && j > 1) // i && j > pfj )			// saltar rapido el tramo de Al con corresp sonda i "corta" 
+		while (i > Ri.Max() && j > 0 ) // i && j > pfj )			// saltar rapido el tramo de Al con corresp sonda i "corta" 
 		{	st= step(i,j);									// hasta que i entre en rango
 			if (! st ) 
-				return false;
+				{Ri.schift(-2+1);return false;}
 			i-= sti1[ st ];    // i,j ????,     i-= sti[ st ];  2 pasos de una vez   ---comparar !!!!!!!
 			j-= stj1[ st ];	//			l+=1;	
 		}
 		float H= Get_H(fi,fj,step(fi,fj)) ,H0, last_Th_OK=0,  // Pasar S y H como argumentos ???? - acaban de ser calculados
 				S= Get_S(fi,fj,step(fi,fj)), S0, Th=0,Gh		  , S00=_NNpar.GetInitialEntropy();
 
-		while (i > pi )			// mientras que alguno de los dos este en rango
+		while (i >=  Ri.Min() )			// mientras que alguno de los dos este en rango
 		{	if (i < 0 || j < 0 ) break ;	// y el otro no se haga "neg."
 			S0= Get_S(i,j,step(i,j)) ;
 			H0= Get_H(i,j,step(i,j)) ;		// no se toma el maximo, sino segun el step ??????????????????
@@ -667,12 +649,7 @@ bool	ThDyAlign_TmCand::AddIfHit(long fi, long fj)// ---fi y fj en la DPMz usan l
 			Th= CalcParamTm( S-S0 +S00,  H-H0); Gh= CalcParamG( S-S0 +S00,  H-H0);  // pos inic NOT INCLUSIV !!!!!!!!
 			if (Th>_Tm_sig   && Gh<_G_sig)							// Th -OK
 			{	last_Th_OK=Th;
-				if	(pi<=i && i<=pf)				// y sonda 1 tambien  -- modif los curr rg
-				{			if (cpf<i)
-								cpf=i;
-					if (i<cpi)
-						cpi=i;
-				}
+				Ri.addMatch(i);
 			}			//			l+=1;				//l+=2;  2 pasos de una vez   ---comparar !!!!!!!		
 			st= step(i,j);
 			if (! st ) 
@@ -680,30 +657,27 @@ bool	ThDyAlign_TmCand::AddIfHit(long fi, long fj)// ---fi y fj en la DPMz usan l
 			i-= sti1[ st ];
 			j-= stj1[ st ];
 		}
-		if (last_Th_OK==0) return false;
-		ri->_picur	= cpi  -2+1 ;				// ---fi y fj en la DPMz usan las pos fi-2 y fj-2 en la sec !!!!!!
-		ri->_pfcur	= cpf  -2+1 ;		//    pii      pfi               fi
+		if (last_Th_OK==0) {Ri.schift(-2+1);return false;}
+		Ri.schift(-2+1);
 		return true;
 
 	} else 
 	{	// ri=rj;
-		long   pi, pf, cpi,cpf;					
-		pi=rj->_pi   +2-1;		// ---fi y fj en la DPMz usan las pos fi-2 y fj-2 en la sec !!!!!!
-	   cpi=rj->_picur+2-1;		// pos inic NOT INCLUSIV !!!!!!!! y en la sec si !!!
-		pf=rj->_pf   +2-1;
-	   cpf=rj->_pfcur+2-1;
+
+		CRangBase &Rj(*rj);  Rj.schift(2-1);
+
 		Step st; 	
-		while (j > pf && i > 0) // i && j > pfj )			// saltar rapido el tramo de Al con corresp sonda i "corta" 
+		while (j > Rj.Max() && i > 0) // i && j > pfj )			// saltar rapido el tramo de Al con corresp sonda i "corta" 
 		{	st= step(i,j);									// hasta que i entre en rango
 			if (! st ) 
-				return false;
+				{Rj.schift(-2+1);return false;}
 			i-= sti1[ st ];    // i,j ????,     i-= sti[ st ];  2 pasos de una vez   ---comparar !!!!!!!
 			j-= stj1[ st ];			//			l+=1;	
 		}
 		float H= Get_H(fi,fj,step(fi,fj)) ,H0, last_Th_OK=0,  // Pasar S y H como argumentos ???? - acaban de ser calculados
 				S= Get_S(fi,fj,step(fi,fj)), S0, Th=0,Gh		  , S00=_NNpar.GetInitialEntropy();
 
-		while (j > pi )			// mientras que alguno de los dos este en rango
+		while (j >= Rj.Min() )			// mientras que alguno de los dos este en rango
 		{	if (i < 0 || j < 0 ) break ;	// y el otro no se haga "neg."
 			S0= Get_S(i,j,step(i,j)) ;
 			H0= Get_H(i,j,step(i,j)) ;		// no se toma el maximo, sino segun el step ??????????????????
@@ -711,12 +685,7 @@ bool	ThDyAlign_TmCand::AddIfHit(long fi, long fj)// ---fi y fj en la DPMz usan l
 			Th= CalcParamTm( S-S0 +S00,  H-H0); Gh= CalcParamG( S-S0 +S00,  H-H0);  // pos inic NOT INCLUSIV !!!!!!!!
 			if (Th>_Tm_sig   && Gh<_G_sig)							// Th -OK
 			{	last_Th_OK=Th;
-				if	(pi<=j && j<=pf)				// y sonda 1 tambien  -- modif los curr rg
-				{			if (cpf<j)
-								cpf=j;
-					if (j<cpi)
-						cpi=j;
-				}
+				Rj.addMatch(j);
 			}			//			l+=1;				//l+=2;  2 pasos de una vez   ---comparar !!!!!!!		
 			st= step(i,j);
 			if (! st ) 
@@ -724,16 +693,82 @@ bool	ThDyAlign_TmCand::AddIfHit(long fi, long fj)// ---fi y fj en la DPMz usan l
 			i-= sti1[ st ];
 			j-= stj1[ st ];
 		}
-		if (last_Th_OK==0) return false;
-		rj->_picur	= cpi   -2+1 ;				// ---fi y fj en la DPMz usan las pos fi-2 y fj-2 en la sec !!!!!!
-		rj->_pfcur	= cpf	-2+1 ;		//    pii      pfi               fi
+		if (last_Th_OK==0) 	{Rj.schift(-2+1);return false;}
+		Rj.schift(-2+1);
+
 		return true;
 	}
 }
 
-
-	
-
+		//LonSecPos   pii, pij, pfi, pfj;		// i-sonda, j-target. En este rango la Tm y "calidad" de las sondas esta garantizada desde el principio
+		//LonSecPos  cpii,cpij,cpfi,cpfj;		// c-current - solo resta comprobar la Th. Todas estas son pos inic. Por eso el -1. Mejor cambiar ??? que??
+		// pii=ri->_pi   +2-1;		// ---fi y fj en la DPMz usan las pos fi-2 y fj-2 en la sec !!!!!!
+		//cpii=ri->_picur+2-1;		// pos inic NOT INCLUSIV !!!!!!!! y en la sec si !!!
+		// pij=rj->_pi   +2-1;		//    pii      pfi               fi
+		//cpij=rj->_picur+2-1;		//----|++++++++|-----------------|--------
+		//									//    pii     pfi               fi
+		//									//----|++++++++|-----------------|--------			El rango inicial, y como va quedando
+		//									//   cpfi                       fi					El rango para calculo ("cur"), antes del comienzo	
+		//									//----|---------|----------------|--------			Asi se queda si no hibridan entre si las sec en esta zona,
+		//									//             cpii             fi					y entonces "colapsa" el rango
+		//									//            cpfi              fi					En este caso encontro 5 "cand" comunes	
+		//									//--------|+++|------------------|--------			
+		//									//       cpii                   fi					
+		// pfi=ri->_pf   +2-1;
+		//cpfi=ri->_pfcur+2-1;
+		// pfj=rj->_pf   +2-1;
+		//cpfj=rj->_pfcur+2-1;
+		//assert(pii>=2);assert(cpii>=2);assert(pij>=2);assert(cpij>=2);
+		//assert(pfi>=2);assert(cpfi>=1);assert(pfj>=2);assert(cpfj>=1);
+				//if	(pii<=i && i<=pfi)				// y sonda 1 tambien  -- modif los curr rg
+				//{			if (cpfi<i)
+				//				cpfi=i;
+				//	if (i<cpii)
+				//		cpii=i;
+				//	Ri.adjustCur(i);// ++ri->match[i-pii];			// OTRO Match !!!!!!
+				//}
+				//if  (pij<=j && j<=pfj)				// y sonda 2 tambien  -- modif los curr rg
+				//{			if (cpfj<j)
+				//				cpfj=j;
+				//	if (j<cpij)
+				//		cpij=j;
+				//	Rj.adjustCur(j);//++rj->match[j-pij];			// OTRO Match !!!!!!
+				//}
+		//assert(pii>=2);assert(cpii>=2);assert(pij>=2);assert(cpij>=2);
+		//assert(pfi>=2);assert(cpfi>=2);assert(pfj>=2);assert(cpfj>=2);
+		//ri->_picur	= cpii  -2+1 ;				// ---fi y fj en la DPMz usan las pos fi-2 y fj-2 en la sec !!!!!!
+		//rj->_picur	= cpij	-2+1 ;		// pos inic NOT INCLUSIV !!!!!!!! y en la sec si !!!
+		//ri->_pfcur	= cpfi	-2+1 ;		//    pii      pfi               fi
+		//rj->_pfcur	= cpfj	-2+1 ;		//----|++++++++|-----------------|--------
+		////_Hits.Add( new CHit( fi, fj, i0, j0,l, H-H0,S-S0,Th_max,step(fi,fj) ) );		//	i,j ???? Th_max??
+		//pi=ri->_pi   +2-1;		// ---fi y fj en la DPMz usan las pos fi-2 y fj-2 en la sec !!!!!!
+	 //  cpi=ri->_picur+2-1;		// pos inic NOT INCLUSIV !!!!!!!! y en la sec si !!!
+		//pf=ri->_pf   +2-1;
+	 //  cpf=ri->_pfcur+2-1;
+		//LonSecPos   pi, pf, cpi,cpf;					
+				//if	(pi<=i && i<=pf)				// y sonda 1 tambien  -- modif los curr rg
+				//{			if (cpf<i)
+				//				cpf=i;
+				//	if (i<cpi)
+				//		cpi=i;
+				//	//++ri->match[i-pi];			// OTRO Match !!!!!!
+				//}
+		//ri->_picur	= cpi  -2+1 ;				// ---fi y fj en la DPMz usan las pos fi-2 y fj-2 en la sec !!!!!!
+		//ri->_pfcur	= cpf  -2+1 ;		//    pii      pfi               fi
+		//long   pi, pf, cpi,cpf;					
+		//pi=rj->_pi   +2-1;		// ---fi y fj en la DPMz usan las pos fi-2 y fj-2 en la sec !!!!!!
+	 //  cpi=rj->_picur+2-1;		// pos inic NOT INCLUSIV !!!!!!!! y en la sec si !!!
+		//pf=rj->_pf   +2-1;
+	 //  cpf=rj->_pfcur+2-1;
+				//if	(pi<=j && j<=pf)				// y sonda 1 tambien  -- modif los curr rg
+				//{			if (cpf<j)
+				//				cpf=j;
+				//	if (j<cpi)
+				//		cpi=j;
+				//	//++rj->match[j-pi];			// OTRO Match !!!!!!
+				//}	
+		//rj->_picur	= cpi   -2+1 ;				// ---fi y fj en la DPMz usan las pos fi-2 y fj-2 en la sec !!!!!!
+		//rj->_pfcur	= cpf	-2+1 ;		//    pii      pfi               fi
 
 void	ThDyAlign::Export_Hits(ofstream &osHits, char *sep)		// mientras estan conectados al Al
 {	
@@ -755,7 +790,8 @@ void	ThDyAlign::Export_Hits(ofstream &osHits, char *sep)		// mientras estan cone
 				else											osHits	<<   KtoC(_tg->Tm(h->_j0+1 -2, h->_j -2 )) ;				 
 	}
 }
-void	CMSecCand::ExportCommonSonden(char*fileName, int format)
+/// MEJORAR !!!
+void	CMSecCand::ExportCommonSonden(char*fileName, bool colpased,float MinCov, int format)
 {	bool	f_fas=format && fasta,
 			f_csv=format && csv;
 	string  f_name(fileName) ;
@@ -770,11 +806,12 @@ void	CMSecCand::ExportCommonSonden(char*fileName, int format)
 	{	string		CSVFile;
 		CSVFile= f_name + ".sonden.csv";
 		osCSV.open(CSVFile);
-		osCSV << "SecName" <<sep<<	"Len" <<sep<<	"Inic" <<sep<< "Fin"  <<sep<< "Tm" <<sep<< "Sec" ;
+		osCSV << "SecName" <<sep<<	"Len" <<sep<<	"Inic" <<sep<< "Fin"  <<sep<< "Tm" <<sep<< "Sec"
+				<< sep <<"H"<< sep <<"S"<< sep <<"G(Ta=" << KtoC(_TDATmC->Ta()) << " gr)" << sep << "No.matchs";
 	}
 
 	Base *sonde=new Base [ _sL._L.Max() + 1];
-
+	int minTcov= int (_MSec->_NSec * MinCov/100.0 ) -1;
 	set <string> SondeList;
 	//for (auto x : SondeList);
 	FracTDAlign fAl( _sL._L.Max() + 1 ,  _sL._L.Max() + 1, _TDATmC->_NNpar);
@@ -785,10 +822,13 @@ void	CMSecCand::ExportCommonSonden(char*fileName, int format)
 		long l= s._Sec.Len() ;
 		for (long fi=1 ; fi<=l;fi++)
 		{	CRang *r=s._rg[fi] ;
-			if (! r) continue;
-			for (long pi=r->_pi; pi <=r->_pf;pi++)
-			{	string cur_s((char*)s._Sec.Copy_charSec(sonde,pi, fi) );
-				if (SondeList.insert(cur_s).second)
+			if (! r) continue;   
+			for (long pi=r->Min(); pi <=r->Max();pi++)
+			{	assert(pi<l);
+				string cur_s((char*)s._Sec.Copy_charSec(sonde,pi, fi) ); 
+			    int matchs=r->matchs[pi- r->Min()];
+
+				if ( (colpased && SondeList.insert(cur_s).second)   || (matchs == 0) || (matchs >=minTcov ) )
 				{	CSec cand  (cur_s.c_str(),1,"s", &_TDATmC->_NNpar);     char *cs=(char*)cand.GetCopy_charSec(rev_compl);
 					CSec c_cand(cs           ,1,"c", &_TDATmC->_NNpar);
 					delete cs;
@@ -798,8 +838,9 @@ void	CMSecCand::ExportCommonSonden(char*fileName, int format)
 					// anadir otras comprobaciones: estruct secund (self-align-compl)
 					if (f_csv)	
 						osCSV <<endl<< s._Sec.Name()<<'.'<<pi<<'.'<<fi	<<sep<< fi-pi+1 <<sep<<pi <<sep<< fi <<sep
-							  << KtoC(s._Sec.Tm(pi,fi)) <<sep<< cur_s  ; 
-					if (f_csv)
+							  << KtoC(s._Sec.Tm(pi,fi)) <<sep<< cur_s 
+							  << sep <<"H"<< sep <<"S"<< sep <<"G(Ta=" << KtoC(_TDATmC->Ta()) << " gr)" << sep << matchs; 
+					if (f_fas)
 						osFasta	<<endl << '>' << s._Sec.Name()<<'.'<<pi<<'.'<<fi	<<"  ; Tm="<< KtoC(s._Sec.Tm(pi,fi))  
 								<<endl<< cur_s  ; 
 					}
@@ -1054,7 +1095,6 @@ void	ThDyAlign::Export_DPMz_Pre(ofstream &osDP_mz)
 //_pre0 = new Step  [TableSize];
 	//_pre1 = new Step  [TableSize];
 	//_pre2 = new Step  [TableSize];
-
 		// HACE FALTA ??????????????????
 	//memset(_dH1,0,_TableSize*sizeof (float));
 	//memset(_dH2,0,_TableSize*sizeof (float));

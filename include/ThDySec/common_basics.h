@@ -81,6 +81,7 @@ class NumRang				// ------------------------------------------------------------
 	void Set(					   ){min=0 			;max=0	;}
 	void Set(		Num av		   ){min=av			;max=av ;}
 	void Set(Num mi,         Num ma){min=mi			;max=ma ;}
+	void Set(     NumRang    R     ){min=R.min		;max=R.max;}
 
 	void SetMin(Num mi			   ){min=mi;			    }
 	void SetMax(			 Num ma){				max=ma ;}
@@ -88,10 +89,16 @@ class NumRang				// ------------------------------------------------------------
 	Num  Ave() const {return (min+max)/2 ;}				// Lineal aritmetical Average "by default"
 	Num  Min() const {return min			;}			Num& Min()		 {return min			;}
 	Num  Max() const {return max			;}			Num& Max()       {return max			;}
+   	Num length()const{ return Max() - Min() ;}          // throw execption "negative length ??????
+
 
 	bool inRang(const Num X)   const {return (min<= X && X<=max);}
+	void Expand(Num num)			 { if ( num<min ) min=num  ; if(  num>max)  max=num  ;}
 	void Expand(Num mi,       Num ma){ if (   mi<min) min=mi   ; if(   ma>max)  max=ma   ;}
 	void Expand(NumRang R)			 { if (R.min<min) min=R.min; if(R.max>max)  max=R.max;}
+    void Shrink(NumRang R)			 { if (R.min>min) min=R.min; if(R.max<max)  max=R.max;}
+	Num  Intersection(NumRang R){return R.Shrink(this);}	//Num  Union(NumRang R)	    {return R.Expand(this);}
+
 
 	bool UpdateMin(Num mi){ return (mi<min) ? min=mi, true : false ;}
 	bool UpdateMax(Num ma){ return (ma>max) ? max=ma, true : false ;}

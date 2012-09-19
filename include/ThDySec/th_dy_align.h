@@ -228,6 +228,7 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 					_MaxSelfTm(MaxSelfTm),		_MinSelfG(MinSelfG),
 
 					_TDATmC(0),			_MSec(0),
+					_TNumCand(0),	_NumPosCand(0),		_NumCand(0),	
 					_TNumPosCand(-1)  /*,		// valor imposible, inicial	
 					_osPaarComp(0)	  */	
 		{} 
@@ -240,7 +241,7 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 	void		FindCommon	(CSecCand  &cand1, CSecCand &cand2, bool design=true)	;
 	CSecCand	*CompNext	();
 
-	void		ExportCommonSonden(char*fileName, int format);
+	void		ExportCommonSonden(char*fileName, bool colpased, float MinCov, int format);
 	virtual ~CMSecCand(){	 // delete _TDATmC; _TDATmC=nullptr ;
 							_LSecCand.Destroy() ; 
 							_LMSecCand.Destroy() ; }
@@ -250,7 +251,8 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 	float	_MaxSd_nTgTm , _MinSd_nTgG ;	// sonde  - non target
 	float	_MaxSelfTm , _MinSelfG  ;		// sonde 
 
-	long	_TNumPosCand,	_TNumCand;
+	long	_NumPosCand,	_NumCand;  // Solo los "locales"
+	long	_TNumPosCand,	_TNumCand;  // Tambien cuenta los de la multiseq
 
 	ofstream _osPaarComp;
 

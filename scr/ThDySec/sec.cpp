@@ -173,7 +173,8 @@ CSec  * CSec::CreateCopy(DNAStrand strnd) // strnd=direct...crea una copia muy s
 Base  *	CSecBasInfo::Copy_charSec(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd)//DNAStrand strnd=direct)
 {	if ( EndBase< 1 || _len <EndBase ) EndBase=_len; 
 	long l=EndBase-InicBase+1 ; charSecHier[l]=0 ;
-	assert(l>=0);
+	if (l>=0) 
+	//assert(l>=0);
 	switch (strnd)
 	{	case DNAStrand::plus :
 		case DNAStrand::direct:		for(long i=0,   p=InicBase;  p<=EndBase;    i++, p++) 	charSecHier[i]=_c[p];				break;
@@ -369,89 +370,118 @@ CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) // crear varia
 
 	sec->_Tm.Set(_NNpar->CalcTM( sec->_SdS[_len-1], sec->_SdH[_len-1])) ;  // usar _len or i ?????= sec->_maxTm = sec->_minTm 
 
+	ChangeCharStrAttaching(sec->_name, _NonDegSet->_NSec);
+	return sec ;
+}
 //	assert ( ( (cout << sec->_name << "\t" << sec->_c << "\t" << (sec->_Tm - 273) << " °C" << "\n" ) , 1 ) ) ;
 	//assert ( ( (cout << "Ultima mutacion: " << b_or << ndb << "\t"<< sec->_name << "\t" << sec->_c << "\t" 
 	//				 << "Tm=" << (sec->_minTm - 273)  << " °C"
 	//				 << " ("  << (sec->_Tm - 273)     << " °C" << ") "
 	//				          << (sec->_maxTm - 273)  << " °C" << "\n" ) , 1 ) ) ;
-	ChangeCharStrAttaching(sec->_name, _NonDegSet->_NSec);
-	return sec ;
-}
 
-//class CRang {public:	long pi,picur, pf,pfcur; } ;-------------------------  CSec---------------------->  CSecCand  --------------------------------
-		CSecCand::CSecCand(CSec &sec, 	SondeLimits sL)
-	:	_Sec(sec), 	_rg(new pCRang [sec.Len()+2]), _NumPosCand(0), _NumCand(0),_NumCandExact(0) // ----- Inicializa array de posibles cand en esta sec.
+
+
+//!  Inicializa array de posibles cand en esta sec. ;---------------------  CSec------------>  CSecCand  ---------------------
+		CSecCand::CSecCand(CSec &sec, 	SondeLimits sL)		  	
+					:	_Sec(sec), 	
+						_rg(new pCRang [sec.Len()+2]), 			//	_b[_len+2]=	    0  ; 
+						_NumPosCand(0), 
+						_NumCand(0),
+						_NumCandExact(0)							
+
 {	long fi, i0;			assert (_rg);	
-	for (fi=0; fi< sL._L.Min() ; fi++)  		_rg[fi]=0;		// se salta las primeras pos
-									// al comienzo fi = L_min	// al comienzo fi = L_max
-	for (	; fi<=sec.Len(); fi++)  // fi - final base of candidate, recorre toda la sec
-	{	//NumRang<long> p(fi-sL._L.Max() +1 , fi-sL._L.Min() +1 ) , pcur;
-		long pi		=fi-sL._L.Max() +1		, pf		=fi-sL._L.Min() +1 ;   // al comienzo pf = L_max -L_min +1
-		long picur	=pf+1					, pfcur		=pi	;
-		if (pi < 1 ) pi=1;
+	for (fi=0; fi< sL._L.Min() ; fi++)  _rg[fi]=0;		// se salta las primeras pos
+														// al comienzo fi = L_min	
+	for (	; fi<=sec.Len(); fi++)						// fi - final base of candidate, recorre toda la sec
+	{	
+		long        pi = fi - sL._L.Max() +1	; if (pi < 1 ) pi=1;
+		CRangBase R(pi	,fi - sL._L.Min() +1 )  ;					   assert( fi>R.Max() );		assert( pi<=R.Max() );
 
-		for (i0=pi ; i0<=pf; i0++ )
+		for (i0=R.Min() ; i0<=R.Max() ; ++i0 )
 		{	if ( sL._Tm.inRang( sec.Tm(i0,fi) )    &&    sL._G.inRang( sec.G(i0,fi) ) ) 	
-			{	if(picur>i0)
-					picur=i0;
-				if(pfcur<i0)
-					pfcur=i0;
-				 _NumCandExact++; //Seria lo correcto, pero da problemas cuando existe una "burbuja" de Tm, cosa que un "rango" no puede considerar, 
-				//             tendria que hacerce con un conjunto. 
-				//             Osea estoy dejando dentro del rango, interiormente la posibilidad de aceptar sondas con Tm fuera de rango
+			{	 R.adjustCur(i0);
+				 _NumCandExact++;	//	Seria lo correcto, pero da problemas cuando existe una "burbuja" de Tm, 
+									//  cosa que un "rango" no puede considerar, tendria que hacerce con un conjunto. 
+									//  Osea estoy dejando dentro del rango, interiormente la posibilidad de aceptar sondas 
+									//	con Tm fuera de rango
 			}
 		}
-		if (picur<=pfcur)
+		if (R.hasMatch())
 		{		_NumPosCand++ ; 
-				_rg[fi]=new CRang (picur,pfcur+1, pfcur,picur);
-				_NumCand+= (_rg[fi]->_pf - _rg[fi]->_pi + 1);
+				_NumCand+= R.NumMatch();				
+				_rg[fi]=new CRang (R.MatchRange());    				assert( fi>R.Max() );	assert( fi>_rg[fi]->Max() );	
 		} else	_rg[fi]=0 ;
 	}
 	_NumPosCandIn=_NumPosCand ; _NumCandIn=_NumCand ;
-//	assert(((clog<< "\nCreating: "<<sec._name<<" \t,#pos: \t"<< _NumPosCand<<", #cand: \t"<< _NumCand),1));
 }
 
+//NumRang<long> p(fi-sL._L.Max() +1 , fi-sL._L.Min() +1 ) , pcur;
+		//long pi		=fi-sL._L.Max() +1		, pf		=fi-sL._L.Max() +1 ;   // al comienzo pf = L_max -L_min +1
+		//long picur	=pf+1					, pfcur		=pi	;
+//	assert(((clog<< "\nCreating: "<<sec._name<<" \t,#pos: \t"<< _NumPosCand<<", #cand: \t"<< _NumCand),1));
+							//if(picur>i0)					picur=i0;
+							//if(pfcur<i0)					pfcur=i0;
+//(R._pfcur - R._picur + 1);
+
+
+
+
+/// Despues de comparar dos seq "candidatos" analiza los rangos de una y los colapsa 
 long	CSecCand::ColapseRangs(bool colapse) // hacer otra variante para "no colapse" rang by self hybri - no sec str!
 {								// _NumPosCand = 0 ;
 								// anadir 2 parametros: pos de com y fin de zona "efectiva" o cubierta por sec pareada
 								// fuera de esa zona no colapsar
-	_NumPosCand = _NumCand = 0; // 2011-05-16. Para resolver el problema del conteo de pos y cand.
+	long NumPosCand(0), NumCand(0); // 2011-05-16. Para resolver el problema del conteo de pos y cand.
 
 											//    pi      pf                fi
 											//----|++++++++|-----------------|--------			El rango inicial, y como va quedando
-
-											//          pfcur               fi					El rango para calculo ("cur"), antes del comienzo	
-											//-------------||----------------|--------			Asi se queda si no hibridan entre si las sec en esta zona,
+											// pfcur                        fi					El rango para calculo ("cur"), antes del comienzo	
+											//---|----------|----------------|--------			Asi se queda si no hibridan entre si las sec en esta zona,
 											//             picur            fi					y entonces "colapsa" el rango
-
-
 											//            pfcur             fi					En este caso encontro 5 "cand" comunes	
 											//--------|+++|------------------|--------			
 											//       picur                  fi					
 	
 	for (long fi=0; fi<=_Sec.Len(); fi++)
-	{	if (!_rg[fi]) continue ;		// _NumPosCand-- ;	//	assert(((clog<<"\n("<<fi<<"->"<<_rg[fi]->_pi<<"-"<<_rg[fi]->_pf<<") 
-															//	---- colapsing:"<<_rg[fi]->_picur<<"-"<<_rg[fi]->_pfcur),1));
-		int Ampl_cur = _rg[fi]->_pfcur - _rg[fi]->_picur  +1   ;
+	{	if (!_rg[fi]) continue ;		 
+											
+		CRang &R (*_rg[fi]);				assert(fi>R.Max());
 
-		if (Ampl_cur  <= 0  )	//	En realidad solo puede ser =0 y no <0, o >0 claro
-		{	if (colapse) {	delete _rg[fi];	_rg[fi]=0 ;	continue ;} // en la ultima comparacion no se confir cand en esta fi
-			Ampl_cur  = 0 ;_NumPosCand--;
-		}															// _NumPosCand--; _NumCand-= (_rg[fi]->_pf - _rg[fi]->_pi + 1);
-																	assert (_rg[fi]->_picur >= _rg[fi]->_pi) ;	// en la ult. comp el rango se extrecho
-																	assert (_rg[fi]->_pfcur <= _rg[fi]->_pf) ;
-		_NumPosCand++ ; _NumCand += Ampl_cur ;						//
-		if (colapse) {	_NumPosCandIn=_NumPosCand ; _NumCandIn=_NumCand ;
-						_rg[fi]->_pi = _rg[fi]->_picur ;			//	_NumCand-= (_rg[fi]->_picur - _rg[fi]->_pi) ;
-						_rg[fi]->_pf = _rg[fi]->_pfcur ;			//	_NumCand-= _rg[fi]->_pf - _rg[fi]->_pfcur ;
-					 }
-		_rg[fi]->_picur =  _rg[fi]->_pf +1	;  // se me habia olvidado abrir el rango para la prox comparacion !!!!
-		_rg[fi]->_pfcur =  _rg[fi]->_pi	;
-
+		if ( R.hasMatch()  )	
+		{	
+			NumPosCand++ ; NumCand += R.NumMatch() ;						
+			if (colapse) 
+			{	
+				R.SchrinkToMatch();
+			}
+			R.IncrMatchs();
+			R.open();
+		}else															
+		{
+			if (colapse) {	delete _rg[fi];	_rg[fi]=0 ;} 	
+		}
 	}
-												//	assert(((clog<< "\nColapsing "<<_Sec._name<<" \t,#pos\t"<< _NumPosCand<<"\t, #cand: "<< _NumCand),1)); ;
+
+	// if (colapse)											//   REVISAR    !!!!!!!!!!!
+	{	/*_NumPosCandIn =*/ _NumPosCand = NumPosCand ; 			
+		/*_NumCandIn    =*/ _NumCand    = NumCand ;   
+	}
+
 	return _NumCand ;
 }
+
+
+// _NumPosCand-- ;	//	assert(((clog<<"\n("<<fi<<"->"<<_rg[fi]->_pi<<"-"<<_rg[fi]->_pf<<")
+//	---- colapsing:"<<_rg[fi]->_picur<<"-"<<_rg[fi]->_pfcur),1));
+// amplitud : pfcur - picur
+//	En realidad solo puede ser =0 y no <0, o >0 claro
+			//for (int pi_pos=R._pi    ; pi_pos <= R._picur ; pi_pos++ ) 
+			//R.match[pi_pos - R._pi]++;
+			//for (int pf_pos=R._pfcur ; pf_pos <= R._pf    ; pf_pos++ ) 
+			//R.match[pf_pos - R._pi]++;
+// en la ultima comparacion no se confir cand en esta fi	//_NumPosCand--;
+			//	assert(((clog<< "\nColapsing "<<_Sec._name<<" \t,#pos\t"<< _NumPosCand<<"\t, #cand: "<< _NumCand),1)); ;
+
 
 char *	CSecAl::CopyAlignedSecChar(long Al_pBeg, long Al_pEnd, char *CharSec)	// CUIDADO !! asume suficiente espacio !!
 {	//assert (Al_pBeg<=Al_pEnd);																			// "EXPERIMENTAL" ---------------------

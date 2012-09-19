@@ -1,12 +1,12 @@
-TargetFile: C:\Users\Rodriguez\Documents\ThDySec\targets\
-OutputFile: C:\Users\Rodriguez\Documents\ThDySec\results\
+TargetFile: C:\Users\Rodriguez\Documents\Exp\uArr Jena\New_uArr-KS. Chlamydia psittaci\enoA. 05 seq 381 nt aligned.fasta
+OutputFile: C:\Users\Rodriguez\Documents\Exp\uArr Jena\New_uArr-KS. Chlamydia psittaci\enoA-3.05
 SaltCorrMt: 0
 ConcSonden: 5e-008
 ConcTarget: 5e-008
 ConcenSalt: 0.05
 TempAnnelg: 55
-AlignMethd: -1
-MaxTgIdent: 99
+AlignMethd: 2
+MaxTgIdent: 100
 SecBeginng: 1
 SecuencEnd: 0
 MinSeqLeng: 0
@@ -18,8 +18,8 @@ SavPosTabl: true
 SaveGTable: true
 SavAlignTb: true
 SavProject: true
-SavG_Plasm: true
-SavTmPlasm: true
+SavG_Plasm: false
+SavTmPlasm: false
 Save_Logfi: false
 Exp_probes: false
 Exp_target: false
@@ -27,17 +27,17 @@ iSonde_uAr: C:\Users\Rodriguez\Documents\ThDySec\sonden\
 iSonde_PCR: C:\Users\Rodriguez\Documents\ThDySec\sonden\
 MinSonde_G: -5
 MaxSonde_G: -1
-MinSondeTm: 57
-MaxSondeTm: 63
-MinSondeLn: 20
+MinSondeTm: 50
+MaxSondeTm: 55
+MinSondeLn: 25
 MaxSondeLn: 35
-MaxSd_Tg_G: 10
-MinSd_TgTm: 30
+MaxSd_Tg_G: 8
+MinSd_TgTm: 45
 MinSdnTg_G: 15
 MaxSdnTgTm: 10
 MinSdSlf_G: 10
 MaxSdSlfTm: 10
-Min_Tg_Cov: 100
+Min_Tg_Cov: 90
 TmCalc_Sec: 
 TmC_Sec2Al: 
 TmCsaveRes: false
