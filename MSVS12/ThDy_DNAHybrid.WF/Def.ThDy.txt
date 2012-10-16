@@ -1,44 +1,82 @@
-TargetFile: C:\Users\Rodriguez\Documents\Exp\uArr Jena\New_uArr-KS. Chlamydia psittaci\enoA. 05 seq 381 nt aligned.fasta
-OutputFile: C:\Users\Rodriguez\Documents\Exp\uArr Jena\New_uArr-KS. Chlamydia psittaci\enoA-3.05
-SaltCorrMt: 0
-ConcSonden: 5e-008
-ConcTarget: 5e-008
-ConcenSalt: 0.05
-TempAnnelg: 55
-AlignMethd: 2
-MaxTgIdent: 100
-SecBeginng: 1
-SecuencEnd: 0
-MinSeqLeng: 0
-LoadNNPara: false
-SaveNNPara: false
+
+	------	Common parametrs for all functions 
+AlignMethd: -1  .	Optimized parametr during DynProg
+ConcSonden: 5e-008 Molar .	Conc of the sondes
+ConcTarget: 5e-008 Molar .	Conc of the targets
+ConcenSalt: 0.05 Molar .	Conc of salt
+Exp_probes: false  .	Programm option- re-export probes
+Exp_target: false  .	Programm option- re-export targets
+LoadNNPara: false  .	Programm option- Load NN parametr
+MaxTgIdent: 99 % .	Filtre Seq Target with more %id
+MinSeqLeng: 0 nt .	Min length of the seq. to be useful
+OutputFile: C:\Users\Rodriguez\Documents\ThDySec\results\
+				  .	Results output file
+PCRftrFile: 
+				  .	Imput file with primers for filtering
+SaltCorrMt: StLucia  .	Salt correction methode
+SavAlignTb: true  .	Programm option- Save Table of aligns
+SavG_Plasm: true  .	Programm option- Gtable for Plasmid
+SavPosTabl: true  .	Programm option- Save Posicion Table
+SavProject: true  .	Programm option- Save Project file
+SavTmPlasm: true  .	Programm option- Tm table for Plasmid
+SavTmTable: true  .	Programm option- Save Tm Table
+SaveGTable: true  .	Programm option- Save free Enrgie Table
+SaveNNPara: false  .	Programm option- save NN parametr
+Save_Logfi: false  .	Programm option- save a log
+SecBeginng: 1 nt .	Fragments of seq. to use. Beginng
+SecuencEnd: 0 nt .	Fragments of seq. to use. End
+TargetFile: C:\Users\Rodriguez\Documents\ThDySec\targets\
+				  .	Imput file for Targets
+TempAnnelg: 55 °C .	Temp anneling expected in exp
 iNNParFile: 
-SavTmTable: true
-SavPosTabl: true
-SaveGTable: true
-SavAlignTb: true
-SavProject: true
-SavG_Plasm: false
-SavTmPlasm: false
-Save_Logfi: false
-Exp_probes: false
-Exp_target: false
+				  .	Imput file with NN parametrs
+
+	------	Virtual microarray experiment 
 iSonde_uAr: C:\Users\Rodriguez\Documents\ThDySec\sonden\
+				  .	Imput file for Sondes
+
+	------	Check multiplex PCR 
 iSonde_PCR: C:\Users\Rodriguez\Documents\ThDySec\sonden\
-MinSonde_G: -5
-MaxSonde_G: -1
-MinSondeTm: 50
-MaxSondeTm: 55
-MinSondeLn: 25
-MaxSondeLn: 35
-MaxSd_Tg_G: 8
-MinSd_TgTm: 45
-MinSdnTg_G: 15
-MaxSdnTgTm: 10
-MinSdSlf_G: 10
-MaxSdSlfTm: 10
-Min_Tg_Cov: 90
-TmCalc_Sec: 
+				  .	Imput file for primers
+
+	------	Find sondes 
+DesigVsCmp: true  .	Make only design or full comp
+MaxSdSlfTm: 10 °C .	Significative selfprobe Tm
+MaxSd_Tg_G: 10 kcal .	Significative G probe-target
+MaxSdnTgTm: 10 °C .	Significative Tm probe-nontarget
+MaxSondeLn: 35 nt .	Sondes to design limits. Length.  Max
+MaxSondeTm: 63 °C .	Sondes to design limits. Perf.Match Tm.  Max
+MaxSonde_G: -1 kcal .	Sondes to design limits. Perf.Match dG.  Max
+MinSdSlf_G: 10 kcal .	Significative selfprobe G
+MinSd_TgTm: 30 °C .	Significative Tm probe-target
+MinSdnTg_G: 15 kcal .	Significative G probe-nontarget
+MinSondeLn: 20 nt .	Sondes to design limits. Length.  Min
+MinSondeTm: 57 °C .	Sondes to design limits. Perf.Match Tm.  Min
+MinSonde_G: -5 kcal .	Sondes to design limits. Perf.Match dG.  Min
+Min_Tg_Cov: 100 % .	Find sondes with more % coverage
+
+	------	Tm calculator 
 TmC_Sec2Al: 
-TmCsaveRes: false
-TmUseAlign: true
+				  .	Primer to align
+TmCalc_Sec: 
+				  .	Primer
+TmCsaveRes: false  .	Save result to file
+TmUseAlign: true  .	Align primers before Tm calc
+iSonde_PCR: 
+				  .	Imput file for primers
+
+	------	ThDy DNA Hybrid Project. 
+
+
+How to use? 
+ Each program´s parameter have an unique identificator or etiquette. 
+ While loading, the text between the beginning of a line and the first : will be taken as
+ an etiquette (discarding surrounding but not internal spaces). 
+IF the etiquette is know (valid), the rest of the line will be use to deduce the value of the parameter. 
+Some parameter (like file´s names) will assume this rest-line-text entirely as his valid value. 
+For such parameter please, add any comment in the next line. 
+Other parameter (like numeric or bool parameters) will only use the beginning of this rest-line-text and discard the end. 
+Any line without a valid etiquette will be discarded (they are comments!).” 
+Only the last valid value of each parameter will be used
+For not defined parameters, the previous value (from the previously active project or from the program´s default) will be use.
+Direct questions please to ArielVina.Rodriguez@fli.bund.de

@@ -44,5 +44,8 @@
     <ClInclude Include="..\..\include\ThDy_programs\prog_comm_functions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\ThDy_programs\init_ThDy_prog_param.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

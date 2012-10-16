@@ -7,7 +7,7 @@
 #pragma unmanaged
 #include < stdio.h >
 #include < stdlib.h >
-#include "ThDy_programs\init_prog_param.h"      // aqui esta ya : #include "..\ThDySec\common_basics.h" 
+#include "ThDy_programs\init_ThDy_prog_param.h"      // aqui esta ya : #include "..\ThDySec\common_basics.h" 
 class CInitProgParam_microArray ;
 
 #pragma managed

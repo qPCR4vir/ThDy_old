@@ -2,11 +2,412 @@
 #define _INIT_PROG_PARAM_H
 #pragma unmanaged
 #include <iostream>
+#include <string>
 #define _CRT_SECURE_NO_WARNINGS
 #include <fstream>
 #include <assert.h>
 #include <time.h>
+#include <map>
+#include <vector>
+
+//#include "..\ThDySec\matrix.h" 
+// TODO:  PROBLEMA : como organizar estos parametros si usamos procesos? Hacer copia de ellos !!!!!!!!?
+// Definiciones y declaraciones para user interface. A usar tambien por programs. Casi Primaria, depende solo de Common basics.
 using namespace std ; 
+#pragma warning( disable : 4996 )
+#include "..\ThDySec\common_basics.h" 
+
+
+
+
+
+class CProgParam ;
+class IBParam
+{
+    string _Titel;
+ public:
+	 IBParam (CProgParam *pp, const string& titel) 
+		    :_Titel(titel), ValueChanged(nullptr)
+	        {         //  pp->_parametrs[_etiq]= *this;
+	        }    
+	 string Titel()const{return _Titel;}    // Human redeable
+	 void SetTitel(string titel){ _Titel=titel;}    // Human redeable
+
+
+ virtual ostream &save	(ostream	&osPr) const
+			            {   osPr<< ".\t"<<Titel()<<endl; 
+							return osPr;
+			            } 
+ virtual bool   load	(istream   &isPr)  /*throw( std::out_of_range)  */              
+			            {   return false;}   
+ virtual bool   load	(string		&etiq, istream &isPr) /*throw( std::out_of_range)*/
+			            {   return false;}   
+
+	 virtual ~IBParam(){}
+     void (*ValueChanged)(IBParam& param) ;
+ protected: 
+	void changed()
+	            {   if(ValueChanged) 
+				        ValueChanged(*this);
+	            }
+ virtual void insertParam(CProgParam *pp){}
+};
+   // ifstream& operator >>(ifstream& ifs,IParam& p);                             //    ?????????????????
+   // ofstream& operator <<(ofstream& ofs,const IParam& p){ p.save(ofs); return ofs;};  //    ?????????????????
+
+class IParam : public IBParam
+{    string _etiq, _unit;
+ public:
+	 IParam (CProgParam *pp, const string& titel, const string& etiq, const string& unit="") 
+		    : IBParam(pp, titel), 
+			  _etiq(etiq), _unit(unit)
+	        {  
+				assert (pp); 
+				insertParam(pp); 
+				if (_etiq=="")          // si no quieres introducir una etiq puedes usar el Titel !!
+					_etiq=Titel();
+
+	        }    
+	 string Etiq()const{return _etiq;}      // semiHuman redeable and unic. Best with length 10
+	 void SetEtiq(string etiq){ _etiq=etiq;}    // Human redeable
+	
+	 string Unit()const{return _unit;}      // Human redeable and optional
+
+	 ostream	&save	(ostream	&osPr) const override
+			            {   osPr<< _etiq << ": "; 
+			                saveValue(osPr)<<" "<<_unit<<" ";
+							IBParam::save(osPr)	; 
+							return osPr;
+			            } 
+     bool       load	(istream   &isPr)  /* throw( std::out_of_range)    */      override         //    Asume etiqueta ya comprobada !!!!
+			            {   return loadValue(isPr);}   
+	 bool       load	(string		&etiq, istream &isPr) /*throw( std::out_of_range)   */  override
+			            {   if (etiq!=_etiq) 
+						        return false;
+			                return load(isPr);
+			            }  
+	virtual ostream	    &saveValue	(ostream	&osPr	) const  // =0;   ??No salva nada, no tiene "value" todavia
+	                                {return osPr;} 
+    virtual bool        loadValue	(istream   &isPr) /*throw( std::out_of_range)   */
+	                                {return false;}         // =0;   ??    ?????????????????
+    virtual void        insertParam (CProgParam *pp) override;
+
+	  ~IParam()override{}
+};
+
+class CParamBool: public IParam
+{    bool  _v, &_value;
+ public:
+						// Acepta un parametro y por tanto no usa _v. Por compatibilidad.
+    CParamBool (CProgParam *pp,  const string& titel, const string& etiq, bool &parRef,    
+		            bool defValue
+					) : IParam (pp, titel, etiq), _value(parRef)            {  _value= defValue;	          }
+
+					   //  no necesita un parametro externo
+    CParamBool (CProgParam *pp,  const string& titel, const string& etiq, 
+		            bool defValue
+					) : IParam (pp, titel, etiq), _v(defValue) , _value(_v) {            }
+
+	void set(bool value){ if (value == _value) return; _value = value;  changed();    }
+	bool get()const{ return _value;    }
+
+	ostream	    &saveValue	(ostream	&osPr) const override   
+	                        {   osPr << boolalpha << _value ;     
+	                            return osPr;        // sera solo un problema de IntelliSense ??
+	                        } 
+
+	bool        loadValue (istream   &isPr) override   // Descarta el Titel que queda detras del ultimo tab
+	                    {   isPr>>boolalpha>>_value;
+							return true;
+	                    } 
+};
+
+class CParamString: public IParam
+{    string  _v, &_value;
+ public:
+								 // Acepta un parametro y por tanto no usa _v. Por compatibilidad.
+    CParamString (CProgParam *pp,  const string& titel, const string& etiq, string &parRef,  
+		            const string defValue
+					) : IParam (pp, titel, etiq), _value(parRef)            {  _value= defValue;	          }
+
+							     //  no necesita un parametro externo
+    CParamString (CProgParam *pp,      const string& titel, const string& etiq, 
+		            const string defValue
+					) : IParam (pp, titel, etiq), _v(defValue) , _value(_v) {            }
+
+	void set(const string& value){ if (value == _value) return; _value == value;  changed();    }
+	string get()const{ return _value;    }
+
+	virtual ostream	    &saveValue	(ostream	&osPr) const override   
+	                        {   osPr << _value << endl <<"\t\t\t\t" ;     
+	                            return osPr;        // sera solo un problema de IntelliSense ??
+	                        } 
+
+	bool        loadValue (istream   &isPr) override   // Descarta el Titel que queda detras del ultimo tab
+	                    {   string t; getline(isPr,t); 
+	                        _value=trim_string( t.substr(0, t.rfind("\t")).c_str()   );
+							return true;
+	                    } 
+};
+class CParamC_str: public IParam, public C_str
+{public:
+    //CParamC_str (CProgParam *pp, C_str &parRef,    // Acepta un parametro y por tanto no usa _v. Por compatibilidad.
+		  //          const string& titel, const string& etiq, 
+		  //          const char * defValue
+				//	) : IParam (pp, titel, etiq), _value(parRef)            {  _value.Copy( defValue) ;	          }
+    CParamC_str (CProgParam *pp,                  //  no necesita un parametro externo
+		            const string& titel, const string& etiq, 
+		            const char * defValue
+					) : IParam (pp, titel, etiq), C_str(defValue)                {            }
+    CParamC_str (CProgParam *pp,                  //  no necesita un parametro externo
+		            const string& titel, const string& etiq, 
+		            const C_str& defValue
+					) : IParam (pp, titel, etiq), C_str(defValue)                {            }
+
+	void set(const C_str& value){ if (! strcmp (Get(),value.Get())) return; Copy(value) ;  changed();    }
+	void set(const char * value){ if (! strcmp (Get(),value))       return; Copy(value) ;  changed();    }
+
+	ostream	    &saveValue	(ostream	&osPr) const override   
+	                        {   osPr << Get() << endl <<"\t\t\t\t" ;     // Por que no se puede poner el return directo????
+	                            return osPr;        // sera solo un problema de IntelliSense ??
+	                        } 
+
+	bool        loadValue (istream   &isPr) override   // Descarta el Titel que queda detras del ultimo tab
+	                    {   string t; getline(isPr,t); 
+	                        CopyTrim( t.substr(0, t.rfind("\t")).c_str()   );
+							return true;
+	                    } 
+};
+template <typename Num>
+class CParamBNRange: public IParam, public NumRang<Num>
+{
+    Num  _v, &_value;
+ public:
+									// Acepta un parametro y por tanto no usa _v. Por compatibilidad.
+    CParamBNRange (CProgParam *pp, const string& titel, const string& etiq, Num &parRef, 
+						Num min, Num max, Num defValue,
+						const string& unit=""
+					) : IParam (pp, titel, etiq, unit), 
+					    NumRang<Num>(min,max), 
+						_value(parRef)
+	          { /*if (!inRang(defValue)) 
+			        throw ParamOutOfNumRange(string("Default Value out of Range while trying to construct: ")+Titel() ); */
+	             _value=defValue ;
+	          }
+
+								// Num &parRef,   usa _v y por tanto no necesita un parametro externo
+    CParamBNRange (CProgParam *pp, const string& titel, const string& etiq, 
+						Num min, Num max, Num defValue,
+						const string& unit=""
+					) : IParam (pp, titel, etiq, unit), NumRang<Num>(min,max), _value(_v)
+	          { /*if (!inRang(defValue)) 
+			        throw OutOfNumRange(string("Default Value out of Range while trying to construct: ")+Titel() );*/
+	             _value=defValue ; 
+	          }
+	void set(Num value){ if (!inRang(value)) // TODO: Incluir value y rang que no concuerdan en mensaje to throw
+		                    throw OutOfNumRange(string("Value out of Range while trying to set: ")+Titel(), value, *this );
+	                     if (_value==value) return; 
+						 _value=value ; 
+						 changed();
+	                    }
+	Num get()const{return _value;}
+	//virtual ostream	    &saveValue	(ostream	&osPr	) const  // =0;   ??No salva nada, no tiene "value" todavia
+};
+
+
+class ParamOutOfNumRange : public OutOfNumRange 
+{ public: 
+	explicit ParamOutOfNumRange ( const std::string& what_arg ): OutOfNumRange(what_arg ){}
+		template<typename Num>
+	ParamOutOfNumRange ( const std::string& what_arg, Num invalidValue, NumRang<Num>& NR ) 
+		: OutOfNumRange (  what_arg ,  invalidValue,  NR ) 
+		{}
+};
+class ParamOutOfEnumRange : public ParamOutOfNumRange 
+{ public: 
+	explicit ParamOutOfEnumRange ( const std::string& what_arg ): ParamOutOfNumRange(what_arg ){}
+		template<typename Num>
+	ParamOutOfEnumRange ( const std::string& what_arg, Num invalidValue, NumRang<Num>& NR ) 
+		: ParamOutOfNumRange (  what_arg , int(invalidValue),  NumRang<int>(   int( NR.Min() )   ,   int( NR.Max() )    )    )
+		{}
+		template<typename Num>
+	ParamOutOfEnumRange ( const std::string& what_arg, int invalidValue, NumRang<Num>& NR ) 
+		: ParamOutOfNumRange (  what_arg , int(invalidValue),  NumRang<int>(   int( NR.Min() )   ,   int( NR.Max() )    )    )
+		{}
+};	 
+
+
+
+template <typename Num>
+class CParamNumRange: public CParamBNRange<Num>
+{
+    
+ public:
+									// Acepta un parametro y por tanto no usa _v. Por compatibilidad.
+    CParamNumRange (CProgParam *pp, const string& titel, const string& etiq, Num &parRef, 
+						Num min, Num max, Num defValue,
+						const string& unit=""
+					) : CParamBNRange (pp, titel, etiq, parRef,min,  max,  defValue,unit)
+	          { if (!inRang(defValue)) 
+			        throw ParamOutOfNumRange(string("Error contructing parametr: \"")
+												     + Titel() 
+												     + "\" ("+ Etiq() + ")" + ", tryin to set the default value " ,
+												defValue , *this  );
+	          }
+								// Num &parRef,   usa _v y por tanto no necesita un parametro externo
+    CParamNumRange (CProgParam *pp, const string& titel, const string& etiq, 
+						Num min, Num max, Num defValue,
+						const string& unit=""
+					) : CParamBNRange (pp, titel, etiq,min,  max,  defValue,unit)
+	          { if (!inRang(defValue)) 
+			        throw ParamOutOfNumRange(string("Error contructing parametr: \"")
+												     + Titel() 
+												     + "\" ("+ Etiq() + ")" + ", tryin to set the default value " ,
+												defValue , *this  );
+	          }
+	ostream	&saveValue	(ostream	&osPr) const override   
+	                        {return osPr<<get();} 
+    bool        loadValue   (istream   &isPr) /*throw( ParamOutOfNumRange) */  override         
+	                        {   Num t; 
+								isPr>>t; 
+	                            set(t);
+								return true;
+	                        } 
+	void set(Num value){ if (!inRang(value)) 
+		                    throw ParamOutOfNumRange(string("Value out of Range while trying to modify: \"")
+												     + Titel() 
+												     + "\" ("+ Etiq() + ")"
+													 , value, *this );
+						  CParamBNRange::set(value) ; 
+	                    }
+
+};
+
+template <typename enumType>
+class CParamEnumRange: public CParamBNRange<enumType>
+{
+   map<string, enumType> _StrValues;
+   map<int, enumType>	 _IntValues;
+
+ public:
+	 void AddEnumValues(					enumType eTy )		{ _IntValues[int(eTy)]=eTy;}
+	 void AddStrValues (const string& strV, enumType eTy )		{ _StrValues[strV]    =eTy;
+																	AddEnumValues(eTy );	}
+	 string ToString(enumType v)const
+		{ for (auto p : _StrValues) 
+			if (p.second==v)
+				return p.first;
+		  throw OutOfNumRange(string("Value out of Range while trying to set: ")+Titel() );
+		}
+	 string StringEnumerate()const 
+	 {	std::ostringstream result;
+		for (auto p : _StrValues)
+			result <<  p.first << "(" << int(p.second) <<"), ";
+		return result.str();
+	 }
+	 string ToString()const {return ToString(get());}
+	 bool exist(int v)		const{		return _IntValues.end()!=_IntValues.find(v); }
+	 bool exist(string v)	const{		return _StrValues.end()!=_StrValues.find(v); }
+
+
+									// Acepta un parametro y por tanto no usa _v. Por compatibilidad.
+	 CParamEnumRange (CProgParam *pp, const string& titel, const string& etiq, enumType &parRef, 
+						enumType min, enumType max, enumType defValue,
+						const string& unit=""
+					 ) : CParamBNRange<enumType> (pp,  titel,  etiq, parRef, min, max, defValue, unit	)
+	          { if (!inRang(defValue)) 
+
+			    throw ParamOutOfEnumRange(string("Error contructing parametr: \"")
+												     + Titel() 
+												     + "\" ("+ Etiq() + ")" + ", tryin to set the default value " ,
+												defValue , *this  );
+	          }									
+											// enumType &parRef,   usa _v y por tanto no necesita un parametro externo
+	 CParamEnumRange (CProgParam *pp, const string& titel, const string& etiq, 
+						enumType min, enumType max, enumType defValue,
+						const string& unit=""
+					 ) : CParamBNRange<enumType> (pp,  titel,  etiq, min, max, defValue, unit	)
+	          { if (!inRang(defValue)) 
+			    throw ParamOutOfEnumRange(string("Error contructing parametr: \"")
+												     + Titel() 
+												     + "\" ("+ Etiq() + ")" + ", tryin to set the default value " ,
+												defValue , *this  );
+	          }								
+	void set(int value){	if (_IntValues.empty())
+								set(enumType(value));
+							else{
+								auto p=_IntValues.find(value);
+								if (p==_IntValues.end())	// TODO: Incluir value y rang que no concuerdan en mensaje to throw
+									throw ParamOutOfEnumRange(string("Value out of Range while trying to modify: \"")
+												     + Titel() 
+												     + "\" ("+ Etiq() + ")" + ", with know values "  + StringEnumerate() ,
+												value , *this  );
+								CParamBNRange::set(enumType(p->second));
+							}
+	                    }
+	void set(string value){		auto p=_StrValues.find(value);
+								if (p==_StrValues.end())	// TODO: Incluir value y rang que no concuerdan en mensaje to throw
+									throw ParamOutOfEnumRange(string( "Value \"" ) + value + "\" out of Range while trying to modify: \"" 
+												     + Titel() 
+												     + "\" ("+ Etiq() + ")" + ", with have know values: "  + StringEnumerate()  );
+								CParamBNRange::set(p->second);
+								set(p->second);
+	                    }
+	void set(enumType value){ if (!inRang(value)) // TODO: Incluir value y rang que no concuerdan en mensaje to throw
+									throw ParamOutOfEnumRange(string("Value out of Range while trying to modify: \"")
+												     + Titel() 
+												     + "\" ("+ Etiq() + ")" + ", with know values "  + StringEnumerate() ,
+												value , *this  );
+							 CParamBNRange::set(value) ; 
+	                    }
+
+	//virtual ostream	    &saveValue	(ostream	&osPr	) const  // =0;   ??No salva nada, no tiene "value" todavia
+	ostream	&saveValue	(ostream	&osPr) const override   
+	                        {	for (auto p : _StrValues) 
+									if (p.second==get())
+										return osPr<<p.first;
+								return osPr<< int(get());
+							} 
+    bool        loadValue   (istream   &isPr) override         
+	                        {   string t; 
+								 //try
+									{	isPr>>t; 
+										if (exist(t))
+										{	set(t);
+											return true;
+										}// if(!_StrValues.empty()) return false;
+										set (stoi(t));
+										return true;
+									} //catch (OutOfNumRange) {}
+								 return false;
+							}
+};
+
+
+template <typename Num>
+class CParamNumMinMax: public IBParam
+{   NumRang<Num>       _v ;
+    CParamNumRange<Num> min, max; 
+ public:
+    CParamNumMinMax (CProgParam *pp, const string& titel, NumRang<Num> &parRef ,// Acepta un parametro y por tanto no usa _v. Por compatibilidad.
+		            const string& titelmin, const string& etiqmin, Num minmin, Num maxmin, Num defValuemin,
+		            const string& titelmax, const string& etiqmax, Num minmax, Num maxmax, Num defValuemax,
+		            const string& unit=""
+					) : IBParam (pp, titel), 
+					    min(pp, titel+". "+titelmin, etiqmin,  parRef.Min(), minmin, maxmin, defValuemin, unit),
+					    max(pp, titel+". "+titelmax, etiqmax,  parRef.Max(), minmax, maxmax, defValuemax, unit)
+	          { 
+	          }
+    CParamNumMinMax (CProgParam *pp, const string& titel, //CNumRang<Num> &parRef ,//   usa _v y por tanto no necesita un parametro externo
+		            const string& titelmin, const string& etiqmin, Num minmin, Num maxmin, Num defValuemin,
+		            const string& titelmax, const string& etiqmax, Num minmax, Num maxmax, Num defValuemax,
+		            const string& unit=""
+					) : IBParam (pp, titel), 
+					    min(pp, titel+". "+titelmin, etiqmin,  _v.Min(), minmin, maxmin, defValuemin, unit),
+					    max(pp, titel+". "+titelmax, etiqmax,  _v.Max(), minmax, maxmax, defValuemax, unit)
+	          { 
+	          }
+};
 
 
 /*   Para crear y anadir un nuevo programa:
@@ -16,328 +417,157 @@ using namespace std ;
 		- implementar funciones de actualizar parametros <=> interfase de usuario : UpdateThDyP() & UpdateThDyForm()
 		- implementar funciones load/save del project. Load: con etiqueta para cada param, "	<< boolalpha " para bool, 
 */
-// Definiciones y declaraciones para user interface. A usar tambien por programs. Casi Primaria, depende solo de Common basics.
-#pragma warning( disable : 4996 )
 
-#include "..\ThDySec\common_basics.h" 
-//#include "..\ThDySec\matrix.h" 
-// TODO:  PROBLEMA : como organizar estos parametros si usamos procesos? Hacer copia de ellos !!!!!!!!
+class CProgProject;
+class CEspProgParam ;
 
-class	CEspProgParam ;
-typedef CEspProgParam *pCEspProgParam ;
-
-class CProgParam // -------	  Clase base "interfase" para param de prog.Solo salva/load project y run prog (virtual todo)   ----------
-{public:	
-	virtual bool	save		(ofstream	&osPr				) = 0;
-	virtual bool	load		(string		&var, ifstream &isPr) = 0; 
-	virtual bool	save_all	(ofstream	&osPr				) = 0; 
-	virtual bool	load_all	(string		&var, ifstream &isPr) = 0; 
-	virtual	int		Run			(CProgParam &prog				){return prog.Run();}
-	virtual int		Run			(		void					){for(int WorkToDo=Initialize(); WorkToDo>0 ; WorkToDo=Continue()) 
-																	CallBack(WorkToDo); 
-																  return Finalize();
-																 } 
+class CProgParam : public IBParam // -------	  Clase base "interfase" para param de prog.Solo salva/load project y run prog (virtual todo)   ----------
+{   
+ public:
+    map<string,IParam*> _parametrs;
+ 
+	CProgParam (const string& titel, CProgProject *proj=nullptr); /*:_Titel(titel){ if (proj) proj->_ProgList.push_back(this);}*/
+	ofstream	    &save		(ofstream	&osPr				 )  const
+	                            {   osPr << endl <<"\t------\t"<<Titel()<<" "<<endl ;
+									for (auto &par : _parametrs) 
+								        par.second->save(osPr); 
+	                                return osPr;
+	                            }
+	         bool	load		(string		&etiq, ifstream &isPr) 
+	                            {   auto p=_parametrs.find(etiq); 
+	                                if (p==_parametrs.end()) 
+										return false;
+	                                return p->second->load(isPr); //throw execption if false ????
+	                            }
+	virtual	int		Run			(CProgParam &prog				){return prog.Run();}       //  ???????
+	virtual int		Run			(		void					)
+	                            {   for(int WorkToDo=Initialize(); WorkToDo>0 ; WorkToDo=Continue()) 
+										CallBack(WorkToDo); 
+									return Finalize();			 
+	                            } 
 	virtual int		Initialize	(		void					){ return 0;} 
 	virtual int		Continue	(		void					){ return false;}
 	virtual int		Finalize	(		void					){ return 0;} 
 	virtual void	CallBack	(		int WorkToDo			){}
-
+	virtual ~CProgParam() override{}
 };	
 
-class CCommProgParam : public CProgParam // concreta los parametros comunes. Mantiene lista de los prog Espec que los usan
-{public:	
-	CCommProgParam();
-	pCEspProgParam	*_ProgList ;
-	C_str			_InputTargetFile ;
-	C_str			_PCRfiltrPrFile ;
-	C_str			_OutputFile    ;
-	C_str			_InputNNFile    ;
-	int				_SaltCorr ;								//  SaltCorrection
-	float			_ConcSd,		_ConcTg,	_ConcSalt ;
-	Temperature		_Ta ;
-	AlignMeth		_TAMeth ;
-	float			_MaxTgId ;
-	LonSecPosRang	_SecLim;								//	long _SecBeg, _SecEnd;  // convertir en NumRang<long> _SecLim;  ?????
-	SecPos			_MinSecLen;
-	
-	bool			_loadNNPar,		_saveNNPar ;
-	bool			_st_savTm, _st_savPos, _st_savG, _st_savAlign, _st_savProj, _st_savG_Plasm, _st_savTm_Plasm, _st_savLog, _st_Exp_sond, _st_ExpTarg ;
+typedef CEspProgParam *pCEspProgParam ;
 
+// derivar para concretar parametros comunes. Mantiene link a proj de los prog Espec que los usan
 
-	// convertirlas en funciones "previas a la paralelizacion", que hacen copias propias de los parametros en serie, no en paralelo
-	void    TargetFile(const char *InputTargetFile)	{	_InputTargetFile.CopyTrim(InputTargetFile);	}
-	void    OutputFile(const char *OutputFile     )	{	_OutputFile.CopyTrim(OutputFile)    ;	}
-	void    NNParaFile(const char *InputNNFile)		{	_InputNNFile.CopyTrim(InputNNFile)	;	}
-	
-	// OJO !!!!!!!!!   las sig funciones se aduenan del pointer, y luego lo deletean    !!!!!!!!
-	void SetTargetFile(      char *InputTargetFile)	{	TargetFile(InputTargetFile)	;	delete []InputTargetFile;	}
-	void SetOutputFile(      char *Output_File    )	{	OutputFile(Output_File )	;	delete []Output_File		;	}
-	void SetNNParaFile(      char *InputNNFile    )	{	NNParaFile(InputNNFile )	;	delete []InputNNFile		;	}
+// clase base para los parametros "Especificos" de programas "Especificos"
 
-	virtual	~CCommProgParam()	{	delete []_ProgList;}
-	virtual bool	save	(ofstream	&osPr				);
-	virtual bool	load	(string		&var, ifstream &isPr); 
-	virtual bool	save_all(ofstream	&osPr				);
-	virtual bool	load_all(string		&var, ifstream &isPr); 
-};
+class CProgProject : public CProgParam
+{
+public:
+	CProgProject(const string& titel, const char *prFname="", const char*defProFN="Def.Proj.txt")
+		:CProgParam(titel), _ProjetFileName(prFname)   ,
+							_defPr(defProFN)  
+	        {  if (!prFname || !prFname[0]) 
+			    _ProjetFileName.Copy(_defPr);   //    ???????????????????????????????????????ß
+	        } 
 
-class	CEspProgParam  : public CProgParam // clase base para los parametros "Especificos" de programas "Especificos"
-{public:										// Permite no duplicar los parametros comunes en los parametros especificos
-	explicit CEspProgParam(CCommProgParam &commParam) : _cp(commParam){}
-	CCommProgParam &_cp;
-	virtual bool	save_all(ofstream &osPr)				{  _cp.save(osPr) ;			return save(osPr) ;    }
-	virtual bool	load_all(string &var, ifstream &isPr)	{ 	if ( _cp.load(var, isPr)) return true ;
-																return load(var, isPr);					 }
-} ;
-
-class CProgParam_microArray ;
-int microArrayProg	( char *InputPrimer, char *InputTarget, char *OutputTm)  ;
-int microArrayProg   ( CProgParam_microArray   *IPrgPar_uArr )  ;
-template <typename Num> class CTable ;
-//typedef uArr_RT CTable<TmGPos> ;
-
-class CProgParam_microArray : public CEspProgParam
-{public:	
-	C_str			_InputSondeFile ; 
-	bool			_I, _G;			// Outpu table of I, G. 
-    explicit 	CProgParam_microArray(CCommProgParam &commParam) :	_I(false), _G(true), CEspProgParam(commParam), 
-																	_rtbl(nullptr)/*,_tlG(nullptr),_tlPos(nullptr), UpDate(nullptr)*/ {} 
-	//uArr_RT *_rtbl;
-	CTable<TmGPos> *_rtbl;	
-
-	virtual int Run (){	return microArrayProg ( this )  ;}
-	virtual bool	save(ofstream &osPr);
-	virtual bool	load(string &var, ifstream &isPr); 
-	//void	(*UpDate)();
-	//void	UpDateUI(){if (UpDate) UpDate(); }
-
-	void    SondeFile (const char *InputSondeFile )	{	_InputSondeFile.CopyTrim(InputSondeFile) ;	}
-	// OJO !!!!!!!!!   la sig funcion se aduena del pointer, y luego lo deletea   !!!!!!!!
-	void SetSondeFile (      char *InputSondeFile )	{	SondeFile( InputSondeFile) ;	delete []InputSondeFile   ;	}
-
-	// cuando se corre un proceso paralelo ver donde es mejor hacer estos delete.
-	virtual ~CProgParam_microArray()		{ /*delete _tlTm;*/}
-};
-
-class	CProgParam_uArrExp;
-int		microArrayProgTest ( CProgParam_uArrExp *IPrgPar_uArr)  ;
-class CProgParam_uArrExp  : public CProgParam_microArray
-{public:	
-	C_str		_Input_uArrExpFile ; 
-	bool		_exclSd;					// No analizar (excluir) determinadas sondas (otros org - micobact, contaminadas, Post contr, Neg contr, etc)
-	C_str		_exclSdMark;				// solo las sondas con esta marca son excl. Si ="" todas las marcadas. Si _exclSd -  se ignora, y nada se excl.
-	bool		_IxI,		_IxI_d;			// output these table (metodo de comparacion - solo similitudes o similitudes menos diferencias?)
-	bool		_Normalize;					// las tablas anteriores : puede suponer perdida de informacion para calcular signif estadistica??
-	Energy		_Isat, _Isen, _Gsat, _Gsen;
-
-    explicit 	CProgParam_uArrExp (CCommProgParam &commParam):	_exclSd(false),		_IxI(true),		_IxI_d(true),			_Normalize(true), 
-																_Isat(Energy(0.87f)),_Isen(Energy(0.01f)),	_Gsat(Energy(-2.0f)),	_Gsen(Energy(2.0f)),
-																CProgParam_microArray (commParam) {} 
-
-	int		Run		(	){	return microArrayProg ( this )  ;}
-	bool	save	(ofstream &osPr				);
-	bool	load	(string &var, ifstream &isPr); 
-
-	void    ExpFile (const char *Input_uArrExpFile )	{	_Input_uArrExpFile.CopyTrim(Input_uArrExpFile) ;	}
-	// OJO !!!!!!!!!   la sig funcion se aduena del pointer, y luego lo deletea   !!!!!!!!
-	void SetExpFile (      char *Input_uArrExpFile )	{	ExpFile( Input_uArrExpFile) ;	delete []Input_uArrExpFile   ;	}
-
-	// cuando se corre un proceso paralelo ver donde es mejor hacer estos delete.
-	virtual ~CProgParam_uArrExp()		{}
-};
-
-class CProgParam_MultiplexPCR ;
-int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr )  ;
-class CProgParam_MultiplexPCR : public CProgParam_microArray
-{public:
-	CProgParam_MultiplexPCR(CCommProgParam &commParam) : CProgParam_microArray(commParam){}
-	int		Run		(){	return MultiplexPCRProg ( this )  ;}
-	bool	save	(ofstream &osPr				);
-	bool	load	(string &var, ifstream &isPr); 
-};
-
-class CProgParam_SondeDesign ;
-int SondeDesignProg  ( CProgParam_SondeDesign  *IPrgPar_SdDes)  ;
-class CProgParam_SondeDesign : public CEspProgParam			//  ------------------------	CProgParam_SondeDesign	----------------
-{public:
-
-	CProgParam_SondeDesign(CCommProgParam &commParam) ;
-	bool		_design ;  // realizar solo diseno de sondas o solo comparacion de sec????
-	SondeLimits _sL ;					//float		_G_min	, _G_max ;				// en kcal ...
-										//float		_Tm_min	, _Tm_max ;  
-										//int		_L_min	, _L_max ;
-	Temperature	_Tm_sig ;			Energy		_G_sig ;				// sonde  - target
-	Temperature	_MaxSd_nTgTm ;		Energy		_MinSd_nTgG ;			// sonde  - non target
-	Temperature	_MaxSelfTm ;		Energy		_MinSelfG  ;			// sonde 
-
-	float		_MinTgCov ;
-
-	int		Run		(){	return  SondeDesignProg( this )  ;}
-	bool	save	(ofstream &osPr				);
-	bool	load	(string &var, ifstream &isPr); 
-};
-
-
-
-class CProgParam_TmCalc ;
-int DegTmCalc ( CProgParam_TmCalc *IPrgPar)  ; //int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr )  ;
-//typedef /*unsigned*/ char Base;
-//extern Base *Generate_DegSec( const char *sec, bool rev, bool compl, long l=0) ;// , long l=0) ;
-class CProgParam_TmCalc : public CProgParam_MultiplexPCR
-{public:
-	bool			_save, _align ; //  save results as mPCR, using the TargetSecFile and ResultFile comunes. Use ThDyAlign or just calc Tm?
-	TemperatureRang _TmS, _Tm2A , _TmHy ;	// Para recoger los reslutados y display it back. 
-	EnergyRang		_GS , _G2A  , _GHy  ; 	
-	CProgParam_TmCalc (CCommProgParam &commParam) :	_save (false), _align(true),
-													CProgParam_MultiplexPCR (commParam){}
-
-	bool	Set_Sec				 (char *Sec){_Sec.Take(Sec)		;		 return true ;}
-	bool	Set_Sec2Align		 (char *Sec){_Sec2Align.Take(Sec)		;return true ;}
-	bool	Set_AlignedSec		 (char *Sec){_AlignedSec.Take(Sec)		;return true ;}
-	bool	Set_AlignedSec2Align (char *Sec){_AlignedSec2Align.Take(Sec);return true ;}
-	bool	Copy_Sec			 (char *Sec){_Sec.Copy(Sec)		;		 return true ;}
-	bool	Copy_Sec2Align		 (char *Sec){_Sec2Align.Copy(Sec)		;return true ;}
-	bool	Copy_AlignedSec		 (char *Sec){_AlignedSec.Copy(Sec)		;return true ;}
-	bool	Copy_AlignedSec2Align(char *Sec){_AlignedSec2Align.Copy(Sec);return true ;}
-
-
-	bool	Update_Sec			(bool rev, bool compl)	{return Set_Sec      ( Generate_DegSec_char( _Sec.Get(),		rev, compl)  ); }
-	bool	Update_Sec_Sec2Align(bool rev, bool compl)	{return Set_Sec2Align( Generate_DegSec_char( _Sec.Get(),		rev, compl)  ); }
-	bool	Update_Sec2Align	(bool rev, bool compl)	{return Set_Sec2Align( Generate_DegSec_char( _Sec2Align.Get(),	rev, compl)  ); }
-	bool	Update_Sec2Align_Sec(bool rev, bool compl)	{return Set_Sec		 ( Generate_DegSec_char( _Sec2Align.Get(),	rev, compl)  ); }
-
-	~CProgParam_TmCalc(){}
-	int		Run		(){	return DegTmCalc ( this )  ;}
-	bool	save	(ofstream &osPr				);
-	bool	load	(string &var, ifstream &isPr); 
-//private:
-	C_str	 _Sec ,			_Sec2Align ;
-	C_str	 _AlignedSec,	_AlignedSec2Align ;
-};
-
-enum Prog2Run {µArr_Prog=0, mPCR_Prog, SdDes_Prog, TmCal_Prog, Num_of_Prog };
-
-class ThDyProjet : public CProgParam // Permite manejar todo el projecto: con un miembro para los parametros comunes y otro para los de cada programa
-{public:
-		CCommProgParam			_cp;
-		CProgParam_microArray   _uArr  ;
-		CProgParam_MultiplexPCR _mPCR  ;
-		CProgParam_SondeDesign	_SdDes ;
-		CProgParam_TmCalc		_TmCal ;
-
- explicit	ThDyProjet():	_uArr(_cp), 
-							_mPCR(_cp), 
-							_SdDes(_cp), 
-							_TmCal(_cp), 
-							_ProjetFileName("Def.ThDy.txt")   ,
-							_defPr("Def.ThDy.txt")   
-					{	_cp._ProgList=new pCEspProgParam[Num_of_Prog+1];		// cambiar por un vector de la STL??
-						_cp._ProgList[µArr_Prog ]	=&_uArr;
-						_cp._ProgList[mPCR_Prog ]	=&_mPCR;	
-						_cp._ProgList[SdDes_Prog]	=&_SdDes;	
-						_cp._ProgList[TmCal_Prog]	=&_TmCal;	
-						_cp._ProgList[Num_of_Prog]	= 0 ;
-					}
- 
-		C_str						_ProjetFileName ;
 		C_str						_defPr ;
+		C_str						_ProjetFileName ;
 
-		    ~ThDyProjet() { }
+   ~CProgProject()override { }
 
-	void	ProjetFile	(const char *ProjetFileName){	_ProjetFileName.CopyTrim(	ProjetFileName);	}
-	bool	save		()							{	return save_using(_ProjetFileName.Get())						 ;}
-	bool	save_using	(char	*ProjetFileName)	{	ofstream osPr(ProjetFileName);				return save_all(osPr);}
-		
-	bool	load		(); 
-	bool	save_defPr	(){ProjetFile(_defPr.Get()); return save();	}
-									// OJO !!!!!!!!!   las sig funciones se aduenan del pointer, y luego lo deletean    !!!!!!!!
-	void	SetProjetFile(char  *ProjetFileName){   ProjetFile(ProjetFileName) ; 		delete []ProjetFileName ;				}
-	bool	saveTMP		 (char	*ProjetFileName){	bool r=save_using(ProjetFileName);	delete []ProjetFileName	; return r ;	}
-	bool	save		 (char	*ProjetFileName){	SetProjetFile(ProjetFileName); return save();			}
-	bool	load		 (char	*ProjetFileName){	SetProjetFile(ProjetFileName); return load();			}
+    //  Este es el verdadero save !!! El que abre el fichero y lo salva todo.
+	ofstream	&saveToFile	(const char *ProjetFileName) const{	ofstream osPr(ProjetFileName);			return save_all(osPr);}
 
-	virtual bool	save    (ofstream &osPr)			 ;//{  	return true ;    }
-	virtual bool	load    (string &var, ifstream &isPr);//{ 	if (true) return false ; return true ;}
-	virtual bool	save_all(ofstream &osPr)				{  _cp.save_all(osPr) ;			return save(osPr) ;    }
-	virtual bool	load_all(string &var, ifstream &isPr)	{ 	if ( _cp.load_all(var, isPr)) return true ;
-																return load(var, isPr);					 }
-	virtual	int		Run (CProgParam &prog)	{	saveTMP( AddFileExt(_cp._OutputFile.Get(),".ThDy.txt") ); return prog.Run();}
-};  
+	ofstream	&save		()			const			{	return saveToFile(_ProjetFileName.Get())	;   }
+	ofstream	&save_defPr	()                          {ProjetFile(_defPr.Get()); return save();	        }
+	void	    ProjetFile	(const char *ProjetFileName){	_ProjetFileName.CopyTrim(	ProjetFileName);	}
+
+	bool	    load		(); 
+
+		// OJO !!!!!!!!!   las sig funciones se aduenan del pointer, y luego lo deletean    !!!!!!!!
+	void	    SetProjetFile(char  *ProjetFileName)
+	                    {   ProjetFile(ProjetFileName) ; 		
+	                        delete []ProjetFileName ;				
+	                    }
+	ofstream	&save	 (char	*ProjetFileName){	SetProjetFile(ProjetFileName); return save();			}
+	bool	    load	 (char	*ProjetFileName){	SetProjetFile(ProjetFileName); return load();			}
+
+
+
+    //  Derivar para usar el MakeProgName de un CComP
+	virtual ofstream &saveTMP() const            // Reescribe el projecto actual. Pensar algo mejor? Preguntar al user? usar # conscuti?
+	                            {	return save();	}
+
+	//ofstream	&	save    (ofstream &osPr)	const	override	 ;//{  	return true ;    }
+	//      bool	load    (string &etiq, ifstream &isPr);//{ 	if (true) return false ; return true ;}
+	   ofstream	&	save_all(ofstream &osPr)	const 			
+	                        {   for(auto p : _ProgList) 
+						            p->save(osPr) ;		
+	                             CProgParam::save(osPr) ;   
+	   
+	   osPr<< endl<<endl<<
+			 "How to use? \n Each program´s parameter have an unique identificator or etiquette. \n "
+			 "While loading, the text between the beginning of a line and the first : will be taken as\n "
+			 "an etiquette (discarding surrounding but not internal spaces). \n"
+			 "IF the etiquette is know (valid), the rest of the line will be use to deduce the value of the parameter. \n"
+			 "Some parameter (like file´s names) will assume this rest-line-text entirely as his valid value. \n"
+			 "For such parameter please, add any comment in the next line. \n"
+			 "Other parameter (like numeric or bool parameters) will only use the beginning of this rest-line-text and discard the end. \n"
+			 "Any line without a valid etiquette will be discarded (they are comments!).” \n"
+			 "Only the last valid value of each parameter will be used\n"
+			 "For not defined parameters, the previous value (from the previously active project or from the program´s default) will be use.\n"
+			 "Direct questions please to ArielVina.Rodriguez@fli.bund.de\n"
+			;
+
+	   return (osPr) ;
+	   
+	   }   // por que solo funciona con el CProgParam:: ???
+	bool	    load_all(string &etiq, ifstream &isPr)	//override
+	                    {   for(auto p : _ProgList)	
+					            if ( p->load(etiq, isPr)) 
+								    return true ;
+						    return CProgParam::load(etiq, isPr);					 }
+	int		Run (CProgParam &prog)	override                    //   ??????
+	                 {	saveTMP( ) ; 
+	                    return prog.Run();
+	                 }
+
+	void AddProg (CProgParam* par) {_ProgList.push_back(par);}
+private:
+	vector<CProgParam*> _ProgList;
+};
+class CCommProgParam : public CProgParam 
+{	CProgProject *_proj;
+ public:	
+	CCommProgParam  (const string& titel,       CProgProject *proj=nullptr)
+		            : CProgParam(titel,proj),   _proj(proj) {}
+	~CCommProgParam() override	{}
+
+	ofstream	&save_all(ofstream	&osPr 				 ) const
+	                    {   return _proj->save_all(osPr);
+	                    }
+	bool	    load_all(string     &etiq, ifstream &isPr)
+	                    {return _proj->load_all(etiq,isPr);
+	                    } 
+	void        AddProgToProject(CProgParam *p)
+	                    {_proj->AddProg(p);}
+    virtual string  MakeRuningName()const {return "";}
+
+};
+class	CEspProgParam  : public CProgParam 
+{public:										// Permite no duplicar los parametros comunes en los parametros especificos
+	explicit CEspProgParam(const string& titel, CCommProgParam &commParam ) 
+		                    : _cp(commParam), CProgParam(titel ) 
+	                        { _cp.AddProgToProject(this);}
+	CCommProgParam &_cp;
+	ofstream	&save_all(ofstream &osPr)	const		   // Save all needed parametrs for this programm, not only the spesific ones
+	                     {          _cp.save(osPr) ;			
+	                         return     save(osPr) ;    }
+	bool	    load_all(string &var, ifstream &isPr)	  // Usar estas dos funciones solo si se quiere save or load olny this program
+	                    { 	if ( _cp.load(var, isPr))       // PAra salvar el projecto completo use el save_all del projecto
+						        return true ;
+							return load(var, isPr);					 }
+} ;
 
 
 #endif
 
 
-	//class	CInitProgParam_SondeDesign;
-	//class	CInitProgParam_microArray;
-	//class	CInitProgParam_MultiplexPCR;
-
-//enum SaltCorrecP {NoSMSelect=-1,SMStLucia=0, SMOwczarzy=1};
-//enum AlignMeth {TAMeth_Tm=0, TAMeth_G, TAMeth_Fract};
-////  PROBLEMA : como organizar estos parametros si usamos procesos? Hacer copia de ellos !!!!!!!!
-//
-//inline char *clone_c_str   (const char *str);
-//inline char *clone_trim_str(const char *str);
-//char *AddFileExt(const char *FileName, const char *Ext="")	;	// no olvide delete este pointer
-////  Crear clase para lidiar con las string como file name y sec que deben ser copiadas y liberadas todo el tiempo. Copy() vs Take() !!!!	
-//
-//class C_str
-//{public:
-//	explicit C_str()													:_s(clone_c_str		("")){}
-//	explicit C_str(const char *s)										:_s(clone_c_str		(s )){}
-//
-//	char *Copy		(const char *s)	{if(s!=_s) delete []_s; _s=clone_c_str		(s );				return _s;}
-//	char *CopyTrim	(const char *s)	{if(s!=_s) delete []_s; _s=clone_trim_str	(s );				return _s;}
-//	char *Trim		(			)	{char *t=_s;  			_s=clone_trim_str	(_s); delete []t;	return _s;}
-//	char *Take		(	   char *s) {if(s!=_s) delete []_s; return	 _s=				(s );}
-//	char *TakeTrim	(	   char *s) { Take(s); return Trim();}
-//	char *Get		()				{						return	 _s						;}
-//	~C_str			()				{delete []_s;									 }
-//private:
-//	char *_s;
-//};
-//
-//template <class Num>
-//class NumRang
-//{public: Num min,max; 
-//	NumRang(					):min(0 )	,max(0 ){}; 
-//	NumRang(		Num av		):min(av)   ,max(av){};
-//	NumRang(Num mi,       Num ma):min(mi)   ,max(ma){};
-////	NumRang(Num mi, Num av, Num ma):min(mi),ave(av)        ,max(ma){};
-//
-////	void Set(Num mi, Num av, Num ma){min=mi; ave=av       ; max=ma;}
-//	void Set(Num mi,           Num ma){min=mi;  max=ma;}
-//	void Set(         Num av         ){min=av;  max=av;}
-//	void SetMin(Num mi){min=mi;  }
-//	void SetMax(Num ma){max=ma;  }
-////	void Set(                            ){        ave=(min+max)/2      ;}
-//	Num Ave() const {return (min+max)/2 ;}
-//	Num Min() const {return min			;}
-//	Num Max() const {return max			;}
-//	bool inRang(const Num X)const {return (min<= X && X<=max);}
-//};
-//template <class Num>
-//inline	bool inRang(const Num X, const NumRang<Num> R)  {return  R.inRang(X) ;}
-//
-//extern const 	NumRang<float> G_def, Tm_def ;  //  G_def(-5,-1), Tm_def(57,63) ;
-//extern const 	NumRang<int>   L_def ;			//  L_def(20,35) ;
-//class SondeLimits
-//{public: 
-//	NumRang<float> _G, _Tm ;
-//	NumRang<int>   _L ;
-//	SondeLimits():_G(G_def),_Tm(Tm_def),_L(L_def){}
-//	SondeLimits(NumRang<float> G, NumRang<float> Tm, NumRang<int> L):_G(G),_Tm(Tm), _L(L){}
-//};
-//
-//class DegRes			//------------------------------------------------------------	DegRes	-------------------------------------
-//{public: float min,ave,max; 
-//	DegRes(							   ):min(0 ),ave(0 )		,max(0 ){}; 
-//	DegRes(			 float av		   ):min(av),ave(av)        ,max(av){};
-//	DegRes(float mi,           float ma):min(mi),ave((mi+ma)/2) ,max(ma){};
-//	DegRes(float mi, float av, float ma):min(mi),ave(av)        ,max(ma){};
-//
-//	void Set(float mi, float av, float ma){min=mi; ave=av       ; max=ma;}
-//	void Set(float mi,           float ma){min=mi; ave=(mi+ma)/2; max=ma;}
-//	void Set(          float av          ){min=av; ave=av       ; max=av;}
-//	void Set(                            ){        ave=(min+max)/2      ;}
-//};

@@ -4,7 +4,7 @@
 
 
 
-auto_ptr<CSaltCorrNN> Create_NNpar(CCommProgParam& _cp)
+auto_ptr<CSaltCorrNN> Create_NNpar(ThDyCommProgParam& _cp)
 {
 	auto_ptr<CSaltCorrNN> apNNpar ( new   
 				CSaltCorrNN			(	_cp._ConcSd, 
@@ -21,7 +21,7 @@ auto_ptr<CSaltCorrNN> Create_NNpar(CCommProgParam& _cp)
 	return apNNpar ;
 }
 
-auto_ptr<ThDyAlign> Create_ThDyAlign(CCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, CSaltCorrNN &NNpar)
+auto_ptr<ThDyAlign> Create_ThDyAlign(ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, CSaltCorrNN &NNpar)
 {
 	auto_ptr<ThDyAlign>	apAl;
 	switch (	_cp._TAMeth )

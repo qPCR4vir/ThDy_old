@@ -505,7 +505,12 @@ char *	CSecAl::GetAlignedSecChar(long Al_pBeg, long Al_pEnd)  // "regala" esta m
 
 int		CMultSec::AddFromFile (const char *file)		// return la cantidad de sec add --------------------  AddFromFile   -------------------
 {		if (  _SecLim.Max() <= _SecLim.Min() ) _SecLim.SetMax(0) ; // if ( _SecEnd<=_SecBeg) _SecEnd=0 ;
-	ifstream ifile( file ); assert (ifile);	if ( ! ifile ) {cerr << "File "<< file <<" could not be opened "<<endl ; return 0;} 
+	ifstream ifile( file ); 
+	if ( ! ifile ) 
+	{
+	    throw std::ios_base::failure(string("Could not open the sequence file: ")+ file );
+	}
+
 	int j=0;
 	char c1;
 	ifile>>skipws  >> c1;

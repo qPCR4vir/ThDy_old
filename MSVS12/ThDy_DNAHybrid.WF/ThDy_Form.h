@@ -17,6 +17,9 @@ namespace ThDy_DNAHybridWF {
 	using namespace System::Drawing;
 	using namespace System::Collections::Generic;
 	using namespace TagBindingNS ;
+    //using namespace Microsoft::Office::Interop::Excel; 
+    //using namespace Microsoft::Office::Tools::Excel;
+
 	/// <summary>
 	/// Summary for ThPr_Form
 	/// </summary>
@@ -39,27 +42,42 @@ namespace ThDy_DNAHybridWF {
 
 			 void 			InitializeTagBindings();
 	public:
-		ThPr_Form(void) : _Pr(   *( new ThDyProjet() )    )
+		ThPr_Form() try : _Pr(   *( new ThDyProjet() )    )
 		{			
 			InitializeComponent();
 			InitializeTagBindings();
-
+           
 			//
 			//TODO: Add the constructor code here
 			//
 			this->comBoxSalMeth->SelectedIndex = TAMeth_Tm;    // 0
-			if ( ! _Pr.load() )						// cuando no existe Def Project: 1ra vez que se usa el prog??
-			{										// char *defPr= clone_trim_str( _Pr._ProjetFileName) ;
-				UpdateThDyP();						// Esto para darle "prioridad" a los def parametros de la FORM 
-													// _Pr.ProjetFile(_defPr);
-				_Pr.save_defPr() ; 					// _Pr.save( _defPr ) ; 
-				this->textBoxPrFile->Update();		//  crea el Def Project.
-			}
-			this->comBoxTAMeth->SelectedIndex  = SMStLucia;// 0
+            try{ 
+				    if (Environment::GetCommandLineArgs()->Length   > 1    )
+                        _Pr.load( CreateCharFromManString(Environment::GetCommandLineArgs()[1]   ) );	
+					else
+						_Pr.load() ;						// cuando no existe Def Project: 1ra vez que se usa el prog??
+		       }
+		    catch ( std::exception& e )
+		     {   MessageBox::Show ( gcnew String(e.what()) + "\n A new Default Project will be created. "  ) ;
+                 try{                                       // char *defPr= clone_trim_str( _Pr._ProjetFileName) ;
+				        UpdateThDyP();						// Esto para darle "prioridad" a los def parametros de la FORM 
+		            }
+		          catch ( ParamOutOfNumRange e)
+		          { MessageBox::Show ( gcnew String(e.what())  ) ;
+		          }
+			    this->comBoxTAMeth->SelectedIndex  = SMStLucia;     // 0
+		        _Pr.save_defPr() ; 					                // _Pr.save( _defPr ) ;  // _Pr.ProjetFile(_defPr);
+		        this->textBoxPrFile->Update();		                //  crea el Def Project.
+             }
 
-	
+			this->comBoxTAMeth->SelectedIndex  = SMStLucia;         // 0
+            UpdateThDyForm();
 		}
-			 	protected:
+		catch ( ParamOutOfNumRange e)
+		          { MessageBox::Show ( gcnew String(e.what())  ) ;
+		          }
+
+	protected:
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -90,7 +108,7 @@ private: void UpdateCommThDyForm				()		//  -------------------- UpdateCommThDyF
 		this->comBoxTAMeth->SelectedIndex	=			_Pr._cp._TAMeth  ;				//this->comBoxTAMeth->Update(); 
 	}
 private: void UpdateCommThDyP					()
-	{		_Pr._cp._SaltCorr= SaltCorrecP(this->comBoxSalMeth->SelectedIndex ) ;//	_CommThDyP->UpDateP();
+	{		_Pr._cp._SaltCorr= SaltCorrection(this->comBoxSalMeth->SelectedIndex ) ;//	_CommThDyP->UpDateP();
 			_Pr._cp._TAMeth	 = AlignMeth  (this->comBoxTAMeth->SelectedIndex ) ;
 	}
 
@@ -115,15 +133,30 @@ private: System::Void commandLoadPrFile			(System::Object^  sender, System::Even
 				 this->textBoxPrFile->Update(); 
 	}
 private: System::Void SavePrFileDialog_FileOk	(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) 
-	{			UpdateThDyP();
+	{			  try{                                       // char *defPr= clone_trim_str( _Pr._ProjetFileName) ;
+				        UpdateThDyP();						// Esto para darle "prioridad" a los def parametros de la FORM 
+		            }
+		          catch ( ParamOutOfNumRange e)
+		          { MessageBox::Show ( gcnew String(e.what())  ) ;
+		          }
 				_Pr.save( CreateCharFromManString(this->savePrFileDialog->FileName    ) );
 	}
 private: System::Void LoadPrFileDialog_FileOk	(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) 
-	{			_Pr.load( CreateCharFromManString(this->loadPrFileDialog->FileName    ) );
-				UpdateThDyForm();
+	{			
+		  try{      _Pr.load( CreateCharFromManString(this->loadPrFileDialog->FileName    ) );
+		     }
+		     catch ( ParamOutOfNumRange e)
+		     { MessageBox::Show ( gcnew String(e.what())  ) ;
+		     }
+		 UpdateThDyForm();
 	}
 private: System::Void commandSetDefPr			(System::Object^  sender, System::EventArgs^  e) 	// crea el Def Project.	 // Set Deff  Proj File
-	{			UpdateThDyP();	
+	{			 try{                                       // char *defPr= clone_trim_str( _Pr._ProjetFileName) ;
+				        UpdateThDyP();						// Esto para darle "prioridad" a los def parametros de la FORM 
+		            }
+		          catch ( ParamOutOfNumRange e)
+		          { MessageBox::Show ( gcnew String(e.what())  ) ;
+		          }
 				char *pr = clone_c_str(_Pr._ProjetFileName.Get()) ;
 													// _Pr.ProjetFile(_defPr);
 				_Pr.save_defPr() ; 					// _Pr.save( _defPr ) ; 
@@ -134,8 +167,12 @@ private: System::Void commandSetDefPr			(System::Object^  sender, System::EventA
 	}
 private: System::Void commandRestDefPr			(System::Object^  sender, System::EventArgs^  e)		// Restore (USE) Deff  Proj File
 	{			_Pr.ProjetFile(_Pr._defPr.Get());
-				_Pr.load( ) ; 
-				UpdateThDyForm();
+            try{
+			        _Pr.load() ;						// cuando no existe Def Project: 1ra vez que se usa el prog??
+		        }
+		 catch ( std::exception& e )
+		 { MessageBox::Show ( gcnew String(e.what())  ) ;	}			
+		 UpdateThDyForm();
 	}
 
 private: System::Void commandLoadNNParamFile	(System::Object^  sender, System::EventArgs^  e) 
@@ -165,9 +202,25 @@ private: System::Void commandSaveResultFile		(System::Object^  sender, System::E
 
 private: System::Void command_uArray			(System::Object^  sender, System::EventArgs^  e)  // Run       mArray
 	{	_uArrThDyP->UpDateP() ;	
-//			MessageBox::Show(L"Primero probemos esto");
-//			_Pr._uArr.Udate = UI_uA_Create ;
-		Run(_Pr._uArr);	
+                                                    //	MessageBox::Show(L"Primero probemos esto");//_Pr._uArr.Udate = UI_uA_Create ;
+	   try{                                   
+		        Run(_Pr._uArr);	
+		   }
+		   catch ( std::exception& e)
+		   { MessageBox::Show ( gcnew String(e.what())  ) ;
+		    return;
+		   }	 
+
+//using namespace Microsoft::Office::Tools;//::Excel;
+//using namespace Microsoft::Office::Interop;//::Excel; 
+//Excel::NamedRange 
+   //     using namespace Microsoft::Office::Interop; 
+   //Excel::ApplicationClass^ eac=  gcnew Excel::ApplicationClass;
+   //Excel::_Application^ ea ;   Excel::Application;
+   ////Excel::Workbook^ ew1 = Excel::ApplicationClass->;
+   //Excel::Workbook^ ew =  eac->Workbooks->Item["na"]  ;
+   //eac->Visible=true;
+   //Excel::Range^ r=    eac->Range("names") ;
 
 		Results^ rsTm	=gcnew Results	(	/**_Pr._uArr._tlTm*/	);
 		Results^ rsG	=gcnew Results	(	/**_Pr._uArr._tlG	*/	);
@@ -241,7 +294,15 @@ private: System::Void but_uArrExp_Click			(System::Object^  sender, System::Even
 			 }
 
 private: System::Void buttPCR_Click				(System::Object^  sender, System::EventArgs^  e) //	  Run      _IPrgPar_mPCR
-			 {	_mPCRThDyP->UpDateP()	;				Run(_Pr._mPCR);		 }
+			 {	_mPCRThDyP->UpDateP()	;				
+		           try{                                   
+		                    Run(_Pr._mPCR);	
+		           }
+		           catch ( std::exception& e)
+		           { MessageBox::Show ( gcnew String(e.what())  ) ;
+		            return;
+		           }	 	        
+		    }
 private: System::Void butSdSecFilePCR_Click		(System::Object^  sender, System::EventArgs^  e) 
 		 {
 			 this->openSondesFileDialog->ShowDialog();
@@ -250,12 +311,37 @@ private: System::Void butSdSecFilePCR_Click		(System::Object^  sender, System::E
 		 }
 
 private: System::Void commandDesign				(System::Object^  sender, System::EventArgs^  e) //    Run      Sonde design
-		{	_Pr._SdDes._design	 = true ;		Run(_Pr._SdDes);		}//Update_SdDesThDyP()	;
+		{	_Pr._SdDes._design	 = true ;		
+		 
+		           try{                                   
+		                  Run(_Pr._SdDes);	
+		           }
+		           catch ( std::exception& e)
+		           { MessageBox::Show ( gcnew String(e.what())  ) ;
+		            return;
+		           }	 	        		 
+
+		 	}                       //Update_SdDesThDyP()	;
 private: System::Void but_Compare_Click			(System::Object^  sender, System::EventArgs^  e) //    Run      Sonde design/ COMPARE
-		 {	_Pr._SdDes._design	 = false ;		Run(_Pr._SdDes);		 }//Update_SdDesThDyP()	;
-			
+		 {	_Pr._SdDes._design	 = false ;				 
+		           try{                                   
+		                  Run(_Pr._SdDes);	
+		           }
+		           catch ( std::exception& e)
+		           { MessageBox::Show ( gcnew String(e.what())  ) ;
+		            return;
+		           }	 	        		 
+
+		 	}                       //Update_SdDesThDyP()	;
 private: System::Void but_TmCalc_Click			(System::Object^  sender, System::EventArgs^  e)	//    Run      TmCalc 
-		{	Run(_Pr._TmCal);			
+		{	
+		           try{                                   
+		                	Run(_Pr._TmCal);		
+		           }
+		           catch ( std::exception& e)
+		           { MessageBox::Show ( gcnew String(e.what())  ) ;
+		            return;
+		           }	 	        		 
 			Update_TmCalThDyForm_Results				();
 		}
 private: void Update_TmCalThDyForm_Results				()

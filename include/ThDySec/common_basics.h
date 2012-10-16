@@ -1,24 +1,63 @@
-// Definiciones y declaraciones basicas. A usar por todos, user interface and programs. Primaria, no depende de nadie.
+// Definiciones y declaraciones basicas. A usar por todos, user interface and programs. Primaria?, no depende? de nadie?.
 #pragma unmanaged	
 #ifndef _COMMON_BASIC_H
 #define _COMMON_BASIC_H
 #pragma warning( disable : 4996 )
 //#include "matrix.h"
-#include <string.h>
 
 
 inline char *clone_c_str   (const char *str) {return strcpy (new char[strlen(str) +1] , str);}  // ;char *clone_c_str(const char *str)
 inline char *clone_trim_str(const char *str)		// definida en    :   init_prog_param.cpp   -  elimina espacios al principio y al final
-//char *clone_trim_str(const char *str)
-{	if(!str) {char *NewStr= new char[1]; NewStr[0]=0;return NewStr;}
-	size_t l =strlen(str) , i ;
-	for ( i=0; i<l && isspace(str[i]); i++ );   // salta espacios al principio
-	for (    ; isspace(str[l]) ; l--);			// se come espacios al final
-	size_t NewLen= l - i ;
-	char *NewStr= new char[NewLen+1];
-	strncpy(NewStr, &str[i], NewLen) ; 	NewStr[NewLen]=0;
-	return NewStr ;
+													//char *clone_trim_str(const char *str)
+{	if(str && str[0]) 
+	{							// llegado aqui - tiene al menos un char !
+		size_t  f, i ;
+		for ( i=0; str[i] && isspace(str[i]); ++i );   // salta espacios al principio
+		for ( f=i; str[f]					; ++f );	// f=Len >0. llega al final (considerando que char(0) es el final !!!!! )
+		for ( --f;  f>=i  && isspace(str[f]); --f );			// se come espacios al final
+		size_t NewLen= f - i+1 ;
+
+		if (NewLen>0)					// strncpy(NewStr, &str[i], NewLen) ; 		
+		{
+			char *NewStr= new char[NewLen+1];
+			NewStr[NewLen]=0;
+			while ( NewLen )
+				NewStr[--NewLen]=str[f--];
+			return NewStr ;
+		}
+	}
+									// vacia o solo espacios. O sea: no char dist de espacio
+	char *NewStr= new char[1]; 
+	NewStr[0]=0;
+	return NewStr;
 }
+
+#include <string.h>
+inline std::string trim_string(const std::string& str)		//   elimina espacios al principio y al final
+{	size_t i,l=str.length() ;
+	if (l)
+	{
+		for ( i=0;  i<l  && isspace(str[i]); ++i );           // salta espacios al principio
+		for ( --l; l>=i  && isspace(str[l]); --l );			// se come espacios al final
+		size_t NewLen= l - i +1;
+		if (NewLen>0)					// strncpy(NewStr, &str[i], NewLen) ; 		
+			return str.substr(i,NewLen);
+	}
+	return "";
+}
+
+//	size_t l =strlen(str) , i ;
+//	for ( i=0; i<l && isspace(str[i]); i++ );   // salta espacios al principio
+//	for (    ; isspace(str[l]) ; l--);			// se come espacios al final
+//	size_t NewLen= l - i+1 ;
+//	char *NewStr= new char[NewLen+1];
+//	strncpy(NewStr, &str[i], NewLen) ; 	NewStr[NewLen]=0;
+//	return NewStr ;
+//}
+
+
+
+
 char *AttachToCharStr       (const char *CharStr   , const char *Attach); //defined in : sec.cpp: no olvide delete este pointer
 char *ChangeCharStrAttaching(char *&CharStrToChange, const char *Attach);	// CharStrToChange : debe ser una cadena que se creo con new, 
 char *ChangeCharStrAttaching(char *&CharStrToChange, const int   Attach);	// y que sera borrada y vuelta a crear !!!
@@ -45,7 +84,11 @@ class C_str
 	char *Trim		(			)	{ char *t=_s;  			_s=clone_trim_str	(_s); delete []t;	return _s		;}
 	char *Take		(	   char *s) { if(s!=_s) delete []_s;										return _s=	(s );}
 	char *TakeTrim	(	   char *s) { Take(s);														return Trim()	;}
-	char *Get		()				{																return _s		;}
+	char *Get		()				{		/* PELIGROSO !!!! use release or Copy ?? */				return _s		;}
+	const char *Get	()		const	{																return _s		;}
+	char *release	()				{  char *t=_s;  	_s=clone_c_str		("")	;				return t		;}
+
+
 	~C_str			()				{ delete []_s; }
 private:
 	char *_s;
@@ -187,7 +230,48 @@ class DegRes			//------------------------------------------------------------	De
 };
 
 
+#include <string.h>
+#include <sstream> 
 
+		template <typename Num>
+ std::string toString_Val_in_Range(Num val, NumRang<Num> &NR)
+{     
+	std::ostringstream result;
+	result << val << " in range [" << NR.Min() <<", "<< NR.Max() << "]";
+	return result.str();
+}
+		template <typename Num>
+ std::string toString_Range(NumRang<Num> &NR)
+{     
+	std::ostringstream result;
+	result << " [" << NR.Min() <<", "<< NR.Max() << "]";
+	return result.str();
+}
+
+
+
+#include <stdexcept>
+
+class OutOfNumRange : public std::out_of_range 
+{ public: 
+	explicit OutOfNumRange ( const std::string& what_arg ) : out_of_range(what_arg + " (Out of numeric rang)" ){}
+
+		template<typename Num>
+	explicit OutOfNumRange ( const std::string& what_arg, Num invalidValue, NumRang<Num>& NR ) 
+		: out_of_range(what_arg + " (Out of numeric rang, trying to set " + toString_Val_in_Range(invalidValue, NR) + ")"   ) 
+		{}
+};
+
+
+//class OutOfNumRangeT : public std::out_of_range 
+//{ public: 
+//	explicit OutOfNumRangeT ( const std::string& what_arg ) : out_of_range(what_arg + " (Out of numeric rang)" ){}
+//
+//		template<typename Num>
+//	explicit OutOfNumRangeT ( const std::string& what_arg, Num invalidValue, NumRang<Num>& NR ) 
+//		: out_of_range(what_arg + " (Out of numeric rang, trying to set " + toString_Val_in_Range(invalidValue, NR) + ")"   ) 
+//		{}
+//};
 
 
 #endif 
