@@ -19,6 +19,7 @@
     <None Include="app.ico">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThDy_DNAHybrid.WF.cpp">
@@ -32,6 +33,9 @@
     </ClCompile>
     <ClCompile Include="..\..\scr\ThDy_DNAHybrid.VC-WF\TagBinding.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SeqExpl.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +55,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ThDy_Form.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SeqExpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

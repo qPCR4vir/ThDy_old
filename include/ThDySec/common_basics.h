@@ -31,9 +31,36 @@ inline char *clone_trim_str(const char *str)		// definida en    :   init_prog_pa
 	NewStr[0]=0;
 	return NewStr;
 }
+ template<typename CharType>               //   elimina espacios al principio y al final
+inline CharType *clone_trim(const CharType *str)		// definida en    :   init_prog_param.cpp   -  elimina espacios al principio y al final
+													//char *clone_trim_str(const char *str)
+{	if(str && str[0]) 
+	{							// llegado aqui - tiene al menos un char !
+		size_t  f, i ;
+		for ( i=0; str[i] && isspace(str[i]); ++i );   // salta espacios al principio
+		for ( f=i; str[f]					; ++f );	// f=Len >0. llega al final (considerando que char(0) es el final !!!!! )
+		for ( --f;  f>=i  && isspace(str[f]); --f );			// se come espacios al final
+		size_t NewLen= f - i+1 ;
 
+		if (NewLen>0)					// strncpy(NewStr, &str[i], NewLen) ; 		
+		{
+			char *NewStr= new CharType[NewLen+1];
+			NewStr[NewLen]=0;
+			while ( NewLen )
+				NewStr[--NewLen]=str[f--];
+			return NewStr ;
+		}
+	}
+									// vacia o solo espacios. O sea: no char dist de espacio
+	char *NewStr= new CharType[1]; 
+	NewStr[0]=CharType(0);
+	return NewStr;
+}
 #include <string.h>
-inline std::string trim_string(const std::string& str)		//   elimina espacios al principio y al final
+
+
+template<class _Elem,	class _Traits,	class _Alloc>               //   elimina espacios al principio y al final
+inline std::basic_string<_Elem, _Traits, _Alloc> trim_string(const std::basic_string<_Elem, _Traits, _Alloc>& str)		
 {	size_t i,l=str.length() ;
 	if (l)
 	{
@@ -43,8 +70,24 @@ inline std::string trim_string(const std::string& str)		//   elimina espacios al
 		if (NewLen>0)					// strncpy(NewStr, &str[i], NewLen) ; 		
 			return str.substr(i,NewLen);
 	}
-	return "";
+	return std::basic_string<_Elem, _Traits, _Alloc>();
 }
+
+//		// TEMPLATE CLASS basic_string
+//template<class _Elem,
+//	class _Traits,
+//	class _Alloc>
+//	class basic_string
+//		: public _String_alloc<!is_empty<_Alloc>::value,
+//			_String_base_types<_Elem, _Alloc> >
+//	{	// null-terminated transparent array of elements
+//public:
+//	typedef basic_string<_Elem, _Traits, _Alloc> _Myt;
+//
+//template<Class CharType>    bool isspace(  CharType _Ch,    const locale& _Loc   )
+
+
+
 
 //	size_t l =strlen(str) , i ;
 //	for ( i=0; i<l && isspace(str[i]); i++ );   // salta espacios al principio

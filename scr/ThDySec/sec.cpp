@@ -504,7 +504,9 @@ char *	CSecAl::GetAlignedSecChar(long Al_pBeg, long Al_pEnd)  // "regala" esta m
 }
 
 int		CMultSec::AddFromFile (const char *file)		// return la cantidad de sec add --------------------  AddFromFile   -------------------
-{		if (  _SecLim.Max() <= _SecLim.Min() ) _SecLim.SetMax(0) ; // if ( _SecEnd<=_SecBeg) _SecEnd=0 ;
+{		
+	if (  _SecLim.Max() <= _SecLim.Min() ) 
+		_SecLim.SetMax(0) ; // if ( _SecEnd<=_SecBeg) _SecEnd=0 ;
 	ifstream ifile( file ); 
 	if ( ! ifile ) 
 	{

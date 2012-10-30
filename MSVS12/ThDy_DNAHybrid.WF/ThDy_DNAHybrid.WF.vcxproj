@@ -1011,11 +1011,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico" />
+    <None Include="ClassDiagram.cd" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\scr\ThDy_DNAHybrid.VC-WF\TagBinding.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="SeqExpl.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -1050,6 +1052,9 @@
     <ClInclude Include="..\..\include\ThDy_DNAHybrid.VC-WF\Results.h" />
     <ClInclude Include="..\..\include\ThDy_DNAHybrid.VC-WF\TagBinding.h" />
     <ClInclude Include="..\..\include\ThDy_DNAHybrid.VC-WF\th_dy_programs.h" />
+    <ClInclude Include="SeqExpl.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="ThDy_Form.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -1060,6 +1065,9 @@
     <ResourceCompile Include="app.rc" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="SeqExpl.resx">
+      <DependentUpon>SeqExpl.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ThDy_Form.resX">
       <DependentUpon>ThDy_Form.h</DependentUpon>
       <SubType>Designer</SubType>

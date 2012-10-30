@@ -594,6 +594,8 @@ bool	ThDyAlign_TmCand::AddIfHit(long fi, long fj)
 	LonSecPos i  = fi, j=fj    /*, 	l=0, i0=-1, j0=-1*/;	
 	if (ri && rj)	
 	{	CRangBase &Ri(*ri),&Rj(*rj); Ri.schift(2-1); Rj.schift(2-1);
+		//CRangBaseSchift sRi(*ri, 2-1),sRj(*rj, 2-1); //use ri, rj directly. Dont worry more about schifting
+
 		Step st; 							// i-sonda, j-target. pos de comienzo de la zona de hibrid analizandose
 		while (i > Ri.Max() && j > Rj.Max() )	// saltar rapido el tramo de Al con corresp sondas "cortas" en ambas sec  (i > pfi && j > pfj )	
 		{	st= step(i,j);					// hasta que alguno de los dos entre en rango

@@ -21,45 +21,50 @@ using namespace std;
 // anadir static member PNNParams NNpar??
 
 class CMultSec	;
-class ISec
-{public:
-	virtual ISec		*CreateCopy(DNAStrand strnd=direct)=0 ;// crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+class ISec				// Pure virtual class ?
+{public:					// crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+	virtual ISec		*CreateCopy		(DNAStrand strnd=direct								)=0 ;
+	virtual Base		*GetCopyFullSec	(													)=0;
+	virtual Base		*GetCopy_charSec(DNAStrand strnd=direct								)=0  ;
+	virtual Base		*GetCopy_charSec(long InicBase, long EndBase, DNAStrand strnd=direct)=0 ;
+	virtual Base		*Copy_charSec	(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd=direct)=0  ;
+	virtual				~ISec			(){}
+};
+
+
+
+
 //	virtual CMultSec	*CreateNonDegSet	()	=0		; // crea todo el set si no existia, solo si existen bases deg: _NDB>0
 //	virtual CMultSec	*ForceNonDegSet();				// lo crea siempre, incluso para =1??
 //	virtual ISec		*GenerateNonDegVariant(CSec *s, long pos, Base ndb)   ; // recursiva
-
 //	virtual Base		*CreateTEMPORALcomplementary(long InicBase=0, long EndBase=-1)=0 ;
-	virtual Base		*GetCopy_charSec(long InicBase, long EndBase, DNAStrand strnd=direct) =0 ;
-	virtual Base		*GetCopyFullSec()=0;
-	virtual Base		*GetCopy_charSec(DNAStrand strnd=direct)=0  ;
-	virtual Base		*Copy_charSec(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd=direct)=0  ;
 //	virtual bool		NotIdem(CSec *sec) {return false;}
 //	virtual ISec		*CopyFirstBases		(long pos)=0	;			// copia parcialmente hasta la pos
 
-};
+
 class CSecBasInfo : public ISec
 {public:
-//	virtual CSecBasInfo	*CreateCopy(DNAStrand strnd=direct) override ;// crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
-//	CMultSec	*CreateNonDegSet	()			; // crea todo el set si no existia, solo si existen bases deg: _NDB>0
-//	CMultSec	*ForceNonDegSet();				// lo crea siempre, incluso para =1??
-//	CSecBasInfo	*GenerateNonDegVariant(CSec *s, long pos, Base ndb)   ; // recursiva
-
-//	virtual Base		*CreateTEMPORALcomplementary(long InicBase=0, long EndBase=-1)override ;
+	virtual Base		*GetCopyFullSec	(						)override
+								{	Base *s=new Base[Len()+3]; 
+									for(int i=0 ; i<Len()+2  ; i++ ) 
+										s[i]=_c[i]; 
+									s[Len()+2]=0; 
+									return s;
+								}
+	virtual Base		*GetCopy_charSec(DNAStrand strnd=direct	)override  ;
 	virtual Base		*GetCopy_charSec(long InicBase, long EndBase, DNAStrand strnd=direct) override ;
-	virtual Base		*GetCopyFullSec()override{Base *s=new Base[Len()+3]; for(int i=0;i<Len()+2;i++) s[i]=_c[i]; s[Len()+2]=0; return s;}
-	virtual Base		*GetCopy_charSec(DNAStrand strnd=direct)override  ;
-	virtual Base		*Copy_charSec(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd=direct) override ;
-	virtual bool NotIdem(CSecBasInfo *sec) {return false;}
-	CSecBasInfo	*CopyFirstBases		(long pos)	;			// copia parcialmente hasta la pos
-	Base		operator[](int i)const{return _c[i];}
-	int			ID()const		{return _ID;}
-	char		*Name()const	{return _name;}
-	long		Len()const		{return _len;} //
-	long		Degeneracy()const{return _GrDeg;}
-	long		*BaseCount()    {return _Count;}
-	long		BaseCount(Base b){ if(is_degbase[b]) return _Count[db2nu[b]]; else return 0;}
-	CMultSec	*NonDegSet()	{return _NonDegSet;}
-	float		GCpercent()const{return	_GCp ;}		
+	virtual Base		*Copy_charSec	(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd=direct) override ;
+	virtual bool		 NotIdem		(CSecBasInfo *sec) {return false;}
+	CSecBasInfo			*CopyFirstBases	(long pos)	;			// copia parcialmente hasta la pos
+	Base		operator[]	(int i)const{return _c[i];}
+	int			ID			()const		{return _ID;}
+	char		*Name		()const		{return _name;}
+	long		Len			()const		{return _len;} //
+	long		Degeneracy	()const		{return _GrDeg;}
+	long		*BaseCount	()			{return _Count;}
+	long		BaseCount	(Base b)	{ if(is_degbase[b]) return _Count[db2nu[b]]; else return 0;}
+	CMultSec	*NonDegSet	()			{return _NonDegSet;}
+	float		GCpercent	()const		{return	_GCp ;}		
 
 protected:
 		int				_ID ;				// num de la sec en file original?? en total??, num unico?
@@ -78,61 +83,67 @@ protected:
 		CSecBasInfo( long l);
 };
 
+//	virtual CSecBasInfo	*CreateCopy(DNAStrand strnd=direct) override ;// crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+//	CMultSec	*CreateNonDegSet	()			; // crea todo el set si no existia, solo si existen bases deg: _NDB>0
+//	CMultSec	*ForceNonDegSet();				// lo crea siempre, incluso para =1??
+//	CSecBasInfo	*GenerateNonDegVariant(CSec *s, long pos, Base ndb)   ; // recursiva
+//	virtual Base		*CreateTEMPORALcomplementary(long InicBase=0, long EndBase=-1)override ;
+
 
 class CSec : public CLink, public CSecBasInfo	// ---------------------------------------   CSec	---------------------------------------------------
 {public:
 	CSec (const char *sec, int id, const char *nam, CSaltCorrNN *NNpar,  long l=0, long secBeg=1, char *clas=nullptr, float conc=-1);
 	CSec ( long l, CSaltCorrNN *NNpar) ;
 
-	CMultSec	*CreateNonDegSet	()			; // crea todo el set si no existia, solo si existen bases deg: _NDB>0
-	CMultSec	*ForceNonDegSet();				// lo crea siempre, incluso para =1??
-	CSec		*GenerateNonDegVariant(CSec *s, long pos, Base ndb)   ; // recursiva
-	void		 CorrectSalt		() { if ( _NNpar->UseOwczarzy () ) CorrectSaltOwczarzy();};
-	virtual CSec*CreateCopy(DNAStrand strnd=direct) override;// crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+	CMultSec	*CreateNonDegSet		()			; // crea todo el set si no existia, solo si existen bases deg: _NDB>0
+	CMultSec	*ForceNonDegSet			();				// lo crea siempre, incluso para =1??
+	CSec		*GenerateNonDegVariant	(CSec *s, long pos, Base ndb)   ; // recursiva
+	CSec		*CopyFirstBases			(long pos)	;			// copia parcialmente hasta la pos
+	void		 CorrectSalt			() { if ( _NNpar->UseOwczarzy () ) CorrectSaltOwczarzy();};
+	virtual CSec*CreateCopy		(DNAStrand strnd=direct) override;// crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+	const char	*Get_charSec			()const{return (const char*)_c;}
 
-	Base		operator()(int i)const{return _b[i];}
+	Base		operator()		(int i)const{return _b[i];}
 	int x;
+	Temperature	Tm	(long pi, long pf	)const;				// Tm de la sonda con sec desde pi hasta pf, inclusive ambas!! 
+	Temperature	Tm	(long pi			)const	{return Tm(pi,Len())   ;}   // Tm de la sonda con sec desde pi hasta el final, inclusive ambos!!
+	Energy		G	(long pi, long pf, float Ta)const;				// G de la sonda con sec desde pi hasta pf, inclusive ambas!! 
+	Energy		G	(long pi, float Ta	)const	{return G(pi,Len(), Ta);}   // G de la sonda con sec desde pi hasta el final, inclusive ambos!!
+	Energy		G	(float Ta			)const	{return G(1 ,Len(), Ta);}   // G de la sonda con sec desde inicio hasta el final, inclusive ambos!!
+	Energy		G	(long pi, long pf	)const;				// G de la sonda con sec desde pi hasta pf, inclusive ambas!! 
+	Energy		G	(long pi			)const	{return G(pi,Len())    ;}   // G de la sonda con sec desde pi hasta el final, inclusive ambos!!
+	Energy		G	(					)const	{return G(1,Len())     ;}   // G de la sonda con sec desde inicio hasta el final, inclusive ambos!!
+
+	virtual		~CSec()   ;   // decidir si vale la pena que sea virtual. Cual es el efecto??
+	virtual bool NotIdem(CSec *sec) {return false;}
+		NumRang<float>	_Tm ;			//float		_Tm, _minTm, _maxTm ;				//  
+		CSaltCorrNN		*_NNpar ;
+		float			_Conc ;			// conc de esta molec. Si igual al resto -1 y la toma de NNParam
+		Base			*_b;			// sec cod, inicialmente basek
+
+		void		 CorrectSaltOwczarzy() ;
+		float		*_SdS ;			// dS acumulada. Calcular Delta S sera solo restar la final menos la inicial	
+		float		*_SdH ;			// 
+};
 
 //	Base		*CreateTEMPORALcomplementary(long InicBase=0, long EndBase=-1) ;
 //	Base		*GetCopy_charSec(long InicBase, long EndBase, DNAStrand strnd=direct)  ;
 //	Base		*GetCopyFullSec(){Base *s=new Base[Len()+3]; for(int i=0;i<Len()+2;i++) s[i]=_c[i]; s[Len()+2]=0; return s;}
 //	Base		*GetCopy_charSec(DNAStrand strnd=direct)  ;
 //	Base		*Copy_charSec(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd=direct)  ;
-	float		Tm	(long pi, long pf)const;				// Tm de la sonda con sec desde pi hasta pf, inclusive ambas!! 
-	float		Tm	(long pi)const			{return Tm(pi,Len())   ;}   // Tm de la sonda con sec desde pi hasta el final, inclusive ambos!!
-	float		G	(long pi, long pf, float Ta)const;				// G de la sonda con sec desde pi hasta pf, inclusive ambas!! 
-	float		G	(long pi, float Ta)const{return G(pi,Len(), Ta);}   // G de la sonda con sec desde pi hasta el final, inclusive ambos!!
-	float		G	(float Ta )const	    {return G(1 ,Len(), Ta);}   // G de la sonda con sec desde pi hasta el final, inclusive ambos!!
-	float		G	(long pi, long pf)const;				// G de la sonda con sec desde pi hasta pf, inclusive ambas!! 
-	float		G	(long pi)const			{return G(pi,Len())    ;}   // G de la sonda con sec desde pi hasta el final, inclusive ambos!!
-	float		G	( )const				{return G(1,Len())     ;}   // G de la sonda con sec desde pi hasta el final, inclusive ambos!!
-	const char	*Get_charSec()const{return (const char*)_c;}
-
-	virtual		~CSec()   ;   // decidir si vale la pena que sea virtual. Cual es el efecto??
-	virtual bool NotIdem(CSec *sec) {return false;}
 //	private:
-
 //		int				_ID ;			// num de la sec en file original?? en total??, num unico?
 //		char			*_name ;		// nombre unico? FASTA id		
 //		long			_len ;			// longitud corregida, sin los '$'
 //		long			_GrDeg ;		// Grado de degeneracion. Cantidad total de diferentes molec, dependiendo de deg
-		NumRang<float>	_Tm ;			//float		_Tm, _minTm, _maxTm ;				//  
 //		Base			*_c;			// sec char, comienzan y terminan con '$'0
-		CSaltCorrNN		*_NNpar ;
-		float			_Conc ;			// conc de esta molec. Si igual al resto -1 y la toma de NNParam
 //		float			_GCp ;		
 //		long			_Count[n_dgba];	// An array of counters for each deg base - inicializar!!
 //		long			_NDB ;			// cantidad de bases deg
 //		char			*_Clas ;		// clasificacion
-		Base			*_b;			// sec cod, inicialmente basek
-
-		CSec		*CopyFirstBases		(long pos)	;			// copia parcialmente hasta la pos
-		void		 CorrectSaltOwczarzy() ;
-		float		*_SdS ;			// dS acumulada. Calcular Delta S sera solo restar la final menos la inicial	
-		float		*_SdH ;			// 
-
 //		CMultSec	*_NonDegSet ;
-};
+
+
       //<Hsp_num>1</Hsp_num>
       //<Hsp_bit-score>482.786</Hsp_bit-score>
       //<Hsp_score>534</Hsp_score>
@@ -331,6 +342,29 @@ public:
  protected:
 	NumRang<long> _c;		//	long			_pi,_picur, _pf,_pfcur; //  _picur= _pf+1; _pfcur= _pi-1;}	
 } ; 
+class CRangBaseSchift /*: public CRangBase */
+{	CRangBase &_R;
+	long _sch;
+public:
+	CRangBaseSchift	(CRangBase& r, long sch) : _R(r), _sch(sch)
+				{
+					_R.schift(_sch);
+				}
+	void AddSchift	(int sch)
+				{
+					_sch+=sch;
+					_R.schift(sch);
+				}
+	void ResetSchift()
+				{
+					_R.schift(-_sch);
+					_sch=0;
+				}
+		~CRangBaseSchift()
+				{
+					ResetSchift();
+				}
+};
 
 
 

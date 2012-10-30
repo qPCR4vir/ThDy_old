@@ -909,12 +909,15 @@
     <ClInclude Include="..\..\include\ThDySec\common_basics.h" />
     <ClInclude Include="..\..\include\ThDySec\link.h" />
     <ClInclude Include="..\..\include\ThDySec\matrix.h" />
+    <ClInclude Include="..\..\include\ThDySec\oligo.h" />
     <ClInclude Include="..\..\include\ThDySec\sec.h" />
     <ClInclude Include="..\..\include\ThDySec\th_dy_align.h" />
     <ClInclude Include="..\..\include\ThDySec\th_dy_param.h" />
+    <ClInclude Include="..\ThDy_DNAHybrid.Excel\strTo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

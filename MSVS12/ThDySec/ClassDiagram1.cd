@@ -1,0 +1,419 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CInit_Cod_Deg" Collapsed="true">
+    <Position X="10.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\cod_deg.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="C_str" Collapsed="true">
+    <Position X="0.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAQAIAQAgABAAAAAAAAAAgEAAAAAAAEgAABAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NumRang&lt;Num&gt;" Collapsed="true">
+    <Position X="14" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAEAAACBAQBAABUEAAAAFAABAAAAAAEAAAIAAABAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NumRangA&lt;Num&gt;" Collapsed="true">
+    <Position X="12.75" Y="7.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAgABAAAAAAAAAAAAAAAAAAAAAAAIAAAACA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SondeLimits">
+    <Position X="17.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAhAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DegRes" Collapsed="true">
+    <Position X="12.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAQBAAAABAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OutOfNumRange" Collapsed="true">
+    <Position X="15.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CLink" Collapsed="true">
+    <Position X="14.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAEAAAIAAAAAAAABABABAAIAAQEAgQIAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\link.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CList" Collapsed="true">
+    <Position X="18.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAYAAkAAAAkAAQBAQgAAAAQAAARAAAAAAAACBAEAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\link.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMatrix_RA&lt;Num&gt;" Collapsed="true">
+    <Position X="0.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>pgAAAAEAAAAABQCgEICgAgAEArEwAkAAgYBCAAEBECA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\matrix.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CTable&lt;Num&gt;" Collapsed="true">
+    <Position X="0.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAgAAAAAAAAAAAAAAAAAAAAAAIAAgEAECACAABAAgg=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\matrix.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ISec" Collapsed="true">
+    <Position X="8.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAgAAAAAAAAAAAAAAAgAAAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSecBasInfo" Collapsed="true">
+    <Position X="8.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIBAIACAAAAAyICQAAAQggQAKBEAAAAAgAIAEEAFAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSec" Collapsed="true">
+    <Position X="8.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAApEQAAAACAAgEACAIAEAIAQAAAAAAABICAAiCgA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSecBLASTHit" Collapsed="true">
+    <Position X="10" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAEEIAABIQAAAwAgAgAAAAEAIgwBICCAgQABBA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSecGB" Collapsed="true">
+    <Position X="11.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAEAABAAAAAAAAAAAAAAAAAAAAAAAAIAABAAIAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSecGBtxt" Collapsed="true">
+    <Position X="8.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABACAAAAAAgAAAAAABAAQAAAAAAIABAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CRangBaseSchift">
+    <Position X="16" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAABgAAAAAAAAAAACAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSecCand" Collapsed="true">
+    <Position X="11" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAwAAAACAQAAAAAAgAAAAAAAAAAAAAgAACBAAAEAQAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSecAl" Collapsed="true">
+    <Position X="17.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAgEAhAAAAAAAAAAAAAAAAAEgAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMultSec" Collapsed="true">
+    <Position X="16" Y="2.75" Width="1.5" />
+    <InheritanceLine Type="CLink" ManuallyRouted="true" FixedToPoint="true">
+      <Path>
+        <Point X="15" Y="1.812" />
+        <Point X="15" Y="2.34" />
+        <Point X="16.75" Y="2.34" />
+        <Point X="16.75" Y="2.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>EiAEIAICAQEAbAAAAUDBIkzgIgAEAEAABIAIA6AFAgo=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMultAlign" Collapsed="true">
+    <Position X="14.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgACQABAAACAAAAAAAAAAAQAAAAAAAAAAg=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSecLink" Collapsed="true">
+    <Position X="12.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMSecLink" Collapsed="true">
+    <Position X="16.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ThDyAlign" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CBEgAJjwAQElQSICEEkAWDABA+O0CSEEgIBQGF2FAwM=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\th_dy_align.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CHit">
+    <Position X="21.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAABAAAAAAAAgAAABACAgAAAAgAAACAABAAAEAAgA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\th_dy_align.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CHitAligned">
+    <Position X="21.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAMAQhAAAAQIAAAAAAAACAAAAgEIAAAAAQAAAAAABAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\th_dy_align.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AlignedSecPar">
+    <Position X="19.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAiAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\th_dy_align.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ThDyAlign_Tm" Collapsed="true">
+    <Position X="1" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAgAAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\th_dy_align.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ThDyAlign_TmHits" Collapsed="true">
+    <Position X="2.5" Y="3.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAACAAAiAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\th_dy_align.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ThDyAlign_TmCand">
+    <Position X="0.5" Y="3.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAgAAAAAAAAAAAAACAAAAAAEAAAAAAAAAACBAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\th_dy_align.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMSecCand">
+    <Position X="19.5" Y="2.75" Width="1.5" />
+    <InheritanceLine Type="CLink" ManuallyRouted="true" FixedFromPoint="true">
+      <Path>
+        <Point X="15" Y="1.812" />
+        <Point X="15" Y="2.34" />
+        <Point X="20.25" Y="2.34" />
+        <Point X="20.25" Y="2.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>gNoAAQCAAAAiwABAEAAIAEAAAIEEAAAAAAQAAEEQQAg=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\th_dy_align.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ThDyAlign_G">
+    <Position X="5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAEBAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\th_dy_align.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FracTDAlign" Collapsed="true">
+    <Position X="3" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAiIAAJABBAAAACEAgACAAAAAAAAAAEAAAQBAJAIAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\th_dy_align.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ThDyAlign_restTm" Collapsed="true">
+    <Position X="6" Y="4.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAABAACAAAAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\th_dy_align.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="COriNN" Collapsed="true">
+    <Position X="2.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BVYgAgIAAAigAQAAOIAAAQAAAEIQAIEgQAQEAEgAAwA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\th_dy_param.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSaltCorrNN" Collapsed="true">
+    <Position X="2.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AhAAgCAICAAEAIAgkwAQAAAAkCABKAAAUgIAWAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\th_dy_param.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CRang">
+    <Position X="14.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAEEAAAAAAI=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="TmGPos" Collapsed="true">
+    <Position X="17.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="Base" Collapsed="true">
+    <Position X="11" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\cod_deg.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="Energy" Collapsed="true">
+    <Position X="9.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="Entropy" Collapsed="true">
+    <Position X="8" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="Temperature" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="SecPos" Collapsed="true">
+    <Position X="5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="LonSecPos" Collapsed="true">
+    <Position X="6.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="EnergyRang" Collapsed="true">
+    <Position X="15" Y="6.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="EntropyRang" Collapsed="true">
+    <Position X="15" Y="6" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="TemperatureRang" Collapsed="true">
+    <Position X="17.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="SecPosRang" Collapsed="true">
+    <Position X="11.75" Y="6.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="LonSecPosRang" Collapsed="true">
+    <Position X="11.75" Y="6" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="index" Collapsed="true">
+    <Position X="2.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\matrix.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="pCRang" Collapsed="true">
+    <Position X="12.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\sec.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Enum Name="SaltCorrection" Collapsed="true">
+    <Position X="2.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAABAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SaltCorrecP" Collapsed="true">
+    <Position X="4.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAEAAAAAAAAAAAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="AlignMeth" Collapsed="true">
+    <Position X="4.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAIACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="DNAStrand" Collapsed="true">
+    <Position X="10" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAEAAAAAAAAAMAAAAAAAAAIAAAAAAAAAAAAgA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="fileFormat" Collapsed="true">
+    <Position X="8.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAABAAAAAAAwA=</HashCode>
+      <FileName>C:\Prog\ThDySec\include\ThDySec\common_basics.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

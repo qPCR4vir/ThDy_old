@@ -56,8 +56,15 @@
     <ClInclude Include="..\..\include\ThDySec\th_dy_param.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\ThDy_DNAHybrid.Excel\strTo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ThDySec\oligo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
 </Project>

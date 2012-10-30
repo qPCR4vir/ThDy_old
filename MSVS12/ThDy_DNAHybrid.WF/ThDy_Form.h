@@ -1,6 +1,7 @@
 #include "ThDy_DNAHybrid.VC-WF/th_dy_programs.h"  // aqui esta ya : // #include "..\ThDy_programs\init_prog_param.h"  ;    #include "..\ThDySec\common_basics.h" 
 #pragma once
 #include "ThDy_DNAHybrid.VC-WF/Results.h"
+#include "SeqExpl.h" //"ThDy_DNAHybrid.VC-WF/Results.h"
 #include "ThDySec\matrix.h" 
 #include "ThDySec\common_basics.h" 
 #pragma managed
@@ -35,6 +36,7 @@ namespace ThDy_DNAHybridWF {
 	private: System::Windows::Forms::RadioButton^  radBut_UnicSond;
 	private: System::Windows::Forms::RadioButton^  radBut_CommSond;
 	private: System::Windows::Forms::FlowLayoutPanel^  flowLayoutPanel1;
+	private: System::Windows::Forms::Button^  butSeqExplorer;
 
 
 
@@ -73,7 +75,7 @@ namespace ThDy_DNAHybridWF {
 			this->comBoxTAMeth->SelectedIndex  = SMStLucia;         // 0
             UpdateThDyForm();
 		}
-		catch ( ParamOutOfNumRange e)
+		catch ( std::exception e)
 		          { MessageBox::Show ( gcnew String(e.what())  ) ;
 		          }
 
@@ -199,7 +201,11 @@ private: System::Void commandSaveResultFile		(System::Object^  sender, System::E
 			 this->textBoxSaveResultFile->Text = this->SaveResultFileDialog->FileName;
 			 this->textBoxSaveResultFile->Update(); 
 		 }
-
+private: System::Void butSeqExplorer_Click		(System::Object^  sender, System::EventArgs^  e) 
+		 {
+			
+		 
+		 }
 private: System::Void command_uArray			(System::Object^  sender, System::EventArgs^  e)  // Run       mArray
 	{	_uArrThDyP->UpDateP() ;	
                                                     //	MessageBox::Show(L"Primero probemos esto");//_Pr._uArr.Udate = UI_uA_Create ;
@@ -599,15 +605,15 @@ private: System::ComponentModel::IContainer^  components;
 		 void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle1 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle8 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle9 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle2 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle3 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle4 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle5 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle6 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle7 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle10 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle17 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle18 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle11 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle12 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle13 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle14 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle15 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle16 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			this->openFileDialog_targets = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->Design = (gcnew System::Windows::Forms::Button());
 			this->openFileDialog_exe = (gcnew System::Windows::Forms::OpenFileDialog());
@@ -625,31 +631,32 @@ private: System::ComponentModel::IContainer^  components;
 			this->tabControl = (gcnew System::Windows::Forms::TabControl());
 			this->tabPagFindSonden = (gcnew System::Windows::Forms::TabPage());
 			this->but_Compare = (gcnew System::Windows::Forms::Button());
-			this->labMinSelfG = (gcnew System::Windows::Forms::Label());
-			this->labMaxSelfTm = (gcnew System::Windows::Forms::Label());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label3 = (gcnew System::Windows::Forms::Label());
-			this->labelMinSd_nonTgG = (gcnew System::Windows::Forms::Label());
-			this->labelMaxSd_TgG = (gcnew System::Windows::Forms::Label());
-			this->labelMaxSd_nonTgTm = (gcnew System::Windows::Forms::Label());
-			this->labelMinSd_TgTm = (gcnew System::Windows::Forms::Label());
 			this->lab_sG = (gcnew System::Windows::Forms::Label());
 			this->nUpDw_MaxSd_G = (gcnew System::Windows::Forms::NumericUpDown());
-			this->nUpDowMinSd_nonTgG = (gcnew System::Windows::Forms::NumericUpDown());
-			this->nUpDowMaxSd_TgG = (gcnew System::Windows::Forms::NumericUpDown());
-			this->nUpDowMaxSd_nonTgTm = (gcnew System::Windows::Forms::NumericUpDown());
-			this->nUpDowMinSd_TgTm = (gcnew System::Windows::Forms::NumericUpDown());
 			this->nUpDw_MinSd_G = (gcnew System::Windows::Forms::NumericUpDown());
-			this->groupBox_Sd_selft = (gcnew System::Windows::Forms::GroupBox());
-			this->numUpDwMinSelfG = (gcnew System::Windows::Forms::NumericUpDown());
-			this->numUpDwMaxSelfTm = (gcnew System::Windows::Forms::NumericUpDown());
-			this->groupBox_Sd_nTg = (gcnew System::Windows::Forms::GroupBox());
-			this->groupBox_SdTg = (gcnew System::Windows::Forms::GroupBox());
 			this->groupBox_Sd_Min_Max = (gcnew System::Windows::Forms::GroupBox());
 			this->lab_sMax = (gcnew System::Windows::Forms::Label());
 			this->groBox_ComUnic = (gcnew System::Windows::Forms::GroupBox());
 			this->radBut_UnicSond = (gcnew System::Windows::Forms::RadioButton());
 			this->radBut_CommSond = (gcnew System::Windows::Forms::RadioButton());
+			this->flowLayoutPanel1 = (gcnew System::Windows::Forms::FlowLayoutPanel());
+			this->groupBox_SdTg = (gcnew System::Windows::Forms::GroupBox());
+			this->nUpDowMinSd_TgTm = (gcnew System::Windows::Forms::NumericUpDown());
+			this->nUpDowMaxSd_TgG = (gcnew System::Windows::Forms::NumericUpDown());
+			this->labelMinSd_TgTm = (gcnew System::Windows::Forms::Label());
+			this->labelMaxSd_TgG = (gcnew System::Windows::Forms::Label());
+			this->groupBox_Sd_nTg = (gcnew System::Windows::Forms::GroupBox());
+			this->nUpDowMaxSd_nonTgTm = (gcnew System::Windows::Forms::NumericUpDown());
+			this->nUpDowMinSd_nonTgG = (gcnew System::Windows::Forms::NumericUpDown());
+			this->labelMaxSd_nonTgTm = (gcnew System::Windows::Forms::Label());
+			this->labelMinSd_nonTgG = (gcnew System::Windows::Forms::Label());
+			this->groupBox_Sd_selft = (gcnew System::Windows::Forms::GroupBox());
+			this->numUpDwMinSelfG = (gcnew System::Windows::Forms::NumericUpDown());
+			this->numUpDwMaxSelfTm = (gcnew System::Windows::Forms::NumericUpDown());
+			this->labMinSelfG = (gcnew System::Windows::Forms::Label());
+			this->labMaxSelfTm = (gcnew System::Windows::Forms::Label());
 			this->microArray = (gcnew System::Windows::Forms::TabPage());
 			this->radioButton2 = (gcnew System::Windows::Forms::RadioButton());
 			this->radioButton1 = (gcnew System::Windows::Forms::RadioButton());
@@ -771,7 +778,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->openFDial_NNParam = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->oFileExp = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->opPCRfiltrFDlg = (gcnew System::Windows::Forms::OpenFileDialog());
-			this->flowLayoutPanel1 = (gcnew System::Windows::Forms::FlowLayoutPanel());
+			this->butSeqExplorer = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMinSdTm))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDw_MinSdLength))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDw_MaxSdLength))->BeginInit();
@@ -780,18 +787,19 @@ private: System::ComponentModel::IContainer^  components;
 			this->tabControl->SuspendLayout();
 			this->tabPagFindSonden->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDw_MaxSd_G))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMinSd_nonTgG))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMaxSd_TgG))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMaxSd_nonTgTm))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMinSd_TgTm))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDw_MinSd_G))->BeginInit();
+			this->groupBox_Sd_Min_Max->SuspendLayout();
+			this->groBox_ComUnic->SuspendLayout();
+			this->flowLayoutPanel1->SuspendLayout();
+			this->groupBox_SdTg->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMinSd_TgTm))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMaxSd_TgG))->BeginInit();
+			this->groupBox_Sd_nTg->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMaxSd_nonTgTm))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMinSd_nonTgG))->BeginInit();
 			this->groupBox_Sd_selft->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDwMinSelfG))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDwMaxSelfTm))->BeginInit();
-			this->groupBox_Sd_nTg->SuspendLayout();
-			this->groupBox_SdTg->SuspendLayout();
-			this->groupBox_Sd_Min_Max->SuspendLayout();
-			this->groBox_ComUnic->SuspendLayout();
 			this->microArray->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDown5))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDown4))->BeginInit();
@@ -815,7 +823,6 @@ private: System::ComponentModel::IContainer^  components;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDw_MinLen))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDw_TgBeg))->BeginInit();
 			this->grBoxTargets->SuspendLayout();
-			this->flowLayoutPanel1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// openFileDialog_targets
@@ -1009,28 +1016,6 @@ private: System::ComponentModel::IContainer^  components;
 			this->but_Compare->UseVisualStyleBackColor = true;
 			this->but_Compare->Click += gcnew System::EventHandler(this, &ThPr_Form::but_Compare_Click);
 			// 
-			// labMinSelfG
-			// 
-			this->labMinSelfG->AutoSize = true;
-			this->labMinSelfG->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->labMinSelfG->Location = System::Drawing::Point(115, 16);
-			this->labMinSelfG->Name = L"labMinSelfG";
-			this->labMinSelfG->Size = System::Drawing::Size(38, 15);
-			this->labMinSelfG->TabIndex = 3;
-			this->labMinSelfG->Text = L"Min G";
-			// 
-			// labMaxSelfTm
-			// 
-			this->labMaxSelfTm->AutoSize = true;
-			this->labMaxSelfTm->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
-			this->labMaxSelfTm->Location = System::Drawing::Point(109, 39);
-			this->labMaxSelfTm->Name = L"labMaxSelfTm";
-			this->labMaxSelfTm->Size = System::Drawing::Size(52, 15);
-			this->labMaxSelfTm->TabIndex = 3;
-			this->labMaxSelfTm->Text = L"Max Tm";
-			this->toolTip->SetToolTip(this->labMaxSelfTm, L"Max. Tm for sonde secundary structure");
-			// 
 			// label1
 			// 
 			this->label1->AutoSize = true;
@@ -1048,51 +1033,6 @@ private: System::ComponentModel::IContainer^  components;
 			this->label3->Size = System::Drawing::Size(71, 13);
 			this->label3->TabIndex = 3;
 			this->label3->Text = L"G ( kcal/mol )";
-			// 
-			// labelMinSd_nonTgG
-			// 
-			this->labelMinSd_nonTgG->AutoSize = true;
-			this->labelMinSd_nonTgG->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
-			this->labelMinSd_nonTgG->Location = System::Drawing::Point(130, 15);
-			this->labelMinSd_nonTgG->Name = L"labelMinSd_nonTgG";
-			this->labelMinSd_nonTgG->Size = System::Drawing::Size(38, 15);
-			this->labelMinSd_nonTgG->TabIndex = 3;
-			this->labelMinSd_nonTgG->Text = L"Min G";
-			this->toolTip->SetToolTip(this->labelMinSd_nonTgG, L"Only sonde with weak interaction with non-target \r\n(larger G by selected Ta) will" 
-				L" be \"include\"");
-			// 
-			// labelMaxSd_TgG
-			// 
-			this->labelMaxSd_TgG->AutoSize = true;
-			this->labelMaxSd_TgG->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
-			this->labelMaxSd_TgG->Location = System::Drawing::Point(122, 15);
-			this->labelMaxSd_TgG->Name = L"labelMaxSd_TgG";
-			this->labelMaxSd_TgG->Size = System::Drawing::Size(42, 15);
-			this->labelMaxSd_TgG->TabIndex = 3;
-			this->labelMaxSd_TgG->Text = L"Max G";
-			this->toolTip->SetToolTip(this->labelMaxSd_TgG, L"Only sonde with stronger interaction with target  (smaller G by selected Ta) will" 
-				L" be \"include\"");
-			// 
-			// labelMaxSd_nonTgTm
-			// 
-			this->labelMaxSd_nonTgTm->AutoSize = true;
-			this->labelMaxSd_nonTgTm->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
-			this->labelMaxSd_nonTgTm->Location = System::Drawing::Point(116, 38);
-			this->labelMaxSd_nonTgTm->Name = L"labelMaxSd_nonTgTm";
-			this->labelMaxSd_nonTgTm->Size = System::Drawing::Size(52, 15);
-			this->labelMaxSd_nonTgTm->TabIndex = 3;
-			this->labelMaxSd_nonTgTm->Text = L"Max Tm";
-			// 
-			// labelMinSd_TgTm
-			// 
-			this->labelMinSd_TgTm->AutoSize = true;
-			this->labelMinSd_TgTm->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
-			this->labelMinSd_TgTm->Location = System::Drawing::Point(119, 38);
-			this->labelMinSd_TgTm->Name = L"labelMinSd_TgTm";
-			this->labelMinSd_TgTm->Size = System::Drawing::Size(48, 15);
-			this->labelMinSd_TgTm->TabIndex = 3;
-			this->labelMinSd_TgTm->Text = L"Min Tm";
-			this->toolTip->SetToolTip(this->labelMinSd_TgTm, L"Only sonde with longer sonde-target Tm will \"include\"");
 			// 
 			// lab_sG
 			// 
@@ -1116,67 +1056,6 @@ private: System::ComponentModel::IContainer^  components;
 			this->nUpDw_MaxSd_G->TabIndex = 4;
 			this->nUpDw_MaxSd_G->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, System::Int32::MinValue});
 			// 
-			// nUpDowMinSd_nonTgG
-			// 
-			this->nUpDowMinSd_nonTgG->DecimalPlaces = 2;
-			this->nUpDowMinSd_nonTgG->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F));
-			this->nUpDowMinSd_nonTgG->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->nUpDowMinSd_nonTgG->Location = System::Drawing::Point(175, 13);
-			this->nUpDowMinSd_nonTgG->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {30, 0, 0, 0});
-			this->nUpDowMinSd_nonTgG->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, System::Int32::MinValue});
-			this->nUpDowMinSd_nonTgG->MinimumSize = System::Drawing::Size(30, 0);
-			this->nUpDowMinSd_nonTgG->Name = L"nUpDowMinSd_nonTgG";
-			this->nUpDowMinSd_nonTgG->Size = System::Drawing::Size(52, 20);
-			this->nUpDowMinSd_nonTgG->TabIndex = 4;
-			this->toolTip->SetToolTip(this->nUpDowMinSd_nonTgG, L"Only sonde with weak interaction with non-target (larger G by selected Ta) will b" 
-				L"e \"include\"");
-			this->nUpDowMinSd_nonTgG->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {15, 0, 0, 0});
-			// 
-			// nUpDowMaxSd_TgG
-			// 
-			this->nUpDowMaxSd_TgG->DecimalPlaces = 2;
-			this->nUpDowMaxSd_TgG->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F));
-			this->nUpDowMaxSd_TgG->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->nUpDowMaxSd_TgG->Location = System::Drawing::Point(172, 13);
-			this->nUpDowMaxSd_TgG->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {30, 0, 0, 0});
-			this->nUpDowMaxSd_TgG->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, System::Int32::MinValue});
-			this->nUpDowMaxSd_TgG->MinimumSize = System::Drawing::Size(30, 0);
-			this->nUpDowMaxSd_TgG->Name = L"nUpDowMaxSd_TgG";
-			this->nUpDowMaxSd_TgG->Size = System::Drawing::Size(52, 20);
-			this->nUpDowMaxSd_TgG->TabIndex = 4;
-			this->toolTip->SetToolTip(this->nUpDowMaxSd_TgG, L"Only sonde with stronger interaction with target  (smaller G by selected Ta) will" 
-				L" be \"include\"");
-			this->nUpDowMaxSd_TgG->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, 0});
-			// 
-			// nUpDowMaxSd_nonTgTm
-			// 
-			this->nUpDowMaxSd_nonTgTm->DecimalPlaces = 2;
-			this->nUpDowMaxSd_nonTgTm->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F));
-			this->nUpDowMaxSd_nonTgTm->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->nUpDowMaxSd_nonTgTm->Location = System::Drawing::Point(175, 36);
-			this->nUpDowMaxSd_nonTgTm->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {70, 0, 0, 0});
-			this->nUpDowMaxSd_nonTgTm->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {273, 0, 0, System::Int32::MinValue});
-			this->nUpDowMaxSd_nonTgTm->MinimumSize = System::Drawing::Size(30, 0);
-			this->nUpDowMaxSd_nonTgTm->Name = L"nUpDowMaxSd_nonTgTm";
-			this->nUpDowMaxSd_nonTgTm->Size = System::Drawing::Size(52, 20);
-			this->nUpDowMaxSd_nonTgTm->TabIndex = 4;
-			this->nUpDowMaxSd_nonTgTm->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, 0});
-			// 
-			// nUpDowMinSd_TgTm
-			// 
-			this->nUpDowMinSd_TgTm->DecimalPlaces = 2;
-			this->nUpDowMinSd_TgTm->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F));
-			this->nUpDowMinSd_TgTm->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->nUpDowMinSd_TgTm->Location = System::Drawing::Point(172, 36);
-			this->nUpDowMinSd_TgTm->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {70, 0, 0, 0});
-			this->nUpDowMinSd_TgTm->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {273, 0, 0, System::Int32::MinValue});
-			this->nUpDowMinSd_TgTm->MinimumSize = System::Drawing::Size(30, 0);
-			this->nUpDowMinSd_TgTm->Name = L"nUpDowMinSd_TgTm";
-			this->nUpDowMinSd_TgTm->Size = System::Drawing::Size(52, 20);
-			this->nUpDowMinSd_TgTm->TabIndex = 4;
-			this->toolTip->SetToolTip(this->nUpDowMinSd_TgTm, L"Only sonde with longer sonde-target Tm will \"include\"");
-			this->nUpDowMinSd_TgTm->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {30, 0, 0, 0});
-			// 
 			// nUpDw_MinSd_G
 			// 
 			this->nUpDw_MinSd_G->DecimalPlaces = 2;
@@ -1189,93 +1068,6 @@ private: System::ComponentModel::IContainer^  components;
 			this->nUpDw_MinSd_G->Size = System::Drawing::Size(52, 20);
 			this->nUpDw_MinSd_G->TabIndex = 4;
 			this->nUpDw_MinSd_G->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {5, 0, 0, System::Int32::MinValue});
-			// 
-			// groupBox_Sd_selft
-			// 
-			this->groupBox_Sd_selft->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) 
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->groupBox_Sd_selft->Controls->Add(this->numUpDwMinSelfG);
-			this->groupBox_Sd_selft->Controls->Add(this->numUpDwMaxSelfTm);
-			this->groupBox_Sd_selft->Controls->Add(this->labMinSelfG);
-			this->groupBox_Sd_selft->Controls->Add(this->labMaxSelfTm);
-			this->groupBox_Sd_selft->Font = (gcnew System::Drawing::Font(L"Arial", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->groupBox_Sd_selft->Location = System::Drawing::Point(1, 128);
-			this->groupBox_Sd_selft->Margin = System::Windows::Forms::Padding(1);
-			this->groupBox_Sd_selft->Name = L"groupBox_Sd_selft";
-			this->groupBox_Sd_selft->Size = System::Drawing::Size(237, 62);
-			this->groupBox_Sd_selft->TabIndex = 5;
-			this->groupBox_Sd_selft->TabStop = false;
-			this->groupBox_Sd_selft->Text = L"Sonde-selft ";
-			this->toolTip->SetToolTip(this->groupBox_Sd_selft, L"Only sonde with weaksecundary structur will be \"include\"");
-			// 
-			// numUpDwMinSelfG
-			// 
-			this->numUpDwMinSelfG->DecimalPlaces = 2;
-			this->numUpDwMinSelfG->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->numUpDwMinSelfG->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->numUpDwMinSelfG->Location = System::Drawing::Point(175, 11);
-			this->numUpDwMinSelfG->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {30, 0, 0, 0});
-			this->numUpDwMinSelfG->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, System::Int32::MinValue});
-			this->numUpDwMinSelfG->MinimumSize = System::Drawing::Size(30, 0);
-			this->numUpDwMinSelfG->Name = L"numUpDwMinSelfG";
-			this->numUpDwMinSelfG->Size = System::Drawing::Size(52, 20);
-			this->numUpDwMinSelfG->TabIndex = 4;
-			this->numUpDwMinSelfG->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, 0});
-			// 
-			// numUpDwMaxSelfTm
-			// 
-			this->numUpDwMaxSelfTm->DecimalPlaces = 1;
-			this->numUpDwMaxSelfTm->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->numUpDwMaxSelfTm->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->numUpDwMaxSelfTm->Location = System::Drawing::Point(175, 35);
-			this->numUpDwMaxSelfTm->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {70, 0, 0, 0});
-			this->numUpDwMaxSelfTm->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {273, 0, 0, System::Int32::MinValue});
-			this->numUpDwMaxSelfTm->MinimumSize = System::Drawing::Size(30, 0);
-			this->numUpDwMaxSelfTm->Name = L"numUpDwMaxSelfTm";
-			this->numUpDwMaxSelfTm->Size = System::Drawing::Size(52, 20);
-			this->numUpDwMaxSelfTm->TabIndex = 4;
-			this->numUpDwMaxSelfTm->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, 0});
-			// 
-			// groupBox_Sd_nTg
-			// 
-			this->groupBox_Sd_nTg->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->groupBox_Sd_nTg->Controls->Add(this->nUpDowMaxSd_nonTgTm);
-			this->groupBox_Sd_nTg->Controls->Add(this->nUpDowMinSd_nonTgG);
-			this->groupBox_Sd_nTg->Controls->Add(this->labelMaxSd_nonTgTm);
-			this->groupBox_Sd_nTg->Controls->Add(this->labelMinSd_nonTgG);
-			this->groupBox_Sd_nTg->Font = (gcnew System::Drawing::Font(L"Arial", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->groupBox_Sd_nTg->Location = System::Drawing::Point(1, 64);
-			this->groupBox_Sd_nTg->Margin = System::Windows::Forms::Padding(1);
-			this->groupBox_Sd_nTg->Name = L"groupBox_Sd_nTg";
-			this->groupBox_Sd_nTg->Size = System::Drawing::Size(237, 62);
-			this->groupBox_Sd_nTg->TabIndex = 5;
-			this->groupBox_Sd_nTg->TabStop = false;
-			this->groupBox_Sd_nTg->Text = L"Sonde-non-target";
-			this->toolTip->SetToolTip(this->groupBox_Sd_nTg, L"Only sonde with weak interaction with non-target will be \"include\"");
-			// 
-			// groupBox_SdTg
-			// 
-			this->groupBox_SdTg->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->groupBox_SdTg->Controls->Add(this->nUpDowMinSd_TgTm);
-			this->groupBox_SdTg->Controls->Add(this->nUpDowMaxSd_TgG);
-			this->groupBox_SdTg->Controls->Add(this->labelMinSd_TgTm);
-			this->groupBox_SdTg->Controls->Add(this->labelMaxSd_TgG);
-			this->groupBox_SdTg->Font = (gcnew System::Drawing::Font(L"Arial", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->groupBox_SdTg->Location = System::Drawing::Point(1, 1);
-			this->groupBox_SdTg->Margin = System::Windows::Forms::Padding(1);
-			this->groupBox_SdTg->Name = L"groupBox_SdTg";
-			this->groupBox_SdTg->Size = System::Drawing::Size(237, 61);
-			this->groupBox_SdTg->TabIndex = 5;
-			this->groupBox_SdTg->TabStop = false;
-			this->groupBox_SdTg->Text = L"Sonde-target";
-			this->toolTip->SetToolTip(this->groupBox_SdTg, L"Only sonde with stronger interaction with target will be \"include\"");
 			// 
 			// groupBox_Sd_Min_Max
 			// 
@@ -1335,6 +1127,232 @@ private: System::ComponentModel::IContainer^  components;
 			this->radBut_CommSond->Text = L"Common, with Min Target Coverage (%)";
 			this->radBut_CommSond->UseVisualStyleBackColor = true;
 			// 
+			// flowLayoutPanel1
+			// 
+			this->flowLayoutPanel1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+			this->flowLayoutPanel1->Controls->Add(this->groupBox_SdTg);
+			this->flowLayoutPanel1->Controls->Add(this->groupBox_Sd_nTg);
+			this->flowLayoutPanel1->Controls->Add(this->groupBox_Sd_selft);
+			this->flowLayoutPanel1->Location = System::Drawing::Point(302, 25);
+			this->flowLayoutPanel1->Name = L"flowLayoutPanel1";
+			this->flowLayoutPanel1->Size = System::Drawing::Size(241, 194);
+			this->flowLayoutPanel1->TabIndex = 16;
+			// 
+			// groupBox_SdTg
+			// 
+			this->groupBox_SdTg->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->groupBox_SdTg->Controls->Add(this->nUpDowMinSd_TgTm);
+			this->groupBox_SdTg->Controls->Add(this->nUpDowMaxSd_TgG);
+			this->groupBox_SdTg->Controls->Add(this->labelMinSd_TgTm);
+			this->groupBox_SdTg->Controls->Add(this->labelMaxSd_TgG);
+			this->groupBox_SdTg->Font = (gcnew System::Drawing::Font(L"Arial", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox_SdTg->Location = System::Drawing::Point(1, 1);
+			this->groupBox_SdTg->Margin = System::Windows::Forms::Padding(1);
+			this->groupBox_SdTg->Name = L"groupBox_SdTg";
+			this->groupBox_SdTg->Size = System::Drawing::Size(237, 61);
+			this->groupBox_SdTg->TabIndex = 5;
+			this->groupBox_SdTg->TabStop = false;
+			this->groupBox_SdTg->Text = L"Sonde-target";
+			this->toolTip->SetToolTip(this->groupBox_SdTg, L"Only sonde with stronger interaction with target will be \"include\"");
+			// 
+			// nUpDowMinSd_TgTm
+			// 
+			this->nUpDowMinSd_TgTm->DecimalPlaces = 2;
+			this->nUpDowMinSd_TgTm->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F));
+			this->nUpDowMinSd_TgTm->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
+			this->nUpDowMinSd_TgTm->Location = System::Drawing::Point(172, 36);
+			this->nUpDowMinSd_TgTm->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {70, 0, 0, 0});
+			this->nUpDowMinSd_TgTm->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {273, 0, 0, System::Int32::MinValue});
+			this->nUpDowMinSd_TgTm->MinimumSize = System::Drawing::Size(30, 0);
+			this->nUpDowMinSd_TgTm->Name = L"nUpDowMinSd_TgTm";
+			this->nUpDowMinSd_TgTm->Size = System::Drawing::Size(52, 20);
+			this->nUpDowMinSd_TgTm->TabIndex = 4;
+			this->toolTip->SetToolTip(this->nUpDowMinSd_TgTm, L"Only sonde with longer sonde-target Tm will \"include\"");
+			this->nUpDowMinSd_TgTm->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {30, 0, 0, 0});
+			// 
+			// nUpDowMaxSd_TgG
+			// 
+			this->nUpDowMaxSd_TgG->DecimalPlaces = 2;
+			this->nUpDowMaxSd_TgG->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F));
+			this->nUpDowMaxSd_TgG->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
+			this->nUpDowMaxSd_TgG->Location = System::Drawing::Point(172, 13);
+			this->nUpDowMaxSd_TgG->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {30, 0, 0, 0});
+			this->nUpDowMaxSd_TgG->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, System::Int32::MinValue});
+			this->nUpDowMaxSd_TgG->MinimumSize = System::Drawing::Size(30, 0);
+			this->nUpDowMaxSd_TgG->Name = L"nUpDowMaxSd_TgG";
+			this->nUpDowMaxSd_TgG->Size = System::Drawing::Size(52, 20);
+			this->nUpDowMaxSd_TgG->TabIndex = 4;
+			this->toolTip->SetToolTip(this->nUpDowMaxSd_TgG, L"Only sonde with stronger interaction with target  (smaller G by selected Ta) will" 
+				L" be \"include\"");
+			this->nUpDowMaxSd_TgG->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, 0});
+			// 
+			// labelMinSd_TgTm
+			// 
+			this->labelMinSd_TgTm->AutoSize = true;
+			this->labelMinSd_TgTm->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
+			this->labelMinSd_TgTm->Location = System::Drawing::Point(119, 38);
+			this->labelMinSd_TgTm->Name = L"labelMinSd_TgTm";
+			this->labelMinSd_TgTm->Size = System::Drawing::Size(48, 15);
+			this->labelMinSd_TgTm->TabIndex = 3;
+			this->labelMinSd_TgTm->Text = L"Min Tm";
+			this->toolTip->SetToolTip(this->labelMinSd_TgTm, L"Only sonde with longer sonde-target Tm will \"include\"");
+			// 
+			// labelMaxSd_TgG
+			// 
+			this->labelMaxSd_TgG->AutoSize = true;
+			this->labelMaxSd_TgG->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
+			this->labelMaxSd_TgG->Location = System::Drawing::Point(122, 15);
+			this->labelMaxSd_TgG->Name = L"labelMaxSd_TgG";
+			this->labelMaxSd_TgG->Size = System::Drawing::Size(42, 15);
+			this->labelMaxSd_TgG->TabIndex = 3;
+			this->labelMaxSd_TgG->Text = L"Max G";
+			this->toolTip->SetToolTip(this->labelMaxSd_TgG, L"Only sonde with stronger interaction with target  (smaller G by selected Ta) will" 
+				L" be \"include\"");
+			// 
+			// groupBox_Sd_nTg
+			// 
+			this->groupBox_Sd_nTg->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->groupBox_Sd_nTg->Controls->Add(this->nUpDowMaxSd_nonTgTm);
+			this->groupBox_Sd_nTg->Controls->Add(this->nUpDowMinSd_nonTgG);
+			this->groupBox_Sd_nTg->Controls->Add(this->labelMaxSd_nonTgTm);
+			this->groupBox_Sd_nTg->Controls->Add(this->labelMinSd_nonTgG);
+			this->groupBox_Sd_nTg->Font = (gcnew System::Drawing::Font(L"Arial", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox_Sd_nTg->Location = System::Drawing::Point(1, 64);
+			this->groupBox_Sd_nTg->Margin = System::Windows::Forms::Padding(1);
+			this->groupBox_Sd_nTg->Name = L"groupBox_Sd_nTg";
+			this->groupBox_Sd_nTg->Size = System::Drawing::Size(237, 62);
+			this->groupBox_Sd_nTg->TabIndex = 5;
+			this->groupBox_Sd_nTg->TabStop = false;
+			this->groupBox_Sd_nTg->Text = L"Sonde-non-target";
+			this->toolTip->SetToolTip(this->groupBox_Sd_nTg, L"Only sonde with weak interaction with non-target will be \"include\"");
+			// 
+			// nUpDowMaxSd_nonTgTm
+			// 
+			this->nUpDowMaxSd_nonTgTm->DecimalPlaces = 2;
+			this->nUpDowMaxSd_nonTgTm->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F));
+			this->nUpDowMaxSd_nonTgTm->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
+			this->nUpDowMaxSd_nonTgTm->Location = System::Drawing::Point(175, 36);
+			this->nUpDowMaxSd_nonTgTm->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {70, 0, 0, 0});
+			this->nUpDowMaxSd_nonTgTm->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {273, 0, 0, System::Int32::MinValue});
+			this->nUpDowMaxSd_nonTgTm->MinimumSize = System::Drawing::Size(30, 0);
+			this->nUpDowMaxSd_nonTgTm->Name = L"nUpDowMaxSd_nonTgTm";
+			this->nUpDowMaxSd_nonTgTm->Size = System::Drawing::Size(52, 20);
+			this->nUpDowMaxSd_nonTgTm->TabIndex = 4;
+			this->nUpDowMaxSd_nonTgTm->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, 0});
+			// 
+			// nUpDowMinSd_nonTgG
+			// 
+			this->nUpDowMinSd_nonTgG->DecimalPlaces = 2;
+			this->nUpDowMinSd_nonTgG->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F));
+			this->nUpDowMinSd_nonTgG->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
+			this->nUpDowMinSd_nonTgG->Location = System::Drawing::Point(175, 13);
+			this->nUpDowMinSd_nonTgG->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {30, 0, 0, 0});
+			this->nUpDowMinSd_nonTgG->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, System::Int32::MinValue});
+			this->nUpDowMinSd_nonTgG->MinimumSize = System::Drawing::Size(30, 0);
+			this->nUpDowMinSd_nonTgG->Name = L"nUpDowMinSd_nonTgG";
+			this->nUpDowMinSd_nonTgG->Size = System::Drawing::Size(52, 20);
+			this->nUpDowMinSd_nonTgG->TabIndex = 4;
+			this->toolTip->SetToolTip(this->nUpDowMinSd_nonTgG, L"Only sonde with weak interaction with non-target (larger G by selected Ta) will b" 
+				L"e \"include\"");
+			this->nUpDowMinSd_nonTgG->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {15, 0, 0, 0});
+			// 
+			// labelMaxSd_nonTgTm
+			// 
+			this->labelMaxSd_nonTgTm->AutoSize = true;
+			this->labelMaxSd_nonTgTm->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
+			this->labelMaxSd_nonTgTm->Location = System::Drawing::Point(116, 38);
+			this->labelMaxSd_nonTgTm->Name = L"labelMaxSd_nonTgTm";
+			this->labelMaxSd_nonTgTm->Size = System::Drawing::Size(52, 15);
+			this->labelMaxSd_nonTgTm->TabIndex = 3;
+			this->labelMaxSd_nonTgTm->Text = L"Max Tm";
+			// 
+			// labelMinSd_nonTgG
+			// 
+			this->labelMinSd_nonTgG->AutoSize = true;
+			this->labelMinSd_nonTgG->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
+			this->labelMinSd_nonTgG->Location = System::Drawing::Point(130, 15);
+			this->labelMinSd_nonTgG->Name = L"labelMinSd_nonTgG";
+			this->labelMinSd_nonTgG->Size = System::Drawing::Size(38, 15);
+			this->labelMinSd_nonTgG->TabIndex = 3;
+			this->labelMinSd_nonTgG->Text = L"Min G";
+			this->toolTip->SetToolTip(this->labelMinSd_nonTgG, L"Only sonde with weak interaction with non-target \r\n(larger G by selected Ta) will" 
+				L" be \"include\"");
+			// 
+			// groupBox_Sd_selft
+			// 
+			this->groupBox_Sd_selft->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->groupBox_Sd_selft->Controls->Add(this->numUpDwMinSelfG);
+			this->groupBox_Sd_selft->Controls->Add(this->numUpDwMaxSelfTm);
+			this->groupBox_Sd_selft->Controls->Add(this->labMinSelfG);
+			this->groupBox_Sd_selft->Controls->Add(this->labMaxSelfTm);
+			this->groupBox_Sd_selft->Font = (gcnew System::Drawing::Font(L"Arial", 9.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox_Sd_selft->Location = System::Drawing::Point(1, 128);
+			this->groupBox_Sd_selft->Margin = System::Windows::Forms::Padding(1);
+			this->groupBox_Sd_selft->Name = L"groupBox_Sd_selft";
+			this->groupBox_Sd_selft->Size = System::Drawing::Size(237, 62);
+			this->groupBox_Sd_selft->TabIndex = 5;
+			this->groupBox_Sd_selft->TabStop = false;
+			this->groupBox_Sd_selft->Text = L"Sonde-selft ";
+			this->toolTip->SetToolTip(this->groupBox_Sd_selft, L"Only sonde with weaksecundary structur will be \"include\"");
+			// 
+			// numUpDwMinSelfG
+			// 
+			this->numUpDwMinSelfG->DecimalPlaces = 2;
+			this->numUpDwMinSelfG->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->numUpDwMinSelfG->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
+			this->numUpDwMinSelfG->Location = System::Drawing::Point(175, 11);
+			this->numUpDwMinSelfG->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {30, 0, 0, 0});
+			this->numUpDwMinSelfG->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, System::Int32::MinValue});
+			this->numUpDwMinSelfG->MinimumSize = System::Drawing::Size(30, 0);
+			this->numUpDwMinSelfG->Name = L"numUpDwMinSelfG";
+			this->numUpDwMinSelfG->Size = System::Drawing::Size(52, 20);
+			this->numUpDwMinSelfG->TabIndex = 4;
+			this->numUpDwMinSelfG->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, 0});
+			// 
+			// numUpDwMaxSelfTm
+			// 
+			this->numUpDwMaxSelfTm->DecimalPlaces = 1;
+			this->numUpDwMaxSelfTm->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->numUpDwMaxSelfTm->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
+			this->numUpDwMaxSelfTm->Location = System::Drawing::Point(175, 35);
+			this->numUpDwMaxSelfTm->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {70, 0, 0, 0});
+			this->numUpDwMaxSelfTm->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {273, 0, 0, System::Int32::MinValue});
+			this->numUpDwMaxSelfTm->MinimumSize = System::Drawing::Size(30, 0);
+			this->numUpDwMaxSelfTm->Name = L"numUpDwMaxSelfTm";
+			this->numUpDwMaxSelfTm->Size = System::Drawing::Size(52, 20);
+			this->numUpDwMaxSelfTm->TabIndex = 4;
+			this->numUpDwMaxSelfTm->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {10, 0, 0, 0});
+			// 
+			// labMinSelfG
+			// 
+			this->labMinSelfG->AutoSize = true;
+			this->labMinSelfG->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->labMinSelfG->Location = System::Drawing::Point(115, 16);
+			this->labMinSelfG->Name = L"labMinSelfG";
+			this->labMinSelfG->Size = System::Drawing::Size(38, 15);
+			this->labMinSelfG->TabIndex = 3;
+			this->labMinSelfG->Text = L"Min G";
+			// 
+			// labMaxSelfTm
+			// 
+			this->labMaxSelfTm->AutoSize = true;
+			this->labMaxSelfTm->Font = (gcnew System::Drawing::Font(L"Arial", 9, System::Drawing::FontStyle::Bold));
+			this->labMaxSelfTm->Location = System::Drawing::Point(109, 39);
+			this->labMaxSelfTm->Name = L"labMaxSelfTm";
+			this->labMaxSelfTm->Size = System::Drawing::Size(52, 15);
+			this->labMaxSelfTm->TabIndex = 3;
+			this->labMaxSelfTm->Text = L"Max Tm";
+			this->toolTip->SetToolTip(this->labMaxSelfTm, L"Max. Tm for sonde secundary structure");
+			// 
 			// microArray
 			// 
 			this->microArray->Controls->Add(this->radioButton2);
@@ -1364,7 +1382,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->microArray->Location = System::Drawing::Point(4, 22);
 			this->microArray->Name = L"microArray";
 			this->microArray->Padding = System::Windows::Forms::Padding(3);
-			this->microArray->Size = System::Drawing::Size(534, 255);
+			this->microArray->Size = System::Drawing::Size(548, 255);
 			this->microArray->TabIndex = 1;
 			this->microArray->Text = L"µArray";
 			this->microArray->ToolTipText = L"An virtual microarray experiment - check all target aganist all sonde";
@@ -1640,7 +1658,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->tabPagPCRDesing->Location = System::Drawing::Point(4, 22);
 			this->tabPagPCRDesing->Name = L"tabPagPCRDesing";
 			this->tabPagPCRDesing->Padding = System::Windows::Forms::Padding(3);
-			this->tabPagPCRDesing->Size = System::Drawing::Size(534, 255);
+			this->tabPagPCRDesing->Size = System::Drawing::Size(548, 255);
 			this->tabPagPCRDesing->TabIndex = 2;
 			this->tabPagPCRDesing->Text = L"PCR Design";
 			// 
@@ -1706,7 +1724,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->tabPagMultiplexPCR->Location = System::Drawing::Point(4, 22);
 			this->tabPagMultiplexPCR->Name = L"tabPagMultiplexPCR";
 			this->tabPagMultiplexPCR->Padding = System::Windows::Forms::Padding(3);
-			this->tabPagMultiplexPCR->Size = System::Drawing::Size(534, 255);
+			this->tabPagMultiplexPCR->Size = System::Drawing::Size(548, 255);
 			this->tabPagMultiplexPCR->TabIndex = 3;
 			this->tabPagMultiplexPCR->Text = L"Multiplex PCR";
 			this->tabPagMultiplexPCR->ToolTipText = L"Check all primers and complementary primers against selft and against all others " 
@@ -1788,7 +1806,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->tabPagTmCalc->Location = System::Drawing::Point(4, 22);
 			this->tabPagTmCalc->Name = L"tabPagTmCalc";
 			this->tabPagTmCalc->Padding = System::Windows::Forms::Padding(3);
-			this->tabPagTmCalc->Size = System::Drawing::Size(534, 255);
+			this->tabPagTmCalc->Size = System::Drawing::Size(548, 255);
 			this->tabPagTmCalc->TabIndex = 4;
 			this->tabPagTmCalc->Text = L"Tm Calc";
 			// 
@@ -1796,41 +1814,41 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			this->dGVw_TmCalcRes->AllowUserToAddRows = false;
 			this->dGVw_TmCalcRes->AllowUserToDeleteRows = false;
-			dataGridViewCellStyle1->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			dataGridViewCellStyle1->BackColor = System::Drawing::SystemColors::Control;
-			dataGridViewCellStyle1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
+			dataGridViewCellStyle10->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			dataGridViewCellStyle10->BackColor = System::Drawing::SystemColors::Control;
+			dataGridViewCellStyle10->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			dataGridViewCellStyle1->ForeColor = System::Drawing::SystemColors::WindowText;
-			dataGridViewCellStyle1->SelectionBackColor = System::Drawing::SystemColors::Highlight;
-			dataGridViewCellStyle1->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
-			dataGridViewCellStyle1->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
-			this->dGVw_TmCalcRes->ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle10->ForeColor = System::Drawing::SystemColors::WindowText;
+			dataGridViewCellStyle10->SelectionBackColor = System::Drawing::SystemColors::Highlight;
+			dataGridViewCellStyle10->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
+			dataGridViewCellStyle10->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
+			this->dGVw_TmCalcRes->ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
 			this->dGVw_TmCalcRes->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
 			this->dGVw_TmCalcRes->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(6) {this->Tm_min, 
 				this->Tm, this->Tm_max, this->G_min, this->G, this->G_max});
-			dataGridViewCellStyle8->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			dataGridViewCellStyle8->BackColor = System::Drawing::SystemColors::Window;
-			dataGridViewCellStyle8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
+			dataGridViewCellStyle17->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			dataGridViewCellStyle17->BackColor = System::Drawing::SystemColors::Window;
+			dataGridViewCellStyle17->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			dataGridViewCellStyle8->ForeColor = System::Drawing::SystemColors::ControlText;
-			dataGridViewCellStyle8->Format = L"N1";
-			dataGridViewCellStyle8->NullValue = nullptr;
-			dataGridViewCellStyle8->SelectionBackColor = System::Drawing::SystemColors::Highlight;
-			dataGridViewCellStyle8->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
-			dataGridViewCellStyle8->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
-			this->dGVw_TmCalcRes->DefaultCellStyle = dataGridViewCellStyle8;
+			dataGridViewCellStyle17->ForeColor = System::Drawing::SystemColors::ControlText;
+			dataGridViewCellStyle17->Format = L"N1";
+			dataGridViewCellStyle17->NullValue = nullptr;
+			dataGridViewCellStyle17->SelectionBackColor = System::Drawing::SystemColors::Highlight;
+			dataGridViewCellStyle17->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
+			dataGridViewCellStyle17->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
+			this->dGVw_TmCalcRes->DefaultCellStyle = dataGridViewCellStyle17;
 			this->dGVw_TmCalcRes->Location = System::Drawing::Point(94, 78);
 			this->dGVw_TmCalcRes->Name = L"dGVw_TmCalcRes";
 			this->dGVw_TmCalcRes->ReadOnly = true;
-			dataGridViewCellStyle9->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			dataGridViewCellStyle9->BackColor = System::Drawing::SystemColors::Control;
-			dataGridViewCellStyle9->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
+			dataGridViewCellStyle18->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			dataGridViewCellStyle18->BackColor = System::Drawing::SystemColors::Control;
+			dataGridViewCellStyle18->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			dataGridViewCellStyle9->ForeColor = System::Drawing::SystemColors::WindowText;
-			dataGridViewCellStyle9->SelectionBackColor = System::Drawing::SystemColors::Highlight;
-			dataGridViewCellStyle9->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
-			dataGridViewCellStyle9->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
-			this->dGVw_TmCalcRes->RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+			dataGridViewCellStyle18->ForeColor = System::Drawing::SystemColors::WindowText;
+			dataGridViewCellStyle18->SelectionBackColor = System::Drawing::SystemColors::Highlight;
+			dataGridViewCellStyle18->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
+			dataGridViewCellStyle18->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
+			this->dGVw_TmCalcRes->RowHeadersDefaultCellStyle = dataGridViewCellStyle18;
 			this->dGVw_TmCalcRes->RowHeadersWidth = 80;
 			this->dGVw_TmCalcRes->Size = System::Drawing::Size(434, 95);
 			this->dGVw_TmCalcRes->TabIndex = 20;
@@ -1838,8 +1856,8 @@ private: System::ComponentModel::IContainer^  components;
 			// Tm_min
 			// 
 			this->Tm_min->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
-			dataGridViewCellStyle2->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleRight;
-			this->Tm_min->DefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle11->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleRight;
+			this->Tm_min->DefaultCellStyle = dataGridViewCellStyle11;
 			this->Tm_min->HeaderText = L"min-";
 			this->Tm_min->Name = L"Tm_min";
 			this->Tm_min->ReadOnly = true;
@@ -1847,8 +1865,8 @@ private: System::ComponentModel::IContainer^  components;
 			// Tm
 			// 
 			this->Tm->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
-			dataGridViewCellStyle3->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleCenter;
-			this->Tm->DefaultCellStyle = dataGridViewCellStyle3;
+			dataGridViewCellStyle12->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleCenter;
+			this->Tm->DefaultCellStyle = dataGridViewCellStyle12;
 			this->Tm->HeaderText = L"Tm(°C)";
 			this->Tm->Name = L"Tm";
 			this->Tm->ReadOnly = true;
@@ -1856,8 +1874,8 @@ private: System::ComponentModel::IContainer^  components;
 			// Tm_max
 			// 
 			this->Tm_max->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
-			dataGridViewCellStyle4->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			this->Tm_max->DefaultCellStyle = dataGridViewCellStyle4;
+			dataGridViewCellStyle13->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			this->Tm_max->DefaultCellStyle = dataGridViewCellStyle13;
 			this->Tm_max->HeaderText = L"-max";
 			this->Tm_max->Name = L"Tm_max";
 			this->Tm_max->ReadOnly = true;
@@ -1865,8 +1883,8 @@ private: System::ComponentModel::IContainer^  components;
 			// G_min
 			// 
 			this->G_min->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
-			dataGridViewCellStyle5->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleRight;
-			this->G_min->DefaultCellStyle = dataGridViewCellStyle5;
+			dataGridViewCellStyle14->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleRight;
+			this->G_min->DefaultCellStyle = dataGridViewCellStyle14;
 			this->G_min->HeaderText = L"min-";
 			this->G_min->Name = L"G_min";
 			this->G_min->ReadOnly = true;
@@ -1874,8 +1892,8 @@ private: System::ComponentModel::IContainer^  components;
 			// G
 			// 
 			this->G->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
-			dataGridViewCellStyle6->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleCenter;
-			this->G->DefaultCellStyle = dataGridViewCellStyle6;
+			dataGridViewCellStyle15->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleCenter;
+			this->G->DefaultCellStyle = dataGridViewCellStyle15;
 			this->G->HeaderText = L"G( kJ)";
 			this->G->Name = L"G";
 			this->G->ReadOnly = true;
@@ -1883,8 +1901,8 @@ private: System::ComponentModel::IContainer^  components;
 			// G_max
 			// 
 			this->G_max->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
-			dataGridViewCellStyle7->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			this->G_max->DefaultCellStyle = dataGridViewCellStyle7;
+			dataGridViewCellStyle16->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			this->G_max->DefaultCellStyle = dataGridViewCellStyle16;
 			this->G_max->HeaderText = L"-max";
 			this->G_max->Name = L"G_max";
 			this->G_max->ReadOnly = true;
@@ -2051,7 +2069,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->tabPagSetup->Location = System::Drawing::Point(4, 22);
 			this->tabPagSetup->Name = L"tabPagSetup";
 			this->tabPagSetup->Padding = System::Windows::Forms::Padding(3);
-			this->tabPagSetup->Size = System::Drawing::Size(534, 255);
+			this->tabPagSetup->Size = System::Drawing::Size(548, 255);
 			this->tabPagSetup->TabIndex = 5;
 			this->tabPagSetup->Text = L"Setup";
 			// 
@@ -2744,22 +2762,22 @@ private: System::ComponentModel::IContainer^  components;
 			this->opPCRfiltrFDlg->InitialDirectory = L"C:\\Users\\Rodriguez\\Documents\\ThDySec\\sonden";
 			this->opPCRfiltrFDlg->Title = L"Open Sondes File";
 			// 
-			// flowLayoutPanel1
+			// butSeqExplorer
 			// 
-			this->flowLayoutPanel1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
-			this->flowLayoutPanel1->Controls->Add(this->groupBox_SdTg);
-			this->flowLayoutPanel1->Controls->Add(this->groupBox_Sd_nTg);
-			this->flowLayoutPanel1->Controls->Add(this->groupBox_Sd_selft);
-			this->flowLayoutPanel1->Location = System::Drawing::Point(302, 25);
-			this->flowLayoutPanel1->Name = L"flowLayoutPanel1";
-			this->flowLayoutPanel1->Size = System::Drawing::Size(241, 194);
-			this->flowLayoutPanel1->TabIndex = 16;
+			this->butSeqExplorer->Location = System::Drawing::Point(179, 432);
+			this->butSeqExplorer->Name = L"butSeqExplorer";
+			this->butSeqExplorer->Size = System::Drawing::Size(83, 21);
+			this->butSeqExplorer->TabIndex = 16;
+			this->butSeqExplorer->Text = L"Seq Explorer";
+			this->butSeqExplorer->UseVisualStyleBackColor = true;
+			this->butSeqExplorer->Click += gcnew System::EventHandler(this, &ThPr_Form::butSeqExplorer_Click);
 			// 
 			// ThPr_Form
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(564, 642);
+			this->Controls->Add(this->butSeqExplorer);
 			this->Controls->Add(this->richTextBox2);
 			this->Controls->Add(this->textBoxPrFile);
 			this->Controls->Add(this->richTextBox1);
@@ -2793,23 +2811,24 @@ private: System::ComponentModel::IContainer^  components;
 			this->tabPagFindSonden->ResumeLayout(false);
 			this->tabPagFindSonden->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDw_MaxSd_G))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMinSd_nonTgG))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMaxSd_TgG))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMaxSd_nonTgTm))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMinSd_TgTm))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDw_MinSd_G))->EndInit();
-			this->groupBox_Sd_selft->ResumeLayout(false);
-			this->groupBox_Sd_selft->PerformLayout();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDwMinSelfG))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDwMaxSelfTm))->EndInit();
-			this->groupBox_Sd_nTg->ResumeLayout(false);
-			this->groupBox_Sd_nTg->PerformLayout();
-			this->groupBox_SdTg->ResumeLayout(false);
-			this->groupBox_SdTg->PerformLayout();
 			this->groupBox_Sd_Min_Max->ResumeLayout(false);
 			this->groupBox_Sd_Min_Max->PerformLayout();
 			this->groBox_ComUnic->ResumeLayout(false);
 			this->groBox_ComUnic->PerformLayout();
+			this->flowLayoutPanel1->ResumeLayout(false);
+			this->groupBox_SdTg->ResumeLayout(false);
+			this->groupBox_SdTg->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMinSd_TgTm))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMaxSd_TgG))->EndInit();
+			this->groupBox_Sd_nTg->ResumeLayout(false);
+			this->groupBox_Sd_nTg->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMaxSd_nonTgTm))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->nUpDowMinSd_nonTgG))->EndInit();
+			this->groupBox_Sd_selft->ResumeLayout(false);
+			this->groupBox_Sd_selft->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDwMinSelfG))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDwMaxSelfTm))->EndInit();
 			this->microArray->ResumeLayout(false);
 			this->microArray->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDown5))->EndInit();
@@ -2840,12 +2859,12 @@ private: System::ComponentModel::IContainer^  components;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numUpDw_TgBeg))->EndInit();
 			this->grBoxTargets->ResumeLayout(false);
 			this->grBoxTargets->PerformLayout();
-			this->flowLayoutPanel1->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
 		 }
 #pragma endregion
+
 
 };
 }
