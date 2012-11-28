@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "ThDy_programs\init_prog_param.h"      // aqui esta ya : #include "..\ThDySec\common_basics.h" 
+#include "ThDy_programs\init_thdy_prog_param.h"      // aqui esta ya : #include "..\ThDySec\common_basics.h" 
 #include "afxwin.h"
 #include "afxcmn.h"
 

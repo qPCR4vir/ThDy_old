@@ -29,6 +29,8 @@ namespace ThDy_DNAHybridWF {
 	{	
 	private:		ThDyProjet		&_Pr;
 					TagBindGroup	^_CommThDyP, ^_uArrThDyP, ^_TmCalThDyP,  ^_mPCRThDyP ,  ^_SdDesThDyP		 ;
+					SeqExpl			^_seqExpl;
+
 	private: System::Windows::Forms::Button^  btPCRfiltrFile;
 	private: System::Windows::Forms::TextBox^  txtBoxPCRfiltr;
 	private: System::Windows::Forms::Label^  label1;
@@ -37,14 +39,12 @@ namespace ThDy_DNAHybridWF {
 	private: System::Windows::Forms::RadioButton^  radBut_CommSond;
 	private: System::Windows::Forms::FlowLayoutPanel^  flowLayoutPanel1;
 	private: System::Windows::Forms::Button^  butSeqExplorer;
-
-
-
 	private: System::Windows::Forms::OpenFileDialog^  opPCRfiltrFDlg;
 
 			 void 			InitializeTagBindings();
 	public:
-		ThPr_Form() try : _Pr(   *( new ThDyProjet() )    )
+		ThPr_Form() 
+			try : _Pr(   *( new ThDyProjet() )    )
 		{			
 			InitializeComponent();
 			InitializeTagBindings();
@@ -71,6 +71,8 @@ namespace ThDy_DNAHybridWF {
 		        _Pr.save_defPr() ; 					                // _Pr.save( _defPr ) ;  // _Pr.ProjetFile(_defPr);
 		        this->textBoxPrFile->Update();		                //  crea el Def Project.
              }
+
+			_seqExpl = gcnew SeqExpl(this->_Pr);
 
 			this->comBoxTAMeth->SelectedIndex  = SMStLucia;         // 0
             UpdateThDyForm();
@@ -116,8 +118,11 @@ private: void UpdateCommThDyP					()
 
 
 private: int Run		(CEspProgParam& IPrgPar)											 //	  Run      CEspProgParam
-	{		UpdateCommThDyP();
-			return _Pr.Run(IPrgPar);	//			return IPrgPar->Run();  //   ????  return _Pr.Run(IPrgPar);
+	{		
+		UpdateCommThDyP();
+			
+		int r= _Pr.Run(IPrgPar);	//			return IPrgPar->Run();  //   ????  return _Pr.Run(IPrgPar);
+		return r;
 	}	
 
 private: System::Void commandSavePrFile			(System::Object^  sender, System::EventArgs^  e)					 // Save  Proj File
@@ -202,9 +207,12 @@ private: System::Void commandSaveResultFile		(System::Object^  sender, System::E
 			 this->textBoxSaveResultFile->Update(); 
 		 }
 private: System::Void butSeqExplorer_Click		(System::Object^  sender, System::EventArgs^  e) 
-		 {
-			
-		 
+		 {		  try{                                       
+						 _seqExpl->Show();		 
+		            }
+		          catch ( std::exception& e)
+		          { MessageBox::Show ( gcnew String(e.what())  ) ;
+		          }
 		 }
 private: System::Void command_uArray			(System::Object^  sender, System::EventArgs^  e)  // Run       mArray
 	{	_uArrThDyP->UpDateP() ;	
@@ -216,9 +224,33 @@ private: System::Void command_uArray			(System::Object^  sender, System::EventAr
 		   { MessageBox::Show ( gcnew String(e.what())  ) ;
 		    return;
 		   }	 
-
+		ShowResTbl(_Pr._uArr._rtbl );
+		_Pr._uArr._rtbl = nullptr;
 //using namespace Microsoft::Office::Tools;//::Excel;
-//using namespace Microsoft::Office::Interop;//::Excel; 
+//using namespace Microsoft::Office::Interop::Excel; 
+//using namespace Microsoft::Office::Interop; 
+//  Excel::Application^ xlApp =gcnew Excel::ApplicationClass();
+// 
+//  Excel::Workbook^ mybook = xlApp->Workbooks->Open("C:\\Liste.xlsx",Type::Missing, Type::Missing, Type::Missing, Type::Missing, Type::Missing, Type::Missing, Type::Missing, Type::Missing, Type::Missing, Type::Missing, Type::Missing, Type::Missing,Type::Missing, Type::Missing);
+// 
+//  xlApp->Visible = false;
+// 
+//  Excel::Worksheet^ mysheet= safe_cast<Worksheet^>(xlApp->ActiveSheet);
+//  
+//  mysheet = (Excel::Worksheet^)mybook->Worksheets->Item[1]; 
+//  Excel::Range^ cell= safe_cast<Range^>(safe_cast<Worksheet^>(mysheet)->Cells[2,3]);
+//  cell->Value2->ToString() ;
+//  cell->Value[0]->ToString() ;
+//
+//  Convert/*  ->ToString();
+//  String^*/ tmp=(String^)((safe_cast<Range^>(safe_cast<Worksheet^>(mysheet)->Cells->Item[2,3]))->Value);    ;
+//  String^ tmp=(String^) (safe_cast<Range^>(safe_cast<Worksheet^>(mysheet)->Cells[2,3] ))->Value2     ;
+//  String^ tmp=(String^) (safe_cast<Range^>(safe_cast<Worksheet^>(mysheet)->Cells[2,3] ) )  ;
+//  String^ tmp=(String^) (                  safe_cast<Worksheet^>(mysheet)->Cells[2,3] )    ;
+//  String^ tmp=(String^) (										 mysheet ->Cells[2,3] )    ;
+//  String^ tmp=(String^) 										 mysheet ->Cells[2,3]     ;
+//  //Convert::ToString((Decimal)safe_cast<Range^>(safe_cast<Worksheet^>(mysheet)->Cells[2,3] )->Value2 ).
+//
 //Excel::NamedRange 
    //     using namespace Microsoft::Office::Interop; 
    //Excel::ApplicationClass^ eac=  gcnew Excel::ApplicationClass;
@@ -227,18 +259,22 @@ private: System::Void command_uArray			(System::Object^  sender, System::EventAr
    //Excel::Workbook^ ew =  eac->Workbooks->Item["na"]  ;
    //eac->Visible=true;
    //Excel::Range^ r=    eac->Range("names") ;
-
+	}
+void ShowResTbl(	CTable<TmGPos> *rtbl)
+{
+	if (!rtbl) return;
 		Results^ rsTm	=gcnew Results	(	/**_Pr._uArr._tlTm*/	);
 		Results^ rsG	=gcnew Results	(	/**_Pr._uArr._tlG	*/	);
 		Results^ rsPos	=gcnew Results	(	/**_Pr._uArr._tlPos	*/	);
 
-		CTable<TmGPos> &tb = *_Pr._uArr._rtbl ; // Alias para _Pr._uArr._rtbl 
+		CTable<TmGPos> &tb = *rtbl ; // Alias para _Pr._uArr._rtbl 
 
 		String^ wname = gcnew String( tb.TitTable().c_str() ) + L"  ( " + gcnew String ( _Pr._cp._OutputFile.Get() ) + L" )";
 
 		rsTm->Text		= L" Tm: " + wname;
 		rsG->Text		= L"  G: " + wname;
 		rsPos->Text		= L"pos: " + wname;
+
 
 
 		rsTm->dg->ColumnCount  = tb.totalCol();		
@@ -275,12 +311,21 @@ private: System::Void command_uArray			(System::Object^  sender, System::EventAr
 				rsPos->dg[c,r]->Value	= gcnew Decimal(	tb(r,c)._Pos);		// fill cells
 			}
 		}
+		rsTm-> dg->AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode::AutoSizeToAllHeaders);
+		rsG->  dg->AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode::AutoSizeToAllHeaders);
+		rsPos->dg->AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode::AutoSizeToAllHeaders);
+		rsTm-> dg->AutoResizeColumns();
+		rsG->  dg->AutoResizeColumns();
+		rsPos->dg->AutoResizeColumns();
+		rsTm-> dg->DefaultCellStyle->Format =L"N1";
+		rsG->  dg->DefaultCellStyle->Format =L"N2";
+		rsPos->dg->DefaultCellStyle->Format =L"N0";
 
 			rsTm->Show(this);
 			rsG->Show(this);
 			rsPos->Show(this);
 
-			delete _Pr._uArr._rtbl  ; _Pr._uArr._rtbl  =nullptr ;		// seguro ????? quien y donde hacerlo??????
+			delete rtbl  ; //_Pr._uArr._rtbl  =nullptr ;		// seguro ????? quien y donde hacerlo??????
 			//delete _Pr._uArr._tlTm  ; _Pr._uArr._tlTm  =nullptr ;		// seguro ????? quien y donde hacerlo??????
 			//delete _Pr._uArr._tlG   ; _Pr._uArr._tlG   =nullptr  ;		// seguro ????? quien y donde hacerlo??????
 			//delete _Pr._uArr._tlPos ; _Pr._uArr._tlPos =nullptr ;		// seguro ????? quien y donde hacerlo??????
@@ -307,7 +352,13 @@ private: System::Void buttPCR_Click				(System::Object^  sender, System::EventAr
 		           catch ( std::exception& e)
 		           { MessageBox::Show ( gcnew String(e.what())  ) ;
 		            return;
-		           }	 	        
+		           }
+		ShowResTbl(_Pr._mPCR._rtbl );
+		_Pr._uArr._rtbl = nullptr;
+
+		ShowResTbl(_Pr._mPCR._rtbl_self );
+		_Pr._mPCR._rtbl_self = nullptr;
+
 		    }
 private: System::Void butSdSecFilePCR_Click		(System::Object^  sender, System::EventArgs^  e) 
 		 {
@@ -605,15 +656,15 @@ private: System::ComponentModel::IContainer^  components;
 		 void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle10 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle17 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle18 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle11 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle12 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle13 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle14 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle15 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
-			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle16 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle1 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle8 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle9 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle2 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle3 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle4 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle5 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle6 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
+			System::Windows::Forms::DataGridViewCellStyle^  dataGridViewCellStyle7 = (gcnew System::Windows::Forms::DataGridViewCellStyle());
 			this->openFileDialog_targets = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->Design = (gcnew System::Windows::Forms::Button());
 			this->openFileDialog_exe = (gcnew System::Windows::Forms::OpenFileDialog());
@@ -1430,6 +1481,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// buttonSondeFile
 			// 
+			this->buttonSondeFile->Enabled = false;
 			this->buttonSondeFile->Location = System::Drawing::Point(21, 225);
 			this->buttonSondeFile->Name = L"buttonSondeFile";
 			this->buttonSondeFile->Size = System::Drawing::Size(94, 23);
@@ -1631,18 +1683,23 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// txtBoxExp
 			// 
+			this->txtBoxExp->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->txtBoxExp->Location = System::Drawing::Point(130, 5);
 			this->txtBoxExp->Name = L"txtBoxExp";
-			this->txtBoxExp->Size = System::Drawing::Size(334, 20);
+			this->txtBoxExp->Size = System::Drawing::Size(411, 20);
 			this->txtBoxExp->TabIndex = 9;
 			this->txtBoxExp->Text = L"C:\\Users\\Rodriguez\\Documents\\ThDySec\\exp\\";
 			this->txtBoxExp->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
 			// textBoxSondesFile
 			// 
+			this->textBoxSondesFile->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->textBoxSondesFile->Enabled = false;
 			this->textBoxSondesFile->Location = System::Drawing::Point(130, 227);
 			this->textBoxSondesFile->Name = L"textBoxSondesFile";
-			this->textBoxSondesFile->Size = System::Drawing::Size(334, 20);
+			this->textBoxSondesFile->Size = System::Drawing::Size(411, 20);
 			this->textBoxSondesFile->TabIndex = 9;
 			this->textBoxSondesFile->Text = L"C:\\Users\\Rodriguez\\Documents\\ThDySec\\sonden\\";
 			this->textBoxSondesFile->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
@@ -1769,6 +1826,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// butSdSecFilePCR
 			// 
+			this->butSdSecFilePCR->Enabled = false;
 			this->butSdSecFilePCR->Location = System::Drawing::Point(7, 42);
 			this->butSdSecFilePCR->Name = L"butSdSecFilePCR";
 			this->butSdSecFilePCR->Size = System::Drawing::Size(116, 23);
@@ -1779,9 +1837,12 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// textBoxSdSecFilePCR
 			// 
+			this->textBoxSdSecFilePCR->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->textBoxSdSecFilePCR->Enabled = false;
 			this->textBoxSdSecFilePCR->Location = System::Drawing::Point(129, 44);
 			this->textBoxSdSecFilePCR->Name = L"textBoxSdSecFilePCR";
-			this->textBoxSdSecFilePCR->Size = System::Drawing::Size(334, 20);
+			this->textBoxSdSecFilePCR->Size = System::Drawing::Size(412, 20);
 			this->textBoxSdSecFilePCR->TabIndex = 14;
 			this->textBoxSdSecFilePCR->Text = L"C:\\Users\\Rodriguez\\Documents\\ThDySec\\sonden\\";
 			this->textBoxSdSecFilePCR->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
@@ -1814,41 +1875,43 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			this->dGVw_TmCalcRes->AllowUserToAddRows = false;
 			this->dGVw_TmCalcRes->AllowUserToDeleteRows = false;
-			dataGridViewCellStyle10->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			dataGridViewCellStyle10->BackColor = System::Drawing::SystemColors::Control;
-			dataGridViewCellStyle10->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
+			this->dGVw_TmCalcRes->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			dataGridViewCellStyle1->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			dataGridViewCellStyle1->BackColor = System::Drawing::SystemColors::Control;
+			dataGridViewCellStyle1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			dataGridViewCellStyle10->ForeColor = System::Drawing::SystemColors::WindowText;
-			dataGridViewCellStyle10->SelectionBackColor = System::Drawing::SystemColors::Highlight;
-			dataGridViewCellStyle10->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
-			dataGridViewCellStyle10->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
-			this->dGVw_TmCalcRes->ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
+			dataGridViewCellStyle1->ForeColor = System::Drawing::SystemColors::WindowText;
+			dataGridViewCellStyle1->SelectionBackColor = System::Drawing::SystemColors::Highlight;
+			dataGridViewCellStyle1->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
+			dataGridViewCellStyle1->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
+			this->dGVw_TmCalcRes->ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this->dGVw_TmCalcRes->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
 			this->dGVw_TmCalcRes->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(6) {this->Tm_min, 
 				this->Tm, this->Tm_max, this->G_min, this->G, this->G_max});
-			dataGridViewCellStyle17->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			dataGridViewCellStyle17->BackColor = System::Drawing::SystemColors::Window;
-			dataGridViewCellStyle17->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
+			dataGridViewCellStyle8->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			dataGridViewCellStyle8->BackColor = System::Drawing::SystemColors::Window;
+			dataGridViewCellStyle8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			dataGridViewCellStyle17->ForeColor = System::Drawing::SystemColors::ControlText;
-			dataGridViewCellStyle17->Format = L"N1";
-			dataGridViewCellStyle17->NullValue = nullptr;
-			dataGridViewCellStyle17->SelectionBackColor = System::Drawing::SystemColors::Highlight;
-			dataGridViewCellStyle17->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
-			dataGridViewCellStyle17->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
-			this->dGVw_TmCalcRes->DefaultCellStyle = dataGridViewCellStyle17;
+			dataGridViewCellStyle8->ForeColor = System::Drawing::SystemColors::ControlText;
+			dataGridViewCellStyle8->Format = L"N1";
+			dataGridViewCellStyle8->NullValue = nullptr;
+			dataGridViewCellStyle8->SelectionBackColor = System::Drawing::SystemColors::Highlight;
+			dataGridViewCellStyle8->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
+			dataGridViewCellStyle8->WrapMode = System::Windows::Forms::DataGridViewTriState::False;
+			this->dGVw_TmCalcRes->DefaultCellStyle = dataGridViewCellStyle8;
 			this->dGVw_TmCalcRes->Location = System::Drawing::Point(94, 78);
 			this->dGVw_TmCalcRes->Name = L"dGVw_TmCalcRes";
 			this->dGVw_TmCalcRes->ReadOnly = true;
-			dataGridViewCellStyle18->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			dataGridViewCellStyle18->BackColor = System::Drawing::SystemColors::Control;
-			dataGridViewCellStyle18->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
+			dataGridViewCellStyle9->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			dataGridViewCellStyle9->BackColor = System::Drawing::SystemColors::Control;
+			dataGridViewCellStyle9->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			dataGridViewCellStyle18->ForeColor = System::Drawing::SystemColors::WindowText;
-			dataGridViewCellStyle18->SelectionBackColor = System::Drawing::SystemColors::Highlight;
-			dataGridViewCellStyle18->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
-			dataGridViewCellStyle18->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
-			this->dGVw_TmCalcRes->RowHeadersDefaultCellStyle = dataGridViewCellStyle18;
+			dataGridViewCellStyle9->ForeColor = System::Drawing::SystemColors::WindowText;
+			dataGridViewCellStyle9->SelectionBackColor = System::Drawing::SystemColors::Highlight;
+			dataGridViewCellStyle9->SelectionForeColor = System::Drawing::SystemColors::HighlightText;
+			dataGridViewCellStyle9->WrapMode = System::Windows::Forms::DataGridViewTriState::True;
+			this->dGVw_TmCalcRes->RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
 			this->dGVw_TmCalcRes->RowHeadersWidth = 80;
 			this->dGVw_TmCalcRes->Size = System::Drawing::Size(434, 95);
 			this->dGVw_TmCalcRes->TabIndex = 20;
@@ -1856,8 +1919,8 @@ private: System::ComponentModel::IContainer^  components;
 			// Tm_min
 			// 
 			this->Tm_min->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
-			dataGridViewCellStyle11->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleRight;
-			this->Tm_min->DefaultCellStyle = dataGridViewCellStyle11;
+			dataGridViewCellStyle2->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleRight;
+			this->Tm_min->DefaultCellStyle = dataGridViewCellStyle2;
 			this->Tm_min->HeaderText = L"min-";
 			this->Tm_min->Name = L"Tm_min";
 			this->Tm_min->ReadOnly = true;
@@ -1865,8 +1928,8 @@ private: System::ComponentModel::IContainer^  components;
 			// Tm
 			// 
 			this->Tm->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
-			dataGridViewCellStyle12->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleCenter;
-			this->Tm->DefaultCellStyle = dataGridViewCellStyle12;
+			dataGridViewCellStyle3->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleCenter;
+			this->Tm->DefaultCellStyle = dataGridViewCellStyle3;
 			this->Tm->HeaderText = L"Tm(°C)";
 			this->Tm->Name = L"Tm";
 			this->Tm->ReadOnly = true;
@@ -1874,8 +1937,8 @@ private: System::ComponentModel::IContainer^  components;
 			// Tm_max
 			// 
 			this->Tm_max->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
-			dataGridViewCellStyle13->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			this->Tm_max->DefaultCellStyle = dataGridViewCellStyle13;
+			dataGridViewCellStyle4->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			this->Tm_max->DefaultCellStyle = dataGridViewCellStyle4;
 			this->Tm_max->HeaderText = L"-max";
 			this->Tm_max->Name = L"Tm_max";
 			this->Tm_max->ReadOnly = true;
@@ -1883,8 +1946,8 @@ private: System::ComponentModel::IContainer^  components;
 			// G_min
 			// 
 			this->G_min->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
-			dataGridViewCellStyle14->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleRight;
-			this->G_min->DefaultCellStyle = dataGridViewCellStyle14;
+			dataGridViewCellStyle5->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleRight;
+			this->G_min->DefaultCellStyle = dataGridViewCellStyle5;
 			this->G_min->HeaderText = L"min-";
 			this->G_min->Name = L"G_min";
 			this->G_min->ReadOnly = true;
@@ -1892,8 +1955,8 @@ private: System::ComponentModel::IContainer^  components;
 			// G
 			// 
 			this->G->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
-			dataGridViewCellStyle15->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleCenter;
-			this->G->DefaultCellStyle = dataGridViewCellStyle15;
+			dataGridViewCellStyle6->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleCenter;
+			this->G->DefaultCellStyle = dataGridViewCellStyle6;
 			this->G->HeaderText = L"G( kJ)";
 			this->G->Name = L"G";
 			this->G->ReadOnly = true;
@@ -1901,8 +1964,8 @@ private: System::ComponentModel::IContainer^  components;
 			// G_max
 			// 
 			this->G_max->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
-			dataGridViewCellStyle16->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
-			this->G_max->DefaultCellStyle = dataGridViewCellStyle16;
+			dataGridViewCellStyle7->Alignment = System::Windows::Forms::DataGridViewContentAlignment::MiddleLeft;
+			this->G_max->DefaultCellStyle = dataGridViewCellStyle7;
 			this->G_max->HeaderText = L"-max";
 			this->G_max->Name = L"G_max";
 			this->G_max->ReadOnly = true;
@@ -1931,6 +1994,8 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// but_Sec2AlignUpd
 			// 
+			this->but_Sec2AlignUpd->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->but_Sec2AlignUpd->Location = System::Drawing::Point(502, 31);
 			this->but_Sec2AlignUpd->Margin = System::Windows::Forms::Padding(0);
 			this->but_Sec2AlignUpd->Name = L"but_Sec2AlignUpd";
@@ -1942,6 +2007,8 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// but_SecUpd
 			// 
+			this->but_SecUpd->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->but_SecUpd->Location = System::Drawing::Point(502, 7);
 			this->but_SecUpd->Margin = System::Windows::Forms::Padding(0);
 			this->but_SecUpd->Name = L"but_SecUpd";
@@ -1953,6 +2020,8 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// but_Sec_Sec2AlignUpd
 			// 
+			this->but_Sec_Sec2AlignUpd->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->but_Sec_Sec2AlignUpd->Location = System::Drawing::Point(482, 6);
 			this->but_Sec_Sec2AlignUpd->Margin = System::Windows::Forms::Padding(0);
 			this->but_Sec_Sec2AlignUpd->Name = L"but_Sec_Sec2AlignUpd";
@@ -1974,6 +2043,8 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// chkBx_rev
 			// 
+			this->chkBx_rev->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->chkBx_rev->AutoSize = true;
 			this->chkBx_rev->Location = System::Drawing::Point(443, 55);
 			this->chkBx_rev->Name = L"chkBx_rev";
@@ -1984,6 +2055,8 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// chkBx_compl
 			// 
+			this->chkBx_compl->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->chkBx_compl->AutoSize = true;
 			this->chkBx_compl->Location = System::Drawing::Point(484, 55);
 			this->chkBx_compl->Name = L"chkBx_compl";
@@ -2007,6 +2080,8 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// txtBx_Sec2Align
 			// 
+			this->txtBx_Sec2Align->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->txtBx_Sec2Align->CharacterCasing = System::Windows::Forms::CharacterCasing::Upper;
 			this->txtBx_Sec2Align->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
@@ -2018,6 +2093,8 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// txtBx_ResultSec2Align
 			// 
+			this->txtBx_ResultSec2Align->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->txtBx_ResultSec2Align->CharacterCasing = System::Windows::Forms::CharacterCasing::Upper;
 			this->txtBx_ResultSec2Align->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
@@ -2025,11 +2102,13 @@ private: System::ComponentModel::IContainer^  components;
 			this->txtBx_ResultSec2Align->MaxLength = 1000;
 			this->txtBx_ResultSec2Align->Name = L"txtBx_ResultSec2Align";
 			this->txtBx_ResultSec2Align->ReadOnly = true;
-			this->txtBx_ResultSec2Align->Size = System::Drawing::Size(466, 21);
+			this->txtBx_ResultSec2Align->Size = System::Drawing::Size(528, 21);
 			this->txtBx_ResultSec2Align->TabIndex = 1;
 			// 
 			// txtBx_Sec
 			// 
+			this->txtBx_Sec->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->txtBx_Sec->CharacterCasing = System::Windows::Forms::CharacterCasing::Upper;
 			this->txtBx_Sec->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
@@ -2042,6 +2121,8 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// txtBx_ResultSec
 			// 
+			this->txtBx_ResultSec->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->txtBx_ResultSec->CharacterCasing = System::Windows::Forms::CharacterCasing::Upper;
 			this->txtBx_ResultSec->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
@@ -2049,7 +2130,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->txtBx_ResultSec->MaxLength = 1000;
 			this->txtBx_ResultSec->Name = L"txtBx_ResultSec";
 			this->txtBx_ResultSec->ReadOnly = true;
-			this->txtBx_ResultSec->Size = System::Drawing::Size(466, 21);
+			this->txtBx_ResultSec->Size = System::Drawing::Size(529, 21);
 			this->txtBx_ResultSec->TabIndex = 1;
 			// 
 			// tabPagSetup
@@ -2322,6 +2403,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// buttonTargetsFile
 			// 
+			this->buttonTargetsFile->Enabled = false;
 			this->buttonTargetsFile->Location = System::Drawing::Point(4, 319);
 			this->buttonTargetsFile->Name = L"buttonTargetsFile";
 			this->buttonTargetsFile->Size = System::Drawing::Size(89, 35);
@@ -2355,6 +2437,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			this->textBoxTgScF4uA->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
 				| System::Windows::Forms::AnchorStyles::Right));
+			this->textBoxTgScF4uA->Enabled = false;
 			this->textBoxTgScF4uA->Location = System::Drawing::Point(84, 13);
 			this->textBoxTgScF4uA->Name = L"textBoxTgScF4uA";
 			this->textBoxTgScF4uA->Size = System::Drawing::Size(449, 20);
@@ -2658,9 +2741,11 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// textBoxPrFile
 			// 
+			this->textBoxPrFile->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->textBoxPrFile->Location = System::Drawing::Point(133, 8);
 			this->textBoxPrFile->Name = L"textBoxPrFile";
-			this->textBoxPrFile->Size = System::Drawing::Size(334, 20);
+			this->textBoxPrFile->Size = System::Drawing::Size(424, 20);
 			this->textBoxPrFile->TabIndex = 14;
 			this->textBoxPrFile->Text = L"C:\\Users\\Rodriguez\\Documents\\ThDySec\\Def.ThDy.txt";
 			this->textBoxPrFile->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
@@ -2712,6 +2797,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// btPCRfiltrFile
 			// 
+			this->btPCRfiltrFile->Enabled = false;
 			this->btPCRfiltrFile->Location = System::Drawing::Point(11, 64);
 			this->btPCRfiltrFile->Name = L"btPCRfiltrFile";
 			this->btPCRfiltrFile->Size = System::Drawing::Size(69, 34);
@@ -2735,6 +2821,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			this->txtBoxPCRfiltr->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
 				| System::Windows::Forms::AnchorStyles::Right));
+			this->txtBoxPCRfiltr->Enabled = false;
 			this->txtBoxPCRfiltr->Location = System::Drawing::Point(82, 72);
 			this->txtBoxPCRfiltr->Name = L"txtBoxPCRfiltr";
 			this->txtBoxPCRfiltr->Size = System::Drawing::Size(451, 20);

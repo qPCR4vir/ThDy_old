@@ -72,7 +72,7 @@ class COriNN
 				cbulge_mism_H,
 				cbulge_mism_S; 
  protected:
-		  float	_RlogC;				// rlogc = R * log( (C1>C2)?C1-C2/2:C2-C1/2  ) ;
+		Entropy	_RlogC;				// rlogc = R * log( (C1>C2)?C1-C2/2:C2-C1/2  ) ;
  public:
 		Entropy forbidden_entropy;	// forbidden entropy=-rlogc
 	Temperature	_Ta;				// ineficiente? si se deja asi, ponerla lo mas parecido, ?pero menor que lo esperado?

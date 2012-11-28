@@ -5,6 +5,7 @@
 #include <fstream>
 #include <cassert>
 #include <string>
+#include <memory>
 
 using namespace std;
 
@@ -31,9 +32,6 @@ class ISec				// Pure virtual class ?
 	virtual				~ISec			(){}
 };
 
-
-
-
 //	virtual CMultSec	*CreateNonDegSet	()	=0		; // crea todo el set si no existia, solo si existen bases deg: _NDB>0
 //	virtual CMultSec	*ForceNonDegSet();				// lo crea siempre, incluso para =1??
 //	virtual ISec		*GenerateNonDegVariant(CSec *s, long pos, Base ndb)   ; // recursiva
@@ -44,6 +42,22 @@ class ISec				// Pure virtual class ?
 
 class CSecBasInfo : public ISec
 {public:
+	char		*Name		()const		{return _name;}
+	int			ID			()const		{return _ID;}
+	static int			NewS_ID()
+	{
+		static int ID(0);
+		return ++ID;
+	}
+
+	bool		_selected, _filtered;
+	bool		Selected(bool select)	{return _selected=select;}
+	bool		Selected(		) const {return _selected;}
+	bool		Filtered(bool filter)	{return _filtered=filter;}
+	bool		Filtered(		) const {return _filtered;}
+	void		Description (std::string	description)		{ _description=description;}
+	virtual std::string	Description ()const	{return _description.length() ? _description : Name() ; }
+
 	virtual Base		*GetCopyFullSec	(						)override
 								{	Base *s=new Base[Len()+3]; 
 									for(int i=0 ; i<Len()+2  ; i++ ) 
@@ -57,8 +71,7 @@ class CSecBasInfo : public ISec
 	virtual bool		 NotIdem		(CSecBasInfo *sec) {return false;}
 	CSecBasInfo			*CopyFirstBases	(long pos)	;			// copia parcialmente hasta la pos
 	Base		operator[]	(int i)const{return _c[i];}
-	int			ID			()const		{return _ID;}
-	char		*Name		()const		{return _name;}
+
 	long		Len			()const		{return _len;} //
 	long		Degeneracy	()const		{return _GrDeg;}
 	long		*BaseCount	()			{return _Count;}
@@ -68,7 +81,8 @@ class CSecBasInfo : public ISec
 
 protected:
 		int				_ID ;				// num de la sec en file original?? en total??, num unico?
-		char			*_name ;			// nombre unico? FASTA id		
+		char			*_name ;			// nombre unico? FASTA id	
+		std::string		_description;
 		long			_len ;				// longitud corregida, sin los '$'
 		long			_GrDeg ;		// Grado de degeneracion. Cantidad total de diferentes molec, dependiendo de deg
 		float			_GCp ;		
@@ -78,8 +92,8 @@ protected:
 		Base			*_c;			// sec char, comienzan y terminan con '$'0
 		CMultSec		*_NonDegSet ;
 
-		CSecBasInfo::CSecBasInfo (int id, const char *nam, char *clas) ;
-		CSecBasInfo(){}
+		CSecBasInfo (int id, const char *nam, char *clas) ;
+		CSecBasInfo():_filtered(false),_selected(true), _ID(NewS_ID()){}
 		CSecBasInfo( long l);
 };
 
@@ -92,8 +106,8 @@ protected:
 
 class CSec : public CLink, public CSecBasInfo	// ---------------------------------------   CSec	---------------------------------------------------
 {public:
-	CSec (const char *sec, int id, const char *nam, CSaltCorrNN *NNpar,  long l=0, long secBeg=1, char *clas=nullptr, float conc=-1);
-	CSec ( long l, CSaltCorrNN *NNpar) ;
+	CSec (const char *sec, int id, const char *nam, std::shared_ptr<CSaltCorrNN>  NNpar,  long l=0, long secBeg=1, char *clas=nullptr, float conc=-1);
+	CSec ( long l, std::shared_ptr<CSaltCorrNN>  NNpar) ;
 
 	CMultSec	*CreateNonDegSet		()			; // crea todo el set si no existia, solo si existen bases deg: _NDB>0
 	CMultSec	*ForceNonDegSet			();				// lo crea siempre, incluso para =1??
@@ -117,13 +131,14 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
 	virtual		~CSec()   ;   // decidir si vale la pena que sea virtual. Cual es el efecto??
 	virtual bool NotIdem(CSec *sec) {return false;}
 		NumRang<float>	_Tm ;			//float		_Tm, _minTm, _maxTm ;				//  
-		CSaltCorrNN		*_NNpar ;
+		std::shared_ptr<CSaltCorrNN>  _NNpar ;
 		float			_Conc ;			// conc de esta molec. Si igual al resto -1 y la toma de NNParam
 		Base			*_b;			// sec cod, inicialmente basek
 
 		void		 CorrectSaltOwczarzy() ;
 		float		*_SdS ;			// dS acumulada. Calcular Delta S sera solo restar la final menos la inicial	
 		float		*_SdH ;			// 
+		CMultSec	*_parentMS	; //std::weak_ptr<CMultSec> _parentMS	;
 };
 
 //	Base		*CreateTEMPORALcomplementary(long InicBase=0, long EndBase=-1) ;
@@ -188,11 +203,11 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 					const char	*	sec	,	
 					NumRang<long>	SecLim,			//long			SecBeg, 	//long			SecEnd,
 					int				id,				//	Hit_num		//	char		*	nam,		Hit_def
-					CSaltCorrNN *	NNpar,			//	long			l=0,		Hit_len   ------> _Hsp_align_len
-					char		*	clas=NULL, 
+					std::shared_ptr<CSaltCorrNN>  NNpar,			//	long			l=0,		Hit_len   ------> _Hsp_align_len
+					char		*	clas=nullptr, 
 					float			conc=-1
 				):
-													CSec (sec, id, Hit_def, NNpar, 
+													CSec (sec, id, Hit_accession, NNpar, 
 															SecLim.Max()? SecLim.Max() - SecLim.Min() +1 : 0	,		//Hsp_align_len,  --  Long
 															SecLim.Min() - long(Hsp_query_from+1) , //     SecBeg
 															clas, conc ),
@@ -246,6 +261,7 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 	bool			_FormatOK ;
 	NumRang<long>	_SecLim;   	//long			_SecBeg;	//long			_SecEnd;
 	//// para CSec	//char	*sec;	//int			id=0;	//char		*nam;	//long		l;	//char		*clas;
+	std::string	Description ()const	override {return _description.length() ? _description : _Hit_def ; }
 
 	virtual ~CSecBLASTHit() {	delete []_Hit_id; 
 								delete []_Hit_def;
@@ -267,16 +283,17 @@ class CSecGB : public CSec // ---------------------------------------   CSecGB	-
 					long			Seq_inst_length	 ,    
 					const char	*	sec	,	
 					int				id,						//	char		*	nam,	Seqdesc_title	,	
-					CSaltCorrNN *	NNpar,  				//	long			l=0,		Seq_inst_length
+					std::shared_ptr<CSaltCorrNN>  NNpar,  				//	long			l=0,		Seq_inst_length
 					char		*	clas=NULL, 
 					float			conc=-1
 				):
-						CSec (sec, id, Seqdesc_title, NNpar, Seq_inst_length,1, clas, conc ),// actualizar Beg-End
+						CSec (sec, id, Textseq_id_accession, NNpar, Seq_inst_length,1, clas, conc ),// actualizar Beg-End
 
 										_Textseq_id_accession	( Textseq_id_accession ) ,
 										_Org_ref_taxname		( Org_ref_taxname ) ,
 										_Seqdesc_title			( Seqdesc_title ) ,				
 										_Seq_inst_length		( Seq_inst_length ) 				{}			
+	virtual std::string	Description ()const override	{return _description.length() ? _description : _Seqdesc_title ; }
 
 	virtual ~CSecGB(){			delete []_Textseq_id_accession; 
 								delete []_Org_ref_taxname;
@@ -297,15 +314,16 @@ class CSecGBtxt : public CSec // ---------------------------------------   CSecG
 					char	*	ORGANISM       ,
 					const char	*	sec	,	
 					int				id,						//	char		*	nam,	DEFINITION	,	
-					CSaltCorrNN *	NNpar,  				//	long			l=0,		Seq_inst_length
+					std::shared_ptr<CSaltCorrNN>  NNpar,  				//	long			l=0,		Seq_inst_length
 					char		*	clas=NULL, 
 					float			conc=-1
-				):		CSec (sec, id, DEFINITION, NNpar, 0,1, clas, conc ), // actualizar Beg-End
+				):		CSec (sec, id, LOCUS, NNpar, 0,1, clas, conc ), // actualizar Beg-End
 							_LOCUS			( LOCUS ) ,
 							_Seq_inst_length( Seq_inst_length ) ,
 							_DEFINITION		( DEFINITION ) ,				
 							_ACCESSION		( ACCESSION ) 	,			
 							_ORGANISM		( ORGANISM ) 				{}	
+	virtual std::string	Description ()const override	{return _description.length() ? _description : _DEFINITION ; }
 	
 	virtual ~CSecGBtxt() {		delete []_LOCUS; 
 								delete []_DEFINITION;
@@ -417,29 +435,239 @@ class CSecAl : public CLink // destinado a formar parte de una lista en un aline
   // CUIDADO :  se aduena de las sec y las borra en su destructor:Usar Remove() or Free() para evitarlo
 class CMultSec	 : public CLink	// --------------------------------------------------------------------- 	CMultSec    -------------------
 {	public:
-		CMultSec (char *file, CSaltCorrNN *NNpar, float MaxTgId =100, NumRang<long> SecLim= NumRang<long> (1,0) /* long SecBeg=1, long SecEnd=0*/  ) 
-				:	_NSec(0), _TNSec(0), _NMSec(0), _TNMSec(0), _SecLim(SecLim), //_SecBeg(SecBeg), _SecEnd(SecEnd),
-					_MaxLen(0),_TMaxLen(0), _MaxTgId(MaxTgId),
-					_Consenso(0),_NNPar (NNpar)					{	AddFromFile (file) ;} ;
+		std::string			_name ;							// nombre unico? FASTA id	
+ 		int					_ID ;							// num de la sec en file original?? en total??, num unico?
+		NumRang<LonSecPos>  _SecLim;					
+		float				_MaxTgId ;					
+		std::shared_ptr<CSaltCorrNN>	_NNPar ;
+		CMultSec			*_parentMS	;								//std::weak_ptr<CMultSec> _parentMS	;
+		CSec				*_Consenso ;
 
-		explicit CMultSec (CSaltCorrNN *NNpar) : _NSec(0), _TNSec(0), _NMSec(0), _TNMSec(0), 
-										_MaxLen(0),_TMaxLen(0), _MaxTgId(100), _SecLim(1,0), //_SecBeg(1), _SecEnd(0),
-										_Consenso(0), _NNPar (NNpar)					{} 	
+		//std::string Path(const std::string& path_sep="/")
+		//{
+		//	std::string path /*= _name*/;			// anadir o no un sep al final del path?????
+		//	for (CMultSec *parent=this; parent;parent=parent->_parentMS)
+		//		path = parent->_name + path_sep + path;
+		//	return path;
+		//}
+		static std::string	Path(CMultSec *ms, const std::string& path_sep="/")
+		{
+			std::string path /*= _name*/;			// anadir o no un sep al final del path?????
+			for (CMultSec *parent=ms; parent;parent=parent->_parentMS)
+				path = parent->_name + path_sep + path;
+			return path;
+		}
+		static int			NewMS_ID()
+		{
+			static int ID(0);
+			return ++ID;
+		}
+
+explicit CMultSec (const std::string &Name  ) 
+				:													//_NSec(0), 
+																	//_TNSec(0), 
+																	//_NMSec(0), 
+																	//_TNMSec(0), 
+																	//	_Len(0),	_TLen(0),
+				  _MaxTgId(100), 
+				  _SecLim(1,0),					//_SecBeg(1), _SecEnd(0), /*_Len(0),_TLen(0),*/
+				_Consenso(nullptr),				
+				_parentMS(nullptr),
+				_name(trim_string(Name)),
+				_ID(NewMS_ID())
+		{	} 
+
+		 CMultSec (	const char	 *file	, 
+					std::shared_ptr<CSaltCorrNN>  NNpar	, 
+					float		  MaxTgId	=100, 
+					NumRang<long> SecLim	= NumRang<long> (1,0)	/* long SecBeg=1, long SecEnd=0*/  
+				 ) :	/*_name(trim_string(file)),	*/
+						_SecLim		(SecLim),	
+						_MaxTgId	(MaxTgId),
+						_Consenso	(nullptr),			
+						_parentMS	(nullptr),
+						_NNPar		(NNpar)	,
+						_ID			(NewMS_ID())			
+				{	
+					AddFromFile (file) ;
+				} 
+
+explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar) 
+			: 
+			  _MaxTgId(100), 
+			  _SecLim(1,0),					
+			  _Consenso(nullptr), 
+			  _NNPar (NNpar),
+			  _parentMS(nullptr),
+			_ID(NewMS_ID())
+		{} 	
+
+explicit CMultSec (CMultSec	*ms, const std::string &Name="") 
+			: _name		(trim_string(Name)),
+			  _MaxTgId	(ms->_MaxTgId), 
+			  _SecLim	(ms->_SecLim),					
+			  _Consenso	(nullptr), 
+			  _NNPar	(ms->_NNPar),
+			  _parentMS	(nullptr),
+			  _ID		(NewMS_ID())
+		{} 	
 
 
-		int			AddFromFile	(const char *file);
-		int			CMultSec::AddFromFileFASTA (ifstream &ifileFASTA);
-		int			CMultSec::AddFromFileBLAST (ifstream &ifileBLAST);
-		int			CMultSec::AddFromFileGB (ifstream &ifileGB);
-		int			CMultSec::AddFromFileGBtxt (ifstream &ifileGB);
-		int			CMultSec::AddFromFileODT (ifstream &ifileODT);
-		int			CMultSec::AddFromFileODS (ifstream &ifileODS);
+
+		struct CExtremes
+		{
+		int			_NSec, _NMSec	;
+		NumRang<LonSecPos> _Len		;		
+		NumRang<Temperature> _Tm	;
+		CExtremes():_NSec(0), _NMSec(0)	{
+										}
+		void Set   (const CSec& s)	{	 
+										_Len.Set(s.Len());		_Tm.Set(s._Tm)	;
+									}
+		void Expand(const CSec& s)	{	
+										_Len.Expand(s.Len());	_Tm.Expand(s._Tm);
+									}
+		void Set   (const CExtremes& e)	{	 
+											_Len.Set(e._Len);		_Tm.Set(e._Tm)	;
+										}
+		bool Expand(const CExtremes& e)	{	
+											bool ex=_Len.Expand(e._Len);  return (_Tm.Expand(e._Tm) || ex );
+										}
+		void Clear(){_NSec=0, _NMSec=0;}
+
+		bool isExtreme(const CSec&		s){return _Tm.isExtrem( s._Tm ) || _Len.isExtrem( s.Len() );}
+		bool isExtreme(const CExtremes& e){return _Tm.isExtrem( e._Tm ) || _Len.isExtrem( e._Len  );}
+
+		} _Local, _Global;
+
+		void Add2LocalExtreme(const CSec& s)
+		{ 
+			if (_Global._NSec)
+			{
+				_Global.Expand(s);
+				_Local._NSec ? _Local.Expand(s) : _Local.Set(s);
+			}else
+			{
+				_Local.Set(s);
+				_Global.Set(s);
+			}
+			_Local._NSec++;
+			_Global._NSec++;
+		}
+		void Add2GlobalExtreme(const CSec& s)
+		{ 
+			if (_Global._NSec)
+			{
+				_Global.Expand(s);
+			}else
+			{
+				_Global.Set(s);
+			}
+			_Global._NSec++;
+		}
+		bool Add2LocalExtreme(const CMultSec& ms)
+		{
+			_Local._NMSec ++ ;
+			return Add2GlobalExtreme(ms);
+		}
+		bool Add2GlobalExtreme(const CMultSec& ms)
+		{	
+			_Global._NMSec += 1 + ms._Global._NMSec   ;
+			if (! ms._Global._NSec )
+				return false;
+			bool res=true;
+			if (_Global._NSec  )
+				res=_Global.Expand(ms._Global); 
+			else
+				_Global.Set(ms._Global) ;
+			_Global._NSec  += ms._Global._NSec   ;
+			 return res;
+		}
+		void RecalExtremes()
+		{
+			_Local.Clear();
+
+			CSec &to_rest = *CurSec() ; 	
+			for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec
+				Add2LocalExtreme( *CurSec()) ; 
+			RestoreCur( &to_rest);
+			RecalGlobExtremes();
+		}
+		void RecalGlobExtremes()
+		{
+			_Global=_Local;
+
+			CMultSec &to_rest = *CurMSec() ; 	
+			for (  goFirstMSec()   ; NotEndMSec()   ;   goNextMSec() )		// recorre todos las primeras sec
+				Add2LocalExtreme( *CurMSec()) ; 
+			RestoreMCur( &to_rest);
+		}
+		bool isGlobExtreme(const CSec     *s ){return _Global.isExtreme( *s				) ;}
+		bool isGlobExtreme(const CMultSec *ms){return _Global.isExtreme( ms->_Global	) ;}
+		bool isLocExtreme (const CSec     *s ){return  _Local.isExtreme( *s				) ;}
+		//bool isLocExtreme (const CMultSec *ms){return _Tm.isExtrem (ms->_TTm) || _Len.isExtrem (ms->_TLen );}
+		//void setGloExtreme(const CMultSec *ms){return _Tm.isExtrem (ms->_TTm) || _Len.isExtrem (ms->_TLen );}
+
+
+		int			AddFromFile		(const char *file);
+		int			CMultSec::AddFromFileFASTA	(ifstream &ifileFASTA);
+		int			CMultSec::AddFromFileBLAST	(ifstream &ifileBLAST);
+		int			CMultSec::AddFromFileGB		(ifstream &ifileGB);
+		int			CMultSec::AddFromFileGBtxt	(ifstream &ifileGB);
+		int			CMultSec::AddFromFileODT	(ifstream &ifileODT);
+		int			CMultSec::AddFromFileODS	(ifstream &ifileODS);
+		CSec		*Idem			(CSec &sec);  //		CConsParam	_ConsPar ;
+		CSec		*AddSec			( CSec *sec );
+		CSec		*InsertSec		( CSec *sec ) ;
+		CSec		*InsertSecAfter	( CSec *sec , CSec *preSec ) ;
+		int			CountSelectedSeq		()
+		{
+			int count(0);
+			for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec de esta misma ms
+				 count += (CurSec()->Filtered()) ;
+			return count;
+		}
+		int			CountSelectedSeqRec		()
+		{
+			int count(0);
+				 count += CountSelectedSeq() ;
+			for (  goFirstMSec()   ; NotEndMSec()   ;   goNextMSec() )		// recorre todos las primeras sec
+				 count += (CurMSec()->CountSelectedSeqRec());
+			return count;
+		}
+		int			CountSelectedNDegSeq	(int MaxGrDeg=0)
+		{
+			int count(0);
+			for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec de esta misma ms
+				if( CurSec()->Filtered() ) 
+					if(CurSec()->NonDegSet())
+					{	
+						if (!MaxGrDeg)
+							count += CurSec()->NonDegSet()->_Global._NSec ;
+						else	
+							if( MaxGrDeg > CurSec()->NonDegSet()->_Global._NSec)
+								count += CurSec()->NonDegSet()->_Global._NSec ;
+					}
+					else ++count;
+			return count;
+		}
+		int			CountSelectedNDegSeqRec	(int MaxGrDeg=0)
+		{
+			int count(0);
+				 count += CountSelectedNDegSeq( MaxGrDeg) ;
+			for (  goFirstMSec()   ; NotEndMSec()   ;   goNextMSec() )		// recorre todos las primeras sec
+				 count += CurMSec()->CountSelectedNDegSeqRec( MaxGrDeg);
+			return count;
+		}
+
+		CMultSec	*AddMultiSec	(const std::string &Name )
+		{
+			return AddMultiSec(new CMultSec (this, Name  ));
+		}
+		CMultSec	*AddMultiSec	(CMultSec *MultSec);
+
 		CSec		CalculateConsenso	(double) ;
-		void		AddSec ( CSec *sec );
-		void		InsertSec ( CSec *sec ) ;
-		void		Free(){_LSec.free(); _LMSec.free();}
-		void		AddMultiSec ( CMultSec *ms );
-		bool		NotIdem(CSec &sec);  //		CConsParam	_ConsPar ;
+		void		Free			()	{_LSec.free(); _LMSec.free();}
 
 		CSec *goFirstSec() {return (CSec *)_LSec.goBeging(); }
 		CSec *goNextSec () {return (CSec *)_LSec.goNext  (); }
@@ -455,21 +683,15 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 		bool	  NotEndMSec () {return _LMSec.NotEnd  (); }
 		void  RestoreMCur(CMultSec *cur){       _LMSec.SetCur(cur);}
 
-		virtual ~CMultSec ()  ;// decidir si vale la pena que sea virtual. Cual es el efecto??
+		virtual ~CMultSec ()  ;	
 
-		int			_NSec, _TNSec, _NMSec, _TNMSec ;
-
-		long		_MaxLen, _TMaxLen/*, _SecBeg, _SecEnd*/ ;
-		NumRang<LonSecPos> _SecLim ;
-		NumRang<float> _Tm ;
-		float		/*_minTm, _maxTm,*/ _MaxTgId ;	
-		int			_ID ;			// num de la sec en file original?? en total??, num unico?
-		char		*_name ;		// nombre unico? FASTA id	
-		CSec		*_Consenso ;
-		CSaltCorrNN	*_NNPar ;
 	private:
-		CList		_LSec, _LMSec ;
-		void		UpdateTotals ( CSec *sec ) ;
+		CList			_LSec, _LMSec ;
+		void			UpdateTotals		( CSec		*sec ) ;
+		void			UpdateTotalsAdding	( CSec		*sec ) ;
+		void			UpdateTotalsAdding	( CMultSec	*sec ) ;
+		CMultSec		*findComParent		( CMultSec	*ms	);
+		static void		RefreshExtremes		( CMultSec	*ms	);
 };
 
 class CMultAlign   // EXPERIMENTAL
@@ -480,10 +702,11 @@ class CMultAlign   // EXPERIMENTAL
 		void Set_fLenEx(int fLenEx) {_fLenEx=fLenEx;}
 		CMultAlign () :  _fLenEx(3){};
 		explicit CMultAlign (long LenAlign) : _LenAlign(LenAlign), _fLenEx(3){};
-		CMultAlign (CMultSec &MultSec, int fLenEx=3) : _LenAlign(MultSec._TMaxLen*fLenEx), _fLenEx(fLenEx){};//implementsr   !!!!!!!!
+		CMultAlign (CMultSec &MultSec, int fLenEx=3) 
+			: _LenAlign(MultSec._Global._Len.Max() *fLenEx), _fLenEx(fLenEx){};//implementsr   !!!!!!!!
 	
-		void	AddFromMultiSec(CMultSec &MultSec);
-		void	AddSec ( CSec *sec );
+		void AddFromMultiSec(CMultSec *MultSec);
+		void AddSec ( CSec *sec );
 
 };
 

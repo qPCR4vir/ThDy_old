@@ -33,6 +33,12 @@
     <ClCompile Include="..\..\scr\ThDy_programs\ThDy_SondeDesign.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\scr\ThDy_programs\ThDy_SeqExpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\scr\ThDy_programs\init_thdy_prog_param.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\scr\ThDy_programs\ThDy_uArrExp.cpp.implementar-actualizar" />

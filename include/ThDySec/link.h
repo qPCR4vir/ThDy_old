@@ -17,7 +17,7 @@ class CLink     // base para los clases que quieran ser elementos de listas, tal
 
 		void Remove ();								// y si pertenecia a una Clist y coincidia con  cur, last or first ??
 
-		void Move ( CLink *p, CLink *n=nullptr ) {Remove ();    Insert (p,n);};
+		void Move ( CLink *p, CLink *n=nullptr ) { if(this==p || this==n) return; Remove ();    Insert (p,n);};
 		void MoveAfter (CLink *p)				 {assert(p);	Move(p,p->_next)  ;}
 		void MoveBefore(CLink *n)				 {assert(n);	Move(n->_prev,n)  ;}
 
@@ -28,10 +28,10 @@ class CLink     // base para los clases que quieran ser elementos de listas, tal
 												// Este solo desconecta el link de donde estaba, "cerrando" el hueco que dejaria
 												// y dejando el link "huerfano"
 		void InsertBefore(CLink *n)				{assert(n);	  Insert(n->_prev,n)  ;}		// Poner PRIVATE ??????????				
+		void InsertAfter (CLink *p)				{assert(p);	  Insert(p,p->_next)  ;}
 	private:
 		CLink *_next, *_prev ;
 		void Insert ( CLink *p, CLink *n=nullptr ) ;  // CUIDADO con las ramificaciones !!!
-		void InsertAfter (CLink *p)				{assert(p);	  Insert(p,p->_next)  ;}
 
 };
 

@@ -5,104 +5,106 @@
 
 int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr, 	CMultSec		&primers	)  ;
 
-int DegTmCalc ( CProgParam_TmCalc *IPrgPar_uArr)  
+int DegTmCalc ( CProgParam_TmCalc *IPrgPar_Calc)  
 {
 	const int MaxGrDeg=300 ;			// crear NonDegSet para las sondas con menos de este gr de deg. Poner como ProgParam??
 
-	auto_ptr<CSaltCorrNN> apNNpar (Create_NNpar(IPrgPar_uArr->_cp)); 	CSaltCorrNN *NNpar = apNNpar.get() ;
-	Temperature Ta=NNpar->Ta();
+	std::shared_ptr<CSaltCorrNN>  NNpar(IPrgPar_Calc->_cp._pSaltCorrNNp );
+    if (!NNpar)
+	    NNpar = Create_NNpar(IPrgPar_Calc->_cp); 	
 
-	CSec			Sec		  (			IPrgPar_uArr->_Sec.Get() ,		0, "Sec",		NNpar); 
+	CSec			Sec		  (			IPrgPar_Calc->_Sec.Get() ,		0, "Sec",		NNpar); 
 	if (Sec.Len() < 1)  return 0 ; // Error :  no sec !!!!!!
 	Sec.CreateNonDegSet();	
 
-	if (CountDegBases(					IPrgPar_uArr->_Sec2Align.Get())		< 1)				
-										IPrgPar_uArr->Update_Sec_Sec2Align(true,true);	
-	CSec			Sec2Align (			IPrgPar_uArr->_Sec2Align.Get() ,	0, "Sec2Align",	NNpar);
+	if (CountDegBases(					IPrgPar_Calc->_Sec2Align.Get())		< 1)				
+										IPrgPar_Calc->Update_Sec_Sec2Align(true,true);	
+	CSec			Sec2Align (			IPrgPar_Calc->_Sec2Align.Get() ,	0, "Sec2Align",	NNpar);
 	Sec2Align.CreateNonDegSet();
 
 	CMultSec	*pr,	*tg;			// Esto se puede hacer mejor
 	if   (      Sec.NonDegSet()) pr=      Sec.NonDegSet() ; 	else {pr =new CMultSec(NNpar); pr->AddSec(      &Sec);}	
-	if   (Sec2Align.NonDegSet()) tg=Sec2Align.NonDegSet() ;	else {tg =new CMultSec(NNpar); tg->AddSec(&Sec2Align);}	
+	if   (Sec2Align.NonDegSet()) tg=Sec2Align.NonDegSet() ;		else {tg =new CMultSec(NNpar); tg->AddSec(&Sec2Align);}	
 
 		
-	IPrgPar_uArr->_TmS  = KtoC(pr->_Tm) ;// (    KtoC(pr->_minTm)   ,   KtoC(pr->_maxTm)   ) ; 
-	IPrgPar_uArr->_Tm2A = KtoC(tg->_Tm) ;
+	IPrgPar_Calc->_TmS  = KtoC(pr->_Local._Tm) ;// (    KtoC(pr->_minTm)   ,   KtoC(pr->_maxTm)   ) ; 
+	IPrgPar_Calc->_Tm2A = KtoC(tg->_Local._Tm) ;
 
-	CSec *pr_maxTmH=pr->goFirstSec()  ;	IPrgPar_uArr->_GS.Set ( pr_maxTmH->G()/1000  )  ; 
-	CSec *tg_maxTmH=tg->goFirstSec()  ; IPrgPar_uArr->_G2A.Set( tg_maxTmH->G()/1000  )  ;
+	CSec *pr_maxTmH=pr->goFirstSec()  ;	IPrgPar_Calc->_GS.Set ( pr_maxTmH->G()/1000  )  ; 
+	CSec *tg_maxTmH=tg->goFirstSec()  ; IPrgPar_Calc->_G2A.Set( tg_maxTmH->G()/1000  )  ;
 														
 	auto_ptr<ThDyAlign> apAl; //	ThDyAlign	*pAl=nullptr;	
+	Temperature Ta= IPrgPar_Calc->_cp._Ta;
 
 	//LonSecPos TgMaxLen= (tg->_TMaxLen > pr->_TMaxLen) ? tg->_TMaxLen : pr->_TMaxLen ;
 
-	if ( IPrgPar_uArr->_align)	
-	{	apAl= Create_ThDyAlign(	IPrgPar_uArr->_cp, pr->_TMaxLen , tg->_TMaxLen, *NNpar);
+	if ( IPrgPar_Calc->_align)	
+	{	apAl= Create_ThDyAlign(	IPrgPar_Calc->_cp, pr->_Global._Len.Max() , tg->_Global._Len.Max(), NNpar);
 		
-		apAl->Align( pr_maxTmH, tg_maxTmH);					apAl->SelectOptParam(Ta);	//  virtual !!! Si G la Ta pudo cambiar, por eso aqui explicita
+	apAl->Align( pr_maxTmH, tg_maxTmH);					apAl->SelectOptParam( Ta);	//  virtual !!! Si G la Ta pudo cambiar, por eso aqui explicita
 								
-		IPrgPar_uArr->_TmHy.Set ( KtoC( apAl->Tm() ) );		//	FrAl.GetOptHit();
-		IPrgPar_uArr->_GHy.Set  ( apAl->G ()/1000    );		//		print_ThDyAlign (osAl, Al);	//Al.Export_DPMz_Pre(osAl);
+		IPrgPar_Calc->_TmHy.Set ( KtoC( apAl->Tm() ) );		//	FrAl.GetOptHit();
+		IPrgPar_Calc->_GHy.Set  ( apAl->G ()/1000    );		//		print_ThDyAlign (osAl, Al);	//Al.Export_DPMz_Pre(osAl);
 
 	}
 	else 
-	{	AlignedSecPar al( pr_maxTmH->GetCopyFullSec() , tg_maxTmH->GetCopyFullSec(), *NNpar ); // la Ta en NNpar no cambio
+	{	AlignedSecPar al( pr_maxTmH->GetCopyFullSec() , tg_maxTmH->GetCopyFullSec(), NNpar ); // la Ta en NNpar no cambio
 
-		IPrgPar_uArr->_TmHy.Set ( KtoC( al.Tm() ) );
-		IPrgPar_uArr->_GHy.Set  (	al.G ()/1000  );
+		IPrgPar_Calc->_TmHy.Set ( KtoC( al.Tm() ) );
+		IPrgPar_Calc->_GHy.Set  (	al.G ()/1000  );
 	}
 
 	for (	pr->goFirstSec() ; pr->NotEndSec()   ;   pr->goNextSec() ) // recorre todos las var no deg de la sonda
 	{	CSec &s = *pr->CurSec() ; 					 Energy  g= s.G (Ta)/1000;			Temperature tm ;
-		IPrgPar_uArr->_GS.Expand(g);
+		IPrgPar_Calc->_GS.Expand(g);
 		
 		for (	tg->goFirstSec() ; tg->NotEndSec()   ;   tg->goNextSec() ) // recorre todos las var no deg de la sonda
 		{	CSec &t = *tg->CurSec() ;					     g= t.G (Ta)/1000 ;
-			IPrgPar_uArr->_G2A.Expand(g) ;
+			IPrgPar_Calc->_G2A.Expand(g) ;
 
-			if ( IPrgPar_uArr->_align)	
+			if ( IPrgPar_Calc->_align)	
 			{	ThDyAlign	&Al=*apAl.get();
 				Al.Align( &(s), &(t));				Al.SelectOptParam(Ta);			//	FrAl.GetOptHit();					
 															 g= Al.G ()/1000 ;			tm=  KtoC( Al.Tm() ) ;
-				IPrgPar_uArr->_GHy.Expand(g) ;
-				if (IPrgPar_uArr->_TmHy.Max() <=  tm  ) 
-				{	IPrgPar_uArr->_TmHy.Max()  =  tm; 
+				IPrgPar_Calc->_GHy.Expand(g) ;
+				if (IPrgPar_Calc->_TmHy.Max() <=  tm  ) 
+				{	IPrgPar_Calc->_TmHy.Max()  =  tm; 
 					CHitAligned Hit (Al);
-					IPrgPar_uArr->Copy_AlignedSec      ( (char*)(Hit._sd ) /*)*/);
-					IPrgPar_uArr->Copy_AlignedSec2Align( (char*)(Hit._tg ) /*)*/);
+					IPrgPar_Calc->Copy_AlignedSec      ( (char*)(Hit._sd ) /*)*/);
+					IPrgPar_Calc->Copy_AlignedSec2Align( (char*)(Hit._tg ) /*)*/);
 				} 
-				else if  (IPrgPar_uArr->_TmHy.Min() >  tm  ) {IPrgPar_uArr->_TmHy.Min() = tm; }
+				else if  (IPrgPar_Calc->_TmHy.Min() >  tm  ) {IPrgPar_Calc->_TmHy.Min() = tm; }
 
 			} else 
 			{
-				AlignedSecPar al( (s.GetCopyFullSec())  , (t.GetCopyFullSec()), *NNpar ); 		
+				AlignedSecPar al( (s.GetCopyFullSec())  , (t.GetCopyFullSec()), NNpar ); 		
 															g= al.G ()/1000 ;	float tm=KtoC( al.Tm() ) ; 
-				IPrgPar_uArr->_GHy.Expand(g) ;
-				if       (IPrgPar_uArr->_TmHy.Max() <  tm  ) 
-				{	IPrgPar_uArr->_TmHy.Max() = tm; 
+				IPrgPar_Calc->_GHy.Expand(g) ;
+				if       (IPrgPar_Calc->_TmHy.Max() <  tm  ) 
+				{	IPrgPar_Calc->_TmHy.Max() = tm; 
 					pr_maxTmH=&s; 
 					tg_maxTmH=&t;
 				} 
-				else if  (IPrgPar_uArr->_TmHy.Min() >  tm  ) {IPrgPar_uArr->_TmHy.Min() = tm; }
+				else if  (IPrgPar_Calc->_TmHy.Min() >  tm  ) {IPrgPar_Calc->_TmHy.Min() = tm; }
 			}
 
 		}// recorre todos las var no deg
 	}
-	if ( ! IPrgPar_uArr->_align)	
+	if ( ! IPrgPar_Calc->_align)	
 	{
-		IPrgPar_uArr->Set_AlignedSec      ( (char*)pr_maxTmH->GetCopyFullSec() );
-		IPrgPar_uArr->Set_AlignedSec2Align( (char*)tg_maxTmH->GetCopyFullSec() );
+		IPrgPar_Calc->Set_AlignedSec      ( (char*)pr_maxTmH->GetCopyFullSec() );
+		IPrgPar_Calc->Set_AlignedSec2Align( (char*)tg_maxTmH->GetCopyFullSec() );
 	}
 
 	if   (!      Sec.NonDegSet()) {pr->Free();		delete pr;}	
 	if   (!Sec2Align.NonDegSet()) {tg->Free();		delete tg;}	
 	//delete pAl;	
-	if (IPrgPar_uArr->_save)	
+	if (IPrgPar_Calc->_save)	
 	{
 		CMultSec primers(NNpar); primers.AddSec(      &Sec);
 								 primers.AddSec(&Sec2Align);
 
-		int t=MultiplexPCRProg ( IPrgPar_uArr, primers		)  ;
+		int t=MultiplexPCRProg ( IPrgPar_Calc, primers		)  ;
 		primers.Free();
 		return t;
 	}

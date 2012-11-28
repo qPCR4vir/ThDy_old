@@ -8,6 +8,8 @@
 #include <iomanip>
 #include <memory>
 #include <math.h>
+#include <list>
+#include <stack>
 using namespace std ; 
 
 #include "ThDySec/sec.h"
@@ -26,7 +28,7 @@ char *AttachToCharStr(const char *CharStr, const char *Attach)			// no olvide de
 	strcpy (NewCharStr,CharStr);	strcat (NewCharStr,Attach);
 	return NewCharStr ;
 }
-char *ChangeCharStrAttaching(char *&CharStrToChange, const char *Attach) // CharStrToChange : debe ser una cadena que se creo con new, 
+char *ChangeCharStrAttaching (char *&CharStrToChange, const char *Attach) // CharStrToChange : debe ser una cadena que se creo con new, 
 																	// y que sera borrada y vuelta a crear !!!
 {	char *OldCharStr=CharStrToChange;
 	CharStrToChange=AttachToCharStr(CharStrToChange, Attach)	;
@@ -38,12 +40,22 @@ char *ChangeCharStrAttaching(char *&CharStrToChange, const int Attach)
 	return ChangeCharStrAttaching(CharStrToChange, itoa (Attach, num, 10) ) ;
 }
 
-		CSecBasInfo::CSecBasInfo( long l):			_len( l ) , 			_NonDegSet( nullptr ), 				_GCp( 0 ),	
-													_GrDeg( 1 ),			_NDB( 0 ),							_c(new Base[l+3])
+		CSecBasInfo::CSecBasInfo( long l):			
+			_len( l ) , 			
+			_NonDegSet( nullptr ), 				
+			_GCp( 0 ),	
+			_selected(true), 
+			_filtered(false),
+			_ID(NewS_ID())	,									
+			_GrDeg( 1 ),			_NDB( 0 ),							_c(new Base[l+3])
 {}
 
-		CSec::CSec ( long l, CSaltCorrNN *NNpar) 		:	CSecBasInfo ( l ) ,			_NNpar(NNpar),		_b(new Base[l+3]),
-															_SdS(new Entropy[l+3]),		_SdH(new Energy[l+3])
+		CSec::CSec ( long l, std::shared_ptr<CSaltCorrNN> NNpar) 		
+			:	CSecBasInfo ( l ) ,			
+				_NNpar(NNpar),		_parentMS(nullptr),
+				_b(new Base[l+3]),
+				_SdS(new Entropy[l+3]),		
+				_SdH(new Energy[l+3])
 
 {	//auto_ptr<Base>		c(new Base[l+3]);	auto_ptr<Base>		b(new Base[l+3]);	auto_ptr<Entropy> 	SdS(new Entropy[l+3]);	
 	//auto_ptr<Energy>	SdH(new Energy[l+3]);	_c=c.release() ;_b=b.release() ;	_SdS=SdS.release() ;	_SdH=SdH.release() ;
@@ -51,12 +63,16 @@ char *ChangeCharStrAttaching(char *&CharStrToChange, const int Attach)
 };  
 
 		CSecBasInfo::CSecBasInfo (int id, const char *nam, char *clas) 
-								:_ID		( id ), 	_NonDegSet( nullptr ), 				_GCp( 0 ),	
-								_GrDeg( 1 ),			_NDB( 0 ),							_name( clone_trim_str	(nam )),
+								:	_ID		( id ), 	_selected(true), _filtered(false),
+									_NonDegSet( nullptr ), 				_GCp( 0 ),	
+									_GrDeg( 1 ),			_NDB( 0 ),							
+									_name( clone_trim_str	(nam )),	
 								_Clas(clas ? clone_c_str (clas) : nullptr )
-{}
-		CSec::CSec (const char *sec, int id, const char *nam, CSaltCorrNN *NNpar, long lmax, long secBeg, char *clas, float conc) 
-			:	CSecBasInfo ( id, nam, clas) ,		_NNpar	( NNpar),				_Conc	( conc )			
+		{}
+		CSec::CSec (const char *sec, int id, const char *nam, std::shared_ptr<CSaltCorrNN> NNpar, long lmax, long secBeg, char *clas, float conc) 
+			:	CSecBasInfo ( id, nam, clas) ,		
+				_NNpar	( NNpar),	_parentMS(nullptr),			
+				_Conc	( conc )			
 							//_ID		( id ), 		_GCp	( 0 ), 	_GrDeg	( 1 ), 	_NDB	( 0 ),	_NonDegSet( 0 )
 {		//assert (nam);		_name	= clone_trim_str	(nam );					auto_ptr<char> ap_name(_name);
 		//					_Clas	= clas ? clone_c_str (clas) : nullptr ;		auto_ptr<char> ap_Clas(_Clas);
@@ -145,13 +161,15 @@ CSec  * CSec::CreateCopy(DNAStrand strnd) // strnd=direct...crea una copia muy s
 {	Base *s=GetCopy_charSec(strnd); 
 	char *n; 
 	CSec *newS=new CSec( (char*)s, 
-						_ID,				// el mismo ????
+						NewS_ID(),				
 						n=AttachToCharStr(_name, DNAStrandName[strnd])	,
 						_NNpar	,
 						0,1,
 						_Clas,
 						_Conc
 						);
+	newS->Selected(Selected());
+	newS->Filtered(Filtered());
 	delete []s;delete []n;
 	return newS;
 }
@@ -266,7 +284,7 @@ CMultSec *CSec::ForceNonDegSet()
 			delete _NonDegSet ;	// lo borramos 
 		_NonDegSet= new CMultSec(_NNpar) ;
 		_NonDegSet->AddSec( GenerateNonDegVariant(this, 0, 0) ) ;
-		_Tm = _NonDegSet->_Tm ; //	_maxTm = _NonDegSet->_maxTm ; _minTm = _NonDegSet->_minTm ;	_Tm    = (_maxTm + _minTm )/2 ;
+		_Tm = _NonDegSet->_Local._Tm ; //	_maxTm = _NonDegSet->_maxTm ; _minTm = _NonDegSet->_minTm ;	_Tm    = (_maxTm + _minTm )/2 ;
 		//assert ( ( (cout << "Post Deg set generation: "<< _name << "\t" << _c << "\t" 
 		//			 << "Tm=" << (_minTm - 273)  << " °C"
 		//			 << " ("  << (_Tm - 273)     << " °C"  << ") "
@@ -370,7 +388,7 @@ CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) // crear varia
 
 	sec->_Tm.Set(_NNpar->CalcTM( sec->_SdS[_len-1], sec->_SdH[_len-1])) ;  // usar _len or i ?????= sec->_maxTm = sec->_minTm 
 
-	ChangeCharStrAttaching(sec->_name, _NonDegSet->_NSec);
+	ChangeCharStrAttaching(sec->_name, _NonDegSet->_Local._NSec);
 	return sec ;
 }
 //	assert ( ( (cout << sec->_name << "\t" << sec->_c << "\t" << (sec->_Tm - 273) << " °C" << "\n" ) , 1 ) ) ;
@@ -389,7 +407,7 @@ CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) // crear varia
 						_NumCand(0),
 						_NumCandExact(0)							
 
-{	long fi, i0;			assert (_rg);	
+{	long fi, i0;										//	assert (_rg);	trow exeption !!
 	for (fi=0; fi< sL._L.Min() ; fi++)  _rg[fi]=0;		// se salta las primeras pos
 														// al comienzo fi = L_min	
 	for (	; fi<=sec.Len(); fi++)						// fi - final base of candidate, recorre toda la sec
@@ -398,7 +416,7 @@ CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) // crear varia
 		CRangBase R(pi	,fi - sL._L.Min() +1 )  ;					   assert( fi>R.Max() );		assert( pi<=R.Max() );
 
 		for (i0=R.Min() ; i0<=R.Max() ; ++i0 )
-		{	if ( sL._Tm.inRang( sec.Tm(i0,fi) )    &&    sL._G.inRang( sec.G(i0,fi) ) ) 	
+		{	if ( sL._Tm.inRang( sec.Tm(i0,fi) )    &&    sL._G.inRang( sec.G(i0,fi) ) ) 	// usa calculos de Tm basados en NNpar
 			{	 R.adjustCur(i0);
 				 _NumCandExact++;	//	Seria lo correcto, pero da problemas cuando existe una "burbuja" de Tm, 
 									//  cosa que un "rango" no puede considerar, tendria que hacerce con un conjunto. 
@@ -516,51 +534,66 @@ int		CMultSec::AddFromFile (const char *file)		// return la cantidad de sec add 
 	int j=0;
 	char c1;
 	ifile>>skipws  >> c1;
-	if ( ! ifile.good() ) {cerr << "File "<< file <<" could not be opened "<<endl ; return 0;} 
+	if ( ! ifile.good() ) 	
+	{
+	    throw std::ios_base::failure(string("Could not open the sequence file: ")+ file );
+	}
 
-	if( c1 =='>' ) 																		return AddFromFileFASTA (ifile);
+	if( c1 =='>' ) 																		
+		return AddFromFileFASTA (ifile);
 					// esto es FASTA, si no  BLAST o GB o ...
 	if (c1 =='<' )
 	{	string xml_DOCTYPE ;
 		getline (ifile, xml_DOCTYPE,'>') ;   // <?xml version="1.0"?>
 		getline (ifile, xml_DOCTYPE,'>') ;   // <!DOCTYPE BlastOutput PUBLIC "-//NCBI//NCBI BlastOutput/EN" "NCBI_BlastOutput.dtd">
-		if ( ! ifile.good() ) {cerr << "File "<< file <<" could not be opened "<<endl ; return 0;} 
+		if ( ! ifile.good() ) 	
+		{	throw std::ios_base::failure(string("Could not open the sequence file: ")+ file );		}
 
-		if		(string::npos!=xml_DOCTYPE.find("DOCTYPE BlastOutput") )				return AddFromFileBLAST (ifile);
-		else if (string::npos!=xml_DOCTYPE.find("DOCTYPE Bioseq-set" ) )				return AddFromFileGB (ifile);
+		if		(string::npos!=xml_DOCTYPE.find("DOCTYPE BlastOutput") )				
+			return AddFromFileBLAST (ifile);
+		else if (string::npos!=xml_DOCTYPE.find("DOCTYPE Bioseq-set" ) )				
+			return AddFromFileGB (ifile);
 		return 0;
 	}
-	if (c1 =='L' )	{	ifile.putback(c1);												return AddFromFileGBtxt (ifile);	}
+	if (c1 =='L' )	
+	{	ifile.putback(c1);												
+		return AddFromFileGBtxt (ifile);	
+	}
 	return 0;   // cerr unknow format		
 }	 
 
-int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // "modernizar" con string -------------------    AddFromFileFASTA   ------------
-{	int j=0 ;	//long l= (_SecEnd ? _SecEnd-_SecBeg +1 : 0) ;
+int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // -------------------    AddFromFileFASTA   ------------
+{	int j=0 ;													//long l= (_SecEnd ? _SecEnd-_SecBeg +1 : 0) ;
 
-	do	{	string Fasta_NAME_DESCR  ;
-			getline (ifile, Fasta_NAME_DESCR); //<?xml version="1.0"?>//char line [SEQUENCES_MAX_SIZE];	
-												//line[0]='>';//ifile.getline (line, SEQUENCES_MAX_SIZE) ;
-			if ( ! ifile.good() )  return 0;            // cerr FASTA sec not readed 
-			//int nl;		// name len
-			//for (nl=0;	nl < Fasta_NAME_DESCR.length() && (	// HORROR - habia olvidado comprobar esta long Esto seguramente se puede hacer mas elegante con string funtion
-			//				isalpha(Fasta_NAME_DESCR[nl])		// 	ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz			isgraph ??   
-			//			||	ispunct(Fasta_NAME_DESCR[nl])		//  !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~								poner solo '._-'    ?????    
-			//			||	isdigit(Fasta_NAME_DESCR[nl])  );	//  01234567890
-			//	 nl++ ) ; 
-			//
-			//string Fasta_NAME = Fasta_NAME_DESCR. .substr(0,nl);	//char *name = new char[nl+1];assert(name);//strncpy(name,Fasta_NAME_DESCR.c_str(), nl );name[nl]=0;
-			string Fasta_NAME = Fasta_NAME_DESCR.substr(0,Fasta_NAME_DESCR.find_first_not_of(
-									"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890!#$()*+-./<=>@[]^_{|}~"    ) );
+	do	{	string Descriptor  ;
+			getline (ifile, Descriptor); 
+			if ( ! ifile.good() )  return 0;					// cerr FASTA sec not readed 
+			size_t b_d=Descriptor.find_first_not_of(
+									"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890!#$()*+-./<=>@[]^_{|}~"    );
+			string Fasta_NAME = Descriptor.substr(0,b_d );
+			Descriptor=Descriptor.substr(Fasta_NAME.length());
 
-  			string Fasta_SEC ;					//	char Seq [SEQUENCES_MAX_SIZE];
-			getline (ifile, Fasta_SEC,'>') ;	//	ifile.getline( Seq, SEQUENCES_MAX_SIZE,'>'); 
+  			string Fasta_SEC ;					
+			getline (ifile, Fasta_SEC,'>') ;	
 
-			if ( Fasta_SEC.length() >= _SecLim.Min() )		//  if ( _SecBeg <= ifile.gcount ( ) )
+			if ( Fasta_SEC.length() >= _SecLim.Min() )			//  if ( _SecBeg <= ifile.gcount ( ) )
 			{	if ( _SecLim.Max() ) Fasta_SEC=Fasta_SEC.substr(_SecLim.Min()-1, _SecLim.Max()-_SecLim.Min()+1 ) ;//if (_SecEnd) Seq[_SecEnd]=0 ;
 				else				 Fasta_SEC=Fasta_SEC.substr(_SecLim.Min()-1 ) ;					// hasta el final
-				CSec *sec=  new CSec(Fasta_SEC.c_str() , _NSec, Fasta_NAME.c_str() , _NNPar); assert(sec);
+				CSec *sec=  new CSec(Fasta_SEC.c_str() , _Local._NSec, Fasta_NAME.c_str() , _NNPar); assert(sec);
 						
-				if ( sec->Len() >= _SecLim.Min()  && NotIdem(*sec) )		{	j++;		AddSec ( sec ) ;	}
+				if ( sec->Len() >= _SecLim.Min()   )		
+				{	
+					CSec *idem=Idem(*sec);
+					InsertSecAfter ( sec , idem) ;	
+					sec->Description(trim_string(Descriptor));
+					if (idem) 
+					{
+						sec->Selected(false);
+						sec->Filtered(true);
+					}
+					else
+						j++;		
+				}
 				else delete sec;
 			}
 			if (!ifile.good()) 				break ;		//			ifile.getline( line, SEQUENCES_MAX_SIZE);
@@ -579,7 +612,7 @@ int		CMultSec::AddFromFileBLAST (ifstream &ifile) // ----------------  CMultSec:
 	
 	do {	unsigned int	_Hit_num=0 ;			// para cada hit
 			char		*	_Hit_id=nullptr ;				
-			char		*	_Hit_def=nullptr ;				
+			char		*	_Hit_def=nullptr ;				// descriptor ??
 			char		*	_Hit_accession=nullptr	;
 			long			_Hit_len=0 ;				
 			float			_Hsp_bit_score=0 ;
@@ -598,7 +631,6 @@ int		CMultSec::AddFromFileBLAST (ifstream &ifile) // ----------------  CMultSec:
 			char *			_Hsp_midline=nullptr ;
 			bool			_FormatOK=0 ;
 		char		*sec=nullptr;						// para CSec
-
 		char		*nam=nullptr;
 		long		 l=0;
 		char		*clas=nullptr;
@@ -702,7 +734,18 @@ int		CMultSec::AddFromFileBLAST (ifstream &ifile) // ----------------  CMultSec:
 														id,			//Hit_num   ???		//	char		*	nam,		Hit_def
 														_NNPar /*,  	//	long l=0,	(Hit_len ---> NO ) !!!  -->_Hsp_align_len -OK clas,	conc*/
 														);
-				if(secH->Len() > 2  && NotIdem(*secH))     		{	id++;	AddSec ( secH ) ;	}
+				if ( secH->Len() >= _SecLim.Min()   )		
+				{	
+					CSec *idem=Idem(*secH);
+					InsertSecAfter (secH  , idem) ;	
+					if (idem) 
+					{
+						secH->Selected(false);
+						secH->Filtered(true);
+					}
+					else
+						id++;		
+				}
 				else delete secH;
 			}
 			delete []sec ;
@@ -759,10 +802,19 @@ int		CMultSec::AddFromFileGBtxt (ifstream &ifile) // ----------------  CMultSec:
 												sec	,	
 												id,								//	char		*	nam,	DEFINITION	,	
 												_NNPar);
-
-			if(secGBtxt->Len() > 2  && NotIdem(*secGBtxt))     //   == Seq_inst_length ??
-			{	id++;		AddSec ( secGBtxt ) ;	}
-			else delete secGBtxt;
+				if ( secGBtxt->Len() >= _SecLim.Min()   )		
+				{	
+					CSec *idem=Idem(*secGBtxt);
+					InsertSecAfter (secGBtxt  , idem) ;	
+					if (idem) 
+					{
+						secGBtxt->Selected(false);
+						secGBtxt->Filtered(true);
+					}
+					else
+						id++;		
+				}
+				else delete secGBtxt;
 			delete []sec ;
 		}
 	while (ifile.good() ); 
@@ -832,8 +884,20 @@ int		CMultSec::AddFromFileGB (ifstream &ifile)  // ----------------  CMultSec:: 
 											_NNPar/*,  	//	long			l=0,		(Hit_len ---> NO ) !!!  -->_Hsp_align_len -OK clas, conc*/
 										);
 			delete []sec ;
-			if(secGB->Len() > 2 && NotIdem(*secGB)  )     	{	id++;		AddSec ( secGB ) ;		}
-			else delete secGB;
+
+				if ( secGB->Len() >= _SecLim.Min()   )		
+				{	
+					CSec *idem=Idem(*secGB);
+					InsertSecAfter (secGB  , idem) ;	
+					if (idem) 
+					{
+						secGB->Selected(false);
+						secGB->Filtered(true);
+					}
+					else
+						id++;		
+				}
+				else delete secGB;
 		}
 	while (ifile.good() ); 
 	return id; 
@@ -842,53 +906,164 @@ int		CMultSec::AddFromFileGB (ifstream &ifile)  // ----------------  CMultSec:: 
 int		CMultSec::AddFromFileODT (ifstream &ifileODT){return 0;}
 int		CMultSec::AddFromFileODS (ifstream &ifileODS){return 0;}
 
-bool	CMultSec::NotIdem ( CSec &sec )   // ----------------  CMultSec::            NotIdem  --- busqueda trivial de sec identicas -------------
-{	if ( 100 == _MaxTgId ) return true ;
+CSec	*CMultSec::Idem ( CSec &sec )   // ----------------  CMultSec::            NotIdem  --- busqueda trivial de sec identicas -------------
+{	if ( 100 < _MaxTgId ) return nullptr ;
 	long Lcs=sec.Len() ;											// len of candidate sec (to be in the list, with MaxId)
 	long MaxErCS= ceil(float(Lcs*(100.0f-_MaxTgId) ) / 100.0f);					// min of not Id base to be in the list
-	for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec
+	for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec de esta misma ms
 	{	CSec &s = *CurSec() ; 
+		if (s.Filtered()) continue;
 		long l, MaxEr ;
 		if (s.Len() < Lcs) 		{	l=s.Len() ;			MaxEr= ceil(l*(100-_MaxTgId)  / 100);		} 
 		else 					{	l=Lcs ;				MaxEr= MaxErCS;						}
 		long i=0 , Er=0 ;
 		while ( ++i <=l ) 	if ( MaxEr   <   ( Er += ( s[i] != sec[i] )) )  break;
-		if (i>l) return false ;		
+		if (i>l) return &s ;		
 	}
-	return true ;
+	return nullptr ;
 }
-void	CMultSec::AddSec ( CSec *sec )
-{	if (!sec) return ;
+ CSec *	CMultSec::AddSec ( CSec *sec )
+{	if (!sec) return nullptr ;
 	_LSec.Add(sec);
-	UpdateTotals ( sec );
+	UpdateTotalsAdding ( sec );
+	return sec;
 }
-void	CMultSec::InsertSec ( CSec *sec ) // insert 'link' sec ,  antes de 'Cur'
-{	if (!sec) return ;
+ CSec *	CMultSec::InsertSec ( CSec *sec ) // insert 'link' sec ,  antes de 'Cur'
+{	if (!sec) return nullptr ;
 	_LSec.Insert(sec);
-	UpdateTotals ( sec );
+	UpdateTotalsAdding ( sec );
+	return sec;
 }
-void	CMultSec::UpdateTotals ( CSec *sec ) // insert 'link' sec ,  antes de 'Cur'
-{	_NSec++; _TNSec ++ ;
+ CSec *	CMultSec::InsertSecAfter	( CSec *sec , CSec *preSec )			// insert 'link' sec ,  after preSec
+{	
+	if (!preSec) return AddSec (sec);
+	if (!sec) return nullptr ;
+	sec->InsertAfter( preSec);
+	UpdateTotalsAdding ( sec );
+	return sec;
+}
+void	CMultSec::UpdateTotalsAdding ( CSec *sec ) 
+{	
+	if (!sec || sec->_parentMS == this)										// no hay sec o ya estaba aqui
+		return;
+	CMultSec *parMS   =sec->_parentMS;					// /*._Get()*/
+	CMultSec *My_parMS=     _parentMS;					// /*._Get()*/
+	bool checkExtr(true) ; 
+	CMultSec   *cp;
 
-	if ( _NSec == 1 )									//   si esta es la primera sec inicializar los max
-	{	_MaxLen = sec->Len() ;
-		_Tm     = sec->_Tm ; //_maxTm  = sec->_maxTm ; 	_minTm  = sec->_minTm ;
-		if ( _TNSec == 1 )	_TMaxLen = _MaxLen ;
-	} else
-	{	if ( _MaxLen  < sec->Len()  ) 		 _MaxLen  = sec->Len() ;
-		if ( _TMaxLen < _MaxLen    ) 		 _TMaxLen = _MaxLen ;
-		_Tm.Expand(sec->_Tm  ) ;//	if ( _maxTm < sec->_maxTm  )  _maxTm = sec->_maxTm ; if ( _minTm > sec->_minTm  )  _minTm = sec->_minTm ;
-	}
+	if (parMS)
+	{
+	    cp=findComParent( parMS);
+		parMS->_Local._NSec--	;								// la elimino de la ms orig. 
+		//parMS->_Global._NSec -- ;								// 
+		if (parMS->_Local._NSec)
+			if (parMS->isLocExtreme(sec))
+				RecalExtremes();
+			else
+				checkExtr=false;
+		else
+			checkExtr=false;
+
+		for ( /*parMS=parMS->*/_parentMS;  parMS != cp &&  parMS ;  parMS=parMS->_parentMS)		// desde localizacion orig subiendo hasta parent comun
+			{
+				parMS->_Global._NSec -- ;								// elimino  de este total.
+				if (checkExtr && parMS->_Global._NSec)
+					if (parMS->isGlobExtreme(sec))
+						RecalExtremes();
+					else
+						checkExtr=false;
+				else
+					checkExtr=false;
+			}
+	}else
+		cp=nullptr;
+	Add2LocalExtreme(*sec);
+	for (My_parMS ; My_parMS!=cp && My_parMS; My_parMS=My_parMS->_parentMS)  // desde mi hacia arriba hasta el com parent anadiendo
+	{
+		if (checkExtr)
+			My_parMS->Add2GlobalExtreme(*sec);
+		else
+		{
+			parMS->_Global._NSec ++;								// sumo sus s a este total.
+		}
+	}	
+	sec->_parentMS = (this) ;							//* std::weak_ptr<CMultSec> */
 }
-void	CMultSec::AddMultiSec ( CMultSec *ms )  //--------------------------------------    AddMultiSec    --------------------
-{	if (!ms) return ;	
+
+
+CMultSec   *CMultSec::findComParent( CMultSec *ms)
+{
+	if(!ms || ms==this) 
+		return ms;
+	std::stack<CMultSec*> myTree,		oTree;
+	CMultSec			*myPms=this, *oPms=ms;
+		myTree.push(myPms);
+		oTree.push(oPms);
+
+	do 
+	{	myPms=myPms->_parentMS;
+		myTree.push(myPms);
+	}while (myPms);
+
+	do 
+	{	oPms=oPms->_parentMS;
+		oTree.push(oPms);
+	}while (oPms);
+
+	do 
+	{	if(  (oPms = myTree.top())   !=  oTree.top()  )
+			return myPms;
+		myPms= oPms;
+		myTree.pop();
+		oTree.pop();
+	} while (!myTree.empty() && !oTree.empty() );
+	return myPms;
+}
+
+
+CMultSec *	CMultSec::AddMultiSec ( CMultSec *ms )  //--------------------------------------    AddMultiSec    --------------------
+{	if (!ms) return nullptr;	
 	_LMSec.Add(ms);
+	UpdateTotalsAdding ( ms );   // al llamar ya esta la ms movida fisicamente. Falta solo actualizar extremes
+	return ms;
+}
+void	    CMultSec::UpdateTotalsAdding ( CMultSec *msec ) 
+{	
+	if (!msec || msec->_parentMS==this)					// no hay msec o ya estaba antes en una de mis subtrees inmediatas. 
+		return;
 
-	if ( _TNSec == 0 )				_TMaxLen = ms->_TMaxLen ;  // estas son las primeras sec en esta lista
-	if ( _TMaxLen < ms->_TMaxLen) 	_TMaxLen = ms->_TMaxLen ;
-	_NMSec++; 
-	_TNMSec += ms->_TNMSec + 1 ;
-	_TNSec  += ms->_TNSec ;
+	CMultSec *parMS   =msec->_parentMS;					// /*._Get()*/
+	CMultSec *My_parMS=     _parentMS;					// /*._Get()*/
+	bool checkExtr(true) ; 
+	CMultSec   *cp;
+	if (parMS)										// no es imprescindible. Anadido solo por claridad de intencion
+	{	cp=findComParent( msec);
+		for ( parMS;  parMS != cp   ;  parMS=parMS->_parentMS)			// desde localizacion orig subiendo hasta parent comun
+			{
+				parMS->_Global._NSec -= msec->_Global._NSec ;			// elimino sus s de este total.
+				parMS->_Global._NMSec-= msec->_Global._NMSec + 1;		// elimino sus ms de este total.
+				parMS->_Local._NMSec--	;								// la elimino de esta ms. 
+				if (checkExtr && parMS->_Global._NSec)
+					if (parMS->isGlobExtreme(msec))
+						RecalExtremes();
+					else
+						checkExtr=false;
+			}
+	}else
+		cp=nullptr;
+	Add2LocalExtreme(*msec);
+	for (My_parMS ; My_parMS!=cp && My_parMS; My_parMS=My_parMS->_parentMS)  // desde mi hacia arriba hasta el com parent anadiendo
+	{
+		if (checkExtr)
+			My_parMS->Add2GlobalExtreme(*msec);
+		else
+		{
+			My_parMS->_Global._NSec += msec->_Global._NSec ;			// sumo sus s a este total.
+			My_parMS->_Global._NMSec+= msec->_Global._NMSec + 1;		// sumo sus ms a este total.
+		}
+	}
+	msec->_parentMS = (this) ;							// std::weak_ptr<CMultSec> 
+
 }
 
 		CMultSec::~CMultSec ()				// funciona bien solo si la lista es "lineal"
@@ -899,42 +1074,34 @@ void	CMultSec::AddMultiSec ( CMultSec *ms )  //---------------------------------
 }    
 
 
-
-//char	*CSec::CreateTEMPORALcomplementary(long InicBase, long EndBase)       // recuerde los $...$, aqui se cuentan, 
-//					{	if ( EndBase< 1 || _len <EndBase ) EndBase=_len;
-//						long l=EndBase-InicBase ;
-//						assert(l>=0);
-//						char *temp=new char[l+1];						 // asi como InicBase y EndBase inclusive!!
-//						assert(temp);						
-//						for(long p=InicBase; p<=EndBase;p++) temp[p]=c_degbase	[_c[p]];
-//						temp[l]=0; return temp;
-//					}
-										// al comienzo fi = L_min
-	//for (	; fi<= sL._L.Max() ; fi++)  // fi - final base of candidate, recorre toda la sec
-	//{	
-	//	long pi		=1		, pf		=fi-L_min+1 ;   // al comienzo pf = 1
-	//	long picur	=pf+1	, pfcur		=pi	;			// al comienzo picur = 2 , pfcur = 1
-
-	//	for (i0=pi ; i0<=pf; i0++ )						// al comienzo i0 = 1 , pf = 1 , fi = L_min
-	//	{	float Tm=sec.Tm(i0,fi), G=sec.G(i0,fi);
-	//		if ( Tm_min <= Tm && Tm <= Tm_max    &&    G_min <= G && G <= G_max ) 
-	//		{	if(picur>i0)
-	//				picur=i0;
-	//			if(pfcur<i0)
-	//				pfcur=i0;
-	//			 _NumCandExact++; //Seria lo correcto, pero da problemas cuando existe una "burbuja" de Tm, cosa que un "rango" no puede considerar, 
-	//			//             tendria que hacerce con un conjunto. 
-	//			//             Osea estoy dejando dentro del rango, interiormente la posibilidad de aceptar sondas con Tm fuera de rango
-	//		}
-	//	}
-	//	if (picur<=pfcur)
-	//	{		_NumPosCand++ ; 
-	//			_rg[fi]=new CRang (picur,pfcur+1, pfcur,picur);
-	//			_NumCand+= (_rg[fi]->_pf - _rg[fi]->_pi + 1);
-	//	} else	_rg[fi]=0 ;
+//void	CMultSec::RefreshExtremes( CMultSec *ms)
+//{
+//	if(!ms)
+//		return;
+//	if(ms->_NSec)
+//
+//}
+	//	
+	//while (parMS)									// subo por el tree hasta llegar al root
+	//	if (parMS==this)						
+	//		return;									// la sec estaba antes en una de mis subtrees. 
+	//	else
+	//auto TLen= msec->_TLen ;
+	//auto TTm = msec->_TTm ;
+	////auto TNMS
+	//CMultSec *My_parMS=this ;    //_parentMS/*._Get()*/;		// 
+	//while (My_parMS)								// subo por el tree hasta llegar al root
+	//{	if ( ! My_parMS->_TNSec  )	
+	//	{											
+	//		My_parMS->_TLen= TLen ;				//   si ademas es la primera del todo inicializar los max totales
+	//		My_parMS->_TTm = TTm ;
+	//	}else
+	//		{	
+	//			My_parMS->_TLen.Expand( TLen) ;
+	//			My_parMS->_TTm .Expand( TTm ) ;
+	//		}	
+	//	My_parMS->_TNSec +=msec->_TNSec;			// la elimino de este total. Que hacer con las max??
+	//	My_parMS->_TNMSec+=msec->_TNMSec;
+	//	TLen=My_parMS->_TLen ;
+	//	TTm =My_parMS->_TTm ;
 	//}
-		//CSecCand::CSecCand(CSec &sec, 	SondeLimits sL
-		//					//float	G_min	, float G_max ,					// en kcal ...
-		//					//float	Tm_min	, float Tm_max ,  
-		//					//int		L_min	, int L_max 
-		//					)

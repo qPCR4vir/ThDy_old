@@ -2,7 +2,7 @@
 #define _INIT_ThDy_PROG_PARAM_H
 
 #include "init_prog_param.h" 
-
+#include <memory>
 
 
 
@@ -64,6 +64,9 @@ class CParamSondeLimits: public IBParam
 	          } 
 };
 
+class CMultSec;
+class CSaltCorrNN;
+
 class ThDyCommProgParam : public CCommProgParam // concreta los parametros comunes. Mantiene lista de los prog Espec que los usan
 {public:	
     ThDyCommProgParam(const string& titel,   CProgProject *proj)
@@ -96,7 +99,13 @@ class ThDyCommProgParam : public CCommProgParam // concreta los parametros comun
 							_InputTargetFile(this, "Imput file for Targets",				"TargetFile", ""			) ,
 							_OutputFile     (this, "Results output file",					"OutputFile", ""			) ,
 							_InputNNFile    (this, "Imput file with NN parametrs",			"iNNParFile", ""			) , 
-							_PCRfiltrPrFile (this, "Imput file with primers for filtering",	"PCRftrFile", ""			)
+							_PCRfiltrPrFile (this, "Imput file with primers for filtering",	"PCRftrFile", ""			),
+			//_pSaltCorrNNp(nullptr),
+			_pSeqTree			(CreateRoot()), 
+			_pSeqNoUsed			(AddSeqGroup(_pSeqTree.get(), "Dont use")), 
+            _pSeqTargets		(AddSeqGroup(_pSeqTree.get(), "Target seq")),
+            _pSeqNonTargets		(AddSeqGroup(_pSeqTree.get(), "Non Target seq")),
+            _pPCRfiltrePrimers	(AddSeqGroup(_pSeqTree.get(), "PCR Primers to <filtre> sequences"))
 	{	TAMeth.AddStrValues("TAMeth_Tm",	TAMeth_Tm);
 		TAMeth.AddStrValues("TAMeth_G",		TAMeth_G);
 		TAMeth.AddStrValues("TAMeth_Fract",	TAMeth_Fract);
@@ -107,8 +116,6 @@ class ThDyCommProgParam : public CCommProgParam // concreta los parametros comun
 	//enum SaltCorrection {NoSelect  =-1 , StLucia  =0 , Owczarzy  =1 }; // ya se puede usar StLucia inicializando todo en el constructor. Parcialmente implementado cambio de Conc
 	//enum SaltCorrecP	{NoSMSelect=-1 , SMStLucia=0 , SMOwczarzy=1 }; // Unificar !!
 	//enum AlignMeth		{TAMeth_Tm =0  , TAMeth_G    , TAMeth_Fract };
-
-
 
 	/*C_str			_InputTargetFile ;	*/CParamC_str _InputTargetFile ;
 	/*C_str			_PCRfiltrPrFile ;	*/CParamC_str _PCRfiltrPrFile;
@@ -127,6 +134,28 @@ class ThDyCommProgParam : public CCommProgParam // concreta los parametros comun
 	bool			_st_savTm, _st_savPos, _st_savG, _st_savAlign, _st_savProj, _st_savG_Plasm, _st_savTm_Plasm, _st_savLog, _st_Exp_sond, _st_ExpTarg ;
 	CParamBool		 st_savTm,  st_savPos,  st_savG,  st_savAlign,  st_savProj,  st_savG_Plasm,  st_savTm_Plasm,  st_savLog,  st_Exp_sond,  st_ExpTarg ;
 
+	std::shared_ptr<CSaltCorrNN>  _pSaltCorrNNp;
+	std::shared_ptr<CMultSec>     _pSeqTree;
+	std::shared_ptr<CMultSec>     _pSeqNoUsed;
+	std::shared_ptr<CMultSec>     _pSeqTargets;
+	std::shared_ptr<CMultSec>     _pSeqNonTargets;
+	std::shared_ptr<CMultSec>     _pPCRfiltrePrimers;
+	CMultSec *AddSeqFromFile(CMultSec *parentGr, const std::string& FileName);
+	CMultSec *AddTargetFromFile(const std::string& FileName)
+	{
+		return AddSeqFromFile(_pSeqTargets.get(),FileName);
+	}
+	CMultSec *AddNoTargetFromFile(const std::string& FileName)
+	{
+		return AddSeqFromFile(_pSeqNonTargets.get(),FileName);
+	}
+	CMultSec *AddPCRfiltreFromFile(const std::string& FileName)
+	{
+		return AddSeqFromFile(_pPCRfiltrePrimers.get(),FileName);
+	}
+
+	CMultSec *AddSeqGroup	(CMultSec *parentGr, const std::string&     Name);
+	CMultSec* CreateRoot	();
 
 	// convertirlas en funciones "previas a la paralelizacion", que hacen copias propias de los parametros en serie, no en paralelo
 	void    TargetFile(const char *InputTargetFile)	{	_InputTargetFile.CopyTrim(InputTargetFile);	}
@@ -158,7 +187,11 @@ class CEspThDyProgParam : public CEspProgParam
 
 class CProgParam_microArray : public CEspThDyProgParam
 {public:	
-	
+	std::shared_ptr<CMultSec>   _probesMS;
+		CMultSec *AdduArrFromFile(const std::string& FileName)
+	{
+		return _cp.AddSeqFromFile(_probesMS.get(),FileName);
+	}
 	CParamC_str		_InputSondeFile ;   /*C_str			_InputSondeFile ; */
 	//bool			    _I, _G;			// Outpu table of I, G. 
 	//CParamBool		 I,  G;			// Outpu table of I, G. 
@@ -166,13 +199,13 @@ class CProgParam_microArray : public CEspThDyProgParam
     explicit 	CProgParam_microArray(const string& titel, ThDyCommProgParam &commThDyParam) 
 		    :	CEspThDyProgParam(titel, commThDyParam), 
 				_InputSondeFile	(this, "Imput file for Sondes",				"iSonde_uAr", ""			) ,
-				_rtbl(nullptr)    /*,_tlG(nullptr),_tlPos(nullptr), UpDate(nullptr)*/ 
-				/*_I(false),   I				(this, "Programm option- Save Tm Table",			"SavTmTable", _I,   false), 
-				  _G(true),    G				(this, "Programm option- Save Tm Table",			"SavTmTable", _G,   true), */
-	        {} 
+				_rtbl(nullptr),
+                _probesMS(_cp.AddSeqGroup(_cp._pSeqTree.get(), "Probes of Virtual uArr"))
+	        {		
+			} 
 
-	CTable<TmGPos> *_rtbl;		//uArr_RT *_rtbl;
-
+	CTable<TmGPos> *_rtbl;		                                    //uArr_RT *_rtbl;
+    void RenameSondesMS(const std::string& name);
 	virtual int Run (){	return microArrayProg ( this )  ;}
 
 	void    SondeFile (const char *InputSondeFile )	{	_InputSondeFile.CopyTrim(InputSondeFile) ;	}
@@ -182,6 +215,10 @@ class CProgParam_microArray : public CEspThDyProgParam
 	// cuando se corre un proceso paralelo ver donde es mejor hacer estos delete.
 	virtual ~CProgParam_microArray()	override	{ /*delete _tlTm;*/}
 };
+ /*,_tlG(nullptr),_tlPos(nullptr), UpDate(nullptr)*/ 
+				/*_I(false),   I				(this, "Programm option- Save Tm Table",			"SavTmTable", _I,   false), 
+				  _G(true),    G				(this, "Programm option- Save Tm Table",			"SavTmTable", _G,   true), */
+
 
 class	CProgParam_uArrExp;
 int		microArrayProgTest ( CProgParam_uArrExp *IPrgPar_uArr)  ;
@@ -194,10 +231,7 @@ class CProgParam_uArrExp  : public CProgParam_microArray
 	bool		_Normalize;					// las tablas anteriores : puede suponer perdida de informacion para calcular signif estadistica??
 	Energy		_Isat, _Isen, _Gsat, _Gsen;
 
-    explicit 	CProgParam_uArrExp (const string& titel, ThDyCommProgParam &commThDyParam):	
-	                _exclSd(false),		_IxI(true),		_IxI_d(true),			_Normalize(true), 
-					_Isat(Energy(0.87f)),_Isen(Energy(0.01f)),	_Gsat(Energy(-2.0f)),	_Gsen(Energy(2.0f)),
-					CProgParam_microArray (titel,commThDyParam) {} 
+    explicit 	CProgParam_uArrExp (const string& titel, ThDyCommProgParam &commThDyParam);
 
 	int		Run		(	){	return microArrayProg ( this )  ;}
 	void    ExpFile (const char *Input_uArrExpFile )	{	_Input_uArrExpFile.CopyTrim(Input_uArrExpFile) ;	}
@@ -213,12 +247,9 @@ class CProgParam_MultiplexPCR ;
 int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr )  ;
 class CProgParam_MultiplexPCR : public CProgParam_microArray
 {public:
-	CProgParam_MultiplexPCR(const string& titel, ThDyCommProgParam &commThDyParam) 
-		: CProgParam_microArray(titel,commThDyParam)
-	{	_InputSondeFile.SetTitel("Imput file for primers"); 
-		_InputSondeFile.SetEtiq("iSonde_PCR"); 
-	}
+	CProgParam_MultiplexPCR(const string& titel, ThDyCommProgParam &commThDyParam) ;
 	int		Run		(){	return MultiplexPCRProg ( this )  ;}
+	CTable<TmGPos> *_rtbl_self;		                                    //uArr_RT *_rtbl;
 };
 
 class CProgParam_SondeDesign ;
@@ -249,7 +280,8 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 		_MinSelfG (10),		 MinSelfG(this, "Significative selfprobe G",		"MinSdSlf_G", _MinSelfG,  0.0f, 30.0f,		10.0f, "kcal" ),		
 		_MaxSelfTm (10),    MaxSelfTm(this, "Significative selfprobe Tm",		"MaxSdSlfTm",_MaxSelfTm, -0.0f,  70.0f,		10.0f, "°C" ),	
 		_MinTgCov (100),	MinTgCov (this, "Find sondes with more % coverage",	"Min_Tg_Cov",  _MinTgCov,  0.0f,100.0f,		99.0f  ,"%")							
-        {}  // revisar cuales deben ser estos valores !!!!	
+        {
+	    }  // revisar cuales deben ser estos valores !!!!	
 	bool		_design ;  // realizar solo diseno de sondas o solo comparacion de sec????
 	CParamBool	design ;  // realizar solo diseno de sondas o solo comparacion de sec????
 	SondeLimits _sL ;	
@@ -288,7 +320,9 @@ class CProgParam_TmCalc : public CProgParam_MultiplexPCR
 						align		(this, "Align primers before Tm calc",	"TmUseAlign", _align,  true),
 						_Sec		(this, "Primer",						"TmCalc_Sec", ""			) ,
 						_Sec2Align	(this, "Primer to align",				"TmC_Sec2Al", ""			) 
-					{}
+					{
+						RenameSondesMS("Tm calulator sondes??");
+	                }
 
 	bool	Set_Sec				 (char *Sec){_Sec.Take(Sec)		;		 return true ;}
 	bool	Set_Sec2Align		 (char *Sec){_Sec2Align.Take(Sec)		;return true ;}
@@ -328,6 +362,8 @@ class ThDyProjet : public CProgProject // Permite manejar todo el projecto: con 
 							_SdDes("Find sondes"                    ,_cp), 
 							_TmCal("Tm calculator"                  ,_cp)
 					{}
+ 	virtual ofstream &saveTMP() const     override       // Se me habia olvidado redefinir esta funcion para usar _cp.OutF
+	{	return saveToFile((auto_ptr<char>(AddFileExt(_cp._OutputFile.Get(),".ThDy.txt"))).get());	}
 };  
 
 

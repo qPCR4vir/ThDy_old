@@ -65,11 +65,11 @@ void	CSaltCorrNN::InitOwczarzySaltNNMatriz() // recalcular solo cuando se "pone"
 	Base a_1, a, b_1, b ;
 	Copy_oridS(_dS) ;	
 	for (a_1 =0; a_1<=5; a_1++)			
-		for (a=0; a<=5; a++)			
-			for (b_1=0; b_1<=5; b_1++)	
-				for (b=0; b<=5; b++)	
-					_dS [a_1][a] [b_1][b] += _oridH [a_1][a] [b_1][b]
-											*((4.29f * _GCp -3.95f )*(1e-5f)*LogSC+ (9.4e-6f)*LogSC*LogSC);
+	for (a   =0; a  <=5; a  ++)			
+	for (b_1 =0; b_1<=5; b_1++)	
+	for (b   =0; b  <=5; b  ++)	
+		_dS [a_1][a] [b_1][b] += _oridH [a_1][a] [b_1][b]
+											* ((4.29f * _GCp -3.95f )*(1e-5f)*LogSC+ (9.4e-6f)*LogSC*LogSC);
 }	
 
 void	CSaltCorrNN::SetStLuciaSaltCorr( float C1, float C2, float Csalt) 
@@ -229,13 +229,23 @@ void	COriNN::InitOriNNMatriz()
 	// Set all parameters to zero!     y porque 0 y no forbidden ?!					//  borrado por Ariel 		
 	//memset(_oridH,0,sizeof(_oridH));	//memset(_oridS,0,sizeof(_oridS));
 
-Base A=bk2nu['A'], C=bk2nu['C'], T=bk2nu['T'], G=bk2nu['G'] , g=0 /* gap */ , e=5 /* extremo, end */ ;
+      const Base A = bk2nu['A'],            //  Revisar esto si cambia el cod_deg  !!!!!!!!!!!!!!!!!!!!!!
+	             C = bk2nu['C'], 
+	             T = bk2nu['T'], 
+	             G = bk2nu['G'], 
+	             g = bk2nu['-'], /* gap */
+	             e = bk2nu['$'], /* extremo, end */
+               all = n_basek,
+			 first = 0,
+		first_base = 1,
+		last_base  = 4 ;
 
-	for (x=0; x<=5; x++)			// Prohibir todo lo no permitido												// Ariel 
-		for (y=0; y<=5; y++)												// Ariel 
-			for (a=0; a<=5; a++)												// Ariel 
-				for (b=0; b<=5; b++)												// Ariel 
-				{	ndH(x,y,a,b)= 0					;	ndS(x,y,a,b)=0				  ; }	//   AB/XY					// Ariel
+
+	for (x = first; x < all; x++)			// Prohibir todo lo no permitido												// Ariel 
+	for (y = first; y < all; y++)												// Ariel 
+	for (a = first; a < all; a++)												// Ariel 
+	for (b = first; b < all; b++)												// Ariel 
+	{	ndH(x,y,a,b)= 0					;	ndS(x,y,a,b) = first				  ; }	//   AB/XY					// Ariel
 				//{	ndH(x,y,a,b)=forbidden_enthalpy;	ndS(x,y,a,b)=forbidden_entropy; }	//   AB/XY					// Ariel
 
 	// y de paso verificar todos estos datos. Dar posibilidad de ajustar solo algunos parametros (correcciones)
@@ -243,8 +253,8 @@ Base A=bk2nu['A'], C=bk2nu['C'], T=bk2nu['T'], G=bk2nu['G'] , g=0 /* gap */ , e=
 	//		H		forbidden_enthalpy	( 1e18f	),		// initialize parameter table! MUY GRANDE
 
 
-	for (x=0;x<=5;x++)					//  bases plus   - and $													// Ariel 
-	{	for (y=0;y<=5;y++)				//  forbid $./XY etc.   ? <./XY  or  >./XY  ?
+	for (x = first;x < all;x++)					//  bases plus   - and $													// Ariel 
+	{	for (y = first;y < all;y++)				//  forbid $./XY etc.   ? <./XY  or  >./XY  ?
 		{	ndH(5,0,x,y)=forbidden_enthalpy;	ndS(5,0,x,y)=forbidden_entropy;   //   $-/XY						// Ariel 
 		//	ndH(0,5,x,y)=forbidden_enthalpy;	ndS(0,5,x,y)=forbidden_entropy;   //   -$/XY						// Ariel - caso especial: comienzo de sec
 		//	ndH(x,y,0,5)=forbidden_enthalpy;	ndS(x,y,0,5)=forbidden_entropy;   //   XY/-$						// Ariel - caso especial: comienzo de sec

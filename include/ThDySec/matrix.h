@@ -77,7 +77,7 @@ public:
 //	string				  _titTable ;
 	CTable(string TitTable)							  : _titTable(TitTable) {}
 	CTable(string TitTable,index capRow, index capCol): CMatrix_RA<Num>(capRow, capCol),		_titTable(TitTable), 
-														_titRows(0),							 _titColumns(0)
+														_titRows(capRow),						_titColumns(capCol)
 														{	_titRows.reserve (capRow ); _titColumns.reserve(capCol);}
 	index AddColummnTit	(const string &newColTit)	{ _titColumns.push_back (newColTit); return _titColumns.size(); }
 	index AddRowTit		(const string &newRowTit)	{ _titRows.push_back	 (newRowTit); return _titRows.size	 ();}

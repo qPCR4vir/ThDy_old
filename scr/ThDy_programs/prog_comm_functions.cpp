@@ -21,7 +21,7 @@ auto_ptr<CSaltCorrNN> Create_NNpar(ThDyCommProgParam& _cp)
 	return apNNpar ;
 }
 
-auto_ptr<ThDyAlign> Create_ThDyAlign(ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, CSaltCorrNN &NNpar)
+auto_ptr<ThDyAlign> Create_ThDyAlign(ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar)
 {
 	auto_ptr<ThDyAlign>	apAl;
 	switch (	_cp._TAMeth )
@@ -71,6 +71,7 @@ void HybridPr(CMultSec &pr, CSec &t, 	ThDyAlign &Al,	ofstream &osTm,
 														CTable<SecPos> *tlPos*/)
 {	for (  pr.goFirstSec()   ; pr.NotEndSec()   ;   pr.goNextSec() )  // recorre todos los primers de nuevo
 	{	CSec &s = *pr.CurSec() ; 
+		if(!s.Selected()) continue;
 		if ( ! s.NonDegSet()  ) 
 			{	
 				Hybrid (s, t, 	Al, osTm, osG,osPos,osPl_Tm,osPl_G,osAl, rtbl);
@@ -82,4 +83,6 @@ void HybridPr(CMultSec &pr, CSec &t, 	ThDyAlign &Al,	ofstream &osTm,
 					}// recorre todos las var no deg
 				} 
 	}
+	for (  pr.goFirstMSec(); pr.NotEndMSec()   ;   pr.goNextMSec())  
+		HybridPr (*pr.CurMSec(), t, 	Al, osTm, osG,osPos,osPl_Tm,osPl_G,osAl, rtbl);
 }			

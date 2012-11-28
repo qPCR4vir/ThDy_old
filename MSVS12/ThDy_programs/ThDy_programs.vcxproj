@@ -1014,10 +1014,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\scr\ThDy_programs\init_prog_param.cpp" />
+    <ClCompile Include="..\..\scr\ThDy_programs\init_thdy_prog_param.cpp" />
     <ClCompile Include="..\..\scr\ThDy_programs\prog_comm_functions.cpp" />
     <ClCompile Include="..\..\scr\ThDy_programs\ThDy_DegTmCalc.cpp" />
     <ClCompile Include="..\..\scr\ThDy_programs\ThDy_microArray.cpp" />
     <ClCompile Include="..\..\scr\ThDy_programs\ThDy_MultiplexPCR.cpp" />
+    <ClCompile Include="..\..\scr\ThDy_programs\ThDy_SeqExpl.cpp" />
     <ClCompile Include="..\..\scr\ThDy_programs\ThDy_SondeDesign.cpp" />
   </ItemGroup>
   <ItemGroup>

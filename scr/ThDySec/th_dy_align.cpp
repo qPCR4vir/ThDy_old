@@ -17,12 +17,12 @@ const int ThDyAlign::stj1[]={0,0,0,1,1,1,1,1};
 	//			
 	//		  } *_pre/*,*_pre0, *_pre1, *_pre2*/ ;   // back punter matriz a:i+1 dirc sonda, b:j+1 dir tg, d:diag
 
-ThDyAlign::ThDyAlign(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, CSaltCorrNN &NNpar, float InitMax) // ------------------------ ThDyAlign	--------
+ThDyAlign::ThDyAlign(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar, float InitMax) // ------------------------ ThDyAlign	--------
 			:_NNpar		(NNpar) ,								//_sd(nullptr),
 			 _dH0(nullptr),_dH1(nullptr),_dH2(nullptr),_dS0(nullptr),_dS1(nullptr),_dS2(nullptr),_pre(nullptr),
 			 _InitMax	(InitMax),
 			 _LenSond(MaxLenSond+2),  _LenTarg(MaxLenTarg+2), 
-			 _Ta(CtoK(60)),										// _Ta(NNpar.kein_Tm), --asi estaba. Se justifica?
+			 _Ta(CtoK(60)),										// _Ta(NNpar->kein_Tm), --asi estaba. Se justifica?
 			 _Ta_lastCalc(-1),									// todavia no se ha calculado. Aqui estara la Ta del ultimo calculo
 			 _Tm_sig(CtoK(15))									//_Tm_min(CtoK(57)), _Tm_max(CtoK(63)), _TableSize ( 0 )
 {	force_ResizeTable();		}
@@ -63,11 +63,11 @@ void ThDyAlign::force_ResizeTable()						//	------------------------------------
 void	ThDyAlign::Use (CSec  *sonde, CSec *target)    // antes hacia mas cosas.. porque?		//	---------------------	Use			---------
 {	_sd = sonde  ; 		_tg = target ;
 	ResizeTable();
-	_NNpar.UpdateGC( _sd->GCpercent(), _sd->Len() ,    _tg->GCpercent(), _tg->Len() );    // verificar 
+	_NNpar->UpdateGC( _sd->GCpercent(), _sd->Len() ,    _tg->GCpercent(), _tg->Len() );    // verificar 
 }
 
 void	ThDyAlign::InitBorder()						//	--------------------------------------------------------------	InitBorder	---------
-{	float IniEnt = _NNpar.GetInitialEntropy();    // 	-5.9f+_RlogC;	
+{	float IniEnt = _NNpar->GetInitialEntropy();    // 	-5.9f+_RlogC;	
 	_LenSondPlus1= _LenSond + 1;		// NO QUITAR !! Las dim de la matriz son (ls+3)X(lt+3) : la pos 0  queda "reservada, y se considferan los 2 '$' (inic y final)										
 	for (long i=0; i<=_LenSond; i++)								// recorre la sonda "comparandola" con el '$' del target
     {	dH0(i,0)=dH1(i,0)=dH2(i,0)=		0.0f;						// seguro ??????
@@ -94,9 +94,9 @@ void	ThDyAlign::Run(long tg_j_StartPos)  // tg_j_StartPos	:  pos de com del targ
 			 Base		gap= bk2nu[ basek[0] ];		// basek[]="-ACGT$"			,  // las 4 bases en el orden K. ?Coservar este orden  => b+cb=5 ??
 	register float S0, S1, S2, H0, H1, H2 ;
 //	long ls = _sd->_len + 2 , lt = _tg->_len + 2 ;    // lo mismo que _LenSond= LenSond +2 ;// Para que incluya los ´$´ ? y _LenTarg= LenTarg +2 ;
-	Energy  forbidden_enthalpy = _NNpar.forbidden_enthalpy/10;		// MUY grande:  1e+18
-	Entropy	forbidden_entropy  = _NNpar.forbidden_entropy/10 ;		// forbidden_entropy	= (_RlogC	),	comparar con  IniEnt = 	-5.9f+_RlogC;
-	Entropy IniEnt = _NNpar.GetInitialEntropy();					// 	-5.9f+_RlogC;	
+	Energy  forbidden_enthalpy = _NNpar->forbidden_enthalpy/10;		// MUY grande:  1e+18
+	Entropy	forbidden_entropy  = _NNpar->forbidden_entropy/10 ;		// forbidden_entropy	= (_RlogC	),	comparar con  IniEnt = 	-5.9f+_RlogC;
+	Entropy IniEnt = _NNpar->GetInitialEntropy();					// 	-5.9f+_RlogC;	
 	float max1, max2, max0 ;
 	Step st0,st1,st2; 
 	b_1= gap ;						// Las dim de la matriz son (lonS+3)X(lonT+3)=(ls+1)X(lt+1) : la pos 0  queda "reservada, y se consideran los 2 '$' (inic y final)
@@ -115,18 +115,18 @@ void	ThDyAlign::Run(long tg_j_StartPos)  // tg_j_StartPos	:  pos de com del targ
 			S0 = dS0 (i_1, j_1);		S1 = dS1 (i_1, j_1);		S2 = dS2 (i_1, j_1);	// al comienzo : 0,0 : i,0 : 0,j -> IniEnt
 			H0 = dH0 (i_1, j_1);		H1 = dH1 (i_1, j_1);		H2 = dH2 (i_1, j_1);	// al comienzo : 0,0 : i,0 : 0,j -> 0
 			if (H0<forbidden_enthalpy)		// OJO !!no tiene else ????? parar? // Diagonal  --- st_d,    st_4
-			{    S0 += _NNpar.GetEntr (a_2, a_1, b_2, b_1);  	// al comienzo : 1,1 -> ('.$','.$') -> 0: i,1 -> ('aa','.$') -> : 1,j -> ('.$','bb') -> 0 
-				 H0 += _NNpar.GetEnth (a_2, a_1, b_2, b_1);     //   
+			{    S0 += _NNpar->GetEntr (a_2, a_1, b_2, b_1);  	// al comienzo : 1,1 -> ('.$','.$') -> 0: i,1 -> ('aa','.$') -> : 1,j -> ('.$','bb') -> 0 
+				 H0 += _NNpar->GetEnth (a_2, a_1, b_2, b_1);     //   
 			} 
 
 			if (H1<forbidden_enthalpy)// OJO !caracter basek '-',' ' o gap en b, j no avanza y, a o i avanzaron -- st_a, st_3
-			{    S1 += _NNpar.GetEntr (a_2, a_1, gap, b_1);		H1 += _NNpar.GetEnth (a_2, a_1, gap, b_1);       } 	
+			{    S1 += _NNpar->GetEntr (a_2, a_1, gap, b_1);		H1 += _NNpar->GetEnth (a_2, a_1, gap, b_1);       } 	
 			if (H2<forbidden_enthalpy) // hueco en a_1, i no avanza y, b o j avanzaron --- st_b, st_5
-			{    S2 += _NNpar.GetEntr (gap, a_1, b_2, b_1);	    H2 += _NNpar.GetEnth (gap, a_1, b_2, b_1);	     } 	
+			{    S2 += _NNpar->GetEntr (gap, a_1, b_2, b_1);	    H2 += _NNpar->GetEnth (gap, a_1, b_2, b_1);	     } 	
 
 			float p0=(this->*CalcParam)(S0,H0);				float p1=(this->*CalcParam)(S1,H1);				float p2=(this->*CalcParam)(S2,H2);
 			// por ejemplo : CalcTM	(float S,float H)const{return (S>=0 || H>=forbidden_enthalpy || (H/S)<0 ) ? 0		 :  (H/S)	; }
-			// CalcParamG(S,H){return -_NNpar.CalcG (S, H);} CalcG (S,H,Ta){return (S>=0 || H>=forbidden_enthalpy/10000) ? -forbidden_freeEnerg : +(H - Ta*S);}
+			// CalcParamG(S,H){return -_NNpar->CalcG (S, H);} CalcG (S,H,Ta){return (S>=0 || H>=forbidden_enthalpy/10000) ? -forbidden_freeEnerg : +(H - Ta*S);}
 			if ((p0 >=p1)&&(p0 >=p2))			// Tm max  -> 0// Diagonal ? --- st_d pre(i_1,j_1) = st_3 ;	
 			{				dS0(i,j) = S0;		dH0(i,j) = H0;		max0= p0;		st0 = st_4 ;	
 			} else	if ((p1 >=p2))				// Tm max  -> 1
@@ -147,14 +147,14 @@ void	ThDyAlign::Run(long tg_j_StartPos)  // tg_j_StartPos	:  pos de com del targ
 			// we do not allow $- in the beginning, therefore set to forbidden if  j=1    ?????????
 			// also, disallow -$ in the end, therefore forbid if j=seq2len-1   . Seguro???????????
 			if ( (j==1) ||  (j==_LenTarg-1) )			// pasar a ....?
-			{	S0 =	S1 = _NNpar.forbidden_entropy;				H0 = 	H1 = _NNpar.forbidden_enthalpy;
+			{	S0 =	S1 = _NNpar->forbidden_entropy;				H0 = 	H1 = _NNpar->forbidden_enthalpy;
 			} else 
 			{	S0 = dS0 (i_1, j);				S1 = dS1 (i_1, j);
 				H0 = dH0 (i_1, j);				H1 = dH1 (i_1, j);
 				if (H0<forbidden_enthalpy)					// OJO !! para que sirve si no tiene else ????? parar? pasar al otro ciclo ??
-				{   S0 += _NNpar.GetEntr (a_2, a_1, b_1, gap);   	H0 += _NNpar.GetEnth (a_2, a_1, b_1, gap);			} 	
+				{   S0 += _NNpar->GetEntr (a_2, a_1, b_1, gap);   	H0 += _NNpar->GetEnth (a_2, a_1, b_1, gap);			} 	
 				if (H1<forbidden_enthalpy)
-				{   S1 += _NNpar.GetEntr (a_2, a_1, gap, gap);		H1 += _NNpar.GetEnth (a_2, a_1, gap, gap);			} 	
+				{   S1 += _NNpar->GetEntr (a_2, a_1, gap, gap);		H1 += _NNpar->GetEnth (a_2, a_1, gap, gap);			} 	
 			}
 			p0 = (this->*CalcParam)  ( S0, H0 );		p1 = (this->*CalcParam)  ( S1, H1 );
 			if (p0 >=p1)			// Tm max  -> 0
@@ -173,14 +173,14 @@ void	ThDyAlign::Run(long tg_j_StartPos)  // tg_j_StartPos	:  pos de com del targ
 			// we do not allow $- in the beginning, therefore set to forbidden if  i=1    ?????????
 			// also, disallow -$ in the end, therefore forbid if i=seq1len-1   . Seguro???????????
 			if ( (i==1) ||  (i==_LenSond-1) )					//  AQUI estaba el error MIO de las asimetrias ?!!!!!!!
-			{	S0 =	S2 = _NNpar.forbidden_entropy;				H0 = 	H2 = _NNpar.forbidden_enthalpy;
+			{	S0 =	S2 = _NNpar->forbidden_entropy;				H0 = 	H2 = _NNpar->forbidden_enthalpy;
 			} else 
 			{	S0 = dS0 (i, j_1);				S2 = dS2 (i, j_1);
 				H0 = dH0 (i, j_1);				H2 = dH2 (i, j_1);
 				if (H0<forbidden_enthalpy)					// OJO !! para que sirve si no tiene else ????? parar? pasar al otro ciclo ??
-				{   S0 += _NNpar.GetEntr (a_1, gap, b_2, b_1);   			H0 += _NNpar.GetEnth (a_1, gap, b_2, b_1);				} 	
+				{   S0 += _NNpar->GetEntr (a_1, gap, b_2, b_1);   			H0 += _NNpar->GetEnth (a_1, gap, b_2, b_1);				} 	
 				if (H2<forbidden_enthalpy)
-				{   S2 += _NNpar.GetEntr (gap, gap, b_2, b_1);				H2 += _NNpar.GetEnth (gap, gap, b_2, b_1);				} 	
+				{   S2 += _NNpar->GetEntr (gap, gap, b_2, b_1);				H2 += _NNpar->GetEnth (gap, gap, b_2, b_1);				} 	
 			}
 			p0 = (this->*CalcParam)  ( S0, H0 );			p2 = (this->*CalcParam)  ( S2, H2 );			
 			if (p0 >=p2)			// Tm max  -> 0
@@ -202,7 +202,7 @@ void	ThDyAlign::Run(long tg_j_StartPos)  // tg_j_StartPos	:  pos de com del targ
 					else
 						{ _max=max2; pre(i,j)=st2;H=dH2(i,j); S=dS2(i,j);}
 
-			if ( _NNpar.CalcTM (S, H) >= _Tm_sig && _NNpar.CalcG  (S, H) <= _G_sig)		//check if Hit found!	  anadir G :  
+			if ( _NNpar->CalcTM (S, H) >= _Tm_sig && _NNpar->CalcG  (S, H) <= _G_sig)		//check if Hit found!	  anadir G :  
 			{	 _THits++ ; if(AddIfHit(i,j)) _HitsOK++;	}	//_Hits.Add( new CHit(i,j,_max) );//check if local maximum found!
 			}
 
@@ -219,7 +219,7 @@ void	ThDyAlign::Run(long tg_j_StartPos)  // tg_j_StartPos	:  pos de com del targ
 			//{	_maxglo=_max;			_maxgloi=i;				_maxgloj=j;		}		
 		}
 	}
-	_Ta_lastCalc= _NNpar._Ta;
+	_Ta_lastCalc= _NNpar->_Ta;
 }
 
 //bool	ThDyAlign::AddIfHit(long fi, long fj)   
@@ -238,7 +238,7 @@ bool	ThDyAlign_TmHits::AddIfHit(LonSecPos fi, LonSecPos fj)   // ---fi y fj en l
 
 		if (i < 2 || j < 2 ) break ;									// i,j>1 ???? de todas formas no se pueden calc las Tm de las sondas
 		S0= Get_S(i,j,step(i,j)) ;		H0=Get_H(i,j,step(i,j)) ;		// no se toma el maximo, sino segun el step
-		Th= CalcParamTm( S-S0+_NNpar.GetInitialEntropy(),  H-H0);		// pos inic NOT INCLUSIV !!!!!!!!
+		Th= CalcParamTm( S-S0+_NNpar->GetInitialEntropy(),  H-H0);		// pos inic NOT INCLUSIV !!!!!!!!
 		l+=1;				//l+=2;  2 pasos de una vez   ---comparar !!!!!!!
 	}		
 
@@ -258,7 +258,7 @@ bool	ThDyAlign_TmHits::AddIfHit(LonSecPos fi, LonSecPos fj)   // ---fi y fj en l
 		
 		if( Th_max < Th ) Th_max=Th ;
 		S0= Get_S(i,j,step(i,j)) ; H0=Get_H(i,j,step(i,j)) ;
-		Th= CalcParamTm( S-S0+_NNpar.GetInitialEntropy(),  H-H0);
+		Th= CalcParamTm( S-S0+_NNpar->GetInitialEntropy(),  H-H0);
     // i,j ????
 		st= step(i,j);
 		if (! st ) 
@@ -338,53 +338,53 @@ void		ThDyAlign::SelectOptParam(LonSecPos i, LonSecPos j, Temperature Ta )
 		case st_7:	_optS = dS2(i,j);	_optH = dH2(i,j);	break ;
 				default: return ; 										// poner valor "absurdo", nulo, o error o accert o expection
 	}
-	_optTm = _NNpar.CalcTM( _optS  , _optH); 
-	_optG  = _NNpar.CalcG ( _optS,   _optH ,Ta) ; // +(_optH-Ta*_optS);  
+	_optTm = _NNpar->CalcTM( _optS  , _optH); 
+	_optG  = _NNpar->CalcG ( _optS,   _optH ,Ta) ; // +(_optH-Ta*_optS);  
 }
 
 CHit		*ThDyAlign::GetOptHit()
 {return new CHit(*this);}
 
 Energy		ThDyAlign::Get_H_max_para	(LonSecPos i, LonSecPos j) const	// --------- Get_H	-----    da param en (i,j) para Tm max !!!!    ?????????
-{	Temperature tm0 = _NNpar.CalcTM( dS0(i,j)  ,dH0(i,j));
-	Temperature tm1 = _NNpar.CalcTM( dS1(i,j)  ,dH1(i,j));
-	Temperature tm2 = _NNpar.CalcTM( dS2(i,j)  ,dH2(i,j));
+{	Temperature tm0 = _NNpar->CalcTM( dS0(i,j)  ,dH0(i,j));
+	Temperature tm1 = _NNpar->CalcTM( dS1(i,j)  ,dH1(i,j));
+	Temperature tm2 = _NNpar->CalcTM( dS2(i,j)  ,dH2(i,j));
 
 	if ((tm0 >=tm1)&&(tm0 >=tm2))		return dH0(i,j);	// Tm max  -> 0
 	if ( tm1 >=tm2)						return dH1(i,j);	// Tm max  -> 1
 										return dH2(i,j);	// Tm max  -> 2
 }
 Entropy		ThDyAlign::Get_S_max_para	(LonSecPos i, LonSecPos j) const	// --------- Get_S	-----    da param en (i,j) para Tm max !!!!    ?????????
-{	Temperature tm0 = _NNpar.CalcTM( dS0(i,j)  ,dH0(i,j));
-	Temperature tm1 = _NNpar.CalcTM( dS1(i,j)  ,dH1(i,j));
-	Temperature tm2 = _NNpar.CalcTM( dS2(i,j)  ,dH2(i,j));
+{	Temperature tm0 = _NNpar->CalcTM( dS0(i,j)  ,dH0(i,j));
+	Temperature tm1 = _NNpar->CalcTM( dS1(i,j)  ,dH1(i,j));
+	Temperature tm2 = _NNpar->CalcTM( dS2(i,j)  ,dH2(i,j));
 
 	if ((tm0 >=tm1)&&(tm0 >=tm2))  		return dS0(i,j);	// Tm max  -> 0
 	if ( tm1 >=tm2)						return dS1(i,j);	// Tm max  -> 1
 										return dS2(i,j);	// Tm max  -> 2
 }
 Temperature	ThDyAlign::Get_Tm_max_para	(LonSecPos i, LonSecPos j) const// --------- Get_Tm	-----    da param en (i,j) para Tm max !!!!    ?????????
-{	Temperature tm0 = _NNpar.CalcTM( dS0(i,j)  ,dH0(i,j));
-	Temperature tm1 = _NNpar.CalcTM( dS1(i,j)  ,dH1(i,j));
-	Temperature tm2 = _NNpar.CalcTM( dS2(i,j)  ,dH2(i,j));
+{	Temperature tm0 = _NNpar->CalcTM( dS0(i,j)  ,dH0(i,j));
+	Temperature tm1 = _NNpar->CalcTM( dS1(i,j)  ,dH1(i,j));
+	Temperature tm2 = _NNpar->CalcTM( dS2(i,j)  ,dH2(i,j));
 
 	if ((tm0 >=tm1)&&(tm0 >=tm2))  		return tm0<0 ? 0: tm0;	// Tm max  -> 0
 	if (tm1 >=tm2)						return tm1<0 ? 0: tm1;	// Tm max  -> 1
 										return tm2<0 ? 0: tm2;	// Tm max  -> 2
 }
 Energy		ThDyAlign::Get_G_max_para	(LonSecPos i, LonSecPos j, Temperature Ta )const // ------- + Get_G	----    da param en (i,j) para Tm max !!!!    ?????????
-{	Temperature tm0 = _NNpar.CalcTM( dS0(i,j)  ,dH0(i,j));
-	Temperature tm1 = _NNpar.CalcTM( dS1(i,j)  ,dH1(i,j));
-	Temperature tm2 = _NNpar.CalcTM( dS2(i,j)  ,dH2(i,j));
+{	Temperature tm0 = _NNpar->CalcTM( dS0(i,j)  ,dH0(i,j));
+	Temperature tm1 = _NNpar->CalcTM( dS1(i,j)  ,dH1(i,j));
+	Temperature tm2 = _NNpar->CalcTM( dS2(i,j)  ,dH2(i,j));
 
 	if ((tm0 >=tm1)&&(tm0 >=tm2)) 		return +(dH0(i,j)-Ta*dS0(i,j));		// Tm max  -> 0
 	if (tm1 >=tm2)						return +(dH1(i,j)-Ta*dS1(i,j));		// Tm max  -> 1
 										return +(dH2(i,j)-Ta*dS2(i,j));		// Tm max  -> 2
 }
 void		ThDyAlign::SelectOptParam_max_para(LonSecPos i, LonSecPos j, Temperature Ta )// ---- SelectOptParam ---    set  _optParam en (i,j) para Tm max !!!!    ?????????
-{	Temperature tm0 = _NNpar.CalcTM(dS0(i,j),dH0(i,j));						// determine optimum values for dG and dH
-	Temperature tm1 = _NNpar.CalcTM(dS1(i,j),dH1(i,j));
-	Temperature tm2 = _NNpar.CalcTM(dS2(i,j),dH2(i,j));
+{	Temperature tm0 = _NNpar->CalcTM(dS0(i,j),dH0(i,j));						// determine optimum values for dG and dH
+	Temperature tm1 = _NNpar->CalcTM(dS1(i,j),dH1(i,j));
+	Temperature tm2 = _NNpar->CalcTM(dS2(i,j),dH2(i,j));
 
 			if ((tm0 >=tm1)&&(tm0 >=tm2))	{ _optS = dS0(i,j);	_optH = dH0(i,j);	_optTm= tm0 ;	} 		// Tm max  -> 0
 	else	if (tm1 >=tm2)					{ _optS = dS1(i,j);	_optH = dH1(i,j);	_optTm= tm1 ;	}		// Tm max  -> 1 
@@ -396,14 +396,14 @@ void		ThDyAlign::SelectOptParam_max_para(LonSecPos i, LonSecPos j, Temperature T
 
 void	FracTDAlign::BeginAlign (CSec  *sonde, CSec *target)	
 {	CalcParam = &ThDyAlign::CalcParamTm;// "Tm" alignment !!! Verificar entonces si se necec lo del funt pointer  !!!!!!!!!!!!!!!!!
-	_InitMax=_NNpar.kein_Tm ;   
-	if (_Ta==_NNpar.kein_Tm) _Ta=_NNpar._Ta;// temperatura del ultimo "exp" (o calculo!!!)	 def:_Ta(CtoK(60)) 
-	else		_NNpar.SetTa(_Ta);			//  !!!!!!
+	_InitMax=_NNpar->kein_Tm ;   
+	if (_Ta==_NNpar->kein_Tm) _Ta=_NNpar->_Ta;// temperatura del ultimo "exp" (o calculo!!!)	 def:_Ta(CtoK(60)) 
+	else		_NNpar->SetTa(_Ta);			//  !!!!!!
 										
 	ThDyAlign::Align (sonde, target);					// "Tm" alignment !!! Verificar entonces si se necec lo del funt pointer  !!!!!!!!!!!!!!!!!
 
 	CalcParam = &ThDyAlign::CalcParamG;// "Tm" alignment !!! Verificar entonces si se necec lo del funt pointer  !!!!!!!!!!!!!!!!!
-	_InitMax=_NNpar.forbidden_freeEnerg ;    
+	_InitMax=_NNpar->forbidden_freeEnerg ;    
 	_finisch = false ;
 	_iterations = 1 ;
 }
@@ -412,7 +412,7 @@ void	FracTDAlign::iterate		(float ta)
 {	assert ( _iterations ); 
 	assert ( _fixedNumIter>=0 ); 
 
-	_NNpar.SetTa (ta);				//	InitBorder	();
+	_NNpar->SetTa (ta);				//	InitBorder	();
 	Run();
 	SelectOptParam();		// Aqui se selecciona una nueva Tm
 	
@@ -478,26 +478,27 @@ void CHitAligned::ExtractAligment(ThDyAlign &Al)
 }
 
 
-void CHitAligned::ReCalcule( CSaltCorrNN &NNpar )
+void CHitAligned::ReCalcule( std::shared_ptr<CSaltCorrNN>  NNpar )
 { 	Base a_1, a=bk2nu[_sd[0]], b_1, b=bk2c_nu[_tg[0]];
 
-	_Hr=0; _Sr= NNpar.GetInitialEntropy(); 
+	_Hr=0; _Sr= NNpar->GetInitialEntropy(); 
 	for (_i=_j= _i0= _j0=0 ; (_sd[_i] && _tg[_j]) && (_sd[_i+1] || _tg[_j+1]); _i++, _j++)
 	{	a_1=a; a=bk2nu[_sd[_i+1]];	b_1=b; b=bk2c_nu[_tg[_j+1]];
-		_Sr += NNpar.GetEntr (a_1, a, b_1, b); 
-		_Hr += NNpar.GetEnth (a_1, a, b_1, b); 
+		_Sr += NNpar->GetEntr (a_1, a, b_1, b); 
+		_Hr += NNpar->GetEnth (a_1, a, b_1, b); 
 	}
 	_l=_i ;
-	_Tmr  = NNpar.CalcTM( _Sr, _Hr) ;
-	_Gr	  = NNpar.CalcG	( _Sr, _Hr) ;
+	_Tmr  = NNpar->CalcTM( _Sr, _Hr) ;
+	_Gr	  = NNpar->CalcG	( _Sr, _Hr) ;
 }
 
 
 
-void CMSecCand::Use(CMultSec *MSec)
+void CMSecCand::Use(shared_ptr<CMultSec> MSec)
 {	_MSec=MSec; 
-	if (! _TDATmC ) _TDATmC=new ThDyAlign_TmCand(_MSec->_TMaxLen,*_MSec->_NNPar);  // Por  que????
-	else	_TDATmC->ResizeTable(_MSec->_TMaxLen, _MSec->_TMaxLen) ;
+	if (! _TDATmC ) 
+		_TDATmC.reset(new ThDyAlign_TmCand(_MSec->_Global._Len.Max(), _MSec->_NNPar));  // Por  que????
+	else	_TDATmC->ResizeTable(  _MSec->_Global._Len.Max()  ,   _MSec->_Global._Len.Max()   ) ;
 	
 	_TNumPosCand= _TNumCand = 0;        // AQUI ???????????
 	_NumPosCand = _NumCand  = 0;        // AQUI ???????????
@@ -508,9 +509,7 @@ void CMSecCand::Use(CMultSec *MSec)
 
 CSecCand	&CMSecCand::AddBeging(CSec &sec)
 {	
-	CSecCand *newtg = new CSecCand( sec ,	_sL		);/*			_G_min,		_G_max, 								
-																	_Tm_min,	_Tm_max,
-																	_L_min,		_L_max	*/	
+	CSecCand *newtg = new CSecCand( sec ,	_sL		);
 
 	_TNumCand	+=newtg->_NumCand;    // sobreestima la cantidad total de candidatos (porque se pueden repetir en varias sec.)
 	_TNumPosCand+=newtg->_NumPosCand;
@@ -605,7 +604,7 @@ bool	ThDyAlign_TmCand::AddIfHit(long fi, long fj)
 			j-= stj1[ st ];		//			l+=1;	
 		}
 		Energy		H= Get_H(fi,fj,step(fi,fj)) ,H0,Gh;   // Pasar S y H como argumentos ???? - acaban de ser calculados
-		Entropy		S= Get_S(fi,fj,step(fi,fj)), S0  , S00=_NNpar.GetInitialEntropy();
+		Entropy		S= Get_S(fi,fj,step(fi,fj)), S0  , S00=_NNpar->GetInitialEntropy();
 		Temperature	last_Th_OK=0, Th=0;		
 		while (i >= Ri.Min() || j >= Rj.Min() )			// mientras que alguno de los dos este en rango//assert(i < 0 || j < 0 );
 		{	
@@ -641,7 +640,7 @@ bool	ThDyAlign_TmCand::AddIfHit(long fi, long fj)
 			j-= stj1[ st ];	//			l+=1;	
 		}
 		float H= Get_H(fi,fj,step(fi,fj)) ,H0, last_Th_OK=0,  // Pasar S y H como argumentos ???? - acaban de ser calculados
-				S= Get_S(fi,fj,step(fi,fj)), S0, Th=0,Gh		  , S00=_NNpar.GetInitialEntropy();
+				S= Get_S(fi,fj,step(fi,fj)), S0, Th=0,Gh		  , S00=_NNpar->GetInitialEntropy();
 
 		while (i >=  Ri.Min() )			// mientras que alguno de los dos este en rango
 		{	if (i < 0 || j < 0 ) break ;	// y el otro no se haga "neg."
@@ -677,7 +676,7 @@ bool	ThDyAlign_TmCand::AddIfHit(long fi, long fj)
 			j-= stj1[ st ];			//			l+=1;	
 		}
 		float H= Get_H(fi,fj,step(fi,fj)) ,H0, last_Th_OK=0,  // Pasar S y H como argumentos ???? - acaban de ser calculados
-				S= Get_S(fi,fj,step(fi,fj)), S0, Th=0,Gh		  , S00=_NNpar.GetInitialEntropy();
+				S= Get_S(fi,fj,step(fi,fj)), S0, Th=0,Gh		  , S00=_NNpar->GetInitialEntropy();
 
 		while (j >= Rj.Min() )			// mientras que alguno de los dos este en rango
 		{	if (i < 0 || j < 0 ) break ;	// y el otro no se haga "neg."
@@ -813,7 +812,7 @@ void	CMSecCand::ExportCommonSonden(char*fileName, bool colpased,float MinCov, in
 	}
 
 	Base *sonde=new Base [ _sL._L.Max() + 1];
-	int minTcov= int (_MSec->_NSec * MinCov/100.0 ) -1;
+	int minTcov= int (_MSec->_Local._NSec * MinCov/100.0 ) -1;  // TODO: REVISAR !!!! global ? local????
 	set <string> SondeList;
 	//for (auto x : SondeList);
 	FracTDAlign fAl( _sL._L.Max() + 1 ,  _sL._L.Max() + 1, _TDATmC->_NNpar);
@@ -831,8 +830,8 @@ void	CMSecCand::ExportCommonSonden(char*fileName, bool colpased,float MinCov, in
 			    int matchs=r->matchs[pi- r->Min()];
 
 				if ( (colpased && SondeList.insert(cur_s).second)   || (matchs == 0) || (matchs >=minTcov ) )
-				{	CSec cand  (cur_s.c_str(),1,"s", &_TDATmC->_NNpar);     char *cs=(char*)cand.GetCopy_charSec(rev_compl);
-					CSec c_cand(cs           ,1,"c", &_TDATmC->_NNpar);
+				{	CSec cand  (cur_s.c_str(),1,"s", _TDATmC->_NNpar);     char *cs=(char*)cand.GetCopy_charSec(rev_compl);
+					CSec c_cand(cs           ,1,"c", _TDATmC->_NNpar);
 					delete cs;
 					fAl.Align(&cand,&c_cand);
 					if (fAl.Tm() < _MaxSelfTm && fAl.G(_TDATmC->Ta()) > _MinSelfG)
@@ -922,13 +921,13 @@ void	ThDyAlign::Export_DPMz_Tm(ofstream &osDP_mz, char *sep)
 	register Base  a_1,  a,   b_1,  b ;		// las bases en esas posiciones ?? exactamente como ?? de la pos anterior?
 //	register float S0, S1, S2, H0, H1, H2 ;
 	long ls = _sd->Len() + 2 , lt = _tg->Len() + 2 ;    // ponerlo como miembro ??  incluye 2x'$'
-	float forbidden_enthalpy = _NNpar.forbidden_enthalpy,
-		  forbidden_entropy  = _NNpar.forbidden_entropy ;        // ponerlo como miembro ??
+	float forbidden_enthalpy = _NNpar->forbidden_enthalpy,
+		  forbidden_entropy  = _NNpar->forbidden_entropy ;        // ponerlo como miembro ??
 
 
 		osDP_mz	<< endl << "forb_H:" <<sep <<forbidden_enthalpy<<sep <<sep << "max (Tm) matriz:" 
 			<< endl << "forb_S:"  <<sep <<forbidden_entropy
-			<< endl << "Init_H:"  <<sep <<_NNpar.GetInitialEntropy()			
+			<< endl << "Init_H:"  <<sep <<_NNpar->GetInitialEntropy()			
 			<< endl ;
 
 		a=0; a_1 = a ;i=0;
@@ -942,15 +941,15 @@ void	ThDyAlign::Export_DPMz_Tm(ofstream &osDP_mz, char *sep)
 
 		a=0;  j=0 ;i=0; b_1 = b=0 ;
 		osDP_mz<<endl << j <<sep<< basek_c[b_1] <<sep<< basek_c[b]<<sep;
-		osDP_mz << KtoC(_NNpar.CalcTM (dS0 (i, j) , dH0 (i, j) ))<<sep
-				<< KtoC(_NNpar.CalcTM (dS1 (i, j) , dH1 (i, j) ))<<sep
-				<< KtoC(_NNpar.CalcTM (dS2 (i, j) , dH2 (i, j) ))<<sep;
+		osDP_mz << KtoC(_NNpar->CalcTM (dS0 (i, j) , dH0 (i, j) ))<<sep
+				<< KtoC(_NNpar->CalcTM (dS1 (i, j) , dH1 (i, j) ))<<sep
+				<< KtoC(_NNpar->CalcTM (dS2 (i, j) , dH2 (i, j) ))<<sep;
 		for (i = 1 ; i<= ls ; i++ )
 		{	a_1 = a ;	 i_1 = i-1 ;	// se justifica esto ????
 			a = _sd->_b [i_1] ;
-		osDP_mz << KtoC(_NNpar.CalcTM (dS0 (i, j) , dH0 (i, j) ))<<sep
-				<< KtoC(_NNpar.CalcTM (dS1 (i, j) , dH1 (i, j) ))<<sep
-				<< KtoC(_NNpar.CalcTM (dS2 (i, j) , dH2 (i, j) ))<<sep;
+		osDP_mz << KtoC(_NNpar->CalcTM (dS0 (i, j) , dH0 (i, j) ))<<sep
+				<< KtoC(_NNpar->CalcTM (dS1 (i, j) , dH1 (i, j) ))<<sep
+				<< KtoC(_NNpar->CalcTM (dS2 (i, j) , dH2 (i, j) ))<<sep;
 		}
 	
 		
@@ -960,17 +959,17 @@ void	ThDyAlign::Export_DPMz_Tm(ofstream &osDP_mz, char *sep)
 		b   = bkn2c_nu	[_tg->_b [j_1]] ;		// se busca la sonda en la sec complementaria a la target (la target se considerara de doble cadena) 
 		a=0; i=0;
 		osDP_mz<<endl << j <<sep<< basek_c[b_1] <<sep<< basek_c[b]<<sep;
-		osDP_mz << KtoC(_NNpar.CalcTM (dS0 (i, j) , dH0 (i, j) ))<<sep
-				<< KtoC(_NNpar.CalcTM (dS1 (i, j) , dH1 (i, j) ))<<sep
-				<< KtoC(_NNpar.CalcTM (dS2 (i, j) , dH2 (i, j) ))<<sep;
+		osDP_mz << KtoC(_NNpar->CalcTM (dS0 (i, j) , dH0 (i, j) ))<<sep
+				<< KtoC(_NNpar->CalcTM (dS1 (i, j) , dH1 (i, j) ))<<sep
+				<< KtoC(_NNpar->CalcTM (dS2 (i, j) , dH2 (i, j) ))<<sep;
 
 		for (i = 1 ; i<= ls ; i++ )
 		{	//RestHS (i);
 			a_1 = a ;	 i_1 = i-1 ;	// se justifica esto ????
 			a = _sd->_b [i_1] ;
-		osDP_mz << KtoC(_NNpar.CalcTM (dS0 (i, j) , dH0 (i, j) ))<<sep
-				<< KtoC(_NNpar.CalcTM (dS1 (i, j) , dH1 (i, j) ))<<sep
-				<< KtoC(_NNpar.CalcTM (dS2 (i, j) , dH2 (i, j) ))<<sep;
+		osDP_mz << KtoC(_NNpar->CalcTM (dS0 (i, j) , dH0 (i, j) ))<<sep
+				<< KtoC(_NNpar->CalcTM (dS1 (i, j) , dH1 (i, j) ))<<sep
+				<< KtoC(_NNpar->CalcTM (dS2 (i, j) , dH2 (i, j) ))<<sep;
 		}
 	}
 }
@@ -980,11 +979,11 @@ void	ThDyAlign::Export_DPMz_S(ofstream &osDP_mz, char *sep)
 	register Base  a_1,  a,   b_1,  b ;		// las bases en esas posiciones ?? exactamente como ?? de la pos anterior?
 //	register float S0, S1, S2, H0, H1, H2 ;
 	long ls = _sd->Len() + 2 , lt = _tg->Len() + 2 ;    // ponerlo como miembro ??  incluye 2x'$'
-	float forbidden_enthalpy = _NNpar.forbidden_enthalpy,
-		  forbidden_entropy  = _NNpar.forbidden_entropy ;        // ponerlo como miembro ??
+	float forbidden_enthalpy = _NNpar->forbidden_enthalpy,
+		  forbidden_entropy  = _NNpar->forbidden_entropy ;        // ponerlo como miembro ??
 	osDP_mz	<< endl << "forb_H:" <<sep <<forbidden_enthalpy<<sep <<sep << "S matriz:" 
 			<< endl << "forb_S:"  <<sep <<forbidden_entropy
-			<< endl << "Init_H:"  <<sep <<_NNpar.GetInitialEntropy()			
+			<< endl << "Init_H:"  <<sep <<_NNpar->GetInitialEntropy()			
 			<< endl ;
 
 		a=0; a_1 = a ;i=0;
@@ -1027,12 +1026,12 @@ void	ThDyAlign::Export_DPMz_H(ofstream &osDP_mz, char *sep)
 	register Base  a_1,  a,   b_1,  b ;		// las bases en esas posiciones ?? exactamente como ?? de la pos anterior?
 //	register float S0, S1, S2, H0, H1, H2 ;
 	long ls = _sd->Len() + 2 , lt = _tg->Len() + 2 ;    // ponerlo como miembro ??  incluye 2x'$'
-	float forbidden_enthalpy = _NNpar.forbidden_enthalpy,
-		  forbidden_entropy  = _NNpar.forbidden_entropy ;        // ponerlo como miembro ??
+	float forbidden_enthalpy = _NNpar->forbidden_enthalpy,
+		  forbidden_entropy  = _NNpar->forbidden_entropy ;        // ponerlo como miembro ??
 
 		osDP_mz	<< endl << "forb_H:" <<sep <<forbidden_enthalpy<<sep <<sep << "H matriz:" 
 			<< endl << "forb_S:"  <<sep <<forbidden_entropy
-			<< endl << "Init_H:"  <<sep <<_NNpar.GetInitialEntropy()			
+			<< endl << "Init_H:"  <<sep <<_NNpar->GetInitialEntropy()			
 			<< endl ;
 
 		a=0; a_1 = a ;i=0;

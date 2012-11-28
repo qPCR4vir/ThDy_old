@@ -15,10 +15,10 @@ class CHitAligned ;
 //extern char sep[];
 class ThDyAlign													// clase abstr?   hace lo que ThDyAlign_Tm ... simplificar? ------   ThDyAlign  ---
 {public:		friend class	CHitAligned ;	 friend class	CHit ;
-					 ThDyAlign	(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, CSaltCorrNN &NNpar, float InitMax= 0 );
+					 ThDyAlign	(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar, float InitMax= 0 );
 	virtual			~ThDyAlign	() ;
 	virtual const char *AlignMeth(){return "ThAl";}
-	Temperature		SetTa	(Temperature Ta)					{Temperature T=_Ta;		_NNpar._Ta=_Ta=Ta;	   return T;}
+	Temperature		SetTa	(Temperature Ta)					{Temperature T=_Ta;		_NNpar->_Ta=_Ta=Ta;	   return T;}
 	Temperature	     Ta		()const								{return _Ta;} // da Ta "seteada", la que se elige para el "experimento"  ---REVISAR esto de las Ta 
 	void			SetSig	(Temperature Tm_sig, Energy G_sig)	{_Tm_sig=Tm_sig;	_G_sig=G_sig ;}	
 	virtual void	Align	(CSec  *sonde, CSec *target)		{	ClearHits();
@@ -43,10 +43,10 @@ private:
 	void			InitBorder	();
 public:
 	float	(ThDyAlign::*CalcParam)(Entropy S, Energy H)const ;
-			Temperature	CalcParamTm(Entropy S, Energy H) const {return    _NNpar.CalcTM (S, H);}  // = 0; hacer virtual ????
-			Energy		CalcParamG (Entropy S, Energy H) const {return  - _NNpar.CalcG  (S, H);} 
-			Temperature	CalcParamRs(Entropy S, Energy H) const {	Temperature Tm = _NNpar.CalcTM (S +_restS, H +_restH);	//  EXPERIMENTAL
-																	if ( _NNpar.CalcTM (S , H )==0 ) Tm= 0;		//if ( Tm < _minTm ) return 0;
+			Temperature	CalcParamTm(Entropy S, Energy H) const {return    _NNpar->CalcTM (S, H);}  // = 0; hacer virtual ????
+			Energy		CalcParamG (Entropy S, Energy H) const {return  - _NNpar->CalcG  (S, H);} 
+			Temperature	CalcParamRs(Entropy S, Energy H) const {	Temperature Tm = _NNpar->CalcTM (S +_restS, H +_restH);	//  EXPERIMENTAL
+																	if ( _NNpar->CalcTM (S , H )==0 ) Tm= 0;		//if ( Tm < _minTm ) return 0;
 																	Tm -= _sd->_Tm.Ave();
 																	return 		Tm ;
 																}  
@@ -93,7 +93,7 @@ public:										// ------ Lo mismo que : Get_X , pero calculados todos de una v
 
 public:		
 	static int const  sti[], stj[], sti1[], stj1[];
-	CSaltCorrNN			&_NNpar ;
+	std::shared_ptr<CSaltCorrNN>  _NNpar ;
 	CSec				*_sd , *_tg ;
 	long				_THits, _HitsOK ;   // Hacer interface
 	LonSecPos			_maxgloi, _maxgloj			/*, _maxglot*/ ;
@@ -160,16 +160,16 @@ class CHitAligned  : public CHit
 	long _mt, _mm, _sgap, _tgap ;    // count sonde and target - matchs , mistmatch, and gaps
 	float			_Hr, _Sr, _Gr, _Tmr ;
 	void ExtractAligment(ThDyAlign &Al);
-	explicit CHitAligned(Base *s, Base *t, CSaltCorrNN &NNpar ) // OJO : se aduena de las sec s, t !!!!!!!!!!!!!!! Las borra !!
+	explicit CHitAligned(Base *s, Base *t, std::shared_ptr<CSaltCorrNN>  NNpar ) // OJO : se aduena de las sec s, t !!!!!!!!!!!!!!! Las borra !!
 									: _sd(s), _tg(t){ReCalcule( NNpar );}; 
 
 	virtual ~CHitAligned()  {delete []_sd; delete []_tg;}
-	void ReCalcule( CSaltCorrNN &NNpar );
+	void ReCalcule( std::shared_ptr<CSaltCorrNN>  NNpar );
 };
 
 class AlignedSecPar : public CHitAligned
 {public: 
-explicit AlignedSecPar( Base *s,  Base *t, CSaltCorrNN &NNpar ):CHitAligned(s, t, NNpar){};
+explicit AlignedSecPar( Base *s,  Base *t, std::shared_ptr<CSaltCorrNN>  NNpar ):CHitAligned(s, t, NNpar){};
 Temperature Tm(){return _Tmr;}
 float  G(){return _Gr ;}
 	virtual ~AlignedSecPar()  {_sd=_tg=nullptr;}
@@ -185,7 +185,8 @@ float  G(){return _Gr ;}
 
 class ThDyAlign_Tm			: public ThDyAlign  // -----------------------------Tm--------------------ThDyAlign_Tm------
 {public:	
-	ThDyAlign_Tm(long MaxLenSond, long MaxLenTarg, CSaltCorrNN &NNpar):ThDyAlign(MaxLenSond, MaxLenTarg, NNpar, NNpar.kein_Tm)
+	ThDyAlign_Tm(long MaxLenSond, long MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar)
+		:ThDyAlign(MaxLenSond, MaxLenTarg, NNpar, NNpar->kein_Tm)
 																		{CalcParam = &ThDyAlign::CalcParamTm;} 
 	virtual const char *AlignMeth(){return "Tm";}
 	Temperature	GetMax_Tm()const{return _maxglo;}
@@ -193,7 +194,7 @@ class ThDyAlign_Tm			: public ThDyAlign  // -----------------------------Tm-----
 
 class ThDyAlign_TmHits			: public ThDyAlign_Tm  // -----------------------------Tm---------------ThDyAlign_TmHits----- no en uso????------
 {public:	
-	ThDyAlign_TmHits(long MaxLenSec, CSaltCorrNN &NNpar, float Tm_min=CtoK(57), float Tm_max=CtoK(63) )
+	ThDyAlign_TmHits(long MaxLenSec, std::shared_ptr<CSaltCorrNN>  NNpar, float Tm_min=CtoK(57), float Tm_max=CtoK(63) )
 		:ThDyAlign_Tm(MaxLenSec, MaxLenSec, NNpar),	 _Tm_min(Tm_min), _Tm_max(Tm_max){} 
 	virtual const char *AlignMeth(){return "TmHits";}
 	virtual	bool	AddIfHit(long i, long j);
@@ -202,8 +203,8 @@ class ThDyAlign_TmHits			: public ThDyAlign_Tm  // -----------------------------
 
 class ThDyAlign_TmCand			: public ThDyAlign_Tm  // -----------------------------Tm-----------------ThDyAlign_TmCand---------
 {public:	
-	ThDyAlign_TmCand(long MaxLenSec, CSaltCorrNN &NNpar/*, float Tm_min=CtoK(57), float Tm_max=CtoK(63) */)
-		:ThDyAlign_Tm(MaxLenSec, MaxLenSec, NNpar)/*,	 _Tm_min(Tm_min), _Tm_max(Tm_max)*/{} 
+	ThDyAlign_TmCand(long MaxLenSec, std::shared_ptr<CSaltCorrNN>  NNpar)       /*, float Tm_min=CtoK(57), float Tm_max=CtoK(63) */
+		:ThDyAlign_Tm(MaxLenSec, MaxLenSec, NNpar){}                            /*,	 _Tm_min(Tm_min), _Tm_max(Tm_max)*/
 	virtual const char *AlignMeth(){return "TmCand";}
 	virtual bool	AddIfHit	(long i, long j);
 	void	Use			(CSecCand  *cand1, CSecCand *cand2)	{	_cs=cand1; _ct=cand2; ThDyAlign_Tm::Use	( &_cs->_Sec, &_ct->_Sec);}
@@ -227,13 +228,12 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 					_MaxSd_nTgTm(MaxSd_nTgTm) , _MinSd_nTgG(MinSd_nTgG), 
 					_MaxSelfTm(MaxSelfTm),		_MinSelfG(MinSelfG),
 
-					_TDATmC(0),			_MSec(0),
 					_TNumCand(0),	_NumPosCand(0),		_NumCand(0),	
 					_TNumPosCand(-1)  /*,		// valor imposible, inicial	
 					_osPaarComp(0)	  */	
 		{} 
 
-	void		Use(CMultSec *MSec);//	void		Set_PaarComparExport(ofstream &osPaarComp){_osPaarComp=osPaarComp;};
+	void		Use(shared_ptr<CMultSec> MSec);//	void		Set_PaarComparExport(ofstream &osPaarComp){_osPaarComp=osPaarComp;};
 	CSecCand	*Add(CSec &sec);
 	CSecCand	&AddBeging	(CSec &sec) ;
 	CSecCand	&curTg		()		{return *((CSecCand *)_LSecCand.Cur());	}
@@ -242,7 +242,7 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 	CSecCand	*CompNext	();
 
 	void		ExportCommonSonden(char*fileName, bool colpased, float MinCov, int format);
-	virtual ~CMSecCand(){	 // delete _TDATmC; _TDATmC=nullptr ;
+	virtual ~CMSecCand(){	 
 							_LSecCand.Destroy() ; 
 							_LMSecCand.Destroy() ; }
 	SondeLimits _sL ;
@@ -256,8 +256,8 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 
 	ofstream _osPaarComp;
 
-	CMultSec			*_MSec ;
-	ThDyAlign_TmCand	*_TDATmC ;  // donde se crea y se borra???   _______________ PROBLEMA !!!!!!!!!!!!!!!!
+	shared_ptr<CMultSec>            _MSec ;
+	shared_ptr<ThDyAlign_TmCand>	_TDATmC ;  // donde se crea y se borra???   _______________ PROBLEMA !!!!!!!!!!!!!!!!
 
 
 	CList	_LSecCand, _LMSecCand;
@@ -265,13 +265,13 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 
 class ThDyAlign_G			: public ThDyAlign	// ------------------------------G-------------------------
 {public:
-	ThDyAlign_G(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, CSaltCorrNN &NNpar, Temperature Tm)
-		:	ThDyAlign(MaxLenSond, MaxLenTarg, NNpar, NNpar.forbidden_freeEnerg)
+	ThDyAlign_G(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar, Temperature Tm)
+		:	ThDyAlign(MaxLenSond, MaxLenTarg, NNpar, NNpar->forbidden_freeEnerg)
 																	{CalcParam = &ThDyAlign::CalcParamG;
 																	 SetTa (Tm);
 																	} 
-	ThDyAlign_G(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, CSaltCorrNN &NNpar)// usar ultima Ta de calculo en NNpar, o "Set" despues
-		:	ThDyAlign(MaxLenSond, MaxLenTarg, NNpar, NNpar.forbidden_freeEnerg)
+	ThDyAlign_G(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar)// usar ultima Ta de calculo en NNpar, o "Set" despues
+		:	ThDyAlign(MaxLenSond, MaxLenTarg, NNpar, NNpar->forbidden_freeEnerg)
 																	{CalcParam = &ThDyAlign::CalcParamG;} 	
 	virtual const char *AlignMeth(){return "G";}
 	float		 GetMax_G()const{return -_maxglo;} // mas o menos lo mismo, pero "comprobado", usa ultima Ta de calculo
@@ -283,7 +283,8 @@ class FracTDAlign	: public ThDyAlign			// --------------------------Frac--------
 	Energy	_maxG_der ;  // epsilum 
  public:
 	virtual const char *AlignMeth(){return "FractG";}
-	 FracTDAlign(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, CSaltCorrNN &NNpar)  :	ThDyAlign	(MaxLenSond, MaxLenTarg, NNpar),
+	 FracTDAlign(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar)  
+		 :	ThDyAlign	(MaxLenSond, MaxLenTarg, NNpar),
 																			_iterations(0),	// prohibido comenzar sin BeginAlign
 																			_maxG_der(1.0f),// super excesivo
 																			_maxNumIt(10),	// super excesivo
@@ -310,13 +311,13 @@ class FracTDAlign	: public ThDyAlign			// --------------------------Frac--------
 
 class ThDyAlign_restTm			: public ThDyAlign  // ---------------------------HACER----------------------------
 {public:	
-	ThDyAlign_restTm(long MaxLenSond, long MaxLenTarg, CSaltCorrNN &NNpar, Temperature minTm)
+	ThDyAlign_restTm(long MaxLenSond, long MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar, Temperature minTm)
 			:		ThDyAlign(MaxLenSond, MaxLenTarg, NNpar, -274)
 			{		_minTm = minTm ; /*CalcParam = &ThDyAlign::CalcParamRs;*/} 
 	virtual const char *AlignMeth(){return "restTm";}
 	virtual inline float CalcParam (float S, float H) const		
-	{	Temperature Tm = _NNpar.CalcTM (S +_restS, H +_restH);
-		if ( _NNpar.CalcTM (S , H )==0 ) Tm= 0;
+	{	Temperature Tm = _NNpar->CalcTM (S +_restS, H +_restH);
+		if ( _NNpar->CalcTM (S , H )==0 ) Tm= 0;
 		//if ( Tm < _minTm ) return 0;
 		Tm -= _sd->_Tm.Ave();
 		return 		Tm ;
@@ -338,11 +339,11 @@ ofstream	&operator<<(ofstream &stream,	FracTDAlign		&FrAl) ;
 #endif
 
 
-//	inline float CalcParamG (float S, float H) const {return _NNpar.CalcG  (S, H);} 
-	//virtual inline float CalcParam  (float S, float H) const {return _NNpar.CalcG  (S, H);} 
-//	inline float CalcParamTm(float S, float H) const {return _NNpar.CalcTM (S, H);}  // = 0; hacer virtual ????
-//virtual	inline float CalcParam  (float S, float H) const {return _NNpar.CalcTM (S, H);}  // duplicado--- dejar????
-	/*virtual inline float CalcParam  (float S, float H) const {return _NNpar.CalcTM (S, H);}  // = CalcParamTm; esto  o lo sig*/
+//	inline float CalcParamG (float S, float H) const {return NNpar->CalcG  (S, H);} 
+	//virtual inline float CalcParam  (float S, float H) const {return NNpar->CalcG  (S, H);} 
+//	inline float CalcParamTm(float S, float H) const {return NNpar->CalcTM (S, H);}  // = 0; hacer virtual ????
+//virtual	inline float CalcParam  (float S, float H) const {return NNpar->CalcTM (S, H);}  // duplicado--- dejar????
+	/*virtual inline float CalcParam  (float S, float H) const {return NNpar->CalcTM (S, H);}  // = CalcParamTm; esto  o lo sig*/
 				//float Tm_sig,
 				//float Tm_min, 		float Tm_max, 
 				//int L_min,			int L_max, 

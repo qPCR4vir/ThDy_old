@@ -145,7 +145,7 @@ class CParamString: public IParam
 
 	bool        loadValue (istream   &isPr) override   // Descarta el Titel que queda detras del ultimo tab
 	                    {   string t; getline(isPr,t); 
-	                        _value=trim_string( t.substr(0, t.rfind("\t")).c_str()   );
+	                        _value=trim_string( t.substr(0, t.rfind("\t"))   );
 							return true;
 	                    } 
 };
@@ -462,14 +462,15 @@ class CProgProject : public CProgParam
 {
 public:
 	CProgProject(const string& titel, const char *prFname="", const char*defProFN="Def.Proj.txt")
-		:CProgParam(titel), _ProjetFileName(prFname)   ,
-							_defPr(defProFN)  
+		:CProgParam(titel), _defPr(defProFN)  ,
+		_ProjetFileName(prFname)   
+							
 	        {  if (!prFname || !prFname[0]) 
 			    _ProjetFileName.Copy(_defPr);   //    ???????????????????????????????????????ß
 	        } 
 
-		C_str						_defPr ;
-		C_str						_ProjetFileName ;
+		C_str					_defPr ;
+		C_str					_ProjetFileName ;
 
    ~CProgProject()override { }
 
@@ -542,13 +543,20 @@ class CCommProgParam : public CProgParam
 	~CCommProgParam() override	{}
 
 	ofstream	&save_all(ofstream	&osPr 				 ) const
-	                    {   return _proj->save_all(osPr);
+	                    {   
+							assert(("Atemt to use an unitialized project pointer in save_all",_proj));
+							return _proj->save_all(osPr);
 	                    }
 	bool	    load_all(string     &etiq, ifstream &isPr)
-	                    {return _proj->load_all(etiq,isPr);
+	                    {
+							assert(("Atemt to use an unitialized project pointer in load_all",_proj));
+							return _proj->load_all(etiq,isPr);
 	                    } 
 	void        AddProgToProject(CProgParam *p)
-	                    {_proj->AddProg(p);}
+	                    {
+							assert(("Atemt to use an unitialized project pointer in AddProgToProject",_proj));
+							_proj->AddProg(p);
+	                    }
     virtual string  MakeRuningName()const {return "";}
 
 };

@@ -1060,6 +1060,7 @@
     </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />
@@ -1077,6 +1078,16 @@
     <Text Include="..\..\include\ThDy_DNAHybrid.VC-WF\Def.ThDy.txt" />
     <Text Include="..\..\include\ThDy_DNAHybrid.VC-WF\ReadMeDP.txt" />
     <Text Include="..\..\include\ThDy_DNAHybrid.VC-WF\Rest from ParF and comp.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Excel.1.6.dll">
+      <Guid>00020813-0000-0000-c000-000000000046</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>6</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>false</Isolated>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

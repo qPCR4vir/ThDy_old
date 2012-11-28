@@ -178,10 +178,14 @@ class NumRang				// ------------------------------------------------------------
    	Num length()const{ return Max() - Min() ;}          // throw execption "negative length ??????
 
 
-	bool inRang(const Num X)   const {return (min<= X && X<=max);}
+	bool inRang  ( Num		X)   const {return (min<= X			&& X<=max)		;}
+	bool inRang  ( NumRang	R)   const {return ( R.inRang(min) && R.inRang(max));}
+	bool isExtrem( Num		X)   const {return (min== X			|| X==max)		;}
+	bool isExtrem( NumRang	R)   const {return (min== R.Min()	|| R.Max()==max);}
+
 	void Expand(Num num)			 { if ( num<min ) min=num  ; if(  num>max)  max=num  ;}
 	void Expand(Num mi,       Num ma){ if (   mi<min) min=mi   ; if(   ma>max)  max=ma   ;}
-	void Expand(NumRang R)			 { if (R.min<min) min=R.min; if(R.max>max)  max=R.max;}
+	bool Expand(NumRang R)			 { bool e; if (e=(R.min<min)) min=R.min; if(R.max>max)  {max=R.max;return true;} return e;}
     void Shrink(NumRang R)			 { if (R.min>min) min=R.min; if(R.max<max)  max=R.max;}
 	Num  Intersection(NumRang R){return R.Shrink(this);}	//Num  Union(NumRang R)	    {return R.Expand(this);}
 
