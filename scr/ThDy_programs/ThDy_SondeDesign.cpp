@@ -60,6 +60,7 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 	std::shared_ptr<CSaltCorrNN>  NNpar(IPrgPar_SdDes->_cp._pSaltCorrNNp );
     if (!NNpar)
 	    NNpar = Create_NNpar(IPrgPar_SdDes->_cp); 	
+	NNpar->SetTa(				CtoK(	IPrgPar_SdDes->_cp._Ta));			// Aqui por si acaso. Revisar.
 
 	std::shared_ptr<CMultSec>  tg(IPrgPar_SdDes->_cp._pSeqTargets );
     if (!tg)

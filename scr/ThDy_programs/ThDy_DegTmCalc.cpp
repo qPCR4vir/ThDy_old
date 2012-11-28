@@ -12,6 +12,8 @@ int DegTmCalc ( CProgParam_TmCalc *IPrgPar_Calc)
 	std::shared_ptr<CSaltCorrNN>  NNpar(IPrgPar_Calc->_cp._pSaltCorrNNp );
     if (!NNpar)
 	    NNpar = Create_NNpar(IPrgPar_Calc->_cp); 	
+	NNpar->SetTa(				CtoK(	IPrgPar_Calc->_cp._Ta));			// Aqui por si acaso. Revisar.
+	Temperature Ta=  NNpar->Ta() ; //CtoK(IPrgPar_Calc->_cp._Ta);        //  Aqui no habia puesto CtoK()  // Mejor usar Ta=NNpar->Ta() ;   ??????   
 
 	CSec			Sec		  (			IPrgPar_Calc->_Sec.Get() ,		0, "Sec",		NNpar); 
 	if (Sec.Len() < 1)  return 0 ; // Error :  no sec !!!!!!
@@ -34,7 +36,6 @@ int DegTmCalc ( CProgParam_TmCalc *IPrgPar_Calc)
 	CSec *tg_maxTmH=tg->goFirstSec()  ; IPrgPar_Calc->_G2A.Set( tg_maxTmH->G()/1000  )  ;
 														
 	auto_ptr<ThDyAlign> apAl; //	ThDyAlign	*pAl=nullptr;	
-	Temperature Ta= IPrgPar_Calc->_cp._Ta;
 
 	//LonSecPos TgMaxLen= (tg->_TMaxLen > pr->_TMaxLen) ? tg->_TMaxLen : pr->_TMaxLen ;
 

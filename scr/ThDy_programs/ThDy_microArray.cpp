@@ -11,6 +11,7 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr)
 	std::shared_ptr<CSaltCorrNN>  NNpar(IPrgPar_uArr->_cp._pSaltCorrNNp );
     if (!NNpar)
 	    NNpar = Create_NNpar(IPrgPar_uArr->_cp); 	
+	NNpar->SetTa(				CtoK(	IPrgPar_uArr->_cp._Ta));			// Aqui por si acaso. Revisar.
 
 	std::shared_ptr<CMultSec>  pr(		IPrgPar_uArr->_probesMS );
 			if (!pr)
