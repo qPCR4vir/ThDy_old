@@ -1,5 +1,5 @@
 //#include "stdafx.h"
-#pragma unmanaged
+//#pragma unmanaged
 #include "ThDySec/cod_deg.h"
 
  Base		is_base		[UCHAR_MAX],		// <> 0  si base. =base, pero para U, =T 
@@ -58,7 +58,7 @@ CInit_Cod_Deg::CInit_Cod_Deg()
 				
 
 			for (Base b=0; b<n_dgba; b++)		
-			{	Base db=nu2dgba[b], ldg=tolower(db);
+			{	Base db=nu2dgba[b], ldg=Base(tolower(db));
 
 				is_degbase	[ db ]	= is_degbase[ ldg ]	= nu2dgba[b] ;
 				c_degbase	[ db ]	= c_degbase	[ ldg ]	= nu2c_dgba[b]   ; // '.' y '$' y tambien '-' quedan igual

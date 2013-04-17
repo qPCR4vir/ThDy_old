@@ -1,6 +1,6 @@
 
 //#include "stdafx.h"
-#pragma unmanaged	
+//#pragma unmanaged	
 #include "ThDySec/th_dy_align.h"
 #include <set>
 

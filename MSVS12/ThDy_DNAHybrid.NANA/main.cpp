@@ -4,6 +4,7 @@
 //#include "ThDy_Form.h"
 //#include <nana/gui/wvl.hpp>
 //#include <nana/gui/widgets/button.hpp>
+#include<filesystem>
 #include <nana/gui/widgets/combox.hpp>
 using namespace nana;
 
@@ -26,7 +27,7 @@ class ThDy_Form : public nana::gui::form
  private:
 	gui::button _butOpenProject;
 	gui::combox _cbProject;
-	ThDyProjet		_Pr;
+	ThDyProject		_Pr;
 	
 }	;
 

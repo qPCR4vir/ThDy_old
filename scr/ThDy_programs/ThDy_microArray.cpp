@@ -1,6 +1,6 @@
 //#include "StdAfx.h"
 #pragma unmanaged
-
+#include <filesystem>
 #include "ThDy_programs/prog_comm_functions.h"
 int microArrayProg ( CProgParam_microArray *IPrgPar_uArr, CMultSec &pr, CMultSec &tg, time_t t_0,  int MAxGrDegTg=1, const std::string of_x=""	);
 
@@ -13,17 +13,23 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr)
 	    NNpar = Create_NNpar(IPrgPar_uArr->_cp); 	
 	NNpar->SetTa(				CtoK(	IPrgPar_uArr->_cp._Ta));			// Aqui por si acaso. Revisar.
 
-	std::shared_ptr<CMultSec>  pr(		IPrgPar_uArr->_probesMS );
-			if (!pr)
-				pr.reset ( new CMultSec(IPrgPar_uArr->_InputSondeFile.Get() ,		NNpar));	
+	assert(("IPrgPar_uArr->_probesMS - debiera existir siempre",IPrgPar_uArr->_probesMS));
+	CMultSec  &pr(		*IPrgPar_uArr->_probesMS.get() ); 
+	if(IPrgPar_uArr->_InputSondeFile.Get()[0] )
+		pr.AddFromFile ( IPrgPar_uArr->_InputSondeFile.Get() );	
+	
 
-	std::shared_ptr<CMultSec>  tg(		IPrgPar_uArr->_cp._pSeqTargets );
-			if (!tg)
-				tg.reset ( new CMultSec(IPrgPar_uArr->_cp._InputTargetFile.Get(),	NNpar,
+	assert(("IPrgPar_uArr->_cp._pSeqTargets - debiera existir siempre",IPrgPar_uArr->_cp._pSeqTargets));
+	CMultSec  &tg(		*IPrgPar_uArr->_cp._pSeqTargets.get() ); 
+
+	std::tr2::sys::path  itf(IPrgPar_uArr->_cp._InputTargetFile.Get());
+	if(itf.has_filename())
+		tg.AddMultiSec ( new CMultSec(itf.file_string().c_str(),	NNpar,
 										IPrgPar_uArr->_cp._MaxTgId,
-										IPrgPar_uArr->_cp._SecLim  ));	
+										IPrgPar_uArr->_cp._SecLim  ))
+			->_name=itf.basename();	
 
-	return microArrayProg ( IPrgPar_uArr, *pr.get()	, *tg.get(), t_0 	)  ; /*, "_self"*/
+	return microArrayProg ( IPrgPar_uArr, pr	, tg, t_0 	)  ; 
 }
 
 void	CreateColumns(CTable<TmGPos> &rtbl, CMultSec &pr, int MaxGrDeg, OutStr &os )

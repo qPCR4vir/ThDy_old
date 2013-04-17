@@ -1,5 +1,5 @@
 //#include "stdafx.h"
-#pragma unmanaged
+//#pragma unmanaged
 #include "ThDySec/link.h"
 
 

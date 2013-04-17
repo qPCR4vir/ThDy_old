@@ -2403,7 +2403,6 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// buttonTargetsFile
 			// 
-			this->buttonTargetsFile->Enabled = false;
 			this->buttonTargetsFile->Location = System::Drawing::Point(4, 319);
 			this->buttonTargetsFile->Name = L"buttonTargetsFile";
 			this->buttonTargetsFile->Size = System::Drawing::Size(89, 35);
@@ -2437,7 +2436,6 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			this->textBoxTgScF4uA->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
 				| System::Windows::Forms::AnchorStyles::Right));
-			this->textBoxTgScF4uA->Enabled = false;
 			this->textBoxTgScF4uA->Location = System::Drawing::Point(84, 13);
 			this->textBoxTgScF4uA->Name = L"textBoxTgScF4uA";
 			this->textBoxTgScF4uA->Size = System::Drawing::Size(449, 20);

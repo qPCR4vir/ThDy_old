@@ -17,7 +17,10 @@ TagBinding_strTrim^	TagBind_Trim(Control^	c	, C_str &s							){ return gcnew Tag
 
 TagBinding_bool^	TagBind(CheckBox^	  c , bool  &p			){ return gcnew TagBinding_bool(p,c)	;}
 
-char *CreateCharFromManString(String ^Text)
+
+//using namespace System;   // http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.marshal.stringtohglobalansi.aspx
+//using namespace System::Runtime::InteropServices;
+char *CreateCharFromManString(String ^Text)   //   ---> StringToHGlobalAnsi : http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.marshal.stringtohglobalansi.aspx
 {	size_t					convertedChars	= 0;
 	size_t					sizeInBytes		= ((Text->Length + 1) * 2);
 	errno_t					err				= 0;
@@ -31,8 +34,39 @@ char *CreateCharFromManString(String ^Text)
 						sizeInBytes);
 	return CharText	;
 
+	//char *CharText=(char*) Marshal::StringToHGlobalAnsi(Text ).ToPointer();
+	//char *r=strcpy(new char[strlen(CharText)+1],CharText);
+	//Marshal::FreeHGlobal(IntPtr(CharText));
+	//return r;
+//
+
+
 }
 }
+
+
+//using namespace System;   // http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.marshal.stringtohglobalansi.aspx
+//using namespace System::Runtime::InteropServices;
+//
+//#include <iostream>                                                 // for printf 
+//
+//
+//int main()
+//{
+//    // Create a managed string.
+//    String^ managedString = "Hello unmanaged world (from the managed world).";
+//
+//    // Marshal the managed string to unmanaged memory. 
+//    char* stringPointer = (char*) Marshal::StringToHGlobalAnsi(managedString ).ToPointer();
+//
+//    printf("stringPointer = %s\n", stringPointer);
+//
+//    // Always free the unmanaged string.
+//    Marshal::FreeHGlobal(IntPtr(stringPointer));
+//
+//    return 0;
+//}
+
 
 //  //    http://msdn.microsoft.com/en-us/library/s7wzt4be(v=vs.110).aspx    
 //errno_t wcstombs_s(					// Zero if successful, an error code on failure.

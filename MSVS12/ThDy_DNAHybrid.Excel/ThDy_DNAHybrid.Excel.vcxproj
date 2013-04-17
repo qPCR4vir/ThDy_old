@@ -13,6 +13,14 @@
       <Configuration>MDrelease</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="MD_deb_Nov12|Win32">
+      <Configuration>MD_deb_Nov12</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MD_rel_Nov12|Win32">
+      <Configuration>MD_rel_Nov12</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="MTdebug|Win32">
       <Configuration>MTdebug</Configuration>
       <Platform>Win32</Platform>
@@ -86,6 +94,12 @@
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MD_deb_Nov12|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120_CTP_Nov2012</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='_MDdebug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -125,6 +139,13 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MD_rel_Nov12|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120_CTP_Nov2012</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='_MDrelease|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -161,6 +182,9 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MD_deb_Nov12|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='_MDdebug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -179,6 +203,9 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MDrelease|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MD_rel_Nov12|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='_MDrelease|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -193,7 +220,7 @@
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -201,7 +228,7 @@
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -209,7 +236,15 @@
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;..\..\lib\VC$(PlatformToolset)_$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
+    <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
+    <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MD_rel_Nov12|Win32'">
+    <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;..\..\lib\VC$(PlatformToolset)_$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\bin\</OutDir>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -217,7 +252,7 @@
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -225,7 +260,7 @@
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -233,7 +268,7 @@
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -241,7 +276,7 @@
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -249,7 +284,7 @@
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -257,7 +292,7 @@
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -265,7 +300,15 @@
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
+    <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
+    <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MD_deb_Nov12|Win32'">
+    <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\bin\</OutDir>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -273,7 +316,7 @@
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -281,7 +324,7 @@
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -289,7 +332,7 @@
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
-    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)</TargetName>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -327,6 +370,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MD_deb_Nov12|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
@@ -401,6 +455,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MDrelease|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>nana_$(Configuration).lib;FileChosserWin32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MD_rel_Nov12|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>

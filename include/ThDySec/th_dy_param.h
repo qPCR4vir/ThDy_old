@@ -34,7 +34,8 @@ class COriNN
 	Energy	CalcG (Entropy S,Energy H,Temperature Ta)const{return (S>=0 || H>=forbidden_enthalpy/10000 ) ? -forbidden_freeEnerg : +(H - Ta*S);}//  ????
 	Energy	CalcG (Entropy S,Energy H		 )		 const{return CalcG(S,H,_Ta);}// Usa la Ta almacenada aqui con el ultimo SetTa
 	bool LoadNNParam(istream &isTDP)  ;
-		COriNN						(float C1 = 50e-9,  float C2 = 50e-9 ) 
+		COriNN						(float C1 = 50e-9,  
+			                         float C2 = 50e-9 ) 
 		:		R					( 1.987f),	
 				_RlogC				( R * (float)log( (C1>C2)?C1-C2/2:C2-C1/2  )	),
 				_Ta					( 0		),		// ineficiente si se deja asi
@@ -53,7 +54,7 @@ class COriNN
 				obulge_mism_H		( 0.00f * 1000),
 				obulge_mism_S		(-6.45f	),
 				cbulge_mism_H		( 0.00f	),
-				cbulge_mism_S		(-6.45f	)   		{	InitOriNNMatriz();}
+				cbulge_mism_S		(-6.45f	)   		         {	InitOriNNMatriz();}
 
 	const float R ;
 	const float forbidden_enthalpy,
@@ -78,6 +79,7 @@ class COriNN
 	Temperature	_Ta;				// ineficiente? si se deja asi, ponerla lo mas parecido, ?pero menor que lo esperado?
 									// se usa para calcular G -free energia
 		  virtual ~COriNN(){}	// Hace falta ????
+private:		  COriNN& operator=(const COriNN& ){} /*= delete*/ ;
 };
 
 //enum SaltCorrection {NoSelect=-1,StLucia=0, Owczarzy=1};
@@ -88,7 +90,7 @@ class CSaltCorrNN : public COriNN
 	float			_ConcSd, _ConcTg ; // pasar a ori?????
 	float			_ConcSalt;
 	float			_GCp ;		// cambiar para que acepte CSec ???, o solo que acepte el GCp ya calculado 
-								// para calcular Owczarzy SaltCorrection
+								// para calcular Owczarzy SaltCorrection  // TODO
 
 	void	InitSaltNNMatriz() ; // inicial ?
 	void	InitStLuciaSaltNNMatriz ();// llamarla al cambiar conc de sal o DNA(este posible parcial)
@@ -127,7 +129,7 @@ public:
                                                                     bkn2c_nu[ a_1 ], bkn2c_nu[a] ); }
 	inline float GetSelfEnth(Base a_1, Base a) const{return GetEnth (		  a_1  ,		  a, 
                                                                     bkn2c_nu[ a_1 ], bkn2c_nu[a] ); }
-    inline float GetCorrectSaltOwczarzySelfEntr ( Base a_1, Base a , float GCp ) const
+    inline float GetCorrectSaltOwczarzySelfEntr ( Base a_1, Base a , float GCp ) const   // TODO: como considerar GCp ?
 	{	float LogSC = log(_ConcSalt);
 		return GetOriSelfEntr(a_1, a) + GetSelfEnth(a_1, a)  *((4.29f * 100*_GCp -3.95f )*(1e-5f)*LogSC+ (9.4e-6f)*LogSC*LogSC);	
 	}

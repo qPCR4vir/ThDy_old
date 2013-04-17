@@ -8,13 +8,13 @@
 
 typedef unsigned char Base;
 
-
+// Introducir Letter->UCHAR_MAX , Base -> "ACGT<>-" , DegBase -> "-GCSTKYBARMVWDHN"
 // las 4 bases en el orden complementario de Kadelari. Cambiar a algo asi "-TGCA." o "GCTA-." o "GCTAx-." Calcular si no es mejor "-GCSTKYBARMVWDHN"
 // usar basek[]=".ACGT$"   or basek[]="-ACGT$"  --- efecto del '-' ????
 
 const Base	nu2ba		[]="GCTA"				,  // las 4 bases, cod corto. de "numero a base".
 			nu2c_ba		[]="CGAT"				,  // 
-			n_ba		 =sizeof(nu2ba)-1       ,			
+			n_ba		  =sizeof(nu2ba)-1      ,			
 
 			basek		[]="-ACGT$"				,  // las 4 bases en el orden de Kadelari. ? Coservar este orden  => b+cb=5 ?
 			basek_c		[]="-TGCA$"				,  // las 4 bases en el orden complementario de Kadelari.
@@ -26,7 +26,8 @@ const Base	nu2ba		[]="GCTA"				,  // las 4 bases, cod corto. de "numero a base".
 
 			nu2dgba		[]="-GCSTKYBARMVWDHN"	,  // "convierte" el "codigo numerico" en letra del deg cod; lo contrario de db2nu[]. de "numero a 
 			nu2c_dgba   []="-CGSAMRVTYKBWHDN"	,  // devuelve el complementario. Comentar aqui codigo binario.
-			n_dgba		=16 ; // =sizeof(nu2dgba)-1	;  // porque da 20 y no 16 ?????? 
+			n_dgba		  =sizeof(nu2dgba)-1	;  // '\020 es 16 ?????? 			//n_dgba		=16 ; 
+
 
 extern Base is_base		[UCHAR_MAX],		// <> 0  si base. =base, pero para U, =T 
 			is_degbase	[UCHAR_MAX],		// <> 0  si letra valida (cualquiera del cod deg,may o minuscula

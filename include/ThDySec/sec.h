@@ -42,20 +42,20 @@ class ISec				// Pure virtual class ?
 
 class CSecBasInfo : public ISec
 {public:
-	char		*Name		()const		{return _name;}
-	int			ID			()const		{return _ID;}
-	static int			NewS_ID()
+	char		*Name		()const		{return _name;} // User-editable
+	int			ID			()const		{return _ID;}	// Run-time-sistem define, non-editable
+protected:	
+	static int			NewS_ID()			// make protected: ??
 	{
-		static int ID(0);
-		return ++ID;
+		static int last_ID(0);
+		return ++last_ID;
 	}
-
-	bool		_selected, _filtered;
-	bool		Selected(bool select)	{return _selected=select;}
-	bool		Selected(		) const {return _selected;}
-	bool		Filtered(bool filter)	{return _filtered=filter;}
+public:
+	bool		Filtered(bool filter)	{return _filtered=filter;}   // User-editable ?????
 	bool		Filtered(		) const {return _filtered;}
-	void		Description (std::string	description)		{ _description=description;}
+	bool		Selected(bool select)	{return _selected=select;} 			// make protected: ??
+	bool		Selected(		) const {return _selected;}					 // User-editable
+	void				Description (std::string	description)		{ _description=description;}
 	virtual std::string	Description ()const	{return _description.length() ? _description : Name() ; }
 
 	virtual Base		*GetCopyFullSec	(						)override
@@ -80,6 +80,7 @@ class CSecBasInfo : public ISec
 	float		GCpercent	()const		{return	_GCp ;}		
 
 protected:
+		bool			_selected, _filtered;
 		int				_ID ;				// num de la sec en file original?? en total??, num unico?
 		char			*_name ;			// nombre unico? FASTA id	
 		std::string		_description;

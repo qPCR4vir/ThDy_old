@@ -1,5 +1,5 @@
 //#include "stdafx.h"
-#pragma unmanaged
+//#pragma unmanaged
 #include <memory.h>
 #include <math.h>
 #include <string.h>
@@ -72,7 +72,7 @@ void	CSaltCorrNN::InitOwczarzySaltNNMatriz() // recalcular solo cuando se "pone"
 											* ((4.29f * _GCp -3.95f )*(1e-5f)*LogSC+ (9.4e-6f)*LogSC*LogSC);
 }	
 
-void	CSaltCorrNN::SetStLuciaSaltCorr( float C1, float C2, float Csalt) 
+void	CSaltCorrNN::SetStLuciaSaltCorr( float C1, float C2, float Csalt)  // TODO
 {	//kplus = Csalt ;	
 //	kfac  = 0.368 * log (kplus) ;
 	;
@@ -178,47 +178,60 @@ ostream &operator<<(ostream &stream, const CSaltCorrNN &sp)
 
 
 void	COriNN::UpdatedSMatriz_forb_entr_elem()// despues de esto hay que update cualquier SaltCorr o al menos una parte
-{	
+{		Base x,y,a,b;									//		basek[]=".ACGT$"	.-0, A-1, C-2, G-3, T-4, $-5 , g=0 /* gap */ , e=5 /* extremo, end */
+		//  En lugar de $...$  tratar de poner <....>
+	// Set all parameters to zero!     y porque 0 y no forbidden ?!					//  borrado por Ariel 		
+	//memset(_oridH,0,sizeof(_oridH));	//memset(_oridS,0,sizeof(_oridS));
+
+      const Base A = bk2nu['A'],            //  Revisar esto si cambia el cod_deg  !!!!!!!!!!!!!!!!!!!!!!
+	             C = bk2nu['C'], 
+	             T = bk2nu['T'], 
+	             G = bk2nu['G'], 
+	             g = bk2nu['-'], /* gap */
+	             e = bk2nu['$'], /* extremo, end */
+               all = n_basek,
+			 first = 0, last       = all-1,
+		first_base = 1,	last_base  = 4 ;
 	
-	for (int x=0;x<=5;x++)					//  bases plus   - and $													// Ariel 
-	{	for (int y=0;y<=5;y++)				//  forbid $./XY etc.
-		{	ndS(5,0,x,y)=forbidden_entropy;   //   $-/XY						// Ariel 
-		//	ndS(0,5,x,y)=forbidden_entropy;   //   -$/XY						// Ariel - caso especial: comienzo de sec
-		//	ndS(x,y,0,5)=forbidden_entropy;   //   XY/-$						// Ariel - caso especial: comienzo de sec
-			ndS(x,y,5,0)=forbidden_entropy;   //   XY/$-						// Ariel
+	for     ( x=first; x<=last ;x++)					//  bases plus   - and $													// Ariel 
+	{	for ( y=first; y<=last ;y++)				//  forbid $./XY etc.
+		{	ndS(e,g,x,y)=forbidden_entropy;   //   $-/XY						// Ariel 
+		//	ndS(g,e,x,y)=forbidden_entropy;   //   -$/XY						// Ariel - caso especial: comienzo de sec
+		//	ndS(x,y,g,e)=forbidden_entropy;   //   XY/-$						// Ariel - caso especial: comienzo de sec
+			ndS(x,y,e,g)=forbidden_entropy;   //   XY/$-						// Ariel
 		}
 	}
 	
-	for (int x=1;x<=4;x++)
-	{	for (int y=1;y<=4;y++)			// Set all X-/Y-, -X/Y- and X-/-Y so, that TM will be VERY small! 
-		{	ndS(0,x,y,0)=forbidden_entropy;
-			ndS(x,0,0,y)=forbidden_entropy;
-			ndS(x,0,y,0)=forbidden_entropy;
-			ndS(0,x,0,y)=forbidden_entropy;   //   -X/-Y						// Ariel
+	for (      x=first_base; x<=last_base; x++)
+	{	for (  y=first_base; y<=last_base; y++)			// Set all X-/Y-, -X/Y- and X-/-Y so, that TM will be VERY small! 
+		{	ndS(g,x,y,g)=forbidden_entropy;
+			ndS(x,g,g,y)=forbidden_entropy;
+			ndS(x,g,y,g)=forbidden_entropy;
+			ndS(g,x,g,y)=forbidden_entropy;   //   -X/-Y						// Ariel
 										// forbid X-/Y$ and X$/Y- etc., i.e. terminal must not be paired with gap!
-			ndS(x,5,y,0)=forbidden_entropy;
-			ndS(x,0,y,5)=forbidden_entropy;
-			ndS(5,x,0,y)=forbidden_entropy;
-			ndS(0,x,5,y)=forbidden_entropy;
+			ndS(x,e,y,g)=forbidden_entropy;
+			ndS(x,g,y,e)=forbidden_entropy;
+			ndS(e,x,g,y)=forbidden_entropy;
+			ndS(g,x,e,y)=forbidden_entropy;
 										// forbid X$/-Y etc.
-			ndS(x,5,0,y)=forbidden_entropy;
-			ndS(x,0,5,y)=forbidden_entropy;
-			ndS(5,x,y,0)=forbidden_entropy;
-			ndS(0,x,y,5)=forbidden_entropy;
+			ndS(x,e,g,y)=forbidden_entropy;
+			ndS(x,g,e,y)=forbidden_entropy;
+			ndS(e,x,y,g)=forbidden_entropy;
+			ndS(g,x,y,e)=forbidden_entropy;
 		}								// also, forbid x-/-- and --/x-, i.e. no two inner gaps paired
-		ndS(x,0,0,0)=forbidden_entropy;
-		ndS(0,0,x,0)=forbidden_entropy;
-		ndS(x,0,0,5)=forbidden_entropy;  // x-/-$
-		ndS(5,0,0,x)=forbidden_entropy;
-		ndS(x,0,0,5)=forbidden_entropy;
-		ndS(0,x,5,0)=forbidden_entropy;
-		ndS(0,5,0,x)=forbidden_entropy;   //   -$/-X						// Ariel
-		ndS(x,0,5,0)=forbidden_entropy;   //   X-/$-     ----- se puede quitar						// Ariel
+		ndS(x,g,g,g)=forbidden_entropy;
+		ndS(g,g,x,g)=forbidden_entropy;
+		ndS(x,g,g,e)=forbidden_entropy;  // x-/-$
+		ndS(e,g,g,x)=forbidden_entropy;
+		ndS(x,g,g,e)=forbidden_entropy;
+		ndS(g,x,e,g)=forbidden_entropy;
+		ndS(g,e,g,x)=forbidden_entropy;   //   -$/-X						// Ariel
+		ndS(x,g,e,g)=forbidden_entropy;   //   X-/$-     ----- se puede quitar						// Ariel
 	}
-	ndS(0,0,0,0)=forbidden_entropy;	// forbid --/--
-	ndS(5,0,0,0)=forbidden_entropy;
-	ndS(0,0,5,0)=forbidden_entropy;
-	ndS(0,5,5,0)=forbidden_entropy;
+	ndS(g,g,g,g)=forbidden_entropy;	// forbid --/--
+	ndS(e,g,g,g)=forbidden_entropy;
+	ndS(g,g,e,g)=forbidden_entropy;
+	ndS(g,e,e,g)=forbidden_entropy;
 }// ver cuales de estos se tienen que corregir con las sales.
 
 
@@ -236,16 +249,15 @@ void	COriNN::InitOriNNMatriz()
 	             g = bk2nu['-'], /* gap */
 	             e = bk2nu['$'], /* extremo, end */
                all = n_basek,
-			 first = 0,
-		first_base = 1,
-		last_base  = 4 ;
+			 first = 0, last       = all-1,
+		first_base = 1,	last_base  = 4 ;
 
 
 	for (x = first; x < all; x++)			// Prohibir todo lo no permitido												// Ariel 
 	for (y = first; y < all; y++)												// Ariel 
 	for (a = first; a < all; a++)												// Ariel 
 	for (b = first; b < all; b++)												// Ariel 
-	{	ndH(x,y,a,b)= 0					;	ndS(x,y,a,b) = first				  ; }	//   AB/XY					// Ariel
+	{	ndH(x,y,a,b)= 0					;	ndS(x,y,a,b) = 0				  ; }	//   AB/XY					// Ariel
 				//{	ndH(x,y,a,b)=forbidden_enthalpy;	ndS(x,y,a,b)=forbidden_entropy; }	//   AB/XY					// Ariel
 
 	// y de paso verificar todos estos datos. Dar posibilidad de ajustar solo algunos parametros (correcciones)
@@ -253,60 +265,60 @@ void	COriNN::InitOriNNMatriz()
 	//		H		forbidden_enthalpy	( 1e18f	),		// initialize parameter table! MUY GRANDE
 
 
-	for (x = first;x < all;x++)					//  bases plus   - and $													// Ariel 
-	{	for (y = first;y < all;y++)				//  forbid $./XY etc.   ? <./XY  or  >./XY  ?
-		{	ndH(5,0,x,y)=forbidden_enthalpy;	ndS(5,0,x,y)=forbidden_entropy;   //   $-/XY						// Ariel 
-		//	ndH(0,5,x,y)=forbidden_enthalpy;	ndS(0,5,x,y)=forbidden_entropy;   //   -$/XY						// Ariel - caso especial: comienzo de sec
-		//	ndH(x,y,0,5)=forbidden_enthalpy;	ndS(x,y,0,5)=forbidden_entropy;   //   XY/-$						// Ariel - caso especial: comienzo de sec
-			ndH(x,y,5,0)=forbidden_enthalpy;	ndS(x,y,5,0)=forbidden_entropy;   //   XY/$-						// Ariel
+	for     (x = first;x < all; x++)				//  bases plus   - and $													// Ariel 
+	{	for (y = first;y < all; y++)				//  forbid $./XY etc.   ? <./XY  or  >./XY  ?
+		{	ndH(e,g,x,y)=forbidden_enthalpy;	ndS(e,g,x,y)=forbidden_entropy;   //   $-/XY						// Ariel 
+		//	ndH(g,e,x,y)=forbidden_enthalpy;	ndS(g,e,x,y)=forbidden_entropy;   //   -$/XY						// Ariel - caso especial: comienzo de sec
+		//	ndH(x,y,g,e)=forbidden_enthalpy;	ndS(x,y,g,e)=forbidden_entropy;   //   XY/-$						// Ariel - caso especial: comienzo de sec
+			ndH(x,y,e,g)=forbidden_enthalpy;	ndS(x,y,e,g)=forbidden_entropy;   //   XY/$-						// Ariel
 		}
 	}
 
-	for (x=1;x<=4;x++)					// solo bases, no - or $
-	{	for (y=1;y<=4;y++)				// Set all X-/Y-, -X/Y- and X-/-Y so, that TM will be VERY small! ??? H/S ??
-		{	ndH(0,x,y,0)=forbidden_enthalpy;	ndS(0,x,y,0)=forbidden_entropy;   //   -X/Y- 
-			ndH(x,0,0,y)=forbidden_enthalpy;	ndS(x,0,0,y)=forbidden_entropy;   //   X-/-Y 
-			ndH(x,0,y,0)=forbidden_enthalpy;	ndS(x,0,y,0)=forbidden_entropy;   //   X-/Y-
-			ndH(0,x,0,y)=forbidden_enthalpy;	ndS(0,x,0,y)=forbidden_entropy;   //   -X/-Y						// Ariel
+	for (x=first_base;x<=last_base;x++)					// solo bases, no - or $
+	{	for (y=first_base;y<=last_base;y++)				// Set all X-/Y-, -X/Y- and X-/-Y so, that TM will be VERY small! ??? H/S ??
+		{	ndH(g,x,y,g)=forbidden_enthalpy;	ndS(g,x,y,g)=forbidden_entropy;   //   -X/Y- 
+			ndH(x,g,g,y)=forbidden_enthalpy;	ndS(x,g,g,y)=forbidden_entropy;   //   X-/-Y 
+			ndH(x,g,y,g)=forbidden_enthalpy;	ndS(x,g,y,g)=forbidden_entropy;   //   X-/Y-
+			ndH(g,x,g,y)=forbidden_enthalpy;	ndS(g,x,g,y)=forbidden_entropy;   //   -X/-Y						// Ariel
 										// forbid X-/Y$ and X$/Y- etc., i.e. terminal must not be paired with gap!
-			ndH(x,5,y,0)=forbidden_enthalpy;	ndS(x,5,y,0)=forbidden_entropy;   //   X$/Y$ 
-			ndH(x,0,y,5)=forbidden_enthalpy;	ndS(x,0,y,5)=forbidden_entropy;   //   X-/Y$ 
-			ndH(5,x,0,y)=forbidden_enthalpy;	ndS(5,x,0,y)=forbidden_entropy;   //   $X/-Y
-			ndH(0,x,5,y)=forbidden_enthalpy;	ndS(0,x,5,y)=forbidden_entropy;   //   -X/$Y
+			ndH(x,e,y,g)=forbidden_enthalpy;	ndS(x,e,y,g)=forbidden_entropy;   //   X$/Y$ 
+			ndH(x,g,y,e)=forbidden_enthalpy;	ndS(x,g,y,e)=forbidden_entropy;   //   X-/Y$ 
+			ndH(e,x,g,y)=forbidden_enthalpy;	ndS(e,x,g,y)=forbidden_entropy;   //   $X/-Y
+			ndH(g,x,e,y)=forbidden_enthalpy;	ndS(g,x,e,y)=forbidden_entropy;   //   -X/$Y
 										// forbid X$/-Y etc.
-			ndH(x,5,0,y)=forbidden_enthalpy;	ndS(x,5,0,y)=forbidden_entropy;   //   X$/-Y
-			ndH(x,0,5,y)=forbidden_enthalpy;	ndS(x,0,5,y)=forbidden_entropy;   //   X-/$Y
-			ndH(5,x,y,0)=forbidden_enthalpy;	ndS(5,x,y,0)=forbidden_entropy;   //   X$/Y-
-			ndH(0,x,y,5)=forbidden_enthalpy;	ndS(0,x,y,5)=forbidden_entropy;   //   -X/Y$
+			ndH(x,e,g,y)=forbidden_enthalpy;	ndS(x,e,g,y)=forbidden_entropy;   //   X$/-Y
+			ndH(x,g,e,y)=forbidden_enthalpy;	ndS(x,g,e,y)=forbidden_entropy;   //   X-/$Y
+			ndH(e,x,y,g)=forbidden_enthalpy;	ndS(e,x,y,g)=forbidden_entropy;   //   X$/Y-
+			ndH(g,x,y,e)=forbidden_enthalpy;	ndS(g,x,y,e)=forbidden_entropy;   //   -X/Y$
 		}								// also, forbid x-/-- and --/x-, i.e. no two inner gaps paired
-		ndH(x,0,0,0)=forbidden_enthalpy;		ndS(x,0,0,0)=forbidden_entropy;   //   -X/--
-		ndH(0,0,x,0)=forbidden_enthalpy;		ndS(0,0,x,0)=forbidden_entropy;   //   --/X-
-		ndH(x,0,0,5)=forbidden_enthalpy;		ndS(x,0,0,5)=forbidden_entropy;   //   X-/-$
-		ndH(5,0,0,x)=forbidden_enthalpy;		ndS(5,0,0,x)=forbidden_entropy;   //   $-/-X     ----- se puede quitar
-		ndH(0,5,x,0)=forbidden_enthalpy;		ndS(x,0,0,5)=forbidden_entropy;   //   -$/X-	
-		ndH(0,x,5,0)=forbidden_enthalpy;		ndS(0,x,5,0)=forbidden_entropy;   //   -X/$-     ----- se puede quitar	
-		ndH(0,5,0,x)=forbidden_enthalpy;		ndS(0,5,0,x)=forbidden_entropy;   //   -$/-X						// Ariel
-		ndH(x,0,5,0)=forbidden_enthalpy;		ndS(x,0,5,0)=forbidden_entropy;   //   X-/$- 					// Ariel    ----- se puede quitar	
+		ndH(x,g,g,g)=forbidden_enthalpy;		ndS(x,g,g,g)=forbidden_entropy;   //   -X/--
+		ndH(g,g,x,g)=forbidden_enthalpy;		ndS(g,g,x,g)=forbidden_entropy;   //   --/X-
+		ndH(x,g,g,e)=forbidden_enthalpy;		ndS(x,g,g,e)=forbidden_entropy;   //   X-/-$
+		ndH(e,g,g,x)=forbidden_enthalpy;		ndS(e,g,g,x)=forbidden_entropy;   //   $-/-X     ----- se puede quitar
+		ndH(g,e,x,g)=forbidden_enthalpy;		ndS(x,g,g,e)=forbidden_entropy;   //   -$/X-	
+		ndH(g,x,e,g)=forbidden_enthalpy;		ndS(g,x,e,g)=forbidden_entropy;   //   -X/$-     ----- se puede quitar	
+		ndH(g,e,g,x)=forbidden_enthalpy;		ndS(g,e,g,x)=forbidden_entropy;   //   -$/-X						// Ariel
+		ndH(x,g,e,g)=forbidden_enthalpy;		ndS(x,g,e,g)=forbidden_entropy;   //   X-/$- 					// Ariel    ----- se puede quitar	
 	}
-	ndH(0,0,0,0)=forbidden_enthalpy;		ndS(0,0,0,0)=forbidden_entropy;	// forbid   --/--
-	ndH(5,0,0,0)=forbidden_enthalpy;		ndS(5,0,0,0)=forbidden_entropy;	// forbid   $-/--     ----- se puede quitar
-	ndH(0,0,5,0)=forbidden_enthalpy;		ndS(0,0,5,0)=forbidden_entropy;	// forbid   --/$-     ----- se puede quitar
-	ndH(0,5,5,0)=forbidden_enthalpy;		ndS(0,5,5,0)=forbidden_entropy;	// forbid   -$/$-     ----- se puede quitar
+	ndH(g,g,g,g)=forbidden_enthalpy;		ndS(g,g,g,g)=forbidden_entropy;	// forbid   --/--
+	ndH(e,g,g,g)=forbidden_enthalpy;		ndS(e,g,g,g)=forbidden_entropy;	// forbid   $-/--     ----- se puede quitar
+	ndH(g,g,e,g)=forbidden_enthalpy;		ndS(g,g,e,g)=forbidden_entropy;	// forbid   --/$-     ----- se puede quitar
+	ndH(g,e,e,g)=forbidden_enthalpy;		ndS(g,e,e,g)=forbidden_entropy;	// forbid   -$/$-     ----- se puede quitar
 
-	for (x=1; x<=4; x++)			// Interior loops (double Mismatches)	iloop_entropy(-0.97f) ?*1000?,  iloop_enthalpy		( 0.00f	),
-		for (y=1; y<=4; y++)
-			for (a=1; a<=4; a++)
-				for (b=1; b<=4; b++)
+	for             (x=first_base; x<=last_base; x++)			// Interior loops (double Mismatches)	iloop_entropy(-0.97f) ?*1000?,  iloop_enthalpy		( 0.00f	),
+		for         (y=first_base; y<=last_base; y++)
+			for     (a=first_base; a<=last_base; a++)
+				for (b=first_base; b<=last_base; b++)
 					// AT and CG pair, and as A=1, C=2, G=3, T=4 this means
 					// we have Watson-Crick pairs if (x+a==5) and (y+b)==5.
 					if (!((x+a==5)||(y+b==5)))						// innecesario !!!?????????????????
 					{	ndH(x,y,a,b) = iloop_enthalpy;// No watson-crick-pair, i.e. double mismatch!
 						ndS(x,y,a,b) = iloop_entropy;// set enthalpy/entropy to loop expansion!
 					}
-	for (x=1; x<=4; x++)			// xy/-- and --/xy (Bulge Loops of size > 1)
-		for (y=1; y<=4; y++)
-		{	ndH(x,y,0,0) = bloop_enthalpy;			ndS(x,y,0,0) = bloop_entropy;	//		bloop_entropy	(-1.30f	),	// xy/-- and --/xy (Bulge Loops of size > 1)
-			ndH(0,0,x,y) = bloop_enthalpy;			ndS(0,0,x,y) = bloop_entropy;	//		bloop_enthalpy	( 0.00f	),
+	for     (x=first_base; x<=last_base; x++)			// xy/-- and --/xy (Bulge Loops of size > 1)
+		for (y=first_base; y<=last_base; y++)
+		{	ndH(x,y,g,g) = bloop_enthalpy;			ndS(x,y,g,g) = bloop_entropy;	//		bloop_entropy	(-1.30f	),	// xy/-- and --/xy (Bulge Loops of size > 1)
+			ndH(g,g,x,y) = bloop_enthalpy;			ndS(g,g,x,y) = bloop_entropy;	//		bloop_enthalpy	( 0.00f	),
 		}
     // x-/ya and xa/y- as well as -x/ay and ax/-y
 	// bulge opening and closing parameters with
@@ -317,19 +329,19 @@ void	COriNN::InitOriNNMatriz()
 	// being better than
 	//     AAAAAAAAA
 	//     TG------T
-	for (x=1; x<=4; x++)
-		for (y=1; y<=4; y++)
-			for (a=1; a<=4; a++)
+	for         (x=first_base; x<=last_base; x++)
+		for     (y=first_base; y<=last_base; y++)
+			for (a=first_base; a<=last_base; a++)
 			{	if (x+y==5)							// other base pair matches!		 :					 H de -2660 a -2660,      S de -14.22 a -14.22   	
-				{	ndH(x,0,y,a)=obulge_match_H;  ndS(x,0,y,a)=obulge_match_S;// bulge opening	obulge_match_H(-2.66f * 1000),	obulge_match_S(-14.22f),
-					ndH(x,a,y,0)=obulge_match_H;  ndS(x,a,y,0)=obulge_match_S;
-					ndH(0,x,a,y)=cbulge_match_H;  ndS(0,x,a,y)=cbulge_match_S;// bulge closing	cbulge_match_H(-2.66f * 1000),	cbulge_match_S(-14.22f),
-					ndH(a,x,0,y)=cbulge_match_H;  ndS(a,x,0,y)=cbulge_match_S;
+				{	ndH(x,g,y,a)=obulge_match_H;  ndS(x,g,y,a)=obulge_match_S;// bulge opening	obulge_match_H(-2.66f * 1000),	obulge_match_S(-14.22f),
+					ndH(x,a,y,g)=obulge_match_H;  ndS(x,a,y,g)=obulge_match_S;
+					ndH(g,x,a,y)=cbulge_match_H;  ndS(g,x,a,y)=cbulge_match_S;// bulge closing	cbulge_match_H(-2.66f * 1000),	cbulge_match_S(-14.22f),
+					ndH(a,x,g,y)=cbulge_match_H;  ndS(a,x,g,y)=cbulge_match_S;
 				}	else							// mismatch in other base pair!
-				{	ndH(x,0,y,a)=obulge_mism_H;   ndS(x,0,y,a)=obulge_mism_S;// bulge opening
-					ndH(x,a,y,0)=obulge_mism_H;   ndS(x,a,y,0)=obulge_mism_S;
-					ndH(0,x,a,y)=cbulge_mism_H;   ndS(0,x,a,y)=cbulge_mism_S;// bulge closing
-					ndH(a,x,0,y)=cbulge_mism_H;   ndS(a,x,0,y)=cbulge_mism_S;
+				{	ndH(x,g,y,a)=obulge_mism_H;   ndS(x,g,y,a)=obulge_mism_S;// bulge opening
+					ndH(x,a,y,g)=obulge_mism_H;   ndS(x,a,y,g)=obulge_mism_S;
+					ndH(g,x,a,y)=cbulge_mism_H;   ndS(g,x,a,y)=cbulge_mism_S;// bulge closing
+					ndH(a,x,g,y)=cbulge_mism_H;   ndS(a,x,g,y)=cbulge_mism_S;
 				}
 			}
 	// Watson-Crick pairs (note that only ten are unique, as obviously  :        H de -10600 a -7200,           S de -24.4 a -19.9   (PM)

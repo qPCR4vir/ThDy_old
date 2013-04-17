@@ -26,7 +26,7 @@ class IBParam
 {
     string _Titel;
  public:
-	 IBParam (CProgParam *pp, const string& titel) 
+	 IBParam (CProgParam *pp, const string& titel)      //  pp->?????????????
 		    :_Titel(titel), ValueChanged(nullptr)
 	        {         //  pp->_parametrs[_etiq]= *this;
 	        }    
