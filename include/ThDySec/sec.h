@@ -438,9 +438,9 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 {	public:
 		std::string			_name ;							// nombre unico? FASTA id	
  		int					_ID ;							// num de la sec en file original?? en total??, num unico?
-		NumRang<LonSecPos>  _SecLim;					
-		float				_MaxTgId ;					
-		std::shared_ptr<CSaltCorrNN>	_NNPar ;
+		NumRang<LonSecPos>  _SecLim;					// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
+		float				_MaxTgId ;					// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
+		std::shared_ptr<CSaltCorrNN>	_NNPar ;		// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
 		CMultSec			*_parentMS	;								//std::weak_ptr<CMultSec> _parentMS	;
 		CSec				*_Consenso ;
 
@@ -465,17 +465,12 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 		}
 
 explicit CMultSec (const std::string &Name  ) 
-				:													//_NSec(0), 
-																	//_TNSec(0), 
-																	//_NMSec(0), 
-																	//_TNMSec(0), 
-																	//	_Len(0),	_TLen(0),
-				  _MaxTgId(100), 
-				  _SecLim(1,0),					//_SecBeg(1), _SecEnd(0), /*_Len(0),_TLen(0),*/
-				_Consenso(nullptr),				
-				_parentMS(nullptr),
-				_name(trim_string(Name)),
-				_ID(NewMS_ID())
+				: _MaxTgId	(100), 
+				  _SecLim	(1,0),					//_SecBeg(1), _SecEnd(0), /*_Len(0),_TLen(0),*/
+				 _Consenso	(nullptr),				
+				 _parentMS	(nullptr),
+			 	 _name		(trim_string(Name)),
+				 _ID		(NewMS_ID())
 		{	} 
 
 		 CMultSec (	const char	 *file	, 
@@ -492,7 +487,20 @@ explicit CMultSec (const std::string &Name  )
 				{	
 					AddFromFile (file) ;
 				} 
-
+		 CMultSec (	ifstream &	 file	,		// TODO: Unificar estos dos constr.
+					std::shared_ptr<CSaltCorrNN>  NNpar	, 
+					float		  MaxTgId	=100, 
+					NumRang<long> SecLim	= NumRang<long> (1,0)	/* long SecBeg=1, long SecEnd=0*/  
+				 ) :	/*_name(trim_string(file)),	*/
+						_SecLim		(SecLim),	
+						_MaxTgId	(MaxTgId),
+						_Consenso	(nullptr),			
+						_parentMS	(nullptr),
+						_NNPar		(NNpar)	,
+						_ID			(NewMS_ID())			
+				{	
+					AddFromFile (file) ;
+				} 
 explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar) 
 			: 
 			  _MaxTgId(100), 
@@ -611,6 +619,7 @@ explicit CMultSec (CMultSec	*ms, const std::string &Name="")
 
 
 		int			AddFromFile		(const char *file);
+		int			AddFromFile     (ifstream& ifile);	
 		int			CMultSec::AddFromFileFASTA	(ifstream &ifileFASTA);
 		int			CMultSec::AddFromFileBLAST	(ifstream &ifileBLAST);
 		int			CMultSec::AddFromFileGB		(ifstream &ifileGB);

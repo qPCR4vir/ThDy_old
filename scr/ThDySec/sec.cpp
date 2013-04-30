@@ -520,23 +520,27 @@ char *	CSecAl::GetAlignedSecChar(long Al_pBeg, long Al_pEnd)  // "regala" esta m
 	assert (Al_sec);
 	return CopyAlignedSecChar(Al_pBeg,  Al_pEnd, Al_sec);
 }
-
 int		CMultSec::AddFromFile (const char *file)		// return la cantidad de sec add --------------------  AddFromFile   -------------------
-{		
-	if (  _SecLim.Max() <= _SecLim.Min() ) 
-		_SecLim.SetMax(0) ; // if ( _SecEnd<=_SecBeg) _SecEnd=0 ;
-	ifstream ifile( file ); 
+{	ifstream ifile( file ); 
 	if ( ! ifile ) 
 	{
 	    throw std::ios_base::failure(string("Could not open the sequence file: ")+ file );
 	}
+
+	return AddFromFile(ifile); // TODO: retrow anadiendo el nombre del file
+}
+
+int		CMultSec::AddFromFile (ifstream& ifile)		// return la cantidad de sec add --------------------  AddFromFile   -------------------
+{		
+	if (  _SecLim.Max() <= _SecLim.Min() ) 
+		_SecLim.SetMax(0) ; // if ( _SecEnd<=_SecBeg) _SecEnd=0 ;
 
 	int j=0;
 	char c1;
 	ifile>>skipws  >> c1;
 	if ( ! ifile.good() ) 	
 	{
-	    throw std::ios_base::failure(string("Could not open the sequence file: ")+ file );
+	    throw std::ios_base::failure(string("Could not open the sequence file: ")/*+ file */);
 	}
 
 	if( c1 =='>' ) 																		
@@ -547,7 +551,7 @@ int		CMultSec::AddFromFile (const char *file)		// return la cantidad de sec add 
 		getline (ifile, xml_DOCTYPE,'>') ;   // <?xml version="1.0"?>
 		getline (ifile, xml_DOCTYPE,'>') ;   // <!DOCTYPE BlastOutput PUBLIC "-//NCBI//NCBI BlastOutput/EN" "NCBI_BlastOutput.dtd">
 		if ( ! ifile.good() ) 	
-		{	throw std::ios_base::failure(string("Could not open the sequence file: ")+ file );		}
+		{	throw std::ios_base::failure(string("Could not open the sequence file: ")/*+ file*/ );		}
 
 		if		(string::npos!=xml_DOCTYPE.find("DOCTYPE BlastOutput") )				
 			return AddFromFileBLAST (ifile);
