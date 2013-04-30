@@ -249,7 +249,7 @@ class CParamNumRange: public CParamBNRange<Num>
 						const string& unit=""
 					) : CParamBNRange (pp, titel, etiq, parRef,min,  max,  defValue,unit)
 	          { if (!inRang(defValue)) 
-			        throw ParamOutOfNumRange(string("Error contructing parametr: \"")
+			        throw ParamOutOfNumRange(std::string("Error contructing parametr: \"")
 												     + Titel() 
 												     + "\" ("+ Etiq() + ")" + ", tryin to set the default value " ,
 												defValue , *this  );
