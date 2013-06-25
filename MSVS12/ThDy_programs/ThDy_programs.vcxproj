@@ -704,7 +704,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\scr\ThDy_programs\ThDy_uArrExp.cpp.implementar-actualizar" />
-    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\ThDy_programs\init_prog_param.h" />

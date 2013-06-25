@@ -5,57 +5,127 @@
 #include <nana/gui/widgets/tabbar.hpp>
 #include <iostream>    // temp, for debugging
 #include <fstream>     // temp, for debugging
-
-
-	//ThDyProject		  _Pr;
 #include<filesystem>
+
 #include "thdy_programs\init_thdy_prog_param.h"
+
 class ThDyNanaForm ;
-class FindSonden : public CompoWidget
+
+class SetupPage : public CompoWidget
 {public: 
-    FindSonden(ThDyNanaForm& tdForm): p_(tdForm), CompoWidget (tdForm, STR("Find Sonden"),STR("FindSonden.lay.txt")),
-    proj       (*this, STR("Project:") )
-    {}
+    SetupPage (ThDyNanaForm& tdForm);
     ThDyProject &p_;
-    OpenSaveBox proj;
+    nana::gui::button  set_def_proj_;
+
+    void SetDefLayout   () override
+    {
+        _DefLayout= "vertical      gap=2             \n\t"
+	                 //"       <weight=1>                \n\t"
+	                 "       <SetDefProj weight=23>       \n\t "
+
+            ;
+    }
+    void AsignWidgetToFields() override
+    {
+	    _place.field("SetDefProj" )<<set_def_proj_;
+    }
+};
+
+class FindSondenPage : public CompoWidget
+{public: 
+    FindSondenPage(ThDyNanaForm& tdForm);
+    ThDyProject &p_;
+    OpenSaveBox nTsec_;
+    void SetDefLayout   () override
+    {
+        _DefLayout= "vertical      gap=2             \n\t"
+	                 //"       <weight=1>                \n\t"
+	                 "       <NonTargSeq weight=23>       \n\t "
+
+            ;
+    }
+    void AsignWidgetToFields() override
+    {
+	    _place.field("NonTargSeq" )<<nTsec_;
+
+    }
 };
 
 
 class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyProject
 {public: 
-   ThDyNanaForm ():nana::gui::form (nana::rectangle( nana::point(200,100), nana::size(500,800) )),
-                   EditableForm    (*this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")){}
+    OpenSaveBox                     proj_;
 	nana::gui::tabbar<nana::string> tabbar_;
+    FindSondenPage                  findSond_;
+    SetupPage                       setup_; 
 
-        void SetDefLayout   () override
+   ThDyNanaForm ():nana::gui::form (nana::rectangle( nana::point(200,100), nana::size(500,500) )),
+                   EditableForm    (*this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")),
+                   proj_           (*this, STR("Project:") ),
+                   tabbar_         (*this),
+                   findSond_       (*this),
+                   setup_          (*this)
+   {
+        add_page( findSond_ );
+        add_page( setup_    );
+
+        tabbar_.active (0);
+
+        InitMyLayout();
+        AddMenuProgram();
+        SelectClickableWidget( _menuBar);
+   }
+
+
+    void SetDefLayout   () override
     {
-        _DefLayout= "vertical      gap=2             \n\t"
-	                 "       <weight=25>                \n\t"
-	                 "       <Project weight=23>       \n\t "
-	                 "       <gap=2 min=30 <b1> <b2 min=200> <b3 weight=200> >   \n\t "
-	                 "       <<b4 min=200 >min=30 <weight=6>>           \n\t "
-	                 "       <  weight=22 <label weight=60 ><Num> <vertical weight=50 <UpDown> >>     \n\t   "
-	                 "       <  weight=23 <Ta  weight= 200><> <num  weight=280 ><>  <Unit weight=50 gap=2 >>         \n\t  "
-	                 "       <Project2 weight=23>       "
-                  ;
+        _DefLayout= "vertical      gap=2               \n\t"
+	                 "       <weight=25>               \n\t"
+	                 "       <Project  weight=23>       \n\t "
+	                 "       <PagesTag weight=23 >          \n\t "
+	                 "       <Pages      min=200 >          \n\t "
+	                 "       <weight=23>       \n\t "
+
+            ;
     }
     void AsignWidgetToFields() override
     {
-	    _place.field("Project" )<<osb;
-	    _place.field("Project2")<<osb2;
-	    _place.field("b1")<<but1;
-	    _place.field("b2")<<but2;
-	    _place.field("b3")<<but3;
-	    _place.field("b4")<<but4;
-	    _place.field("num")<<num1 << num2;
-	    _place.field("Num"    ) << _num  ;
-	    _place.field("Unit"   ) << UPicker/*._cb*/ ;
-	    _place.field("UpDown" ) << _up << _down  ;
-	    _place.field("label"  ) << _label;
-	    _place.field("Ta"  ) << Ta;
+	    _place.field("Project" )<< proj_   ;
+	    _place.field("PagesTag")<< tabbar_  ;
+	    _place.field("Pages"   ).fasten( findSond_).fasten(setup_)  ;
+    }
+    void add_page(widget& w)
+    {        tabbar_.push_back (                    w.caption());
+             tabbar_.relate    (tabbar_.length()-1, w          );
+    }
+};
+
+   FindSondenPage::FindSondenPage(ThDyNanaForm& tdForm)
+        : p_           (tdForm), 
+          CompoWidget  (tdForm, STR("Find Sonden"), STR("FindSonden.lay.txt")),
+          nTsec_       (*this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt") )
+    {
+        nTsec_._DefLayout=("vertical   <weight=1>    "
+                 "  <weight=20 <weight=3><   vertical weight=100 <><label weight=15><>     ><weight=1>     "
+		         "               <proj_buttons weight=74 gap=1>     "
+		         "			   <cbFL >       "
+		         "			   <pick weight=30>  "
+		         "			   <weight=3> 	>            <weight=2>    ");
+        InitMyLayout();
+        SelectClickableWidget( nTsec_);
+
+    }
+   SetupPage::SetupPage          (ThDyNanaForm& tdForm)
+        : p_           (tdForm), 
+          CompoWidget  (tdForm, STR("Setup"), STR("Setup.lay.txt")),
+          set_def_proj_(*this)
+    {
+        set_def_proj_.caption( STR("Set as Def. project") );
+        InitMyLayout();
+        SelectClickableWidget( set_def_proj_);
+
     }
 
-};
 int main()
 {
 	ThDyNanaForm tdForm;
@@ -75,5 +145,3 @@ int main()
 	return 0;
 }
 
-
-//window_caption(window wd, const nana::string& title)
