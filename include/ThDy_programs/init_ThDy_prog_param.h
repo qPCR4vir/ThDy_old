@@ -347,7 +347,7 @@ class CProgParam_TmCalc : public CProgParam_MultiplexPCR
 };
 
 
-class ThDyProjet : public CProgProject // Permite manejar todo el projecto: con un miembro para los parametros comunes y otro para los de cada programa
+class ThDyProject : public CProgProject // Permite manejar todo el projecto: con un miembro para los parametros comunes y otro para los de cada programa
 {public:
 		ThDyCommProgParam		_cp;
 		CProgParam_microArray   _uArr  ;
@@ -355,7 +355,7 @@ class ThDyProjet : public CProgProject // Permite manejar todo el projecto: con 
 		CProgParam_SondeDesign	_SdDes ;
 		CProgParam_TmCalc		_TmCal ;
 
- explicit	ThDyProjet():	CProgProject("ThDy DNA Hybrid Project.","Def.ThDy.txt","Def.ThDy.txt"),
+ explicit	ThDyProject():	CProgProject("ThDy DNA Hybrid Project.","Def.ThDy.txt","Def.ThDy.txt"),
                             _cp("Common parametrs for all functions",this),
                             _uArr("Virtual microarray experiment"   ,_cp), 
 							_mPCR("Check multiplex PCR"             ,_cp), 

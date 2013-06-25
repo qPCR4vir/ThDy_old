@@ -27,7 +27,7 @@ namespace ThDy_DNAHybridWF {
 	
 	public ref class ThPr_Form : public System::Windows::Forms::Form //  , public INotifyPropertyChanged
 	{	
-	private:		ThDyProjet		&_Pr;
+	private:		ThDyProject		&_Pr;
 					TagBindGroup	^_CommThDyP, ^_uArrThDyP, ^_TmCalThDyP,  ^_mPCRThDyP ,  ^_SdDesThDyP		 ;
 					SeqExpl			^_seqExpl;
 
@@ -44,7 +44,7 @@ namespace ThDy_DNAHybridWF {
 			 void 			InitializeTagBindings();
 	public:
 		ThPr_Form() 
-			try : _Pr(   *( new ThDyProjet() )    )
+			try : _Pr(   *( new ThDyProject() )    )
 		{			
 			InitializeComponent();
 			InitializeTagBindings();
@@ -91,7 +91,7 @@ namespace ThDy_DNAHybridWF {
 			{
 				delete components;
 			}
-			ThDyProjet *pr=&_Pr ;
+			ThDyProject *pr=&_Pr ;
 			delete pr ;
 		}
 

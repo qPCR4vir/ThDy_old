@@ -25,7 +25,7 @@ public:
 // Implementation
 protected:
 	HICON m_hIcon;
-	ThDyProjet		_Pr;
+	ThDyProject		_Pr;
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();

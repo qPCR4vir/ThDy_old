@@ -22,14 +22,14 @@ namespace ThDy_DNAHybridWF {
 	{
 	public:
 
-			ThDyProjet				&_Pr;
+			ThDyProject				&_Pr;
 			 bool					_showAllseq, _showFiltered;
              System::Drawing::Font	^seqFont;
 			 TreeNode^				_DropTargetNode;
 			 ItemCheckedEventHandler ^SecChecked;
 	public: 
 
-		SeqExpl(ThDyProjet& Pr) : _Pr(Pr), _showAllseq (true), _showFiltered(true), seqFont(gcnew System::Drawing::Font("Lucida Console", 10))
+		SeqExpl(ThDyProject& Pr) : _Pr(Pr), _showAllseq (true), _showFiltered(true), seqFont(gcnew System::Drawing::Font("Lucida Console", 10))
 		{
 			InitializeComponent();
 			//

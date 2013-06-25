@@ -56,7 +56,7 @@
       <FileName>c:\prog\thdysec\include\thdy_programs\init_thdy_prog_param.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ThDyProjet">
+  <Class Name="ThDyProject">
     <Position X="16.75" Y="4.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAQIAAAAAAAAAAAAAAAAAgAAIEAAAAABAAA=</HashCode>

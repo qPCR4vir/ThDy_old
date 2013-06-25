@@ -19,12 +19,12 @@ namespace TagBindingNS
 char *CreateCharFromManString(System::String ^Text);		//char *CreateTrimCharFromManString(System::String ^Text);
 	
 
-void			UpDateP		(Control^  control);
-void			UpDateForm	(Control^  control);
+void			UpDateP		(Control^  control);          // Posible because in .NET all control have a Tag^
+void			UpDateForm	(Control^  control);          // and there we keep a ref to the "users" parametr
 System::Void	Validated_TB(System::Object^  senderControl, System::EventArgs^  e);
 
 
-enum  PriorizeDefault {Form, Parametr, NoDef};
+enum  PriorizeDefault {Form, Parametr, NoDef};            // from the user code or the GUI layout?
 ref		  class TagBindGroup;
 interface class IUpDatable 						{	void UpDateP() ,			UpDateForm() ;	
 													static  PriorizeDefault _def=/*PriorizeDefault::*/Form;		};

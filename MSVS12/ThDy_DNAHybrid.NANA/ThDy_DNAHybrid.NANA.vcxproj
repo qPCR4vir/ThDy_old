@@ -207,41 +207,49 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\Exe.PropertySheet.props" />
     <Import Project="..\..\..\ExtLib\Addnana.C11Lib.PropertySheet.props" />
+    <Import Project="..\..\AddThDySevLib.PropertySheet.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MT_deb_Nov12|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\Exe.PropertySheet.props" />
     <Import Project="..\..\..\ExtLib\Addnana.C11Lib.PropertySheet.props" />
+    <Import Project="..\..\AddThDySevLib.PropertySheet.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MTdebug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\Exe.PropertySheet.props" />
     <Import Project="..\..\..\ExtLib\Addnana.C11Lib.PropertySheet.props" />
+    <Import Project="..\..\AddThDySevLib.PropertySheet.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MT_deb_Nov12|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\Exe.PropertySheet.props" />
     <Import Project="..\..\..\ExtLib\Addnana.C11Lib.PropertySheet.props" />
+    <Import Project="..\..\AddThDySevLib.PropertySheet.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\Exe.PropertySheet.props" />
     <Import Project="..\..\..\ExtLib\Addnana.C11Lib.PropertySheet.props" />
+    <Import Project="..\..\AddThDySevLib.PropertySheet.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MD_deb_Nov12|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\Exe.PropertySheet.props" />
     <Import Project="..\..\..\ExtLib\Addnana.C11Lib.PropertySheet.props" />
+    <Import Project="..\..\AddThDySevLib.PropertySheet.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\Exe.PropertySheet.props" />
     <Import Project="..\..\..\ExtLib\Addnana.C11Lib.PropertySheet.props" />
+    <Import Project="..\..\AddThDySevLib.PropertySheet.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MD_deb_Nov12|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\Exe.PropertySheet.props" />
     <Import Project="..\..\..\ExtLib\Addnana.C11Lib.PropertySheet.props" />
+    <Import Project="..\..\AddThDySevLib.PropertySheet.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MTrelease|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -289,6 +297,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\Exe.PropertySheet.props" />
     <Import Project="..\..\..\ExtLib\Addnana.C11Lib.PropertySheet.props" />
+    <Import Project="..\..\AddThDySevLib.PropertySheet.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MDrelease|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -300,6 +309,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\Exe.PropertySheet.props" />
     <Import Project="..\..\..\ExtLib\Addnana.C11Lib.PropertySheet.props" />
+    <Import Project="..\..\AddThDySevLib.PropertySheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTrelease|Win32'">
@@ -645,10 +655,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\ExtLib\Nana\Nana.Cpp11\temp\CompoWidget.cpp" />
+    <ClCompile Include="..\..\..\ExtLib\Nana\Nana.Cpp11\temp\EditableForm.cpp" />
+    <ClCompile Include="..\..\..\ExtLib\Nana\Nana.Cpp11\temp\Numer.cpp" />
+    <ClCompile Include="..\..\..\ExtLib\Nana\Nana.Cpp11\temp\Units.cpp" />
     <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ThDy_Form.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\bin\layot.txt" />
