@@ -53,5 +53,8 @@
     <ClInclude Include="..\..\include\ThDy_programs\init_ThDy_prog_param.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\ThDy_programs\init_prog_param_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

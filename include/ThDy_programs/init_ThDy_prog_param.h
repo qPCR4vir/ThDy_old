@@ -13,14 +13,14 @@ class CParamSondeLimits: public IBParam
     CParamNumMinMax<SecPos> L; 
  public: 
 	 // Acepta un parametro y por tanto no usa _v. Por compatibilidad.
-    CParamSondeLimits (CProgParam *pp, const string& titel, SondeLimits &parRef, 
-		             const string& etiqGmin, Energy minGmin,        Energy maxGmin,         Energy defValueGmin,
-		             const string& etiqGmax, Energy minGmax,        Energy maxGmax,         Energy defValueGmax,
-		             const string& etiqTmin, Temperature minTmin,   Temperature maxTmin,    Temperature defValueTmin,
-		             const string& etiqTmax, Temperature minTmax,   Temperature maxTmax,    Temperature defValueTmax,
-		             const string& etiqLmin, SecPos minLmin,        SecPos maxLmin,         SecPos defValueLmin,
-		             const string& etiqLmax, SecPos minLmax,        SecPos maxLmax,         SecPos defValueLmax,
-                     string UnitG="kcal", string UnitT="°C", string UnitL="nt" 
+    CParamSondeLimits (CProgParam *pp, const std::string& titel, SondeLimits &parRef, 
+		             const std::string& etiqGmin, Energy minGmin,        Energy maxGmin,         Energy defValueGmin,
+		             const std::string& etiqGmax, Energy minGmax,        Energy maxGmax,         Energy defValueGmax,
+		             const std::string& etiqTmin, Temperature minTmin,   Temperature maxTmin,    Temperature defValueTmin,
+		             const std::string& etiqTmax, Temperature minTmax,   Temperature maxTmax,    Temperature defValueTmax,
+		             const std::string& etiqLmin, SecPos minLmin,        SecPos maxLmin,         SecPos defValueLmin,
+		             const std::string& etiqLmax, SecPos minLmax,        SecPos maxLmax,         SecPos defValueLmax,
+                           std::string  UnitG="kcal", std::string UnitT="°C", std::string UnitL="nt" 
 
 					) : IBParam (pp, titel), 
 					    G(pp, titel+". Perf.Match dG", parRef._G,
@@ -38,14 +38,14 @@ class CParamSondeLimits: public IBParam
 	          { 
 	          } 
 	        // Num &parRef,   usa _v y por tanto no necesita un parametro externo
-    CParamSondeLimits (CProgParam *pp, const string& titel, //SondeLimits &parRef, 
-		             const string& etiqGmin, Energy minGmin,        Energy maxGmin,         Energy defValueGmin,
-		             const string& etiqGmax, Energy minGmax,        Energy maxGmax,         Energy defValueGmax,
-		             const string& etiqTmin, Temperature minTmin,   Temperature maxTmin,    Temperature defValueTmin,
-		             const string& etiqTmax, Temperature minTmax,   Temperature maxTmax,    Temperature defValueTmax,
-		             const string& etiqLmin, SecPos minLmin,        SecPos maxLmin,         SecPos defValueLmin,
-		             const string& etiqLmax, SecPos minLmax,        SecPos maxLmax,         SecPos defValueLmax,
-                     const string& UnitG="kcal", const string& UnitT="°C", const string& UnitL="nt" 
+    CParamSondeLimits (CProgParam *pp, const std::string& titel, //SondeLimits &parRef, 
+		             const std::string& etiqGmin, Energy minGmin,        Energy maxGmin,         Energy defValueGmin,
+		             const std::string& etiqGmax, Energy minGmax,        Energy maxGmax,         Energy defValueGmax,
+		             const std::string& etiqTmin, Temperature minTmin,   Temperature maxTmin,    Temperature defValueTmin,
+		             const std::string& etiqTmax, Temperature minTmax,   Temperature maxTmax,    Temperature defValueTmax,
+		             const std::string& etiqLmin, SecPos minLmin,        SecPos maxLmin,         SecPos defValueLmin,
+		             const std::string& etiqLmax, SecPos minLmax,        SecPos maxLmax,         SecPos defValueLmax,
+                     const std::string& UnitG="kcal", const std::string& UnitT="°C", const std::string& UnitL="nt" 
 
 					) : IBParam (pp, titel), 
 					    G(pp, titel+". Perf.Match dG", sL._G,
@@ -69,7 +69,7 @@ class CSaltCorrNN;
 
 class ThDyCommProgParam : public CCommProgParam // concreta los parametros comunes. Mantiene lista de los prog Espec que los usan
 {public:	
-    ThDyCommProgParam(const string& titel,   CProgProject *proj)
+    ThDyCommProgParam(const std::string& titel,   CProgProject *proj)
 		:	CCommProgParam(titel,proj), 
 			_loadNNPar(false),    loadNNPar (this, "Programm option- Load NN parametr",		"LoadNNPara", _loadNNPar,  false),
 			_saveNNPar(false),    saveNNPar (this, "Programm option- save NN parametr",		"SaveNNPara", _saveNNPar,  false),
@@ -178,7 +178,7 @@ template <typename Num> class CTable ;
 class CEspThDyProgParam : public CEspProgParam
 {public:
 	ThDyCommProgParam& _cp;
-	CEspThDyProgParam(const string& titel, ThDyCommProgParam &commThDyParam)
+	CEspThDyProgParam(const std::string& titel, ThDyCommProgParam &commThDyParam)
 		: CEspProgParam(titel, commThDyParam),
 		  _cp(commThDyParam)
 	{}
@@ -196,7 +196,7 @@ class CProgParam_microArray : public CEspThDyProgParam
 	//bool			    _I, _G;			// Outpu table of I, G. 
 	//CParamBool		 I,  G;			// Outpu table of I, G. 
 
-    explicit 	CProgParam_microArray(const string& titel, ThDyCommProgParam &commThDyParam) 
+    explicit 	CProgParam_microArray(const std::string& titel, ThDyCommProgParam &commThDyParam) 
 		    :	CEspThDyProgParam(titel, commThDyParam), 
 				_InputSondeFile	(this, "Imput file for Sondes",				"iSonde_uAr", ""			) ,
 				_rtbl(nullptr),
@@ -231,7 +231,7 @@ class CProgParam_uArrExp  : public CProgParam_microArray
 	bool		_Normalize;					// las tablas anteriores : puede suponer perdida de informacion para calcular signif estadistica??
 	Energy		_Isat, _Isen, _Gsat, _Gsen;
 
-    explicit 	CProgParam_uArrExp (const string& titel, ThDyCommProgParam &commThDyParam);
+    explicit 	CProgParam_uArrExp (const std::string& titel, ThDyCommProgParam &commThDyParam);
 
 	int		Run		(	){	return microArrayProg ( this )  ;}
 	void    ExpFile (const char *Input_uArrExpFile )	{	_Input_uArrExpFile.CopyTrim(Input_uArrExpFile) ;	}
@@ -247,7 +247,7 @@ class CProgParam_MultiplexPCR ;
 int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr )  ;
 class CProgParam_MultiplexPCR : public CProgParam_microArray
 {public:
-	CProgParam_MultiplexPCR(const string& titel, ThDyCommProgParam &commThDyParam) ;
+	CProgParam_MultiplexPCR(const std::string& titel, ThDyCommProgParam &commThDyParam) ;
 	int		Run		(){	return MultiplexPCRProg ( this )  ;}
 	CTable<TmGPos> *_rtbl_self;		                                    //uArr_RT *_rtbl;
 };
@@ -259,7 +259,7 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 
 
 
-	CProgParam_SondeDesign(const string& titel,ThDyCommProgParam &commThDyParam):		
+	CProgParam_SondeDesign(const std::string& titel,ThDyCommProgParam &commThDyParam):		
 		CEspThDyProgParam (titel, commThDyParam),
 		_design (true), design(this, "Make only design or full comp",	"DesigVsCmp", _design,  true),
         sL(this, "Sondes to design limits", _sL,							 
@@ -313,7 +313,7 @@ class CProgParam_TmCalc : public CProgParam_MultiplexPCR
 	CParamBool		 save,  align ; //  save results as mPCR, using the TargetSecFile and ResultFile comunes. Use ThDyAlign or just calc Tm?
 	TemperatureRang _TmS, _Tm2A , _TmHy ;	// Para recoger los reslutados y display it back. 
 	EnergyRang		_GS , _G2A  , _GHy  ; 	
-	CProgParam_TmCalc (const string& titel,ThDyCommProgParam &commThDyParam) :	
+	CProgParam_TmCalc (const std::string& titel,ThDyCommProgParam &commThDyParam) :	
 		                _save (false), _align(true),
 						CProgParam_MultiplexPCR (titel,commThDyParam),
 						save		(this, "Save result to file",			"TmCsaveRes", _save,   false),
@@ -362,8 +362,8 @@ class ThDyProject : public CProgProject // Permite manejar todo el projecto: con
 							_SdDes("Find sondes"                    ,_cp), 
 							_TmCal("Tm calculator"                  ,_cp)
 					{}
- 	virtual ofstream &saveTMP() const     override       // Se me habia olvidado redefinir esta funcion para usar _cp.OutF
-	{	return saveToFile((auto_ptr<char>(AddFileExt(_cp._OutputFile.Get(),".ThDy.txt"))).get());	}
+ 	virtual std::ofstream &saveTMP() const     override       // Se me habia olvidado redefinir esta funcion para usar _cp.OutF
+	{	return saveToFile((std::auto_ptr<char>(AddFileExt(_cp._OutputFile.Get(),".ThDy.txt"))).get());	}
 };  
 
 
