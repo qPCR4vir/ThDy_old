@@ -34,11 +34,17 @@ class FindSondenPage : public CompoWidget
 
 class TmCalcPage : public CompoWidget
 {public: 
-    ThDyProject        &p_;
+    ThDyProject        &_Pr;
     nana::gui::textbox  sec_, sec2align_, txtBx_ResultSec, txtBx_ResultSec2Align;
     nana::gui::checkbox chkBx_Tm_save_asPCR, chkBx_align, chkBx_copy_rev, chkBx_copy_compl;
-    nana::gui::button   copy_f_s_2, copy_s, copy_s_a;
+    nana::gui::button   copy_f_s_2, copy_s, copy_s_a, run_;
     nana::gui::label    error_;
+    nana::gui::NumberBox    Tm_min_Up, Tm_Up, Tm_max_Up ;
+    nana::gui::NumberBox    Tm_min_Dw, Tm_Dw, Tm_max_Dw ;
+    nana::gui::NumberBox    Tm_min_In, Tm_In, Tm_max_In ;
+    nana::gui::NumberBox    G_min_Up,  G_Up,  G_max_Up ;
+    nana::gui::NumberBox    G_min_Dw,  G_Dw,  G_max_Dw ;
+    nana::gui::NumberBox    G_min_In,  G_In,  G_max_In ;
 
     TmCalcPage (ThDyNanaForm& tdForm);
 
@@ -58,21 +64,75 @@ class TmCalcPage : public CompoWidget
 	    _place.field("rev_compl")<< chkBx_copy_rev << chkBx_copy_compl ;
 	    _place.field("InputSec" )<< sec_ << sec2align_ ;
 	    _place.field("error"    )<< error_ ;
+	    _place.field("Left"     )<< run_  ;
 	    _place.field("CopyBut"  )<< nana::gui::place::room (copy_f_s_2, 2, 1)<< copy_s << copy_s_a ;
-	    _place.field("Table"    )<< ""          << " | min-" << "Tm(°C)"   << "-max" << " | min-"  << "G(kJ)"   << "-max | " ;
-	    _place.field("Table"    )<< "Up"        << " | min-" << "Tm(°C)"   << "-max" << " | min-"  << "G(kJ)"   << "-max | " ;
-	    _place.field("Table"    )<< "Down"      << " | min-" << "Tm(°C)"   << "-max" << " | min-"  << "G(kJ)"   << "-max | " ;
-	    _place.field("Table"    )<< "Interact"  << " | min-" << "Tm(°C)"   << "-max" << " | min-"  << "G(kJ)"   << "-max | " ;
+	    _place.field("Table"    )<< ""          << "   min-" << "Tm(°C)"   << "-max" << "   min-"  << "G(kJ)"   << "-max   "  ;
+	    _place.field("Table"    )<< "Up"        << Tm_min_Up << Tm_Up      << Tm_max_Up<<G_min_Up  <<  G_Up     <<  G_max_Up  ;
+	    _place.field("Table"    )<< "Down"      << Tm_min_Dw << Tm_Dw      << Tm_max_Dw<<G_min_Dw  <<  G_Dw     <<  G_max_Dw  ;
+	    _place.field("Table"    )<< "Interact"  << Tm_min_In << Tm_In      << Tm_max_In<<G_min_In  <<  G_In     <<  G_max_In  ;
 
 
 	    _place.field("ResAlign" )<< txtBx_ResultSec << txtBx_ResultSec2Align ;
     }
+    void Run()
+    {
+        _Pr._TmCal.      _Sec.CopyTrim (std::string(nana::charset (      sec_.caption ())).c_str() );		
+        _Pr._TmCal._Sec2Align.CopyTrim (std::string(nana::charset (sec2align_.caption ())).c_str() );		
+   //         	_TmCalThDyP = gcnew	TagBindGroup()
+			//<<		TagBind 	( txtBx_Sec			 , _Pr._TmCal._Sec		)	
+			//<<		TagBind 	( txtBx_Sec2Align	 , _Pr._TmCal._Sec2Align)	
+			//<<		TagBind 	( chkBx_Tm_save_asPCR, _Pr._TmCal._save		)
+			//<<		TagBind		( chkBx_align		 , _Pr._TmCal._align	)  
+			//;
+        _Pr._TmCal.Run ();
+        txtBx_ResultSec      .caption (nana::charset (_Pr._TmCal._AlignedSec      .Get() ));
+        txtBx_ResultSec2Align.caption (nana::charset (_Pr._TmCal._AlignedSec2Align.Get() ));
+        Tm_min_Up.Value( _Pr._TmCal._TmS.Min ());
+        Tm_Up    .Value( _Pr._TmCal._TmS.Ave ());  
+        Tm_max_Up.Value( _Pr._TmCal._TmS.Max ()); 
+
+        Tm_min_Dw.Value( _Pr._TmCal._Tm2A.Min ());
+        Tm_Dw    .Value( _Pr._TmCal._Tm2A.Ave ());  
+        Tm_max_Dw.Value( _Pr._TmCal._Tm2A.Max ()); 
+
+        Tm_min_In.Value( _Pr._TmCal._TmHy.Min ());
+        Tm_In    .Value( _Pr._TmCal._TmHy.Ave ());  
+        Tm_max_In.Value( _Pr._TmCal._TmHy.Max ()); 
+
+        G_min_Up.Value( _Pr._TmCal._GS .Min ());
+        G_Up    .Value( _Pr._TmCal._GS.Ave ());  
+        G_max_Up.Value( _Pr._TmCal._GS.Max ()); 
+
+        G_min_Dw.Value( _Pr._TmCal._G2A .Min ());
+        G_Dw    .Value( _Pr._TmCal._G2A.Ave ());  
+        G_max_Dw.Value( _Pr._TmCal._G2A.Max ()); 
+
+        G_min_In.Value( _Pr._TmCal._GHy.Min ());
+        G_In    .Value( _Pr._TmCal._GHy.Ave ());  
+        G_max_In.Value( _Pr._TmCal._GHy.Max ()); 
+        //G_min_Up,  G_Up,  G_max_Up 
+        //G_min_Dw,  G_Dw,  G_max_Dw 
+        //G_min_In,  G_In,  G_max_In 
+
+
+        //Tm_min_Up.caption ((nana::charset (std::to_string(  _Pr._TmCal._TmS.Min ()) )));
+        //Tm_Up    .caption ((nana::charset (std::to_string( _Pr._TmCal._TmS.Ave ()) )));  
+        //Tm_max_Up.caption ((nana::charset (std::to_string( _Pr._TmCal._TmS.Max ()) ))); 
+        //Tm_min_Dw, Tm_Dw, Tm_max_Dw
+        //Tm_min_In, Tm_In, Tm_max_In
+        //G_min_Up,  G_Up,  G_max_Up 
+        //G_min_Dw,  G_Dw,  G_max_Dw 
+        //G_min_In,  G_In,  G_max_In 
+
+
+    }
+
 };
 
 class SetupPage : public CompoWidget
 {public: 
     SetupPage (ThDyNanaForm& tdForm);
-    ThDyProject &p_;
+    ThDyProject &_Pr;
     nana::gui::button  set_def_proj_;
 
     void SetDefLayout   () override
@@ -164,14 +224,20 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
     }
    TmCalcPage::TmCalcPage        (ThDyNanaForm& tdForm)
-        : p_           (tdForm), 
+        : _Pr           (tdForm), 
           CompoWidget  (tdForm, STR("Tm Calc"), STR("Tm Calc.lay.txt")),
-          sec_(*this),  sec2align_(*this),  txtBx_ResultSec(*this),  txtBx_ResultSec2Align(*this),
+          sec_(*this),  sec2align_(*this),  txtBx_ResultSec(*this),  txtBx_ResultSec2Align(*this), 
           chkBx_Tm_save_asPCR(*this, STR("save")),   chkBx_align     (*this, STR("align")),
           chkBx_copy_rev     (*this, STR("rev")),    chkBx_copy_compl(*this, STR("cpl")),
           copy_f_s_2         (*this, STR("copy")),   copy_s          (*this, STR("c")),
-          copy_s_a           (*this, STR("c")),      error_          (*this, STR("no error"))
-
+          copy_s_a           (*this, STR("c")),      error_          (*this, STR("no error")),
+          run_               (*this, STR("Tm !")),
+           Tm_min_Up(*this), Tm_Up(*this), Tm_max_Up(*this) ,
+           Tm_min_Dw(*this), Tm_Dw(*this), Tm_max_Dw(*this) ,
+           Tm_min_In(*this), Tm_In(*this), Tm_max_In(*this) ,
+           G_min_Up(*this),   G_Up(*this),  G_max_Up(*this) ,
+           G_min_Dw(*this),   G_Dw(*this),  G_max_Dw(*this) ,
+           G_min_In(*this),   G_In(*this),  G_max_In(*this)  
     {
                          sec_.multi_lines(false);
                    sec2align_.multi_lines(false);
@@ -183,11 +249,20 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
               txtBx_ResultSec.editable(false);
         txtBx_ResultSec2Align.editable(false);
 
+
+                         sec_.tip_string (STR("forward primer"));
+                   sec2align_.tip_string (STR("reverse primer"));
+              txtBx_ResultSec.tip_string (STR("alingned forward primer"));
+        txtBx_ResultSec2Align.tip_string (STR("alingned reverse primer"));
+
+
+        run_.make_event <nana::gui::events::click>([&](){Run();});
+
         InitMyLayout();
         SelectClickableWidget( *this);
     }
    SetupPage::SetupPage          (ThDyNanaForm& tdForm)
-        : p_           (tdForm), 
+        : _Pr           (tdForm), 
           CompoWidget  (tdForm, STR("Setup"), STR("Setup.lay.txt")),
           set_def_proj_(*this,STR("Set as Def. project") )
     {
