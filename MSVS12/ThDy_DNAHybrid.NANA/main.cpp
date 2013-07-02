@@ -51,9 +51,9 @@ class TmCalcPage : public CompoWidget
     void SetDefLayout   () override
     {
         _DefLayout= "vertical      gap=2  min=150           \n\t"
-            "       < weight=50  <vertical gap=2 InputSec>   < weight=50 gap=1 CopyBut grid[2,2]>  >       \n\t "
-            "       < weight=25 <weight=20><error min=50> <rev_compl weight=80>>    "
-            "       < weight=90 <vertical weight=80 gap=2 Left>   < Table min=300  gap=1 grid[4,7]>  >       \n\t "
+            "       < weight=50  <vertical min=100 gap=2 InputSec>   < weight=50 gap=1 CopyBut grid[2,2]>  >       \n\t "
+            "       < weight=25 <weight=20><error min=50> <rev_compl weight=80>>         \n\t  "
+            "       < weight=90 gap=2  <vertical weight=80 gap=2 Left>   < Table min=300 grid[4,7]>  >       \n\t "
             "       < vertical weight=50  ResAlign>    "
 	                 //"       <weight=1>                \n\t"
 
@@ -78,13 +78,9 @@ class TmCalcPage : public CompoWidget
     {
         _Pr._TmCal.      _Sec.CopyTrim (std::string(nana::charset (      sec_.caption ())).c_str() );		
         _Pr._TmCal._Sec2Align.CopyTrim (std::string(nana::charset (sec2align_.caption ())).c_str() );		
-   //         	_TmCalThDyP = gcnew	TagBindGroup()
-			//<<		TagBind 	( txtBx_Sec			 , _Pr._TmCal._Sec		)	
-			//<<		TagBind 	( txtBx_Sec2Align	 , _Pr._TmCal._Sec2Align)	
-			//<<		TagBind 	( chkBx_Tm_save_asPCR, _Pr._TmCal._save		)
-			//<<		TagBind		( chkBx_align		 , _Pr._TmCal._align	)  
-			//;
+
         _Pr._TmCal.Run ();
+
         txtBx_ResultSec      .caption (nana::charset (_Pr._TmCal._AlignedSec      .Get() ));
         txtBx_ResultSec2Align.caption (nana::charset (_Pr._TmCal._AlignedSec2Align.Get() ));
         Tm_min_Up.Value( _Pr._TmCal._TmS.Min ());
@@ -110,21 +106,33 @@ class TmCalcPage : public CompoWidget
         G_min_In.Value( _Pr._TmCal._GHy.Min ());
         G_In    .Value( _Pr._TmCal._GHy.Ave ());  
         G_max_In.Value( _Pr._TmCal._GHy.Max ()); 
-        //G_min_Up,  G_Up,  G_max_Up 
-        //G_min_Dw,  G_Dw,  G_max_Dw 
-        //G_min_In,  G_In,  G_max_In 
+    }
+    void Copy()
+    {
+        _Pr._TmCal._Sec.CopyTrim (std::string(nana::charset (   sec_.caption ())).c_str() );
+         bool rev  =  chkBx_copy_rev.checked(), compl=  chkBx_copy_compl.checked() ;	
 
+		_Pr._TmCal.Update_Sec_Sec2Align	(rev, compl) ;
 
-        //Tm_min_Up.caption ((nana::charset (std::to_string(  _Pr._TmCal._TmS.Min ()) )));
-        //Tm_Up    .caption ((nana::charset (std::to_string( _Pr._TmCal._TmS.Ave ()) )));  
-        //Tm_max_Up.caption ((nana::charset (std::to_string( _Pr._TmCal._TmS.Max ()) ))); 
-        //Tm_min_Dw, Tm_Dw, Tm_max_Dw
-        //Tm_min_In, Tm_In, Tm_max_In
-        //G_min_Up,  G_Up,  G_max_Up 
-        //G_min_Dw,  G_Dw,  G_max_Dw 
-        //G_min_In,  G_In,  G_max_In 
+        sec2align_.caption (nana::charset (_Pr._TmCal._Sec2Align.Get() ));
+    }
+    void Self()
+    {
+        _Pr._TmCal._Sec.CopyTrim (std::string(nana::charset (  sec_.caption ())).c_str() );
+         bool rev  =  chkBx_copy_rev.checked(), compl=  chkBx_copy_compl.checked() ;	
 
+		_Pr._TmCal.Update_Sec	(rev, compl) ;
 
+        sec_.caption (nana::charset (_Pr._TmCal._Sec   .Get() ));
+    }
+    void Rev()
+    {
+        _Pr._TmCal._Sec2Align.CopyTrim (std::string(nana::charset (  sec2align_.caption ())).c_str() );
+         bool rev  =  chkBx_copy_rev.checked(), compl=  chkBx_copy_compl.checked() ;	
+
+		_Pr._TmCal.Update_Sec2Align	(rev, compl) ;
+
+        sec2align_.caption (nana::charset (_Pr._TmCal._Sec2Align  .Get() ));
     }
 
 };
@@ -249,14 +257,17 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
               txtBx_ResultSec.editable(false);
         txtBx_ResultSec2Align.editable(false);
 
-
                          sec_.tip_string (STR("forward primer"));
                    sec2align_.tip_string (STR("reverse primer"));
               txtBx_ResultSec.tip_string (STR("alingned forward primer"));
         txtBx_ResultSec2Align.tip_string (STR("alingned reverse primer"));
 
 
-        run_.make_event <nana::gui::events::click>([&](){Run();});
+        run_      .make_event <nana::gui::events::click>([&](){Run ();});
+        copy_f_s_2.make_event <nana::gui::events::click>([&](){Copy();});      ;   //(*this, STR("copy")),   
+        copy_s    .make_event <nana::gui::events::click>([&](){Self();});      ;  //  (*this, STR("c")),
+        copy_s_a  .make_event <nana::gui::events::click>([&](){Rev ();});      ;  
+
 
         InitMyLayout();
         SelectClickableWidget( *this);
