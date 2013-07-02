@@ -167,7 +167,7 @@ class ThDyCommProgParam : public CCommProgParam // concreta los parametros comun
 	void SetOutputFile(      char *Output_File    )	{	OutputFile(Output_File )	;	delete []Output_File		;	}
 	void SetNNParaFile(      char *InputNNFile    )	{	NNParaFile(InputNNFile )	;	delete []InputNNFile		;	}
 
-	virtual	~ThDyCommProgParam() override	{	/*delete []_ProgList;*/}
+	virtual	~ThDyCommProgParam(void) override;//	{	/*delete []_ProgList;*/}
 };
 
 class CProgParam_microArray ;
