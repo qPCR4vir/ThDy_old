@@ -3,9 +3,9 @@
 #include "thdy_programs\init_thdy_prog_param.h"
 #include "ThDy_programs\prog_comm_functions.h"
 
-ThDyCommProgParam::~ThDyCommProgParam(void) 	
-{/*delete []_ProgList;*/}
+ThDyCommProgParam::~ThDyCommProgParam(void)        {/*delete []_ProgList;*/}
 
+CProgParam_microArray::~CProgParam_microArray()		{ /*delete _tlTm;*/}
 
 CMultSec* ThDyCommProgParam::CreateRoot	() 
 {

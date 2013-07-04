@@ -213,7 +213,7 @@ class CProgParam_microArray : public CEspThDyProgParam
 	void SetSondeFile (      char *InputSondeFile )	{	SondeFile( InputSondeFile) ;	delete []InputSondeFile   ;	}
 
 	// cuando se corre un proceso paralelo ver donde es mejor hacer estos delete.
-	virtual ~CProgParam_microArray()	override	{ /*delete _tlTm;*/}
+	virtual ~CProgParam_microArray()	override	;
 };
  /*,_tlG(nullptr),_tlPos(nullptr), UpDate(nullptr)*/ 
 				/*_I(false),   I				(this, "Programm option- Save Tm Table",			"SavTmTable", _I,   false), 
