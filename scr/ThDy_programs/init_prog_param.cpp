@@ -15,12 +15,26 @@ const 	TemperatureRang   Tm_def  (57,63) ;
 const 	SecPosRang       L_def   (20,35) ;		/*_sL(G_def, Tm_def, L_def),*/
 //  void insertParam(CProgParam *pp) const override;
 
-void IParam::insertParam(CProgParam *pp)  
-{   pp->_parametrs[_etiq]= this;
-}
+
+IParam::IParam (  CProgParam *pp, 
+                  const std::string& titel, 
+                  const std::string& etiq, 
+                  const std::string& unit ) 
+		    : IBParam(titel), 
+			  _etiq( etiq==""? Titel() : etiq ),  /// si no quieres introducir una etiq puedes usar el Titel !!
+              _unit( unit )
+	        {  
+				assert (pp); 
+				pp->insertParam(this); 
+	        }    
+
+
+//void IParam::insertParam(CProgParam *pp)  
+//{   pp->_parametrs[_etiq]= this;
+//}
 
 CProgParam::CProgParam (const string& titel, CProgProject *proj) // CProgProject *proj=nullptr)
-	:IBParam(this, titel)
+	:IBParam( titel)
 { 
 	if (proj) proj->AddProg (this);
 }

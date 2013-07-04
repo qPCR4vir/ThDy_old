@@ -12,7 +12,7 @@
 #include <vector>
 #include <functional>
 
-#include "..\ThDySec\common_basics.h"
+#include "..\ThDySec\common_basics.h" 
 
 //#include "..\ThDySec\matrix.h" 
 // TODO:  PROBLEMA : como organizar estos parametros si usamos procesos? Hacer copia de ellos !!!!!!!!?
@@ -24,15 +24,18 @@ class IBParam
 {
    std::string _Titel;
  public:
-   IBParam (CProgParam *pp, const std::string &titel)      //  pp->?????????????
-		    :_Titel(titel), ValueChanged(nullptr)
-	        {         //  pp->_parametrs[_etiq]= *this;
+
+   IBParam (  const std::string &titel)      //  pp->?????????????
+		    :_Titel(titel) 
+	        {         
 	        }    
-	 std::string Titel   ()const{return _Titel;}    // Human redeable
-	 void        SetTitel(std::string titel){ _Titel=titel;}    // Human redeable
+	 virtual ~IBParam(){}
+
+	 std::string Titel   ()const{return _Titel;}                //  ????  Human redeable
+	 void        SetTitel(std::string titel){ _Titel=titel;}    //  ????  Human redeable
 
 
- virtual std::ostream &save	(std::ostream	&osPr) const
+ virtual std::ostream &save	(std::ostream	&osPr) const        ///< The default. To be change in derivate classes
 			            {   osPr<< ".\t"<<Titel()<<std::endl; 
 							return osPr;
 			            } 
@@ -41,35 +44,29 @@ class IBParam
  virtual bool   load	(std::string &etiq, std::istream &isPr) /*throw( std::out_of_range)*/
 			            {   return false;}   
 
-	 virtual ~IBParam(){}
-     void (*ValueChanged)(IBParam& param) ;
- protected: 
-	void changed()
-	            {   if(ValueChanged) 
-				        ValueChanged(*this);
-	            }
- virtual void insertParam(CProgParam *pp){}
 };
    // ifstream& operator >>(ifstream& ifs,IParam& p);                             //    ?????????????????
    // ofstream& operator <<(ofstream& ofs,const IParam& p){ p.save(ofs); return ofs;};  //    ?????????????????
 
 class IParam : public IBParam
 {    std::string _etiq, _unit;
- public:
-	 IParam (CProgParam *pp, const std::string& titel, const std::string& etiq, const std::string& unit="") 
-		    : IBParam(pp, titel), 
-			  _etiq(etiq), _unit(unit)
-	        {  
-				assert (pp); 
-				insertParam(pp); 
-				if (_etiq=="")          // si no quieres introducir una etiq puedes usar el Titel !!
-					_etiq=Titel();
+ protected: 
+	void changed()
+	            {   if(ValueChanged) 
+				        ValueChanged(/**this*/);
+	            }
 
-	        }    
-	 std::string Etiq()const{return _etiq;}      // semiHuman redeable and unic. Best with length 10
-	 void SetEtiq(std::string etiq){ _etiq=etiq;}    // Human redeable
+ public:
+     std::function<void(void/*IBParam& param*/)> ValueChanged ;
+
+	 IParam (  CProgParam *pp, 
+               const std::string& titel, 
+               const std::string& etiq, 
+               const std::string& unit="" ) ;
+	 std::string Etiq(           )const{return _etiq;}      ///< semiHuman redeable and unic. Best with length 10
+	 void     SetEtiq(std::string etiq){ _etiq=etiq;}       /// Human redeable
 	
-	 std::string Unit()const{return _unit;}      // Human redeable and optional
+	 std::string Unit()const{return _unit;}      /// Human redeable and optional
 
 	 std::ostream	&save	(std::ostream	&osPr) const override
 			            {   osPr<< _etiq << ": "; 
@@ -88,7 +85,6 @@ class IParam : public IBParam
 	                                {return osPr;} 
     virtual bool        loadValue	(std::istream   &isPr) /*throw( std::out_of_range)   */
 	                                {return false;}         // =0;   ??    ?????????????????
-    virtual void        insertParam (CProgParam *pp) override;
 
 	  ~IParam()override{}
 };
@@ -131,7 +127,7 @@ class CParamBNRange: public IParam, public NumRang<Num>
 
 
 class CProgProject;
-class CEspProgParam ;
+//class CEspProgParam ;
 /**   Para crear y anadir un nuevo programa:
  *		- crear interfase de usuario para tener idea de los parametros a usar
  *		- crear funcion del programa en su propio .cpp en el proyecto de prog
@@ -143,7 +139,8 @@ class CProgParam : public IBParam // -------	  Clase base "interfase" para param
 {   
  public:
     std::map<std::string,IParam*> _parametrs;
- 
+    void insertParam(IParam *pp){_parametrs[pp->Etiq ()]=pp;}
+
 	CProgParam (const std::string& titel, CProgProject *proj=nullptr); /*:_Titel(titel){ if (proj) proj->_ProgList.push_back(this);}*/
 	std::ofstream	&save		(std::ofstream	&osPr				 )  const
 	                            {   osPr << std::endl <<"\t------\t"<<Titel()<<" "<<std::endl ;
@@ -170,7 +167,7 @@ class CProgParam : public IBParam // -------	  Clase base "interfase" para param
 	virtual ~CProgParam() override{}
 };	
 
-typedef CEspProgParam *pCEspProgParam ;
+//typedef CEspProgParam *pCEspProgParam ;
 /// How to use?  Each program's parameter have an unique identificator or etiquette.  
 /// While loading, the text between the beginning of a line and the first : will be taken as 
 /// an etiquette (discarding surrounding but not internal spaces). 

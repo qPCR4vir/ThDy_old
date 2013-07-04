@@ -264,7 +264,7 @@ class CParamNumMinMax: public IBParam
 		            const std::string& titelmin, const std::string& etiqmin, Num minmin, Num maxmin, Num defValuemin,
 		            const std::string& titelmax, const std::string& etiqmax, Num minmax, Num maxmax, Num defValuemax,
 		            const std::string& unit=""
-					) : IBParam (pp, titel), 
+					) : IBParam ( titel),
 					    min(pp, titel+". "+titelmin, etiqmin,  parRef.Min(), minmin, maxmin, defValuemin, unit),
 					    max(pp, titel+". "+titelmax, etiqmax,  parRef.Max(), minmax, maxmax, defValuemax, unit)
 	          { 
@@ -273,7 +273,7 @@ class CParamNumMinMax: public IBParam
 		            const std::string& titelmin, const std::string& etiqmin, Num minmin, Num maxmin, Num defValuemin,
 		            const std::string& titelmax, const std::string& etiqmax, Num minmax, Num maxmax, Num defValuemax,
 		            const std::string& unit=""
-					) : IBParam (pp, titel), 
+					) : IBParam (titel),
 					    min(pp, titel+". "+titelmin, etiqmin,  _v.Min(), minmin, maxmin, defValuemin, unit),
 					    max(pp, titel+". "+titelmax, etiqmax,  _v.Max(), minmax, maxmax, defValuemax, unit)
 	          { 

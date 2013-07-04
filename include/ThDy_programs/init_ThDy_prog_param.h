@@ -22,7 +22,7 @@ class CParamSondeLimits: public IBParam
 		             const std::string& etiqLmax, SecPos minLmax,        SecPos maxLmax,         SecPos defValueLmax,
                            std::string  UnitG="kcal", std::string UnitT="°C", std::string UnitL="nt" 
 
-					) : IBParam (pp, titel), 
+					) : IBParam ( titel),
 					    G(pp, titel+". Perf.Match dG", parRef._G,
 						    " Min", etiqGmin,  minGmin, maxGmin, defValueGmin, 
 						    " Max", etiqGmax,  minGmax, maxGmax, defValueGmax, 
@@ -47,7 +47,7 @@ class CParamSondeLimits: public IBParam
 		             const std::string& etiqLmax, SecPos minLmax,        SecPos maxLmax,         SecPos defValueLmax,
                      const std::string& UnitG="kcal", const std::string& UnitT="°C", const std::string& UnitL="nt" 
 
-					) : IBParam (pp, titel), 
+					) : IBParam ( titel),
 					    G(pp, titel+". Perf.Match dG", sL._G,
 						    " Min", etiqGmin,  minGmin, maxGmin, defValueGmin, 
 						    " Max", etiqGmax,  minGmax, maxGmax, defValueGmax, 
@@ -66,8 +66,8 @@ class CParamSondeLimits: public IBParam
 
 class CMultSec;
 class CSaltCorrNN;
-
-class ThDyCommProgParam : public CCommProgParam // concreta los parametros comunes. Mantiene lista de los prog Espec que los usan
+/// concreta los parametros comunes. Mantiene lista de los prog Espec que los usan
+class ThDyCommProgParam : public CCommProgParam
 {public:	
     ThDyCommProgParam(const std::string& titel,   CProgProject *proj)
 		:	CCommProgParam(titel,proj), 
