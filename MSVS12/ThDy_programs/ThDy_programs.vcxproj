@@ -695,6 +695,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\scr\ThDy_programs\init_prog_param.cpp" />
     <ClCompile Include="..\..\scr\ThDy_programs\init_thdy_prog_param.cpp" />
+    <ClCompile Include="..\..\scr\ThDy_programs\ParamGUIBind.cpp" />
     <ClCompile Include="..\..\scr\ThDy_programs\prog_comm_functions.cpp" />
     <ClCompile Include="..\..\scr\ThDy_programs\ThDy_DegTmCalc.cpp" />
     <ClCompile Include="..\..\scr\ThDy_programs\ThDy_microArray.cpp" />
@@ -709,6 +710,7 @@
     <ClInclude Include="..\..\include\ThDy_programs\init_prog_param.h" />
     <ClInclude Include="..\..\include\ThDy_programs\init_prog_param_impl.h" />
     <ClInclude Include="..\..\include\ThDy_programs\init_ThDy_prog_param.h" />
+    <ClInclude Include="..\..\include\ThDy_programs\ParamGUIBind.hpp" />
     <ClInclude Include="..\..\include\ThDy_programs\prog_comm_functions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

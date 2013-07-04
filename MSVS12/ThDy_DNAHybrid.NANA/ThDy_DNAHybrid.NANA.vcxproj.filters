@@ -32,8 +32,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\bin\layot.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
+    <ClInclude Include="nanaBind.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

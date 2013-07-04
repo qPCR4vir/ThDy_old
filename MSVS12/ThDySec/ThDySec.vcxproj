@@ -624,7 +624,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\scr\ThDySec\cod_deg.cpp" />
     <ClCompile Include="..\..\scr\ThDySec\link.cpp" />
-    <ClCompile Include="..\..\scr\ThDySec\reaction.cpp" />
     <ClCompile Include="..\..\scr\ThDySec\sec.cpp" />
     <ClCompile Include="..\..\scr\ThDySec\th_dy_align.cpp" />
     <ClCompile Include="..\..\scr\ThDySec\th_dy_param.cpp" />
