@@ -22,7 +22,7 @@ class CParamSondeLimits: public IBParam
 		             const std::string& etiqLmax, SecPos minLmax,        SecPos maxLmax,         SecPos defValueLmax,
                            std::string  UnitG="kcal", std::string UnitT="°C", std::string UnitL="nt" 
 
-					) : IBParam ( titel),
+					) : IBParam ( titel), 
 					    G(pp, titel+". Perf.Match dG", parRef._G,
 						    " Min", etiqGmin,  minGmin, maxGmin, defValueGmin, 
 						    " Max", etiqGmax,  minGmax, maxGmax, defValueGmax, 
@@ -47,7 +47,7 @@ class CParamSondeLimits: public IBParam
 		             const std::string& etiqLmax, SecPos minLmax,        SecPos maxLmax,         SecPos defValueLmax,
                      const std::string& UnitG="kcal", const std::string& UnitT="°C", const std::string& UnitL="nt" 
 
-					) : IBParam ( titel),
+					) : IBParam ( titel), 
 					    G(pp, titel+". Perf.Match dG", sL._G,
 						    " Min", etiqGmin,  minGmin, maxGmin, defValueGmin, 
 						    " Max", etiqGmax,  minGmax, maxGmax, defValueGmax, 
@@ -67,7 +67,7 @@ class CParamSondeLimits: public IBParam
 class CMultSec;
 class CSaltCorrNN;
 /// concreta los parametros comunes. Mantiene lista de los prog Espec que los usan
-class ThDyCommProgParam : public CCommProgParam
+class ThDyCommProgParam : public CCommProgParam 
 {public:	
     ThDyCommProgParam(const std::string& titel,   CProgProject *proj)
 		:	CCommProgParam(titel,proj), 
@@ -324,12 +324,12 @@ class CProgParam_TmCalc : public CProgParam_MultiplexPCR
 						RenameSondesMS("Tm calulator sondes??");
 	                }
 
-	bool	Set_Sec				 (char *Sec){_Sec.Take(Sec)		;		 return true ;}
-	bool	Set_Sec2Align		 (char *Sec){_Sec2Align.Take(Sec)		;return true ;}
+	bool	Set_Sec				 (char *Sec){_Sec.take(Sec)		;		 return true ;}
+	bool	Set_Sec2Align		 (char *Sec){_Sec2Align.take(Sec)		;return true ;}
 	bool	Set_AlignedSec		 (char *Sec){_AlignedSec.Take(Sec)		;return true ;}
 	bool	Set_AlignedSec2Align (char *Sec){_AlignedSec2Align.Take(Sec);return true ;}
-	bool	Copy_Sec			 (char *Sec){_Sec.Copy(Sec)		;		 return true ;}
-	bool	Copy_Sec2Align		 (char *Sec){_Sec2Align.Copy(Sec)		;return true ;}
+	bool	Copy_Sec			 (char *Sec){_Sec.set(Sec)		;		 return true ;}
+	bool	Copy_Sec2Align		 (char *Sec){_Sec2Align.set(Sec)		;return true ;}
 	bool	Copy_AlignedSec		 (char *Sec){_AlignedSec.Copy(Sec)		;return true ;}
 	bool	Copy_AlignedSec2Align(char *Sec){_AlignedSec2Align.Copy(Sec);return true ;}
 

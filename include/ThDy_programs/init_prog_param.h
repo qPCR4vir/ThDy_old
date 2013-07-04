@@ -61,7 +61,7 @@ class CParamC_str: public IParam, public C_str
     //CParamC_str (CProgParam *pp, C_str &parRef,    // Acepta un parametro y por tanto no usa _v. Por compatibilidad.
 		  //          const string& titel, const string& etiq, 
 		  //          const char * defValue
-				//	) : IParam (pp, titel, etiq), _value(parRef)            {  _value.Copy( defValue) ;	          }
+				//	) : IParam (pp, titel, etiq), _value(parRef)       {  _value.Copy( defValue) ;	   }
     CParamC_str (CProgParam *pp,                  ///  no necesita un parametro externo
 		            const std::string& titel, const std::string& etiq, 
 		            const char * defValue
@@ -71,8 +71,9 @@ class CParamC_str: public IParam, public C_str
 		            const C_str& defValue
 					) : IParam (pp, titel, etiq), C_str(defValue)                {            }
 
-	void set(const C_str& value){ if (! strcmp (Get(),value.Get())) return; Copy(value) ;  changed();    }
-	void set(const char * value){ if (! strcmp (Get(),value))       return; Copy(value) ;  changed();    }
+	void set (const C_str& value){ if (! strcmp (Get(),value.Get())) return; Copy(value) ;  changed(); }
+	void set (const char * value){ if (! strcmp (Get(),value))       return; Copy(value) ;  changed(); }
+    void take(char * value){ if (! strcmp (Get(),value)){delete[]value;return;} Take(value);changed(); }
 
 	std::ostream &saveValue	(std::ostream	&osPr) const override   
 	                        {   osPr << Get() << std::endl <<"\t\t\t\t" ;     // Por que no se puede poner el return directo????
@@ -264,7 +265,7 @@ class CParamNumMinMax: public IBParam
 		            const std::string& titelmin, const std::string& etiqmin, Num minmin, Num maxmin, Num defValuemin,
 		            const std::string& titelmax, const std::string& etiqmax, Num minmax, Num maxmax, Num defValuemax,
 		            const std::string& unit=""
-					) : IBParam ( titel),
+					) : IBParam ( titel), 
 					    min(pp, titel+". "+titelmin, etiqmin,  parRef.Min(), minmin, maxmin, defValuemin, unit),
 					    max(pp, titel+". "+titelmax, etiqmax,  parRef.Max(), minmax, maxmax, defValuemax, unit)
 	          { 
@@ -273,7 +274,7 @@ class CParamNumMinMax: public IBParam
 		            const std::string& titelmin, const std::string& etiqmin, Num minmin, Num maxmin, Num defValuemin,
 		            const std::string& titelmax, const std::string& etiqmax, Num minmax, Num maxmax, Num defValuemax,
 		            const std::string& unit=""
-					) : IBParam (titel),
+					) : IBParam (titel), 
 					    min(pp, titel+". "+titelmin, etiqmin,  _v.Min(), minmin, maxmin, defValuemin, unit),
 					    max(pp, titel+". "+titelmax, etiqmax,  _v.Max(), minmax, maxmax, defValuemax, unit)
 	          { 
