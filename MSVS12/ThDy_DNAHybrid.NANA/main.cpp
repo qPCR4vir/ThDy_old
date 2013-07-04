@@ -9,6 +9,8 @@
 #include<filesystem>
 
 #include "thdy_programs\init_thdy_prog_param.h"
+#include "nanaBind.hpp"
+using namespace ProgParamGUIBind;
 
 class ThDyNanaForm ;
 
@@ -39,12 +41,14 @@ class TmCalcPage : public CompoWidget
     nana::gui::checkbox chkBx_Tm_save_asPCR, chkBx_align, chkBx_copy_rev, chkBx_copy_compl;
     nana::gui::button   copy_f_s_2, copy_s, copy_s_a, run_;
     nana::gui::label    error_;
-    nana::gui::NumberBox    Tm_min_Up, Tm_Up, Tm_max_Up ;
+    nana::gui::NumberLabel    Tm_min_Up, Tm_Up, Tm_max_Up ;
     nana::gui::NumberBox    Tm_min_Dw, Tm_Dw, Tm_max_Dw ;
     nana::gui::NumberBox    Tm_min_In, Tm_In, Tm_max_In ;
     nana::gui::NumberBox    G_min_Up,  G_Up,  G_max_Up ;
     nana::gui::NumberBox    G_min_Dw,  G_Dw,  G_max_Dw ;
     nana::gui::NumberBox    G_min_In,  G_In,  G_max_In ;
+    Bind_bool align;
+    Bind_C_str_txtbox sec, re_sec;
 
     TmCalcPage (ThDyNanaForm& tdForm);
 
@@ -64,7 +68,7 @@ class TmCalcPage : public CompoWidget
 	    _place.field("rev_compl")<< chkBx_copy_rev << chkBx_copy_compl ;
 	    _place.field("InputSec" )<< sec_ << sec2align_ ;
 	    _place.field("error"    )<< error_ ;
-	    _place.field("Left"     )<< run_  ;
+	    _place.field("Left"     )<< run_  << chkBx_align;
 	    _place.field("CopyBut"  )<< nana::gui::place::room (copy_f_s_2, 2, 1)<< copy_s << copy_s_a ;
 	    _place.field("Table"    )<< ""          << "   min-" << "Tm(°C)"   << "-max" << "   min-"  << "G(kJ)"   << "-max   "  ;
 	    _place.field("Table"    )<< "Up"        << Tm_min_Up << Tm_Up      << Tm_max_Up<<G_min_Up  <<  G_Up     <<  G_max_Up  ;
@@ -76,8 +80,8 @@ class TmCalcPage : public CompoWidget
     }
     void Run()
     {
-        _Pr._TmCal.      _Sec.CopyTrim (std::string(nana::charset (      sec_.caption ())).c_str() );		
-        _Pr._TmCal._Sec2Align.CopyTrim (std::string(nana::charset (sec2align_.caption ())).c_str() );		
+        //_Pr._TmCal.      _Sec.CopyTrim (std::string(nana::charset (      sec_.caption ())).c_str() );		
+        //_Pr._TmCal._Sec2Align.CopyTrim (std::string(nana::charset (sec2align_.caption ())).c_str() );		
 
         _Pr._TmCal.Run ();
 
@@ -109,30 +113,30 @@ class TmCalcPage : public CompoWidget
     }
     void Copy()
     {
-        _Pr._TmCal._Sec.CopyTrim (std::string(nana::charset (   sec_.caption ())).c_str() );
+        //_Pr._TmCal._Sec.CopyTrim (std::string(nana::charset (   sec_.caption ())).c_str() );
          bool rev  =  chkBx_copy_rev.checked(), compl=  chkBx_copy_compl.checked() ;	
 
 		_Pr._TmCal.Update_Sec_Sec2Align	(rev, compl) ;
 
-        sec2align_.caption (nana::charset (_Pr._TmCal._Sec2Align.Get() ));
+        //sec2align_.caption (nana::charset (_Pr._TmCal._Sec2Align.Get() ));
     }
     void Self()
     {
-        _Pr._TmCal._Sec.CopyTrim (std::string(nana::charset (  sec_.caption ())).c_str() );
+        //_Pr._TmCal._Sec.CopyTrim (std::string(nana::charset (  sec_.caption ())).c_str() );
          bool rev  =  chkBx_copy_rev.checked(), compl=  chkBx_copy_compl.checked() ;	
 
 		_Pr._TmCal.Update_Sec	(rev, compl) ;
 
-        sec_.caption (nana::charset (_Pr._TmCal._Sec   .Get() ));
+        //sec_.caption (nana::charset (_Pr._TmCal._Sec   .Get() ));
     }
     void Rev()
     {
-        _Pr._TmCal._Sec2Align.CopyTrim (std::string(nana::charset (  sec2align_.caption ())).c_str() );
+        //_Pr._TmCal._Sec2Align.CopyTrim (std::string(nana::charset (  sec2align_.caption ())).c_str() );
          bool rev  =  chkBx_copy_rev.checked(), compl=  chkBx_copy_compl.checked() ;	
 
 		_Pr._TmCal.Update_Sec2Align	(rev, compl) ;
 
-        sec2align_.caption (nana::charset (_Pr._TmCal._Sec2Align  .Get() ));
+        //sec2align_.caption (nana::charset (_Pr._TmCal._Sec2Align  .Get() ));
     }
 
 };
@@ -245,7 +249,10 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
            Tm_min_In(*this), Tm_In(*this), Tm_max_In(*this) ,
            G_min_Up(*this),   G_Up(*this),  G_max_Up(*this) ,
            G_min_Dw(*this),   G_Dw(*this),  G_max_Dw(*this) ,
-           G_min_In(*this),   G_In(*this),  G_max_In(*this)  
+           G_min_In(*this),   G_In(*this),  G_max_In(*this),
+           align(_Pr._TmCal.align  ,chkBx_align),
+           sec   (_Pr._TmCal._Sec       , sec_), 
+           re_sec(_Pr._TmCal._Sec2Align , sec2align_)
     {
                          sec_.multi_lines(false);
                    sec2align_.multi_lines(false);
