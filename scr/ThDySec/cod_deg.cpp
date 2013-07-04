@@ -1,7 +1,7 @@
 //#include "stdafx.h"
 //#pragma unmanaged
 #include "ThDySec/cod_deg.h"
-
+ 
  Base		is_base		[UCHAR_MAX],		// <> 0  si base. =base, pero para U, =T 
 			is_degbase	[UCHAR_MAX],		// <> 0  si letra valida (cualquiera del cod deg,may o minuscula
 											//+ insercion '-').=base, pero para U, =T 

@@ -1,8 +1,17 @@
 // Definiciones y declaraciones basicas. A usar por todos, user interface and programs. Primaria?, no depende? de nadie?.
-#pragma unmanaged	
 #ifndef _COMMON_BASIC_H
 #define _COMMON_BASIC_H
+
+#pragma unmanaged	
 #pragma warning( disable : 4996 )
+
+#include <cctype> 
+#include <string>
+//#include <string.h>
+#include <sstream> 
+#include <stdexcept>
+
+
 //#include "matrix.h"
 
 
@@ -56,7 +65,6 @@ inline CharType *clone_trim(const CharType *str)		// definida en    :   init_pro
 	NewStr[0]=CharType(0);
 	return NewStr;
 }
-#include <string.h>
 
 
 template<class _Elem,	class _Traits,	class _Alloc>               //   elimina espacios al principio y al final
@@ -112,7 +120,7 @@ typedef unsigned char Base;
 Base *Generate_DegSec( const char *sec, bool rev, bool compl, long l=0) ;// , long l=0) ;
 inline char *Generate_DegSec_char( const char *sec, bool rev, bool compl, long l=0){return (char *)Generate_DegSec(sec, rev,  compl,  l);};
 
-//  Clase para lidiar con las string como file name y sec que deben ser copiadas y liberadas todo el tiempo. Copy() vs Take() !!!!
+///  Clase para lidiar con las string como file name y sec que deben ser copiadas y liberadas todo el tiempo. Copy() vs Take() !!!!
 class C_str
 {public:
 /*explicit*/ C_str()													:_s(clone_c_str		("")){}
@@ -277,9 +285,6 @@ class DegRes			//------------------------------------------------------------	De
 };
 
 
-#include <string.h>
-#include <sstream> 
-
 		template <typename Num>
  std::string toString_Val_in_Range(Num val, NumRang<Num> &NR)
 {     
@@ -297,7 +302,6 @@ class DegRes			//------------------------------------------------------------	De
 
 
 
-#include <stdexcept>
 
 class OutOfNumRange : public std::out_of_range 
 { public: 

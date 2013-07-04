@@ -1,21 +1,23 @@
 #ifndef _INIT_PROG_PARAM_IMPL_H
 #define _INIT_PROG_PARAM_IMPL_H
+#define _CRT_SECURE_NO_WARNINGS
 #pragma unmanaged
+#pragma warning( disable : 4996 )
 #include <iostream>
 #include <string>
-#define _CRT_SECURE_NO_WARNINGS
 #include <fstream>
 #include <assert.h>
 #include <time.h>
 #include <map>
 #include <vector>
+#include <functional>
+
+#include "..\ThDySec\common_basics.h"
 
 //#include "..\ThDySec\matrix.h" 
 // TODO:  PROBLEMA : como organizar estos parametros si usamos procesos? Hacer copia de ellos !!!!!!!!?
 // Definiciones y declaraciones para user interface. A usar tambien por programs. Casi Primaria, depende solo de Common basics.
 //using namespace std ; 
-#pragma warning( disable : 4996 )
-#include "..\ThDySec\common_basics.h" 
 
 class CProgParam ;
 class IBParam
