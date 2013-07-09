@@ -9,6 +9,7 @@
 #include<filesystem>
 
 #include "thdy_programs\init_thdy_prog_param.h"
+
 #include "nanaBind.hpp"
 using namespace ProgParamGUIBind;
 
@@ -17,19 +18,80 @@ class ThDyNanaForm ;
 class FindSondenPage : public CompoWidget
 {public: 
     FindSondenPage(ThDyNanaForm& tdForm);
-    ThDyProject &p_;
-    OpenSaveBox nTsec_;
+    ThDyProject &_Pr;
+    FilePickBox nTsec_;
+    BindGroup   _findSond;
+    nana::gui::NumUnitUpDown _Gmin, _Gmax, _Tmmin, _Tmmax, _Lengthmin, _Lengthmax, _MaxG, _MinTm, _MinG, _MaxTm, _MinSelfG, _MaxSelfTm;//;
     void SetDefLayout   () override
     {
-        _DefLayout= "vertical      gap=2             \n\t"
-	                 //"       <weight=1>                \n\t"
-	                 "       <NonTargSeq weight=23>       \n\t "
+      _DefLayout=  
+        "vertical      gap=2             \n\t"
+	    "    <NonTargSeq weight=23>       \n\t "
+        "<weight=195 gap=2 <weight=320 vertical <weight=100 <weight=320 Sonde  grid[3,4]>>> "
+        "       <><weight=230 gap=1 vertical  options>  >   \n\t " ;
+ 
+         _Gmin.ResetLayout     (60,45,55 );   _Gmax.ResetLayout     (1,40,50 );
+        _Tmmin.ResetLayout     (60,45,55 );  _Tmmax.ResetLayout     (1,40,50 );
+        _Lengthmin.ResetLayout (60,45,55 );   _Lengthmax.ResetLayout (1,40,50 );
+ 
+        _MaxG.ResetLayout     (90,45,50 );   
+        _MinTm.ResetLayout    (90,45,50);   
+        _MinG.ResetLayout     (90,45,50 );   
 
-            ;
+        _MaxTm.ResetLayout     (90,45,50 );   
+        _MinSelfG.ResetLayout  (90,45,50);   
+        _MaxSelfTm.ResetLayout (90,45,50 );   
+
+      //std::string min_lay(
+      //     " <                                       \n\t"    
+      //     "    <vertical   min=150            Num                 >                         \n\t"     
+      //     "    <vertical   min=48     <><vertical Unit weight=21><>          >                    \n\t"            
+      //    " >                \n\t"    )
+      //    ;
+      //  _Gmin.ResetDefLayout     ( min_lay );
+      //  _Tmmin.ResetDefLayout    (min_lay );
+      //  _Lengthmin.ResetDefLayout(min_lay );
+      //std::string nmin_lay(
+      //    "     <                      \n\t"    
+      //   
+      //         "  <vertical weight=90       <><label weight=15  gap=1 >        <>          >                  \n\t"       
+      //            "  <vertical weight=15       <><vertical UpDown weight=21><>          >               \n\t"    
+      //            "  <vertical                           <><Num weight=21>                    <>          >                 \n\t"     
+      //    "  >                \n\t"    )  ;
+      //  _Gmin._num.ResetDefLayout     ( nmin_lay ); 
+      //  _Tmmin._num.ResetDefLayout    ( nmin_lay ); 
+      //  _Lengthmin._num.ResetDefLayout( nmin_lay );
+      //std::string max_lay(
+      //   " <                                       \n\t"
+      //   "   <vertical   min=50            Num                 >                   \n\t"       
+      //   "   <vertical   min=48     <><vertical Unit weight=21><>          >                  \n\t"          
+      //   "  >                \n\t");
+      //  _Gmax.ResetDefLayout      ( max_lay ); 
+      //  _Tmmax.ResetDefLayout     ( max_lay ); 
+      //  _Lengthmax.ResetDefLayout ( max_lay ); 
+      //std::string nmax_lay(
+      //    " <                   \n\t"
+      //    "            \n\t"
+      //    "     <vertical weight=2       <><label weight=15  gap=1 >        <>          >              \n\t"    
+      //    "     <vertical weight=15       <><vertical UpDown weight=21><>          >            \n\t"
+      //    "     <vertical                           <><Num weight=21>                    <>          >               \n\t"
+      //    "  >             \n\t")          ;
+      //  _Gmax._num.ResetDefLayout        ( nmax_lay );  
+      //  _Tmmax._num.ResetDefLayout       ( nmax_lay ); 
+      //  _Lengthmax._num.ResetDefLayout   ( nmax_lay ); 
+
     }
     void AsignWidgetToFields() override
     {
-	    _place.field("NonTargSeq" )<<nTsec_;
+	     /// Use room (wd,w,h) in combination with a <Table grid[W,H]>
+        _place.field("NonTargSeq" )<<nTsec_;
+	    _place.field("Sonde" )     << "Sonde"     << "Min."    << "   Max."   
+                                   <<  _place.room(_Gmin ,2,1) << _Gmax
+                                   <<  _place.room(_Tmmin,2,1) << _Tmmax
+                                   <<  _place.room(_Lengthmin,2,1) << _Lengthmax  ;
+	    _place.field("options" )   << "Sonde-target"    <<  _MaxG     << _MinTm
+                                   << "Sonde-non-target"<<  _MinG     << _MaxTm
+                                   << "Sonde-self"      <<  _MinSelfG << _MaxSelfTm   ;    
 
     }
 };
@@ -47,8 +109,7 @@ class TmCalcPage : public CompoWidget
     nana::gui::NumberBox    G_min_Up,  G_Up,  G_max_Up ;
     nana::gui::NumberBox    G_min_Dw,  G_Dw,  G_max_Dw ;
     nana::gui::NumberBox    G_min_In,  G_In,  G_max_In ;
-    Bind_bool align;
-    Bind_C_str_txtbox sec, re_sec;
+    BindGroup              _TmCalc;
 
     TmCalcPage (ThDyNanaForm& tdForm);
 
@@ -57,7 +118,7 @@ class TmCalcPage : public CompoWidget
         _DefLayout= "vertical      gap=2  min=150           \n\t"
             "       < weight=50  <vertical min=100 gap=2 InputSec>   < weight=50 gap=1 CopyBut grid[2,2]>  >       \n\t "
             "       < weight=25 <weight=20><error min=50> <rev_compl weight=80>>         \n\t  "
-            "       < weight=90 gap=2  <vertical weight=80 gap=2 Left>   < Table min=300 grid[4,7]>  >       \n\t "
+            "       < weight=80 gap=2  <vertical weight=80 gap=2 Left>   < Table min=280 grid[7,4]>  >       \n\t "
             "       < vertical weight=50  ResAlign>    "
 	                 //"       <weight=1>                \n\t"
 
@@ -69,7 +130,7 @@ class TmCalcPage : public CompoWidget
 	    _place.field("InputSec" )<< sec_ << sec2align_ ;
 	    _place.field("error"    )<< error_ ;
 	    _place.field("Left"     )<< run_  << chkBx_align;
-	    _place.field("CopyBut"  )<< nana::gui::place::room (copy_f_s_2, 2, 1)<< copy_s << copy_s_a ;
+	    _place.field("CopyBut"  )<< nana::gui::place::room (copy_f_s_2, 1, 2)<< copy_s << copy_s_a ;
 	    _place.field("Table"    )<< ""          << "   min-" << "Tm(°C)"   << "-max" << "   min-"  << "G(kJ)"   << "-max   "  ;
 	    _place.field("Table"    )<< "Up"        << Tm_min_Up << Tm_Up      << Tm_max_Up<<G_min_Up  <<  G_Up     <<  G_max_Up  ;
 	    _place.field("Table"    )<< "Down"      << Tm_min_Dw << Tm_Dw      << Tm_max_Dw<<G_min_Dw  <<  G_Dw     <<  G_max_Dw  ;
@@ -143,33 +204,40 @@ class TmCalcPage : public CompoWidget
 
 class SetupPage : public CompoWidget
 {public: 
-    SetupPage (ThDyNanaForm& tdForm);
-    ThDyProject &_Pr;
+    ThDyProject        &_Pr;
+    BindGroup          _setup;
     nana::gui::button  set_def_proj_;
+    FilePickBox        _NNParamFile;
+
+    SetupPage (ThDyNanaForm& tdForm);
 
     void SetDefLayout   () override
     {
         _DefLayout= "vertical      gap=2             \n\t"
-	                 //"       <weight=1>                \n\t"
-	                 "       <SetDefProj weight=23>       \n\t "
+            "  <wieght=300 <vertical min=50 max=200 buttons> <> <weight=80 checks>>   \n\t"
+	        "  <NN_param weight=23>       \n\t "
 
             ;
     }
     void AsignWidgetToFields() override
     {
-	    _place.field("SetDefProj" )<<set_def_proj_;
+	    _place.field("buttons"  )<<set_def_proj_;
+	    _place.field("NN_param" )<<_NNParamFile;
+	    _place.field("checks"   )<<"save result";
     }
 };
 
 class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyProject
 {public: 
-    OpenSaveBox                     proj_, targets_ , results_;
+    OpenSaveBox                     proj_;
+    FilePickBox                     targets_ , results_;
 	nana::gui::tabbar<nana::string> tabbar_;
     FindSondenPage                  findSond_;
     TmCalcPage                      tmCalc_; 
-    SetupPage                       setup_; 
+    SetupPage                       setup_;
+    BindGroup                       _commPP;
 
-   ThDyNanaForm ():nana::gui::form (nana::rectangle( nana::point(200,100), nana::size(500,500) )),
+   ThDyNanaForm ():nana::gui::form (nana::rectangle( nana::point(200,100), nana::size(700,500) )),
                    EditableForm    (nullptr, *this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")),
                    proj_           (*this, STR("Project:") ),
                    targets_        (*this, STR("Targets:") ),
@@ -185,11 +253,37 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
         tabbar_.active (0);
 
+        proj_.FileName(nana::charset ( _ProjetFileName.Get () ));
+
+        _commPP  << link( _cp._InputTargetFile , targets_  )
+                 << link( _cp._OutputFile      , results_  )
+            ;
+
         InitMyLayout();
         AddMenuProgram();
         SelectClickableWidget( _menuBar);
-   }
 
+        proj_.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
+        proj_.Open.make_event	<nana::gui::events::click> ([&](){ OpenProj() ;} );
+		proj_.Save.make_event	<nana::gui::events::click> ([&](){ SaveProj() ;} );
+
+
+   }
+    //~ThDyNanaForm();
+
+    void  OpenProj()
+	{	 
+      if(  proj_.Canceled () )  return;
+      ProjetFile (std::string(nana::charset ( proj_.FileName())).c_str());  /// TODO: revise ortografia
+      load (); 
+      //tmCalc_._TmCalc.UpDateForm();
+	}
+    void  SaveProj()
+	{	 
+      if(  proj_.Canceled () )  return;
+      ProjetFile (std::string(nana::charset ( proj_.FileName())).c_str());  /// TODO: revise ortografia
+      save (); 
+	}
 
     void SetDefLayout   () override
     {
@@ -197,7 +291,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 	                 "       <weight=25>               \n\t"
 	                 "       <Project  weight=23>       \n\t "
 	                 "       <PagesTag weight=23 >          \n\t "
-	                 "       <Pages      min=200 >          \n\t "
+	                 "       <Pages      min=220 >          \n\t "
 	                 "       <Targets  weight=23>       \n\t "
 	                 "       <weight=23>       \n\t "
 	                 "       <Results  weight=23>       \n\t "
@@ -221,18 +315,30 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 };
 
    FindSondenPage::FindSondenPage(ThDyNanaForm& tdForm)
-        : p_           (tdForm), 
-          CompoWidget  (tdForm, STR("Find Sonden"), STR("FindSonden.lay.txt")),
-          nTsec_       (*this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt") )
+        : _Pr        (tdForm), 
+          CompoWidget(tdForm, STR("Find Sonden"), STR("FindSonden.lay.txt")),
+          nTsec_     (*this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt") ),
+          _Gmin   (*this, STR("G :" ), -5, -10 , 10,"kcal/mol"),     _Gmax  (*this, STR(""), -1, -10, 10, "kcal/mol" ),
+          _Tmmin  (*this, STR("Tm :"), 57, 40 , 60,"°C"),           _Tmmax  (*this, STR(""), 63, 45, 75, "°C"  ),
+      _Lengthmin  (*this, STR("Length:"), 20, 15 , 35,"nt"),    _Lengthmax  (*this, STR(""), 35, 15, 40, "nt"  ),
+          _MinG   (*this, STR("Min G" ), 15, -10 , 30,"kcal/mol"),   _MaxG  (*this, STR("Max G"), 10, -10, 30, "kcal/mol" ),
+          _MinTm  (*this, STR("Tm :"), 30, 10 , 60,"°C"),          _MaxTm  (*this, STR("Max Tm"), 10, -10, 75, "°C"  ),
+         _MinSelfG(*this, STR("Min G" ), 10, -10 , 30,"kcal/mol"), _MaxSelfTm(*this, STR("Max Tm"), 10, -10, 75, "°C"  )
     {
         nTsec_._DefLayout=("vertical   <weight=1>    "
                  "  <weight=20 <weight=3><   vertical weight=100 <><label weight=15><>     ><weight=1>     "
-		         "               <proj_buttons weight=74 gap=1>     "
 		         "			   <cbFL >       "
 		         "			   <pick weight=30>  "
 		         "			   <weight=3> 	>            <weight=2>    ");
+
+        //_findSond << link (   _Pr._cp.     ,   nTsec_     )  
+        //         //<< link (   _Pr._cp.AddNoTargetFromFile???      ,   nTsec_     )  
+
+            ;
+
         InitMyLayout();
         SelectClickableWidget( nTsec_);
+        SelectClickableWidget( *this);
 
     }
    TmCalcPage::TmCalcPage        (ThDyNanaForm& tdForm)
@@ -249,10 +355,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
            Tm_min_In(*this), Tm_In(*this), Tm_max_In(*this) ,
            G_min_Up(*this),   G_Up(*this),  G_max_Up(*this) ,
            G_min_Dw(*this),   G_Dw(*this),  G_max_Dw(*this) ,
-           G_min_In(*this),   G_In(*this),  G_max_In(*this),
-           align(_Pr._TmCal.align  ,chkBx_align),
-           sec   (_Pr._TmCal._Sec       , sec_), 
-           re_sec(_Pr._TmCal._Sec2Align , sec2align_)
+           G_min_In(*this),   G_In(*this),  G_max_In(*this)
     {
                          sec_.multi_lines(false);
                    sec2align_.multi_lines(false);
@@ -269,6 +372,10 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
               txtBx_ResultSec.tip_string (STR("alingned forward primer"));
         txtBx_ResultSec2Align.tip_string (STR("alingned reverse primer"));
 
+        _TmCalc << link (   _Pr._TmCal.align      ,    chkBx_align    )    
+                << link (   _Pr._TmCal._Sec       ,    sec_           )
+                << link (   _Pr._TmCal._Sec2Align ,    sec2align_     )
+                ;
 
         run_      .make_event <nana::gui::events::click>([&](){Run ();});
         copy_f_s_2.make_event <nana::gui::events::click>([&](){Copy();});      ;   //(*this, STR("copy")),   
@@ -278,21 +385,27 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
         InitMyLayout();
         SelectClickableWidget( *this);
+        SelectClickableWidget( error_);
     }
    SetupPage::SetupPage          (ThDyNanaForm& tdForm)
         : _Pr           (tdForm), 
           CompoWidget  (tdForm, STR("Setup"), STR("Setup.lay.txt")),
-          set_def_proj_(*this,STR("Set as Def. project") )
+          set_def_proj_(*this,STR("Set as Def. project") ),
+          _NNParamFile (*this, STR("NN param:") )
     {
-        //set_def_proj_.caption( );
+        _setup<< link(   _Pr._cp._InputNNFile , _NNParamFile)
+            ;
+
         InitMyLayout();
         SelectClickableWidget( set_def_proj_);
-
+        SelectClickableWidget( *this);
     }
 
 int main()
 {
-	ThDyNanaForm tdForm;
+	IParBind::SetDef(PriorizeDefault::Parametr );
+
+    ThDyNanaForm tdForm;
 	tdForm.show();
     try {
 	        nana::gui::exec();
