@@ -25,7 +25,63 @@ namespace ProgParamGUIBind
 				//void			Add			(IUpDatable^ tbg){ _tb->Add( tbg);				 }
 				//void			Add			(TagBinding%  tb){ _tb->Add( tb.getTagBinding());}	
    //BindGroup()  {}
-
+//class TagBinding : public ITagBinding //  crear y dejar instalado las especializadas.
+//{ protected:	Control^	_c;
+//				Object^		_OldTag;
+//
+//				TagBinding(Control^ c)		: _c(c),  _OldTag(c->Tag)		
+//					{	_c->Tag= this;
+//						_c->Validated += gcnew System::EventHandler( Validated_TB) ;		
+//					}
+//				void SetDef(void){  switch (IUpDatable::_def){	case /*PriorizeDefault::*/Form:			UpDateP();		break;		
+//																case /*PriorizeDefault::*/Parametr:		UpDateForm();	break;
+//																case /*PriorizeDefault::*/NoDef:						default:	;	
+//								 }						     }
+//public:
+//				~TagBinding() { _c->Tag = _OldTag ; }
+//
+//
+//	ITagBinding^		getTagBinding()	{ return	TagBindingNS::getTagBinding(_c)		;}	
+//	Control^			getControl()	{ return	_c									;}
+//
+//	virtual void		set(Object^ s)	{			getTagBinding()->set(s)			;}
+//	virtual Object^		get(		 )	{ return	getTagBinding()->get( )			;}
+//
+//	virtual void		UpDateForm(	 )	{			getTagBinding()->UpDateForm(	 )	;}
+//	virtual void		UpDateP(	 )	{			getTagBinding()->UpDateP(	 )		;}
+//
+//};
+//
+//
+//ref		  class TagBinding_C_str_b : public TagBinding //    Bind a Control.Text with a C_str variable ---- TagBinding_C_str    :
+//{ 	protected:	C_str	&_p ;
+//	public:				TagBinding_C_str_b (C_str &s, Control^ c):TagBinding(c)	, _p(s)	{} 
+//
+//	virtual void		set(Object^ s)	override{						_p.Take (  CreateCharFromManString((String^ )s)	) ; }
+//	virtual Object^		get(		 )	override{ return  gcnew String(	_p.Get()								) ; }
+//	virtual void		UpDateForm(	 )	override{ _c->Text = (String^)get()	;}
+//	virtual void		UpDateP(	 )	override{ set (_c->Text)				;}
+//};
+//ref		  class TagBinding_C_str    : public TagBinding_C_str_b  //    Bind a Control.Text with a C_str variable using Trim ---- TagBinding_strTrim    :
+//{ 	public:				TagBinding_C_str   (C_str &s, Control^ c):TagBinding_C_str_b(s,c)		{SetDef()		;}
+//};
+//ref		  class TagBinding_strTrim  : public TagBinding_C_str_b  //    Bind a Control.Text with a C_str variable using Trim ---- TagBinding_strTrim    :
+//{ 	public:				TagBinding_strTrim (C_str &s, Control^ c):TagBinding_C_str_b(s,c)		{SetDef()		;}
+//	virtual void		set(Object^ s)	override{						_p.TakeTrim (  CreateCharFromManString((String^ )s)	) ; }
+//};
+//
+//template<typename Num>
+//ref		  class TagBinding_Dec    : public TagBinding //    Bind a NumericUpDown.Value with a float variable ---- TagBinding_Dec    :
+//{ 	protected:	Num		&_p; 
+//				float	_k ;
+//	public:				TagBinding_Dec (Num &p, NumericUpDown^ c, float k):TagBinding(c), _p(p), _k(k)	{SetDef()		;}
+//
+//	virtual void		set(Object^ f)	override{	_p	 = (Num)(_k * Decimal::ToSingle( *(Decimal^)(f) )); }
+//	virtual Object^		get(		 )	override{ return  gcnew Decimal(	_p / _k) ; }
+//	virtual void		UpDateForm(	 )	override{	   ((NumericUpDown^)(_c))->Value =  *(Decimal^) get()	;}
+//	virtual void		UpDateP(	 )	override{ set( ((NumericUpDown^)(_c))->Value )  					;}	
+//};
+//
 
                             /// from the user code (the "Program") or the GUI layout?
 enum  class PriorizeDefault {Form, Parametr, NoDef};          
@@ -36,6 +92,7 @@ class IParBind
   public: 
     virtual void    UpDateProg()=0, UpDateForm()=0 ;	
     virtual ~IParBind()    {}
+    static void SetDef(PriorizeDefault def){_def=def;}
     void SetDef(void)
     {  switch (_def)
        {
@@ -72,68 +129,28 @@ class ProgPBind : public virtual IParBind
       }
 };
 
+class Bind_CParamBool : public ProgPBind //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
+{ 	
+ public:				
+    Bind_CParamBool (CParamBool &p ):ProgPBind(p){} 
 
+    void updateProg(bool val){ static_cast <CParamBool&         >(_p).set    (val); }
+    bool getProgVal(){ return  static_cast <CParamBool&         >(_p).get    () ; }
+};
 
-//class TagBinding : public ITagBinding //  crear y dejar instalado las especializadas.
-//{ protected:	Control^	_c;
-//				Object^		_OldTag;
-//
-//				TagBinding(Control^ c)		: _c(c),  _OldTag(c->Tag)		
-//					{	_c->Tag= this;
-//						_c->Validated += gcnew System::EventHandler( Validated_TB) ;		
-//					}
-//				void SetDef(void){  switch (IUpDatable::_def){	case /*PriorizeDefault::*/Form:			UpDateP();		break;		
-//																case /*PriorizeDefault::*/Parametr:		UpDateForm();	break;
-//																case /*PriorizeDefault::*/NoDef:						default:	;	
-//								 }						     }
-//public:
-//				~TagBinding() { _c->Tag = _OldTag ; }
-//
-//
-//	ITagBinding^		getTagBinding()	{ return	TagBindingNS::getTagBinding(_c)		;}	
-//	Control^			getControl()	{ return	_c									;}
-//
-//	virtual void		set(Object^ s)	{			getTagBinding()->set(s)			;}
-//	virtual Object^		get(		 )	{ return	getTagBinding()->get( )			;}
-//
-//	virtual void		UpDateForm(	 )	{			getTagBinding()->UpDateForm(	 )	;}
-//	virtual void		UpDateP(	 )	{			getTagBinding()->UpDateP(	 )		;}
-//
-//};
+class Bind_C_str : public ProgPBind  
+{ 	
+ public:				
+    Bind_C_str (CParamC_str &p ):ProgPBind(p){} 
+
+    void        updateProg(const char*  val){ static_cast <CParamC_str& >(_p).CopyTrim (val); }
+    const char* getProgVal(        ){ return  static_cast <CParamC_str& >(_p).Get      (  ) ; }
+};
 
 
 
-//
-//
-//ref		  class TagBinding_C_str_b : public TagBinding //    Bind a Control.Text with a C_str variable ---- TagBinding_C_str    :
-//{ 	protected:	C_str	&_p ;
-//	public:				TagBinding_C_str_b (C_str &s, Control^ c):TagBinding(c)	, _p(s)	{} 
-//
-//	virtual void		set(Object^ s)	override{						_p.Take (  CreateCharFromManString((String^ )s)	) ; }
-//	virtual Object^		get(		 )	override{ return  gcnew String(	_p.Get()								) ; }
-//	virtual void		UpDateForm(	 )	override{ _c->Text = (String^)get()	;}
-//	virtual void		UpDateP(	 )	override{ set (_c->Text)				;}
-//};
-//ref		  class TagBinding_C_str    : public TagBinding_C_str_b  //    Bind a Control.Text with a C_str variable using Trim ---- TagBinding_strTrim    :
-//{ 	public:				TagBinding_C_str   (C_str &s, Control^ c):TagBinding_C_str_b(s,c)		{SetDef()		;}
-//};
-//ref		  class TagBinding_strTrim  : public TagBinding_C_str_b  //    Bind a Control.Text with a C_str variable using Trim ---- TagBinding_strTrim    :
-//{ 	public:				TagBinding_strTrim (C_str &s, Control^ c):TagBinding_C_str_b(s,c)		{SetDef()		;}
-//	virtual void		set(Object^ s)	override{						_p.TakeTrim (  CreateCharFromManString((String^ )s)	) ; }
-//};
-//
-//template<typename Num>
-//ref		  class TagBinding_Dec    : public TagBinding //    Bind a NumericUpDown.Value with a float variable ---- TagBinding_Dec    :
-//{ 	protected:	Num		&_p; 
-//				float	_k ;
-//	public:				TagBinding_Dec (Num &p, NumericUpDown^ c, float k):TagBinding(c), _p(p), _k(k)	{SetDef()		;}
-//
-//	virtual void		set(Object^ f)	override{	_p	 = (Num)(_k * Decimal::ToSingle( *(Decimal^)(f) )); }
-//	virtual Object^		get(		 )	override{ return  gcnew Decimal(	_p / _k) ; }
-//	virtual void		UpDateForm(	 )	override{	   ((NumericUpDown^)(_c))->Value =  *(Decimal^) get()	;}
-//	virtual void		UpDateP(	 )	override{ set( ((NumericUpDown^)(_c))->Value )  					;}	
-//};
-//
+
+
 //	template<typename Num>
 //ref		  class TagBinding_Rang_Min_b    : public TagBinding //    Bind a NumericUpDown.Value with a min of NumRang float variable ---- TagBinding_Rang_Min_b    :
 //{ 	protected:	float			_k ;

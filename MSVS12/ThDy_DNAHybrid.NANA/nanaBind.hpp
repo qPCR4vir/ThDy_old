@@ -13,7 +13,6 @@
 
 namespace ProgParamGUIBind 
 {
-
 class nanaWidgetBind : public virtual IParBind 
 {
   protected:
@@ -26,6 +25,8 @@ public:
                 UpDateProg ();
         });
     }
+    void          updateForm(nana::string val){ _w.caption (val); }
+    nana::string  getFormVal(       ){ return   _w.caption (   ); }
 };
 
 class Bind_checkbox : public nanaWidgetBind //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
@@ -33,19 +34,8 @@ class Bind_checkbox : public nanaWidgetBind //    Bind a Control.CheckBox with a
  public:				
     Bind_checkbox ( nana::gui::checkbox& c):nanaWidgetBind(c){} 
 
-    void updateForm(bool val){ 
-        static_cast <nana::gui::checkbox&>(_w).check  (val); }
-    bool getFormVal(){ 
-        return  static_cast <nana::gui::checkbox&>(_w).checked() ; }
-};
-
-class Bind_CParamBool : public ProgPBind //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
-{ 	
- public:				
-    Bind_CParamBool (CParamBool &p ):ProgPBind(p){} 
-
-    void updateProg(bool val){ static_cast <CParamBool&         >(_p).set    (val); }
-    bool getProgVal(){ return  static_cast <CParamBool&         >(_p).get    () ; }
+    void updateForm(bool val){  static_cast <nana::gui::checkbox&>(_w).check  (val); }
+    bool getFormVal(){  return  static_cast <nana::gui::checkbox&>(_w).checked(   ); }
 };
 
 //template <class CParam,class Widget> 
@@ -58,79 +48,71 @@ class BindBool : public Bind_checkbox, public Bind_CParamBool //    Bind a Contr
 	void	UpDateProg(	 )	override {         updateProg(getFormVal()); }
 };
 
-
-
-class Bind_txtbox : public nanaWidgetBind  
+class Bind_C_str_widget : public nanaWidgetBind, public Bind_C_str //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
 { 	
  public:				
-    Bind_txtbox ( nana::gui::textbox& c):nanaWidgetBind(c){} 
-
-    void          updateForm(nana::string val){ static_cast <nana::gui::textbox&>(_w).caption (val); }
-    nana::string  getFormVal(       ){ return   static_cast <nana::gui::textbox&>(_w).caption (   ); }
-};
-
-class Bind_C_str : public ProgPBind  
-{ 	
- public:				
-    Bind_C_str (CParamC_str &p ):ProgPBind(p){} 
-
-    void        updateProg(const char*  val){ static_cast <CParamC_str& >(_p).CopyTrim (val); }
-    const char* getProgVal(        ){ return  static_cast <CParamC_str& >(_p).Get      (  ) ; }
-};
-
-class Bind_C_str_txtbox : public Bind_txtbox, public Bind_C_str //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
-{ 	
- public:				
-    Bind_C_str_txtbox (CParamC_str &p, nana::gui::textbox& c):Bind_C_str(p),Bind_txtbox(c){SetDef();} 
+    Bind_C_str_widget (CParamC_str &p, nana::gui::widget& c):Bind_C_str(p),nanaWidgetBind(c){SetDef();} 
 
     void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
 	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )).c_str());}
 };
 
-//class Bind_C_str_txtbox : public PrgPrmNanaBind //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
+upPbind link(CParamC_str &p, nana::gui::widget&  w)
+{
+    return  upPbind(new Bind_C_str_widget (p, w));
+}
+upPbind link(CParamC_str &p, FilePickBox&        w)
+{
+    return  link(p, w._fileName);
+}
+upPbind link(CParamBool &p, nana::gui::checkbox& c)
+{
+    return  upPbind(new BindBool (p, c));
+}
+
+}
+#endif
+
+//class Bind_C_str_txtbox : public Bind_txtbox, public Bind_C_str //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
 //{ 	
 // public:				
-//    Bind_C_str_txtbox (CParamC_str &p, nana::gui::textbox & c):PrgPrmNanaBind(p,c){} 
+//    Bind_C_str_txtbox (CParamC_str &p, nana::gui::textbox& c):Bind_C_str(p),Bind_txtbox(c){SetDef();} 
 //
-//    void updateForm(nana::string val){ static_cast <nana::gui::textbox&>(_w).caption  (val); }
-//    void updateProg(const char*  val){ static_cast <CParamC_str&       >(_p).CopyTrim (val); }
-//    nana::string getProgVal(){ return  nana::charset ( static_cast <CParamC_str&         >(_p).Get    ()) ; }
-//    const char*  getFormVal(){ return  std::string( nana::charset ( static_cast <nana::gui::textbox&>(_w).caption())).c_str () ; }
-//
-//        //_Pr._TmCal.      _Sec.CopyTrim (std::string(nana::charset (      sec_.caption ())).c_str() );		
-//        //_Pr._TmCal._Sec2Align.CopyTrim (std::string(nana::charset (sec2align_.caption ())).c_str() );		
-//
-//
-//    
-//    void	UpDateForm(	 )	override { 
-//        updateForm(getProgVal()); }
-//	void	UpDateProg(	 )	override { 
-//        updateProg(getFormVal()); }
+//    void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
+//	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )).c_str());}
 //};
-
-class PrgPrmNanaBind : public nanaWidgetBind, public ProgPBind
-{
-  public:
-      PrgPrmNanaBind(IParam& p,nana::gui::widget& w):ProgPBind(p), nanaWidgetBind(w){}
-
-};
-
-class Bind_bool : public PrgPrmNanaBind //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
-{ 	
- public:				
-    Bind_bool (CParamBool &p, nana::gui::checkbox& c):PrgPrmNanaBind(p,c){} 
-
-    void updateForm(bool val){ static_cast <nana::gui::checkbox&>(_w).check  (val); }
-    void updateProg(bool val){ static_cast <CParamBool&         >(_p).set    (val); }
-    bool getProgVal(){ return  static_cast <CParamBool&         >(_p).get    () ; }
-    bool getFormVal(){ return  static_cast <nana::gui::checkbox&>(_w).checked() ; }
-    
-    void	UpDateForm(	 )	override { updateForm(getProgVal()); }
-	void	UpDateProg(	 )	override { updateProg(getFormVal()); }
-};
-
-
-
+//class PrgPrmNanaBind : public nanaWidgetBind, public ProgPBind
+//{
+//  public:
+//      PrgPrmNanaBind(IParam& p,nana::gui::widget& w):ProgPBind(p), nanaWidgetBind(w){}
+//
+//};
+//class Bind_bool : public PrgPrmNanaBind //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
+//{ 	
+// public:				
+//    Bind_bool (CParamBool &p, nana::gui::checkbox& c):PrgPrmNanaBind(p,c){} 
+//
+//    void updateForm(bool val){ static_cast <nana::gui::checkbox&>(_w).check  (val); }
+//    void updateProg(bool val){ static_cast <CParamBool&         >(_p).set    (val); }
+//    bool getProgVal(){ return  static_cast <CParamBool&         >(_p).get    () ; }
+//    bool getFormVal(){ return  static_cast <nana::gui::checkbox&>(_w).checked() ; }
+//    
+//    void	UpDateForm(	 )	override { updateForm(getProgVal()); }
+//	void	UpDateProg(	 )	override { updateProg(getFormVal()); }
+//};
+//class Bind_txtbox : public nanaWidgetBind  
+//{ 	
+// public:				
+//    Bind_txtbox ( nana::gui::textbox& c):nanaWidgetBind(c){} 
+//
+//    //void          updateForm(nana::string val){ static_cast <nana::gui::textbox&>(_w).caption (val); }
+//    //nana::string  getFormVal(       ){ return   static_cast <nana::gui::textbox&>(_w).caption (   ); }
+//};
+     //BindGroup&	operator<<	(upPbind&& pb){  _pb.push_back(std::move(pb)) ;	  return *this;	 }
+//upPbind link(CParamC_str &p, nana::gui::textbox& c)
+//{
+//    return  upPbind(new Bind_C_str_txtbox (p, c));
+//}
 
 //class Bind_C_str_b : public PrgPrmNanaBind //    Bind a Control.Text with a C_str variable ---- TagBinding_C_str    :
 //{ 	protected:	 ;
@@ -202,7 +184,3 @@ class Bind_bool : public PrgPrmNanaBind //    Bind a Control.CheckBox with a boo
 //
 //}
 //
-}
-#endif
-
-
