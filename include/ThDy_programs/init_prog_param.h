@@ -73,6 +73,7 @@ class CParamC_str: public IParam, public C_str
 
 	void set (const C_str& value){ if (! strcmp (Get(),value.Get())) return; Copy(value) ;  changed(); }
 	void set (const char * value){ if (! strcmp (Get(),value))       return; Copy(value) ;  changed(); }
+	void trim(const char * value){ if (! strcmp (Get(),value))       return; CopyTrim(value) ;  changed(); }
     void take(char * value){ if (! strcmp (Get(),value)){delete[]value;return;} Take(value);changed(); }
 
 	std::ostream &saveValue	(std::ostream	&osPr) const override   
@@ -82,7 +83,7 @@ class CParamC_str: public IParam, public C_str
 
 	bool        loadValue (std::istream   &isPr) override   // Descarta el Titel que queda detras del ultimo tab
 	                    {   std::string t; std::getline(isPr,t); 
-	                        CopyTrim( t.substr(0, t.rfind("\t")).c_str()   );
+	                        trim( t.substr(0, t.rfind("\t")).c_str()   );
 							return true;
 	                    } 
 };
