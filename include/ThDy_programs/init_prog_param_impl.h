@@ -14,11 +14,12 @@
 
 #include "..\ThDySec\common_basics.h" 
 
-//#include "..\ThDySec\matrix.h" 
-// TODO:  PROBLEMA : como organizar estos parametros si usamos procesos? Hacer copia de ellos !!!!!!!!?
-// Definiciones y declaraciones para user interface. A usar tambien por programs. Casi Primaria, depende solo de Common basics.
-//using namespace std ; 
-
+ // TODO:  PROBLEMA : como organizar estos parametros si usamos procesos? Hacer copia de ellos !!!!!!!!?
+ 
+/// Organize a "software" or Project into Specialized Programns and manage the input/config parametrs for each of the programs, 
+/// making ease to write a program interfase with a command-line, a text "project file" or a GUI, or all of then together. 
+/// Definiciones y declaraciones para user interface. A usar tambien por programs. Casi Primaria, depende solo de Common basics.
+namespace Programs{
 class CProgParam ;
 class IBParam
 {
@@ -48,6 +49,9 @@ class IBParam
    // ifstream& operator >>(ifstream& ifs,IParam& p);                             //    ?????????????????
    // ofstream& operator <<(ofstream& ofs,const IParam& p){ p.save(ofs); return ofs;};  //    ?????????????????
 
+/// Base clase to manage a parametr of "some" type (defined in derived classes) 
+/// that will call a ValueChanged callback function and set Unit and Etiq
+/// used for save and load to a stream, without implementing the load ans saveValue functions. 
 class IParam : public IBParam
 {    std::string _etiq, _unit;
  protected: 
@@ -63,10 +67,10 @@ class IParam : public IBParam
                const std::string& titel, 
                const std::string& etiq, 
                const std::string& unit="" ) ;
-	 std::string Etiq(           )const{return _etiq;}      ///< semiHuman redeable and unic. Best with length 10
-	 void     SetEtiq(std::string etiq){ _etiq=etiq;}       /// Human redeable
+	 std::string Etiq(           )const{return _etiq;}      ///< semiHuman readable and unique. Best with length 10
+	 void     SetEtiq(std::string etiq){ _etiq=etiq;}       ///< Human readable
 	
-	 std::string Unit()const{return _unit;}      /// Human redeable and optional
+	 std::string Unit()const{return _unit;}      ///< Human redeable and optional
 
 	 std::ostream	&save	(std::ostream	&osPr) const override
 			            {   osPr<< _etiq << ": "; 
@@ -74,27 +78,31 @@ class IParam : public IBParam
 							IBParam::save(osPr)	; 
 							return osPr;
 			            } 
-     bool       load	(std::istream   &isPr)  /* throw( std::out_of_range)    */      override         //    Asume etiqueta ya comprobada !!!!
+     bool       load	(std::istream   &isPr)  /* throw( std::out_of_range) */      override   /**< Asume etiquete allready tested OK !!!!  */
 			            {   return loadValue(isPr);}   
 	 bool       load	(std::string		&etiq, std::istream &isPr) /*throw( std::out_of_range)   */  override
 			            {   if (etiq!=_etiq) 
 						        return false;
 			                return load(isPr);
 			            }  
+                                            /// Default behavior, not yet a real implementation 
 	virtual std::ostream	    &saveValue	(std::ostream	&osPr	) const  // =0;   ??No salva nada, no tiene "value" todavia
 	                                {return osPr;} 
+                                            /// Default behavior, not yet a real implementation 
     virtual bool        loadValue	(std::istream   &isPr) /*throw( std::out_of_range)   */
 	                                {return false;}         // =0;   ??    ?????????????????
 
 	  ~IParam()override{}
 };
 
-template <typename Num>
+           /// Only partialy manage a parametr of type Num (a "numeric" type) for with the value have to be in a range defined by min and max. 
+           /// Implement get and set (with check if value is in range and throw) but NOT loadValue and saveValue. Do not check the DefValue. 
+  template <typename Num>
 class CParamBNRange: public IParam, public NumRang<Num>
 {
     Num  _v, &_value;
  public:
-								/// Acepta un parametro y por tanto no usa _v. Por compatibilidad.
+								/// It accepts a parameter and therefore does not use _v. For compatibility.
     CParamBNRange (CProgParam *pp, const std::string& titel, const std::string& etiq, Num &parRef, 
 						Num min, Num max, Num defValue,
 						const std::string& unit=""
@@ -106,7 +114,7 @@ class CParamBNRange: public IParam, public NumRang<Num>
 	             _value=defValue ;
 	          }
 
-								/// Num &parRef,   usa _v y por tanto no necesita un parametro externo
+								/// Num &parRef,   _v used and therefore does not need an external parameter
     CParamBNRange (CProgParam *pp, const std::string& titel, const std::string& etiq, 
 						Num min, Num max, Num defValue,
 						const std::string& unit=""
@@ -168,6 +176,9 @@ class CProgParam : public IBParam // -------	  Clase base "interfase" para param
 };	
 
 //typedef CEspProgParam *pCEspProgParam ;
+/// Clase base para los parametros "Especificos" de programas "Especificos".
+/// derivar para concretar parametros comunes. Mantiene link a proj de los prog Espec que los usan.
+/// 
 /// How to use?  Each program's parameter have an unique identificator or etiquette.  
 /// While loading, the text between the beginning of a line and the first : will be taken as 
 /// an etiquette (discarding surrounding but not internal spaces). 
@@ -179,10 +190,7 @@ class CProgParam : public IBParam // -------	  Clase base "interfase" para param
 /// Only the last valid value of each parameter will be used
 /// For not defined parameters, the previous value (from the previously active project or from the program´s default) will be use.
 /// Direct questions please to ArielVina.Rodriguez@fli.bund.de
-//;
 
-/// derivar para concretar parametros comunes. Mantiene link a proj de los prog Espec que los usan
-/// clase base para los parametros "Especificos" de programas "Especificos"
 class CProgProject : public CProgParam
 {
 public:
@@ -300,7 +308,8 @@ class	CEspProgParam  : public CProgParam
 							return load(var, isPr);					 }
 } ;
 
-
+}
+//using namespace Programs ;
 #endif
 
 

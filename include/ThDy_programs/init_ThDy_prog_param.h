@@ -117,14 +117,21 @@ class ThDyCommProgParam : public CCommProgParam
 	//enum SaltCorrection {NoSelect  =-1 , StLucia  =0 , Owczarzy  =1 }; // ya se puede usar StLucia inicializando todo en el constructor. Parcialmente implementado cambio de Conc
 	//enum SaltCorrecP	{NoSMSelect=-1 , SMStLucia=0 , SMOwczarzy=1 }; // Unificar !!
 	//enum AlignMeth		{TAMeth_Tm =0  , TAMeth_G    , TAMeth_Fract };
+    //        /*C_str			_InputTargetFile ;	*/
+    //        /*C_str			_PCRfiltrPrFile ;	*/
+    //        /*C_str			_OutputFile    ;	*/
+    //        /*C_str			_InputNNFile    ;	*/
+	CParamC_str     _InputTargetFile ;  
+	CParamC_str     _PCRfiltrPrFile;    
+	CParamC_str     _OutputFile;        
+	CParamC_str     _InputNNFile; 
 
-	/*C_str			_InputTargetFile ;	*/CParamC_str _InputTargetFile ;
-	/*C_str			_PCRfiltrPrFile ;	*/CParamC_str _PCRfiltrPrFile;
-	/*C_str			_OutputFile    ;	*/CParamC_str _OutputFile;
-	/*C_str			_InputNNFile    ;	*/CParamC_str _InputNNFile;
-	SaltCorrection 	_SaltCorr ;			CParamEnumRange<SaltCorrection>	SaltCorr ;	 				//  SaltCorrection
+	SaltCorrection 	_SaltCorr ;			
+    CParamEnumRange<SaltCorrection>	SaltCorr ;	 				//  SaltCorrection
+
 	float					_ConcSd,	_ConcTg,	_ConcSalt ;
 	CParamNumRange<float>	 ConcSd,	 ConcTg,	 ConcSalt;
+
 	Temperature		_Ta ;				CParamNumRange<Temperature>	Ta ;	
 	AlignMeth		_TAMeth ;			CParamEnumRange<AlignMeth>	TAMeth ;	 
 	float			_MaxTgId ;			CParamNumRange<float>	MaxTgId ;	
@@ -283,20 +290,21 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 		_MinTgCov (100),	MinTgCov (this, "Find sondes with more % coverage",	"Min_Tg_Cov",  _MinTgCov,  0.0f,100.0f,		99.0f  ,"%")							
         {
 	    }  // revisar cuales deben ser estos valores !!!!	
-	bool		_design ;  // realizar solo diseno de sondas o solo comparacion de sec????
+
+    bool		_design ;  // realizar solo diseno de sondas o solo comparacion de sec????
 	CParamBool	design ;  // realizar solo diseno de sondas o solo comparacion de sec????
+
 	SondeLimits _sL ;	
 	CParamSondeLimits sL;                                    
 
-	Temperature	_Tm_sig ;			Energy		_G_sig ;				// sonde  - target
-	Temperature	_MaxSd_nTgTm ;		Energy		_MinSd_nTgG ;			// sonde  - non target
-	Temperature	_MaxSelfTm ;		Energy		_MinSelfG  ;			// sonde 
+	Temperature	               _Tm_sig ;	    Energy		            _G_sig ;				// sonde  - target
+	Temperature	               _MaxSd_nTgTm ;   Energy		            _MinSd_nTgG ;			// sonde  - non target
+	Temperature	               _MaxSelfTm ;	    Energy		            _MinSelfG  ;			// sonde 
+	CParamNumRange<Temperature>	Tm_sig ;	    CParamNumRange<Energy>   G_sig ;				// sonde  - target
+	CParamNumRange<Temperature>	MaxSd_nTgTm ;	CParamNumRange<Energy>   MinSd_nTgG ;			// sonde  - non target
+	CParamNumRange<Temperature>	MaxSelfTm ;		CParamNumRange<Energy>   MinSelfG  ;			// sonde 
 
-	CParamNumRange<Temperature>	Tm_sig ;			CParamNumRange<Energy>		G_sig ;				// sonde  - target
-	CParamNumRange<Temperature>	MaxSd_nTgTm ;		CParamNumRange<Energy>		MinSd_nTgG ;			// sonde  - non target
-	CParamNumRange<Temperature>	MaxSelfTm ;			CParamNumRange<Energy>		MinSelfG  ;			// sonde 
-
-	float		_MinTgCov ;
+	float		           _MinTgCov ;
 	CParamNumRange<float>	MinTgCov ;
 
 	int		Run		(){	return  SondeDesignProg( this )  ;}

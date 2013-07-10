@@ -2,15 +2,16 @@
 #define _INIT_PROG_PARAM_H
 #include "ThDy_programs/init_prog_param_impl.h"
 
+namespace Programs{
 class CParamBool: public IParam
 {    bool  _v, &_value;
  public:
-						// Acepta un parametro y por tanto no usa _v. Por compatibilidad.
+                    /// Link to an existing parameter. Do not use the internal   _v. For compatibility.
     CParamBool (CProgParam *pp,  const std::string& titel, const std::string& etiq, bool &parRef,    
 		            bool defValue
 					) : IParam (pp, titel, etiq), _value(parRef)            {  _value= defValue;	          }
 
-					   //  no necesita un parametro externo
+	               /// Use the internal parameter and dont need an external one
     CParamBool (CProgParam *pp,  const std::string& titel, const std::string& etiq, 
 		            bool defValue
 					) : IParam (pp, titel, etiq), _v(defValue) , _value(_v) {            }
@@ -88,7 +89,7 @@ class CParamC_str: public IParam, public C_str
 	                    } 
 };
 
-    /// To be trow
+    /// To be throw
 class ParamOutOfNumRange : public OutOfNumRange 
 { public: 
 	explicit ParamOutOfNumRange ( const std::string& what_arg ): OutOfNumRange(what_arg ){}
@@ -97,7 +98,7 @@ class ParamOutOfNumRange : public OutOfNumRange
 		: OutOfNumRange (  what_arg ,  invalidValue,  NR ) 
 		{}
 };
-    /// To be trow
+    /// To be throw
 class ParamOutOfEnumRange : public ParamOutOfNumRange 
 { public: 
 	explicit ParamOutOfEnumRange ( const std::string& what_arg ): ParamOutOfNumRange(what_arg ){}
@@ -112,33 +113,36 @@ class ParamOutOfEnumRange : public ParamOutOfNumRange
 };	 
 
 
+           /// Manage a parametr of type Num (a "numeric" type) for with the value have to be in a range defined by min and max. 
+           /// Reimplement set and implement loadValue (with check if value is in range and throw)and saveValue.  
 template <typename Num>
 class CParamNumRange: public CParamBNRange<Num>
 {
     
  public:
-									// Acepta un parametro y por tanto no usa _v. Por compatibilidad.
-    CParamNumRange (CProgParam *pp, const std::string& titel, const std::string& etiq, Num &parRef, 
-						Num min, Num max, Num defValue,
-						const std::string& unit=""
-					) : CParamBNRange (pp, titel, etiq, parRef,min,  max,  defValue,unit)
-	          { if (!inRang(defValue)) 
-			        throw ParamOutOfNumRange(std::string("Error contructing parametr: \"")
-												     + Titel() 
-												     + "\" ("+ Etiq() + ")" + ", tryin to set the default value " ,
-												defValue , *this  );
-	          }
-								// Num &parRef,   usa _v y por tanto no necesita un parametro externo
+								/// It accepts a parameter and therefore does not use _v. For compatibility.
+    CParamNumRange ( CProgParam *pp, const std::string& titel, const std::string& etiq, Num &parRef, 
+					 Num min, Num max, Num defValue,
+					const std::string& unit=""					) 
+        : CParamBNRange (pp, titel, etiq, parRef,min,  max,  defValue,unit)
+	    { 
+            if (!inRang(defValue)) 
+			throw ParamOutOfNumRange(std::string("Error contructing parametr: \"")
+												+ Titel() 
+												+ "\" ("+ Etiq() + ")" + ", trying to set the default value "
+										 ,defValue , *this  );
+	    }
+								/// Num &parRef,   _v used and therefore does not need an external parameter
     CParamNumRange (CProgParam *pp, const std::string& titel, const std::string& etiq, 
 						Num min, Num max, Num defValue,
 						const std::string& unit=""
 					) : CParamBNRange (pp, titel, etiq,min,  max,  defValue,unit)
-	          { if (!inRang(defValue)) 
-			        throw ParamOutOfNumRange(std::string("Error contructing parametr: \"")
-												     + Titel() 
-												     + "\" ("+ Etiq() + ")" + ", tryin to set the default value " ,
-												defValue , *this  );
-	          }
+	{ if (!inRang(defValue)) 
+		throw ParamOutOfNumRange(std::string("Error contructing parametr: \"")
+											+ Titel() 
+											+ "\" ("+ Etiq() + ")" + ", tryin to set the default value " ,
+									defValue , *this  );
+	}
 	std::ostream	&saveValue	(std::ostream	&osPr) const override   
 	                        {return osPr<<get();} 
     bool        loadValue   (std::istream   &isPr) /*throw( ParamOutOfNumRange) */  override         
@@ -160,13 +164,13 @@ class CParamNumRange: public CParamBNRange<Num>
 template <typename enumType>
 class CParamEnumRange: public CParamBNRange<enumType>
 {
-   std::map<std::string, enumType> _StrValues;
-   std::map<int, enumType>	 _IntValues;
+   std::map<std::string, enumType>   _StrValues;
+   std::map<   int     , enumType>	 _IntValues;
 
  public:
-	 void AddEnumValues(					enumType eTy )		{ _IntValues[int(eTy)]=eTy;}
+	 void AddEnumValues(                         enumType eTy )		{ _IntValues[int(eTy)]=eTy; }
 	 void AddStrValues (const std::string& strV, enumType eTy )		{ _StrValues[strV]    =eTy;
-																	AddEnumValues(eTy );	}
+                                                                      AddEnumValues(eTy );      }
 	 std::string ToString(enumType v)const
 		{ for (auto p : _StrValues) 
 			if (p.second==v)
@@ -184,7 +188,7 @@ class CParamEnumRange: public CParamBNRange<enumType>
 	 bool exist(std::string v)	const{		return _StrValues.end()!=_StrValues.find(v); }
 
 
-									/// Acepta un parametro y por tanto no usa _v. Por compatibilidad.
+								/// It accepts a parameter and therefore does not use _v. For compatibility.
 	 CParamEnumRange (CProgParam *pp, const std::string& titel, const std::string& etiq, enumType &parRef, 
 						enumType min, enumType max, enumType defValue,
 						const std::string& unit=""
@@ -257,12 +261,16 @@ class CParamEnumRange: public CParamBNRange<enumType>
 							}
 };
 
+
+           /// Manage a parametr of type NumRang<Num> (a min and max value for some "numeric" type) for with the values have to be in defined ranges. 
+
 template <typename Num>
 class CParamNumMinMax: public IBParam
 {   NumRang<Num>       _v ;
     CParamNumRange<Num> min, max; 
  public:
-    CParamNumMinMax (CProgParam *pp, const std::string& titel, NumRang<Num> &parRef ,// Acepta un parametro y por tanto no usa _v. Por compatibilidad.
+ 								/// It accepts a parameter and therefore does not use _v. For compatibility.
+   CParamNumMinMax (CProgParam *pp, const std::string& titel, NumRang<Num> &parRef , 
 		            const std::string& titelmin, const std::string& etiqmin, Num minmin, Num maxmin, Num defValuemin,
 		            const std::string& titelmax, const std::string& etiqmax, Num minmax, Num maxmax, Num defValuemax,
 		            const std::string& unit=""
@@ -281,6 +289,8 @@ class CParamNumMinMax: public IBParam
 	          { 
 	          }
 };
+}
+using namespace Programs ;
 
 #endif
 
