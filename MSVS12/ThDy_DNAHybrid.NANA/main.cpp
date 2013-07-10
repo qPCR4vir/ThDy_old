@@ -11,7 +11,7 @@
 #include "thdy_programs\init_thdy_prog_param.h"
 
 #include "nanaBind.hpp"
-using namespace ProgParamGUIBind;
+using namespace ParamGUIBind;
 
 class ThDyNanaForm ;
 

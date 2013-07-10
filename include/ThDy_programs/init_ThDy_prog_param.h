@@ -14,7 +14,7 @@ class CParamSondeLimits: public IBParam
     CParamNumMinMax<SecPos> L; 
  public: 
 	 // Acepta un parametro y por tanto no usa _v. Por compatibilidad.
-    CParamSondeLimits (CProgParam *pp, const std::string& titel, SondeLimits &parRef, 
+    CParamSondeLimits (IProg *pp, const std::string& titel, SondeLimits &parRef, 
 		             const std::string& etiqGmin, Energy minGmin,        Energy maxGmin,         Energy defValueGmin,
 		             const std::string& etiqGmax, Energy minGmax,        Energy maxGmax,         Energy defValueGmax,
 		             const std::string& etiqTmin, Temperature minTmin,   Temperature maxTmin,    Temperature defValueTmin,
@@ -39,7 +39,7 @@ class CParamSondeLimits: public IBParam
 	          { 
 	          } 
 	        // Num &parRef,   usa _v y por tanto no necesita un parametro externo
-    CParamSondeLimits (CProgParam *pp, const std::string& titel, //SondeLimits &parRef, 
+    CParamSondeLimits (IProg *pp, const std::string& titel, //SondeLimits &parRef, 
 		             const std::string& etiqGmin, Energy minGmin,        Energy maxGmin,         Energy defValueGmin,
 		             const std::string& etiqGmax, Energy minGmax,        Energy maxGmax,         Energy defValueGmax,
 		             const std::string& etiqTmin, Temperature minTmin,   Temperature maxTmin,    Temperature defValueTmin,
@@ -70,7 +70,7 @@ class CSaltCorrNN;
 /// concreta los parametros comunes. Mantiene lista de los prog Espec que los usan
 class ThDyCommProgParam : public CCommProgParam 
 {public:	
-    ThDyCommProgParam(const std::string& titel,   CProgProject *proj)
+    ThDyCommProgParam(const std::string& titel,   CProject *proj)
 		:	CCommProgParam(titel,proj), 
 			_loadNNPar(false),    loadNNPar (this, "Programm option- Load NN parametr",		"LoadNNPara", _loadNNPar,  false),
 			_saveNNPar(false),    saveNNPar (this, "Programm option- save NN parametr",		"SaveNNPara", _saveNNPar,  false),
@@ -183,11 +183,11 @@ int microArrayProg	( char *InputPrimer, char *InputTarget, char *OutputTm)  ;
 int microArrayProg   ( CProgParam_microArray   *IPrgPar_uArr )  ;
 template <typename Num> class CTable ;
 //typedef uArr_RT CTable<TmGPos> ;
-class CEspThDyProgParam : public CEspProgParam
+class CEspThDyProgParam : public CEspProg
 {public:
 	ThDyCommProgParam& _cp;
 	CEspThDyProgParam(const std::string& titel, ThDyCommProgParam &commThDyParam)
-		: CEspProgParam(titel, commThDyParam),
+		: CEspProg(titel, commThDyParam),
 		  _cp(commThDyParam)
 	{}
 	~CEspThDyProgParam()override{}
@@ -356,7 +356,7 @@ class CProgParam_TmCalc : public CProgParam_MultiplexPCR
 };
 
 
-class ThDyProject : public CProgProject // Permite manejar todo el projecto: con un miembro para los parametros comunes y otro para los de cada programa
+class ThDyProject : public CProject // Permite manejar todo el projecto: con un miembro para los parametros comunes y otro para los de cada programa
 {public:
 		ThDyCommProgParam		_cp;
 		CProgParam_microArray   _uArr  ;
@@ -364,7 +364,7 @@ class ThDyProject : public CProgProject // Permite manejar todo el projecto: con
 		CProgParam_SondeDesign	_SdDes ;
 		CProgParam_TmCalc		_TmCal ;
 
- explicit	ThDyProject():	CProgProject("ThDy DNA Hybrid Project.","Def.ThDy.txt","Def.ThDy.txt"),
+ explicit	ThDyProject():	CProject("ThDy DNA Hybrid Project.","Def.ThDy.txt","Def.ThDy.txt"),
                             _cp("Common parametrs for all functions",this),
                             _uArr("Virtual microarray experiment"   ,_cp), 
 							_mPCR("Check multiplex PCR"             ,_cp), 

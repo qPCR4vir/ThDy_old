@@ -13,10 +13,10 @@ using namespace std;
 const 	EnergyRang        G_def   (-5,-1);
 const 	TemperatureRang   Tm_def  (57,63) ;
 const 	SecPosRang       L_def   (20,35) ;		/*_sL(G_def, Tm_def, L_def),*/
-//  void insertParam(CProgParam *pp) const override;
+//  void insertParam(IProg *pp) const override;
 
 
-IParam::IParam (  CProgParam *pp, 
+IParam::IParam (  IProg *pp, 
                   const std::string& titel, 
                   const std::string& etiq, 
                   const std::string& unit ) 
@@ -29,18 +29,18 @@ IParam::IParam (  CProgParam *pp,
 	        }    
 
 
-//void IParam::insertParam(CProgParam *pp)  
+//void IParam::insertParam(IProg *pp)  
 //{   pp->_parametrs[_etiq]= this;
 //}
 
-CProgParam::CProgParam (const string& titel, CProgProject *proj) // CProgProject *proj=nullptr)
+IProg::IProg (const string& titel, CProject *proj) // CProject *proj=nullptr)
 	:IBParam( titel)
 { 
 	if (proj) proj->AddProg (this);
 }
 
 
-bool	CProgProject::load()
+bool	CProject::load()
 {   streamoff i=0;
 	string etiq ;	
 	ifstream isPr( _ProjetFileName.Get() ); 

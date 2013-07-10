@@ -11,7 +11,7 @@
 #include <../temp/EditableForm.hpp>
 #include <nana/gui/widgets/checkbox.hpp>
 
-namespace ProgParamGUIBind 
+namespace ParamGUIBind 
 {
 class nanaWidgetBind : public virtual IParBind 
 {
@@ -29,7 +29,7 @@ public:
     nana::string  getFormVal(       ){ return   _w.caption (   ); }
 };
 
-class Bind_checkbox : public nanaWidgetBind //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
+class Bind_checkbox : public nanaWidgetBind  
 { 	
  public:				
     Bind_checkbox ( nana::gui::checkbox& c):nanaWidgetBind(c){} 
@@ -37,9 +37,36 @@ class Bind_checkbox : public nanaWidgetBind //    Bind a Control.CheckBox with a
     void updateForm(bool val){  static_cast <nana::gui::checkbox&>(_w).check  (val); }
     bool getFormVal(){  return  static_cast <nana::gui::checkbox&>(_w).checked(   ); }
 };
+class Bind_UnitUpDw : public nanaWidgetBind  
+{ 	
+ public:				
+    Bind_UnitUpDw ( nana::gui::NumUnitUpDown & c):nanaWidgetBind(c){} 
 
-//template <class CParam,class Widget> 
-class BindBool : public Bind_checkbox, public Bind_CParamBool //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
+    void   updateForm(double val){  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (val); }
+    double getFormVal(  ){  return  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (   ); }
+    void   updateForm(double val, const CUnit::unit_name &un){  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (val, un); }
+    double getFormVal(const CUnit::unit_name &un    ){  return  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (un     ); }
+};
+class Bind_NumUpDw : public nanaWidgetBind  
+{ 	
+ public:				
+    Bind_NumUpDw ( nana::gui::NumerUpDown & c):nanaWidgetBind(c){} 
+
+    void   updateForm(double val){  static_cast <nana::gui::NumerUpDown&>(_w).Value  (val); }
+    double getFormVal(  ){  return  static_cast <nana::gui::NumerUpDown&>(_w).Value  (   ); }
+};
+
+
+
+class Bind_CParamC_str_widget : public nanaWidgetBind, public Bind_CParamC_str  
+{ 	
+ public:				
+    Bind_CParamC_str_widget (CParamC_str &p, nana::gui::widget& c):Bind_CParamC_str(p),nanaWidgetBind(c){SetDef();} 
+
+    void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
+	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )).c_str());}
+};
+class BindBool   : public Bind_checkbox, public Bind_CParamBool  
 { 	
  public:				
     BindBool (CParamBool &p, nana::gui::checkbox& c):Bind_CParamBool(p),Bind_checkbox(c){SetDef();} 
@@ -48,18 +75,10 @@ class BindBool : public Bind_checkbox, public Bind_CParamBool //    Bind a Contr
 	void	UpDateProg(	 )	override {         updateProg(getFormVal()); }
 };
 
-class Bind_C_str_widget : public nanaWidgetBind, public Bind_C_str //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
-{ 	
- public:				
-    Bind_C_str_widget (CParamC_str &p, nana::gui::widget& c):Bind_C_str(p),nanaWidgetBind(c){SetDef();} 
-
-    void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
-	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )).c_str());}
-};
 
 upPbind link(CParamC_str &p, nana::gui::widget&  w)
 {
-    return  upPbind(new Bind_C_str_widget (p, w));
+    return  upPbind(new Bind_CParamC_str_widget (p, w));
 }
 upPbind link(CParamC_str &p, FilePickBox&        w)
 {
@@ -68,6 +87,30 @@ upPbind link(CParamC_str &p, FilePickBox&        w)
 upPbind link(CParamBool &p, nana::gui::checkbox& c)
 {
     return  upPbind(new BindBool (p, c));
+}
+
+
+
+
+
+
+            template <class Bind_Param,class Bind_Widget> 
+class Bind_Param_Widget : public     Bind_Param, public Bind_Widget
+{
+    //Bind_Param  & _p;
+    //Bind_Widget & _w;
+public:
+    template <class Param,class Widget> 
+    Bind_Param_Widget (Param &p, Widget& w):Bind_Param(p),Bind_Widget(w){SetDef();} 
+
+    void	UpDateForm(	 )	override {         updateForm(getProgVal()); }
+	void	UpDateProg(	 )	override {         updateProg(getFormVal()); }
+
+};
+            template <class Bind_Param,class Bind_Widget,class Param,class Widget> 
+upPbind link( Param &p,  Widget&  w)
+{
+    return  upPbind(new Bind_Param_Widget<Bind_Param,Bind_Widget> (p, w));
 }
 
 }

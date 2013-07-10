@@ -8,7 +8,7 @@
 #include "ThDySec\common_basics.h" 
 #include "init_prog_param.h" 
 
-namespace ProgParamGUIBind 
+namespace ParamGUIBind 
 {
 
 //
@@ -129,24 +129,59 @@ class ProgPBind : public virtual IParBind
       }
 };
 
-class Bind_CParamBool : public ProgPBind //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
+class Bind_CParamBool : public ProgPBind  
 { 	
  public:				
     Bind_CParamBool (CParamBool &p ):ProgPBind(p){} 
 
+    void updateProg(bool val){ static_cast <CParamBool& >(_p).set  (val); }
+    bool getProgVal(){ return  static_cast <CParamBool& >(_p).get  () ; }
+};
+
+class Bind_CParamString : public ProgPBind  
+{ 	
+ public:				
+    Bind_CParamString (CParamString &p ):ProgPBind(p){} 
+
+    void        updateProg(const std::string&  val){ static_cast <CParamString& >(_p).set (val); }
+    std::string getProgVal(               ){ return  static_cast <CParamString& >(_p).get (  ) ; }
+};
+class Bind_CParamC_str : public ProgPBind  
+{ 	
+ public:				
+    Bind_CParamC_str (CParamC_str &p ):ProgPBind(p){} 
+
+    void        updateProg(const char*  val){ static_cast <CParamC_str& >(_p).Copy     (val); }
+    const char* getProgVal(        ){ return  static_cast <CParamC_str& >(_p).Get      (  ) ; }
+};
+class Bind_CParamC_str_TRIM : public Bind_CParamC_str  
+{ 	
+ public:				
+    Bind_CParamC_str_TRIM (CParamC_str &p ):Bind_CParamC_str(p){} 
+
+    void        updateProg(const char*  val){ static_cast <CParamC_str& >(_p).CopyTrim (val); }
+};
+
+
+template <class Num>
+class Bind_CParamRang  : public ProgPBind  
+{ 	
+ public:				
+    Bind_CParamRang (CParamNumRange<Num> &p ):ProgPBind(p){} 
+
+    void updateProg (Num val) { static_cast <CParamNumRange<Num>& >(_p).set  (val); }
+    Num  getProgVal (){ return  static_cast <CParamNumRange<Num>& >(_p).get  () ; }
+};
+
+template <class Num>
+class Bind_CParamRang_Min  : public ProgPBind //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
+{ 	
+ public:				
+    Bind_CParamRang_Min (CParamNumMinMax &p ):ProgPBind(p){} 
+
     void updateProg(bool val){ static_cast <CParamBool&         >(_p).set    (val); }
     bool getProgVal(){ return  static_cast <CParamBool&         >(_p).get    () ; }
 };
-
-class Bind_C_str : public ProgPBind  
-{ 	
- public:				
-    Bind_C_str (CParamC_str &p ):ProgPBind(p){} 
-
-    void        updateProg(const char*  val){ static_cast <CParamC_str& >(_p).CopyTrim (val); }
-    const char* getProgVal(        ){ return  static_cast <CParamC_str& >(_p).Get      (  ) ; }
-};
-
 
 
 

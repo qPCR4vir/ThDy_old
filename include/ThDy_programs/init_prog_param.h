@@ -7,12 +7,12 @@ class CParamBool: public IParam
 {    bool  _v, &_value;
  public:
                     /// Link to an existing parameter. Do not use the internal   _v. For compatibility.
-    CParamBool (CProgParam *pp,  const std::string& titel, const std::string& etiq, bool &parRef,    
+    CParamBool (IProg *pp,  const std::string& titel, const std::string& etiq, bool &parRef,    
 		            bool defValue
 					) : IParam (pp, titel, etiq), _value(parRef)            {  _value= defValue;	          }
 
 	               /// Use the internal parameter and dont need an external one
-    CParamBool (CProgParam *pp,  const std::string& titel, const std::string& etiq, 
+    CParamBool (IProg *pp,  const std::string& titel, const std::string& etiq, 
 		            bool defValue
 					) : IParam (pp, titel, etiq), _v(defValue) , _value(_v) {            }
 
@@ -34,12 +34,12 @@ class CParamString: public IParam
 {    std::string  _v, &_value;
  public:
     /// Link to an existing parameter. Do not use the internal string _v. For compatibility.
-    CParamString (CProgParam *pp,  const std::string& titel, const std::string& etiq, std::string &parRef,  
+    CParamString (IProg *pp,  const std::string& titel, const std::string& etiq, std::string &parRef,  
 		            const std::string defValue
 					) : IParam (pp, titel, etiq), _value(parRef)            {  _value= defValue;	          }
 
 	/// Use the internal parameter and dont need an external one
-    CParamString (CProgParam *pp,      const std::string& titel, const std::string& etiq, 
+    CParamString (IProg *pp,      const std::string& titel, const std::string& etiq, 
 		            const std::string defValue
 					) : IParam (pp, titel, etiq), _v(defValue) , _value(_v) {            }
 
@@ -59,15 +59,15 @@ class CParamString: public IParam
 };
 class CParamC_str: public IParam, public C_str
 {public:
-    //CParamC_str (CProgParam *pp, C_str &parRef,    // Acepta un parametro y por tanto no usa _v. Por compatibilidad.
+    //CParamC_str (IProg *pp, C_str &parRef,    // Acepta un parametro y por tanto no usa _v. Por compatibilidad.
 		  //          const string& titel, const string& etiq, 
 		  //          const char * defValue
 				//	) : IParam (pp, titel, etiq), _value(parRef)       {  _value.Copy( defValue) ;	   }
-    CParamC_str (CProgParam *pp,                  ///  no necesita un parametro externo
+    CParamC_str (IProg *pp,                  ///  no necesita un parametro externo
 		            const std::string& titel, const std::string& etiq, 
 		            const char * defValue
 					) : IParam (pp, titel, etiq), C_str(defValue)                {            }
-    CParamC_str (CProgParam *pp,                  ///  no necesita un parametro externo
+    CParamC_str (IProg *pp,                  ///  no necesita un parametro externo
 		            const std::string& titel, const std::string& etiq, 
 		            const C_str& defValue
 					) : IParam (pp, titel, etiq), C_str(defValue)                {            }
@@ -121,7 +121,7 @@ class CParamNumRange: public CParamBNRange<Num>
     
  public:
 								/// It accepts a parameter and therefore does not use _v. For compatibility.
-    CParamNumRange ( CProgParam *pp, const std::string& titel, const std::string& etiq, Num &parRef, 
+    CParamNumRange ( IProg *pp, const std::string& titel, const std::string& etiq, Num &parRef, 
 					 Num min, Num max, Num defValue,
 					const std::string& unit=""					) 
         : CParamBNRange (pp, titel, etiq, parRef,min,  max,  defValue,unit)
@@ -133,7 +133,7 @@ class CParamNumRange: public CParamBNRange<Num>
 										 ,defValue , *this  );
 	    }
 								/// Num &parRef,   _v used and therefore does not need an external parameter
-    CParamNumRange (CProgParam *pp, const std::string& titel, const std::string& etiq, 
+    CParamNumRange (IProg *pp, const std::string& titel, const std::string& etiq, 
 						Num min, Num max, Num defValue,
 						const std::string& unit=""
 					) : CParamBNRange (pp, titel, etiq,min,  max,  defValue,unit)
@@ -189,7 +189,7 @@ class CParamEnumRange: public CParamBNRange<enumType>
 
 
 								/// It accepts a parameter and therefore does not use _v. For compatibility.
-	 CParamEnumRange (CProgParam *pp, const std::string& titel, const std::string& etiq, enumType &parRef, 
+	 CParamEnumRange (IProg *pp, const std::string& titel, const std::string& etiq, enumType &parRef, 
 						enumType min, enumType max, enumType defValue,
 						const std::string& unit=""
 					 ) : CParamBNRange<enumType> (pp,  titel,  etiq, parRef, min, max, defValue, unit	)
@@ -201,7 +201,7 @@ class CParamEnumRange: public CParamBNRange<enumType>
 												defValue , *this  );
 	          }									
 											// enumType &parRef,   usa _v y por tanto no necesita un parametro externo
-	 CParamEnumRange (CProgParam *pp, const std::string& titel, const std::string& etiq, 
+	 CParamEnumRange (IProg *pp, const std::string& titel, const std::string& etiq, 
 						enumType min, enumType max, enumType defValue,
 						const std::string& unit=""
 					 ) : CParamBNRange<enumType> (pp,  titel,  etiq, min, max, defValue, unit	)
@@ -270,7 +270,7 @@ class CParamNumMinMax: public IBParam
     CParamNumRange<Num> min, max; 
  public:
  								/// It accepts a parameter and therefore does not use _v. For compatibility.
-   CParamNumMinMax (CProgParam *pp, const std::string& titel, NumRang<Num> &parRef , 
+   CParamNumMinMax (IProg *pp, const std::string& titel, NumRang<Num> &parRef , 
 		            const std::string& titelmin, const std::string& etiqmin, Num minmin, Num maxmin, Num defValuemin,
 		            const std::string& titelmax, const std::string& etiqmax, Num minmax, Num maxmax, Num defValuemax,
 		            const std::string& unit=""
@@ -279,7 +279,7 @@ class CParamNumMinMax: public IBParam
 					    max(pp, titel+". "+titelmax, etiqmax,  parRef.Max(), minmax, maxmax, defValuemax, unit)
 	          { 
 	          }
-    CParamNumMinMax (CProgParam *pp, const std::string& titel, //CNumRang<Num> &parRef ,//   usa _v y por tanto no necesita un parametro externo
+    CParamNumMinMax (IProg *pp, const std::string& titel, //CNumRang<Num> &parRef ,//   usa _v y por tanto no necesita un parametro externo
 		            const std::string& titelmin, const std::string& etiqmin, Num minmin, Num maxmin, Num defValuemin,
 		            const std::string& titelmax, const std::string& etiqmax, Num minmax, Num maxmax, Num defValuemax,
 		            const std::string& unit=""

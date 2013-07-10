@@ -1,6 +1,6 @@
 #include "ThDy_programs/ParamGUIBind.hpp" 
 
-namespace ProgParamGUIBind 
+namespace ParamGUIBind 
 {
 
 PriorizeDefault IParBind:: _def=PriorizeDefault::Form;		

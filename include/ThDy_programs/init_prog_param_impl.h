@@ -20,7 +20,7 @@
 /// making ease to write a program interfase with a command-line, a text "project file" or a GUI, or all of then together. 
 /// Definiciones y declaraciones para user interface. A usar tambien por programs. Casi Primaria, depende solo de Common basics.
 namespace Programs{
-class CProgParam ;
+class IProg ;
 class IBParam
 {
    std::string _Titel;
@@ -63,7 +63,7 @@ class IParam : public IBParam
  public:
      std::function<void(void/*IBParam& param*/)> ValueChanged ;
 
-	 IParam (  CProgParam *pp, 
+	 IParam (  IProg *pp, 
                const std::string& titel, 
                const std::string& etiq, 
                const std::string& unit="" ) ;
@@ -103,7 +103,7 @@ class CParamBNRange: public IParam, public NumRang<Num>
     Num  _v, &_value;
  public:
 								/// It accepts a parameter and therefore does not use _v. For compatibility.
-    CParamBNRange (CProgParam *pp, const std::string& titel, const std::string& etiq, Num &parRef, 
+    CParamBNRange (IProg *pp, const std::string& titel, const std::string& etiq, Num &parRef, 
 						Num min, Num max, Num defValue,
 						const std::string& unit=""
 					) : IParam (pp, titel, etiq, unit), 
@@ -115,7 +115,7 @@ class CParamBNRange: public IParam, public NumRang<Num>
 	          }
 
 								/// Num &parRef,   _v used and therefore does not need an external parameter
-    CParamBNRange (CProgParam *pp, const std::string& titel, const std::string& etiq, 
+    CParamBNRange (IProg *pp, const std::string& titel, const std::string& etiq, 
 						Num min, Num max, Num defValue,
 						const std::string& unit=""
 					) : IParam (pp, titel, etiq, unit), NumRang<Num>(min,max), _value(_v)
@@ -134,22 +134,22 @@ class CParamBNRange: public IParam, public NumRang<Num>
 };
 
 
-class CProgProject;
-//class CEspProgParam ;
+class CProject;
+//class CEspProg ;
 /**   Para crear y anadir un nuevo programa:
  *		- crear interfase de usuario para tener idea de los parametros a usar
  *		- crear funcion del programa en su propio .cpp en el proyecto de prog
- *		- crear class tomando como base CEspProgParam o uno de sus derivados : anadir los paramet espec com se vio en la interfase e inicializarlos en el constr
+ *		- crear class tomando como base CEspProg o uno de sus derivados : anadir los paramet espec com se vio en la interfase e inicializarlos en el constr
  *		- implementar funciones de actualizar parametros <=> interfase de usuario : UpdateThDyP() & UpdateThDyForm()
  *		- implementar funciones load/save del project. Load: con etiqueta para cada param, "	<< boolalpha " para bool, 
  */
-class CProgParam : public IBParam // -------	  Clase base "interfase" para param de prog.Solo salva/load project y run prog (virtual todo)   ----------
+class IProg : public IBParam // -------	  Clase base "interfase" para param de prog.Solo salva/load project y run prog (virtual todo)   ----------
 {   
  public:
     std::map<std::string,IParam*> _parametrs;
     void insertParam(IParam *pp){_parametrs[pp->Etiq ()]=pp;}
 
-	CProgParam (const std::string& titel, CProgProject *proj=nullptr); /*:_Titel(titel){ if (proj) proj->_ProgList.push_back(this);}*/
+	IProg (const std::string& titel, CProject *proj=nullptr); /*:_Titel(titel){ if (proj) proj->_ProgList.push_back(this);}*/
 	std::ofstream	&save		(std::ofstream	&osPr				 )  const
 	                            {   osPr << std::endl <<"\t------\t"<<Titel()<<" "<<std::endl ;
 									for (auto &par : _parametrs) 
@@ -162,7 +162,7 @@ class CProgParam : public IBParam // -------	  Clase base "interfase" para param
 										return false;
 	                                return p->second->load(isPr); //throw execption if false ????
 	                            }
-	virtual	int		Run			(CProgParam &prog				){return prog.Run();}       //  ???????
+	virtual	int		Run			(IProg &prog				){return prog.Run();}       //  ???????
 	virtual int		Run			(		void					)
 	                            {   for(int WorkToDo=Initialize(); WorkToDo>0 ; WorkToDo=Continue()) 
 										CallBack(WorkToDo); 
@@ -172,10 +172,10 @@ class CProgParam : public IBParam // -------	  Clase base "interfase" para param
 	virtual int		Continue	(		void					){ return false;}
 	virtual int		Finalize	(		void					){ return 0;} 
 	virtual void	CallBack	(		int WorkToDo			){}
-	virtual ~CProgParam() override{}
+	virtual ~IProg() override{}
 };	
 
-//typedef CEspProgParam *pCEspProgParam ;
+//typedef CEspProg *pCEspProgParam ;
 /// Clase base para los parametros "Especificos" de programas "Especificos".
 /// derivar para concretar parametros comunes. Mantiene link a proj de los prog Espec que los usan.
 /// 
@@ -191,11 +191,11 @@ class CProgParam : public IBParam // -------	  Clase base "interfase" para param
 /// For not defined parameters, the previous value (from the previously active project or from the program´s default) will be use.
 /// Direct questions please to ArielVina.Rodriguez@fli.bund.de
 
-class CProgProject : public CProgParam
+class CProject : public IProg
 {
 public:
-	CProgProject(const std::string& titel, const char *prFname="", const char*defProFN="Def.Proj.txt")
-		:CProgParam(titel), _defPr(defProFN)  ,
+	CProject(const std::string& titel, const char *prFname="", const char*defProFN="Def.Proj.txt")
+		:IProg(titel), _defPr(defProFN)  ,
 		_ProjetFileName(prFname)   
 							
 	        {  if (!prFname || !prFname[0]) 
@@ -205,7 +205,7 @@ public:
 		C_str					_defPr ;
 		C_str					_ProjetFileName ;
 
-   ~CProgProject()override { }
+   ~CProject()override { }
 
     //  Este es el verdadero save !!! El que abre el fichero y lo salva todo.
 	std::ofstream	&saveToFile	(const char *ProjetFileName) const{	std::ofstream osPr(ProjetFileName);			return save_all(osPr);}
@@ -235,7 +235,7 @@ public:
 	   std::ofstream&	save_all(std::ofstream &osPr)	const 			
 	                        {   for(auto p : _ProgList) 
 						            p->save(osPr) ;		
-	                             CProgParam::save(osPr) ;   
+	                             IProg::save(osPr) ;   
 	   
 	   osPr<< std::endl<<std::endl<<
 			 "How to use? \n Each program´s parameter have an unique identificator or etiquette. \n "
@@ -253,26 +253,26 @@ public:
 
 	   return (osPr) ;
 	   
-	   }   // por que solo funciona con el CProgParam:: ???
+	   }   // por que solo funciona con el IProg:: ???
 	bool	    load_all(std::string &etiq, std::ifstream &isPr)	//override
 	                    {   for(auto p : _ProgList)	
 					            if ( p->load(etiq, isPr)) 
 								    return true ;
-						    return CProgParam::load(etiq, isPr);					 }
-	int		Run (CProgParam &prog)	override                    //   ??????
+						    return IProg::load(etiq, isPr);					 }
+	int		Run (IProg &prog)	override                    //   ??????
 	                 {	saveTMP( ) ; 
 	                    return prog.Run();
 	                 }
 
-	void AddProg (CProgParam* par) {_ProgList.push_back(par);}
+	void AddProg (IProg* par) {_ProgList.push_back(par);}
 private:
-	std::vector<CProgParam*> _ProgList;
+	std::vector<IProg*> _ProgList;
 };
-class CCommProgParam : public CProgParam 
-{	CProgProject *_proj;
+class CCommProgParam : public IProg 
+{	CProject *_proj;
  public:	
-	CCommProgParam  (const std::string& titel,       CProgProject *proj=nullptr)
-		            : CProgParam(titel,proj),   _proj(proj) {}
+	CCommProgParam  (const std::string& titel,       CProject *proj=nullptr)
+		            : IProg(titel,proj),   _proj(proj) {}
 	~CCommProgParam() override	{}
 
 	std::ofstream	&save_all(std::ofstream	&osPr 				 ) const
@@ -285,7 +285,7 @@ class CCommProgParam : public CProgParam
 							assert(("Atemt to use an unitialized project pointer in load_all",_proj));
 							return _proj->load_all(etiq,isPr);
 	                    } 
-	void        AddProgToProject(CProgParam *p)
+	void        AddProgToProject(IProg *p)
 	                    {
 							assert(("Atemt to use an unitialized project pointer in AddProgToProject",_proj));
 							_proj->AddProg(p);
@@ -293,10 +293,10 @@ class CCommProgParam : public CProgParam
     virtual std::string  MakeRuningName()const {return "";}
 
 };
-class	CEspProgParam  : public CProgParam 
+class	CEspProg  : public IProg 
 {public:										// Permite no duplicar los parametros comunes en los parametros especificos
-	explicit CEspProgParam(const std::string& titel, CCommProgParam &commParam ) 
-		                    : _cp(commParam), CProgParam(titel ) 
+	explicit CEspProg(const std::string& titel, CCommProgParam &commParam ) 
+		                    : _cp(commParam), IProg(titel ) 
 	                        { _cp.AddProgToProject(this);}
 	CCommProgParam &_cp;
 	std::ofstream	&save_all(std::ofstream &osPr)	const		   // Save all needed parametrs for this programm, not only the spesific ones

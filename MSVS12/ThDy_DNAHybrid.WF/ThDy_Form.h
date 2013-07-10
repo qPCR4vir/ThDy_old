@@ -117,7 +117,7 @@ private: void UpdateCommThDyP					()
 	}
 
 
-private: int Run		(CEspProgParam& IPrgPar)											 //	  Run      CEspProgParam
+private: int Run		(CEspProg& IPrgPar)											 //	  Run      CEspProg
 	{		
 		UpdateCommThDyP();
 			
