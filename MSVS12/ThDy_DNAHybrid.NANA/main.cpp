@@ -21,7 +21,8 @@ class FindSondenPage : public CompoWidget
     ThDyProject &_Pr;
     FilePickBox nTsec_;
     BindGroup   _findSond;
-    nana::gui::NumUnitUpDown _Gmin, _Gmax, _Tmmin, _Tmmax, _Lengthmin, _Lengthmax, _MaxG, _MinTm, _MinG, _MaxTm, _MinSelfG, _MaxSelfTm;//;
+    nana::gui::NumUnitUpDown _Gmin, _Gmax, _Tmmin, _Tmmax, _Lengthmin, _Lengthmax, 
+                             _MaxG, _MinTm, _MinG, _MaxTm, _MinSelfG, _MaxSelfTm;
     void SetDefLayout   () override
     {
       _DefLayout=  
@@ -32,15 +33,15 @@ class FindSondenPage : public CompoWidget
  
          _Gmin.ResetLayout     (60,45,55 );   _Gmax.ResetLayout     (1,40,50 );
         _Tmmin.ResetLayout     (60,45,55 );  _Tmmax.ResetLayout     (1,40,50 );
-        _Lengthmin.ResetLayout (60,45,55 );   _Lengthmax.ResetLayout (1,40,50 );
+        _Lengthmin.ResetLayout (60,45,55 );  _Lengthmax.ResetLayout (1,40,50 );
  
-        _MaxG.ResetLayout     (90,45,50 );   
-        _MinTm.ResetLayout    (90,45,50);   
-        _MinG.ResetLayout     (90,45,50 );   
+        _MaxG.ResetLayout     (110,45,50 );   
+        _MinTm.ResetLayout    (110,45,50 );   
+        _MinG.ResetLayout     (110,45,50 );   
 
-        _MaxTm.ResetLayout     (90,45,50 );   
-        _MinSelfG.ResetLayout  (90,45,50);   
-        _MaxSelfTm.ResetLayout (90,45,50 );   
+        _MaxTm.ResetLayout     (110,45,50 );   
+        _MinSelfG.ResetLayout  (110,45,50);   
+        _MaxSelfTm.ResetLayout (110,45,50 );  
 
       //std::string min_lay(
       //     " <                                       \n\t"    
@@ -103,13 +104,13 @@ class TmCalcPage : public CompoWidget
     nana::gui::checkbox chkBx_Tm_save_asPCR, chkBx_align, chkBx_copy_rev, chkBx_copy_compl;
     nana::gui::button   copy_f_s_2, copy_s, copy_s_a, run_;
     nana::gui::label    error_;
-    nana::gui::NumberLabel    Tm_min_Up, Tm_Up, Tm_max_Up ;
-    nana::gui::NumberBox    Tm_min_Dw, Tm_Dw, Tm_max_Dw ;
-    nana::gui::NumberBox    Tm_min_In, Tm_In, Tm_max_In ;
-    nana::gui::NumberBox    G_min_Up,  G_Up,  G_max_Up ;
-    nana::gui::NumberBox    G_min_Dw,  G_Dw,  G_max_Dw ;
-    nana::gui::NumberBox    G_min_In,  G_In,  G_max_In ;
     BindGroup              _TmCalc;
+    nana::gui::NumberBox    Tm_min_Up,  Tm_Up, Tm_max_Up ,
+                            Tm_min_Dw,  Tm_Dw, Tm_max_Dw,
+                            Tm_min_In,  Tm_In, Tm_max_In,
+                            G_min_Up,   G_Up,  G_max_Up ,
+                            G_min_Dw,   G_Dw,  G_max_Dw ,
+                            G_min_In,   G_In,  G_max_In ;
 
     TmCalcPage (ThDyNanaForm& tdForm);
 
@@ -130,7 +131,7 @@ class TmCalcPage : public CompoWidget
 	    _place.field("InputSec" )<< sec_ << sec2align_ ;
 	    _place.field("error"    )<< error_ ;
 	    _place.field("Left"     )<< run_  << chkBx_align;
-	    _place.field("CopyBut"  )<< nana::gui::place::room (copy_f_s_2, 1, 2)<< copy_s << copy_s_a ;
+	    _place.field("CopyBut"  )<< nana::gui::vplace::room (copy_f_s_2, 1, 2)<< copy_s << copy_s_a ;
 	    _place.field("Table"    )<< ""          << "   min-" << "Tm(°C)"   << "-max" << "   min-"  << "G(kJ)"   << "-max   "  ;
 	    _place.field("Table"    )<< "Up"        << Tm_min_Up << Tm_Up      << Tm_max_Up<<G_min_Up  <<  G_Up     <<  G_max_Up  ;
 	    _place.field("Table"    )<< "Down"      << Tm_min_Dw << Tm_Dw      << Tm_max_Dw<<G_min_Dw  <<  G_Dw     <<  G_max_Dw  ;
@@ -236,12 +237,18 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     TmCalcPage                      tmCalc_; 
     SetupPage                       setup_;
     BindGroup                       _commPP;
+    nana::gui::NumUnitUpDown        numUpDowTa, numUpDwMaxTgId, numUpDowSdConc, numUpDowTgConc, numUpDowSalConc;
 
    ThDyNanaForm ():nana::gui::form (nana::rectangle( nana::point(200,100), nana::size(700,500) )),
                    EditableForm    (nullptr, *this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")),
                    proj_           (*this, STR("Project:") ),
                    targets_        (*this, STR("Targets:") ),
                    results_        (*this, STR("Results:") ),
+                   numUpDwMaxTgId  (*this, STR("Max. ident.:"), 99, 50 , 100,"%"),
+                   numUpDowSdConc  (*this, STR("Sonde Conctr:"), 50, 0.1 , 1000,"µM"),
+                   numUpDowSalConc (*this, STR("Salt Conc [Cations]:"), 50, 0.1 , 10000000,"µM"),
+                   numUpDowTgConc  (*this, STR("Target Conctr:"), 50, 0.1 , 1000,"µM"),
+                   numUpDowTa      (*this, STR("Temp. Anneling:"), 55, 40 , 75,"°C"),
                    tabbar_         (*this),
                    findSond_       (*this),
                    tmCalc_         (*this),
@@ -255,11 +262,32 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
         proj_.FileName(nana::charset ( _ProjetFileName.Get () ));
 
+                //targets_.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+                //{  
+                //    std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: (set in ThDyNanaForm Constr), FilePickBox: ";
+                //    std::wcerr<< targets_._Titel << std::endl;
+                //    //if (!ei.focus.getting) 
+                //    //    validate_edit( );
+                //}); 
+                //targets_._fileName.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+                //{  
+                //    std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: (set in ThDyNanaForm Constr), FilePickBox:_fileName ";
+                //    std::wcerr<< targets_._Titel << std::endl;
+                //    //if (!ei.focus.getting) 
+                //    //    validate_edit( );
+                //}); 
+
         _commPP  << link( _cp._InputTargetFile , targets_  )
                  << link( _cp._OutputFile      , results_  )
+                 << link( _cp.MaxTgId    , numUpDwMaxTgId  )
+                 << link( _cp.ConcSd	 , numUpDowSdConc  )          << link( _cp.ConcSalt	         , numUpDowSalConc  )
+                 << link( _cp.ConcTg	 , numUpDowTgConc  )
+                 << link( _cp.Ta	         , numUpDowTa  )        /*  << link( _cp._ConcSalt	         , numUpDowSalConc  )*/
             ;
 
         InitMyLayout();
+        numUpDowTa.ResetLayout (110,45,50 );  
+
         AddMenuProgram();
         SelectClickableWidget( _menuBar);
 
@@ -284,7 +312,6 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
       ProjetFile (std::string(nana::charset ( proj_.FileName())).c_str());  /// TODO: revise ortografia
       save (); 
 	}
-
     void SetDefLayout   () override
     {
         _DefLayout= "vertical      gap=2               \n\t"
@@ -295,6 +322,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 	                 "       <Targets  weight=23>       \n\t "
 	                 "       <weight=23>       \n\t "
 	                 "       <Results  weight=23>       \n\t "
+                     "       <ComPar grid[2,4]  min=50 gap=2>       \n\t "
 
 	                 "       <weight=23>       \n\t "
 
@@ -303,15 +331,23 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     void AsignWidgetToFields() override
     {
 	    _place.field("Project" )<< proj_   ;
-	    _place.field("Targets" )<< targets_   ;
-	    _place.field("Results" )<< results_   ;
 	    _place.field("PagesTag")<< tabbar_  ;
-    }
+	    _place.field("Targets" )<< targets_   ;
+	    _place.field("Targets" )<< numUpDwMaxTgId   ;
+	    _place.field("Results" )<< results_   ;
+	    _place.field("ComPar"  )<< numUpDowSdConc  << numUpDowSalConc 
+                                << numUpDowTgConc  << "Salt Correct. Method:"	
+                                << numUpDowTa	   << "ThDy Align. Method"
+                                << ""              << "  INNT - FLI \n ArielVina.Rodriguez@fli.bund.de"
+
+                                ;
+
+    }                                        
     void add_page(widget& w)
     {        tabbar_.push_back (                    w.caption());
              tabbar_.relate    (tabbar_.length()-1, w          );
-	    _place.field("Pages"   ).fasten( w)  ;
-    }
+	         _place.field("Pages"   ).fasten( w)  ;
+    }         
 };
 
    FindSondenPage::FindSondenPage(ThDyNanaForm& tdForm)
@@ -331,9 +367,29 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 		         "			   <pick weight=30>  "
 		         "			   <weight=3> 	>            <weight=2>    ");
 
-        //_findSond << link (   _Pr._cp.     ,   nTsec_     )  
-        //         //<< link (   _Pr._cp.AddNoTargetFromFile???      ,   nTsec_     )  
 
+
+                 _MaxG.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+                {  
+                    std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: (set in FindSond Constr), NumerUnitUpDown: ";
+                    std::wcerr<< _Titel << std::endl;
+                    //if (!ei.focus.getting) 
+                    //    validate_edit( );
+                }); 
+
+
+        _findSond << link (   _Pr._SdDes.G_sig ,        _MaxG     )    
+                  << link (   _Pr._SdDes.Tm_sig ,       _MinTm    )
+                  << link (   _Pr._SdDes.MinSd_nTgG,    _MinG     )
+                  << link (   _Pr._SdDes.MaxSd_nTgTm,   _MaxTm    )
+                  << link (   _Pr._SdDes.MinSelfG,      _MinSelfG )
+                  << link (   _Pr._SdDes.MaxSelfTm,     _MaxSelfTm)
+                  << link (   _Pr._SdDes.sL.G,        _Gmin,_Gmax )
+                  << link (   _Pr._SdDes.sL.T,      _Tmmin,_Tmmax )
+                  << link (  _Pr._SdDes.sL.L,_Lengthmin,_Lengthmax)
+
+
+                  //<< link (  _Pr._cp.  ,               nTsec_)
             ;
 
         InitMyLayout();

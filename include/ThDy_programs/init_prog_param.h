@@ -288,6 +288,8 @@ class CParamNumMinMax: public IBParam
 					    max(pp, titel+". "+titelmax, etiqmax,  _v.Max(), minmax, maxmax, defValuemax, unit)
 	          { 
 	          }
+    CParamNumRange<Num> &Min(){ return min;}
+    CParamNumRange<Num> &Max(){ return max;}
 };
 }
 using namespace Programs ;

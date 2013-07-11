@@ -127,8 +127,6 @@ class Bind_NumUpDw : public nanaWidgetBind
     double getFormVal(  ){  return  static_cast <nana::gui::NumerUpDown&>(_w).Value  (   ); }
 };
 
-
-
 class Bind_CParamC_str_widget : public nanaWidgetBind, public Bind_CParamC_str  
 { 	
  public:				
@@ -145,12 +143,11 @@ class BindBool   : public Bind_checkbox, public Bind_CParamBool
     void	UpDateForm(	 )	override {         updateForm(getProgVal()); }
 	void	UpDateProg(	 )	override {         updateProg(getFormVal()); }
 };
-
-   //template <class Num> 
-class Bind_NumR_UnitUpDw   : public Bind_UnitUpDw, public Bind_CParamRang<float>  
+   template <class Num> 
+class Bind_NumR_UnitUpDw   : public Bind_UnitUpDw, public Bind_CParamRang<Num>  
 { 	
  public:				
-    Bind_NumR_UnitUpDw (CParamNumRange<float>  &p, nana::gui::NumUnitUpDown& c):Bind_CParamRang<float> (p), Bind_UnitUpDw(c)
+    Bind_NumR_UnitUpDw (CParamNumRange<Num>  &p, nana::gui::NumUnitUpDown& c):Bind_CParamRang<Num> (p), Bind_UnitUpDw(c)
     {
         //CUnit::unit_name gui(static_cast <nana::gui::NumUnitUpDown&>(_w)._unit._defUnit);
         //CUnit::unit_name                  prog( _p.Unit());
@@ -164,6 +161,17 @@ class Bind_NumR_UnitUpDw   : public Bind_UnitUpDw, public Bind_CParamRang<float>
 	void	UpDateProg(	 )	override {     updateProg(getFormVal(   _p.Unit())); 
     }
 };
+   template <class Num> 
+class Bind_MinMaxUnitUpDw : public BindGroup 
+{public:
+    Bind_MinMaxUnitUpDw(CParamNumMinMax<Num>&p, nana::gui::NumUnitUpDown& min, 
+                                                nana::gui::NumUnitUpDown& max)
+    {
+         add(upPbind(new  Bind_NumR_UnitUpDw<Num> ( p.Min() ,min)  ));
+         add(upPbind(new  Bind_NumR_UnitUpDw<Num> ( p.Max() ,max)  ));
+    }
+};
+
 
 
 upPbind link(CParamC_str &p,            nana::gui::widget&      w)
@@ -178,11 +186,19 @@ upPbind link(CParamBool &p,             nana::gui::checkbox&    c)
 {
     return  upPbind(new BindBool (p, c));
 }
-upPbind link(CParamNumRange<float>  &p, nana::gui::NumUnitUpDown& c)
+    template <class Num> 
+upPbind link(CParamNumRange<Num>  &p, nana::gui::NumUnitUpDown& c)
 {
-    return  upPbind(new  Bind_NumR_UnitUpDw (p,  c) );
+    return  upPbind(new  Bind_NumR_UnitUpDw<Num> (p,  c) );
 }
-   //template <class Num> 
+    template <class Num> 
+upPbind link(CParamNumMinMax<Num> &p, nana::gui::NumUnitUpDown& min, 
+                                      nana::gui::NumUnitUpDown& max)
+{
+    return  upPbind(new  Bind_MinMaxUnitUpDw<Num> (p,min,max) );
+}
+
+
 
 
 

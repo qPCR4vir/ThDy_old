@@ -9,10 +9,10 @@
 
 class CParamSondeLimits: public IBParam
 {   SondeLimits sL;
+ public: 
     CParamNumMinMax<Energy> G; 
     CParamNumMinMax<Temperature> T; 
     CParamNumMinMax<SecPos> L; 
- public: 
 	 // Acepta un parametro y por tanto no usa _v. Por compatibilidad.
     CParamSondeLimits (IProg *pp, const std::string& titel, SondeLimits &parRef, 
 		             const std::string& etiqGmin, Energy minGmin,        Energy maxGmin,         Energy defValueGmin,
