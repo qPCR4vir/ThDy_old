@@ -125,7 +125,8 @@ class ProgPBind : public virtual IParBind
   public:
       ProgPBind(IParam& p):_p(p)
       {
-          _p.ValueChanged =[&](){UpDateForm();};
+          _p.ValueChanged =[&](){UpDateForm();
+          };
       }
 };
 
@@ -151,8 +152,10 @@ class Bind_CParamC_str : public ProgPBind
  public:				
     Bind_CParamC_str (CParamC_str &p ):ProgPBind(p){} 
 
-    void        updateProg(const char*  val){ static_cast <CParamC_str& >(_p).Copy     (val); }
-    const char* getProgVal(        ){ return  static_cast <CParamC_str& >(_p).Get      (  ) ; }
+    void        updateProg(const char*  val){ static_cast <CParamC_str& >(_p).Copy     (val); 
+    }
+    const char* getProgVal(        ){ return  static_cast <CParamC_str& >(_p).Get      (  ) ; 
+    }
 };
 class Bind_CParamC_str_TRIM : public Bind_CParamC_str  
 { 	
@@ -169,8 +172,10 @@ class Bind_CParamRang  : public ProgPBind
  public:				
     Bind_CParamRang (CParamNumRange<Num> &p ):ProgPBind(p){} 
 
-    void updateProg (Num val) { static_cast <CParamNumRange<Num>& >(_p).set  (val); }
-    Num  getProgVal (){ return  static_cast <CParamNumRange<Num>& >(_p).get  () ; }
+    void updateProg (Num val) { static_cast <CParamNumRange<Num>& >(_p).set  (val); 
+    }
+    Num  getProgVal (){ return  static_cast <CParamNumRange<Num>& >(_p).get  () ; 
+    }
 };
 
 template <class Num>

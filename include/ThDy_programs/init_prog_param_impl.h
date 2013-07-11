@@ -129,7 +129,8 @@ class CParamBNRange: public IParam, public NumRang<Num>
 						 _value=value ; 
 						 changed();
 	                    }
-	Num get()const{return _value;}
+	Num get()const{return _value;
+    }
 	//virtual ostream	    &saveValue	(ostream	&osPr	) const  // =0;   ??No salva nada, no tiene "value" todavia
 };
 
