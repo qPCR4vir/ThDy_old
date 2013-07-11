@@ -18,15 +18,80 @@ class nanaWidgetBind : public virtual IParBind
   protected:
     nana::gui::widget& _w;
 public: 
-    nanaWidgetBind (nana::gui::widget& w): _w(w)
+    nanaWidgetBind (CompoWidget & CW ): _w(CW)
     {
-        _w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
-        {  if (!ei.focus.getting) 
+        std::cerr<< "\nSetting validating: , nanaWidgetBind: ";
+        std::wcerr<< CW._Titel  << std::endl;
+        CW.add_validated ( [&]()
+                {  
+                    std::cerr<< "\nBefore validating: , nanaWidgetBind: ";
+                    std::wcerr<< CW._Titel  << std::endl;
+                }); 
+        CW.add_validated ([&]()
+        {  
                 UpDateProg ();
         });
+        CW.add_validated ([&]()
+                {  
+                    std::cerr<< "\nAfter validating: , nanaWidgetBind: ";
+                    std::wcerr<< CW._Titel  << std::endl;
+                }); 
     }
-    void          updateForm(nana::string val){ _w.caption (val); }
-    nana::string  getFormVal(       ){ return   _w.caption (   ); }
+    nanaWidgetBind (nana::gui::widget& w, nana::gui::widget& resp_w): _w(w)
+    {
+        resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+                {  
+                    std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+                    std::wcerr<< _w.caption() << std::endl;
+                    //if (!ei.focus.getting) 
+                    //    validate_edit( );
+                }); 
+        resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        {  
+                    std::cerr<< "\n" << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+                    std::wcerr<< _w.caption() << std::endl;
+            
+            if (!ei.focus.getting) 
+                UpDateProg ();
+        });
+        resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+                {  
+                    std::cerr<< "\nAfter " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+                    std::wcerr<< _w.caption() << std::endl;
+                    //if (!ei.focus.getting) 
+                    //    validate_edit( );
+                }); 
+    }
+    nanaWidgetBind (nana::gui::widget& w ): _w(w)
+    {
+        _w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+                {  
+                    std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+                    std::wcerr<< _w.caption() << std::endl;
+                    //if (!ei.focus.getting) 
+                    //    validate_edit( );
+                }); 
+        _w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        {  
+                    std::cerr<< "\n" << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+                    std::wcerr<< _w.caption() << std::endl;
+            
+            if (!ei.focus.getting) 
+                UpDateProg ();
+        });
+        _w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+                {  
+                    std::cerr<< "\nAfter " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+                    std::wcerr<< _w.caption() << std::endl;
+                    //if (!ei.focus.getting) 
+                    //    validate_edit( );
+                }); 
+    }
+
+    void          updateForm(nana::string val){ _w.caption (val); 
+    }
+    nana::string  getFormVal(       ){ return   _w.caption (   );
+    }
 };
 
 class Bind_checkbox : public nanaWidgetBind  
@@ -34,23 +99,29 @@ class Bind_checkbox : public nanaWidgetBind
  public:				
     Bind_checkbox ( nana::gui::checkbox& c):nanaWidgetBind(c){} 
 
-    void updateForm(bool val){  static_cast <nana::gui::checkbox&>(_w).check  (val); }
-    bool getFormVal(){  return  static_cast <nana::gui::checkbox&>(_w).checked(   ); }
+    void updateForm(bool val){  static_cast <nana::gui::checkbox&>(_w).check  (val); 
+    }
+    bool getFormVal(){  return  static_cast <nana::gui::checkbox&>(_w).checked(   ); 
+    }
 };
 class Bind_UnitUpDw : public nanaWidgetBind  
 { 	
  public:				
-    Bind_UnitUpDw ( nana::gui::NumUnitUpDown & c):nanaWidgetBind(c){} 
+    Bind_UnitUpDw ( nana::gui::NumUnitUpDown & c):nanaWidgetBind(c/*,c._num._num*/){} 
 
-    void   updateForm(double val){  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (val); }
-    double getFormVal(  ){  return  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (   ); }
-    void   updateForm(double val, const CUnit::unit_name &un){  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (val, un); }
-    double getFormVal(const CUnit::unit_name &un    ){  return  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (un     ); }
+    void   updateForm(double val){  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (val); 
+    }
+    double getFormVal(  ){  return  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (   ); 
+    }
+    void   updateForm(double val, const CUnit::unit_name &un){  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (val, un);
+    }
+    double getFormVal(const CUnit::unit_name &un    ){  return  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (un     );
+    }
 };
 class Bind_NumUpDw : public nanaWidgetBind  
 { 	
  public:				
-    Bind_NumUpDw ( nana::gui::NumerUpDown & c):nanaWidgetBind(c){} 
+    Bind_NumUpDw ( nana::gui::NumerUpDown & c):nanaWidgetBind(c/*,c._num*/){} 
 
     void   updateForm(double val){  static_cast <nana::gui::NumerUpDown&>(_w).Value  (val); }
     double getFormVal(  ){  return  static_cast <nana::gui::NumerUpDown&>(_w).Value  (   ); }
@@ -75,19 +146,43 @@ class BindBool   : public Bind_checkbox, public Bind_CParamBool
 	void	UpDateProg(	 )	override {         updateProg(getFormVal()); }
 };
 
+   //template <class Num> 
+class Bind_NumR_UnitUpDw   : public Bind_UnitUpDw, public Bind_CParamRang<float>  
+{ 	
+ public:				
+    Bind_NumR_UnitUpDw (CParamNumRange<float>  &p, nana::gui::NumUnitUpDown& c):Bind_CParamRang<float> (p), Bind_UnitUpDw(c)
+    {
+        //CUnit::unit_name gui(static_cast <nana::gui::NumUnitUpDown&>(_w)._unit._defUnit);
+        //CUnit::unit_name                  prog( _p.Unit());
+        //CUnit u( static_cast <nana::gui::NumUnitUpDown&>(_w)._unit._defUnit
+        //assert(   );
+        SetDef();
+    } 
 
-upPbind link(CParamC_str &p, nana::gui::widget&  w)
+    void	UpDateForm(	 )	override {     updateForm(getProgVal(), _p.Unit() ); 
+    }
+	void	UpDateProg(	 )	override {     updateProg(getFormVal(   _p.Unit())); 
+    }
+};
+
+
+upPbind link(CParamC_str &p,            nana::gui::widget&      w)
 {
     return  upPbind(new Bind_CParamC_str_widget (p, w));
 }
-upPbind link(CParamC_str &p, FilePickBox&        w)
+upPbind link(CParamC_str &p,            FilePickBox&            w)
 {
     return  link(p, w._fileName);
 }
-upPbind link(CParamBool &p, nana::gui::checkbox& c)
+upPbind link(CParamBool &p,             nana::gui::checkbox&    c)
 {
     return  upPbind(new BindBool (p, c));
 }
+upPbind link(CParamNumRange<float>  &p, nana::gui::NumUnitUpDown& c)
+{
+    return  upPbind(new  Bind_NumR_UnitUpDw (p,  c) );
+}
+   //template <class Num> 
 
 
 
