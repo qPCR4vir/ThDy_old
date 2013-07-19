@@ -659,6 +659,7 @@
     <ClCompile Include="..\..\..\ExtLib\Nana\Nana.Cpp11\temp\EditableForm.cpp" />
     <ClCompile Include="..\..\..\ExtLib\Nana\Nana.Cpp11\temp\Numer.cpp" />
     <ClCompile Include="..\..\..\ExtLib\Nana\Nana.Cpp11\temp\Units.cpp" />
+    <ClCompile Include="..\..\..\ExtLib\Nana\Nana.Cpp11\temp\vplace.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
