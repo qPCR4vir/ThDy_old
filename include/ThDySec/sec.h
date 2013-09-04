@@ -23,7 +23,8 @@ using namespace std;
 
 class CMultSec	;
 class ISec				// Pure virtual class ?
-{public:					// crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+{public:			
+         /// crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 	virtual ISec		*CreateCopy		(DNAStrand strnd=direct								)=0 ;
 	virtual Base		*GetCopyFullSec	(													)=0;
 	virtual Base		*GetCopy_charSec(DNAStrand strnd=direct								)=0  ;
@@ -32,29 +33,32 @@ class ISec				// Pure virtual class ?
 	virtual				~ISec			(){}
 };
 
-//	virtual CMultSec	*CreateNonDegSet	()	=0		; // crea todo el set si no existia, solo si existen bases deg: _NDB>0
-//	virtual CMultSec	*ForceNonDegSet();				// lo crea siempre, incluso para =1??
-//	virtual ISec		*GenerateNonDegVariant(CSec *s, long pos, Base ndb)   ; // recursiva
-//	virtual Base		*CreateTEMPORALcomplementary(long InicBase=0, long EndBase=-1)=0 ;
-//	virtual bool		NotIdem(CSec *sec) {return false;}
-//	virtual ISec		*CopyFirstBases		(long pos)=0	;			// copia parcialmente hasta la pos
-
 
 class CSecBasInfo : public ISec
-{public:
-	char		*Name		()const		{return _name;} // User-editable
-	int			ID			()const		{return _ID;}	// Run-time-sistem define, non-editable
-protected:	
-	static int			NewS_ID()			// make protected: ??
-	{
-		static int last_ID(0);
-		return ++last_ID;
-	}
+{ protected:	
+	bool			_selected, _filtered;
+	int				_ID ;			//< num de la sec en file original?? en total??, num unico?
+	std::string     _name ;			//< nombre unico? FASTA id	// char			*_name ;
+	std::string		_description;
+	long			_len ;			//< longitud corregida, sin los '$'
+	long			_GrDeg ;		//< Grado de degeneracion. Cantidad total de diferentes molec, dependiendo de deg
+	float			_GCp ;		
+	long			_Count[n_dgba];	//< An array of counters for each deg base - inicializar!!
+	long			_NDB ;			//< cantidad de bases deg
+	char			*_Clas ;		//< clasificacion
+	Base			*_c;			//< sec char, comienzan y terminan con '$'0
+	CMultSec		*_NonDegSet ;
+	static int	NewS_ID     ()	{static int last_ID(0);	return ++last_ID;	}
+		CSecBasInfo (int id, const char *nam, char *clas) ;
+		CSecBasInfo ():_filtered(false),_selected(true), _ID(NewS_ID()){}
+		CSecBasInfo ( long l);
 public:
-	bool		Filtered(bool filter)	{return _filtered=filter;}   // User-editable ?????
+    std::string Name		()const		{return _name;} //< User-editable
+	int			ID			()const		{return _ID;}	//< Run-time-sistem define, non-editable
+	bool		Filtered(bool filter)	{return _filtered=filter;}   //< User-editable ?????
 	bool		Filtered(		) const {return _filtered;}
-	bool		Selected(bool select)	{return _selected=select;} 			// make protected: ??
-	bool		Selected(		) const {return _selected;}					 // User-editable
+	bool		Selected(bool select)	{return _selected=select;} 			//< make protected: ??
+	bool		Selected(		) const {return _selected;}					 //< User-editable
 	void				Description (std::string	description)		{ _description=description;}
 	virtual std::string	Description ()const	{return _description.length() ? _description : Name() ; }
 
@@ -78,36 +82,19 @@ public:
 	long		BaseCount	(Base b)	{ if(is_degbase[b]) return _Count[db2nu[b]]; else return 0;}
 	CMultSec	*NonDegSet	()			{return _NonDegSet;}
 	float		GCpercent	()const		{return	_GCp ;}		
-
-protected:
-		bool			_selected, _filtered;
-		int				_ID ;				// num de la sec en file original?? en total??, num unico?
-		char			*_name ;			// nombre unico? FASTA id	
-		std::string		_description;
-		long			_len ;				// longitud corregida, sin los '$'
-		long			_GrDeg ;		// Grado de degeneracion. Cantidad total de diferentes molec, dependiendo de deg
-		float			_GCp ;		
-		long			_Count[n_dgba];	// An array of counters for each deg base - inicializar!!
-		long			_NDB ;			// cantidad de bases deg
-		char			*_Clas ;		// clasificacion
-		Base			*_c;			// sec char, comienzan y terminan con '$'0
-		CMultSec		*_NonDegSet ;
-
-		CSecBasInfo (int id, const char *nam, char *clas) ;
-		CSecBasInfo():_filtered(false),_selected(true), _ID(NewS_ID()){}
-		CSecBasInfo( long l);
 };
-
-//	virtual CSecBasInfo	*CreateCopy(DNAStrand strnd=direct) override ;// crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
-//	CMultSec	*CreateNonDegSet	()			; // crea todo el set si no existia, solo si existen bases deg: _NDB>0
-//	CMultSec	*ForceNonDegSet();				// lo crea siempre, incluso para =1??
-//	CSecBasInfo	*GenerateNonDegVariant(CSec *s, long pos, Base ndb)   ; // recursiva
-//	virtual Base		*CreateTEMPORALcomplementary(long InicBase=0, long EndBase=-1)override ;
 
 
 class CSec : public CLink, public CSecBasInfo	// ---------------------------------------   CSec	---------------------------------------------------
 {public:
-	CSec (const char *sec, int id, const char *nam, std::shared_ptr<CSaltCorrNN>  NNpar,  long l=0, long secBeg=1, char *clas=nullptr, float conc=-1);
+	CSec (  const char  *sec, 
+            int          id, 
+            const std::string&  nam,     // char*
+      std::shared_ptr<CSaltCorrNN>  NNpar, 
+            long         l=0, 
+            long         secBeg=1, 
+            char        *clas=nullptr, 
+            float        conc=-1);
 	CSec ( long l, std::shared_ptr<CSaltCorrNN>  NNpar) ;
 
 	CMultSec	*CreateNonDegSet		()			; // crea todo el set si no existia, solo si existen bases deg: _NDB>0
@@ -141,24 +128,6 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
 		float		*_SdH ;			// 
 		CMultSec	*_parentMS	; //std::weak_ptr<CMultSec> _parentMS	;
 };
-
-//	Base		*CreateTEMPORALcomplementary(long InicBase=0, long EndBase=-1) ;
-//	Base		*GetCopy_charSec(long InicBase, long EndBase, DNAStrand strnd=direct)  ;
-//	Base		*GetCopyFullSec(){Base *s=new Base[Len()+3]; for(int i=0;i<Len()+2;i++) s[i]=_c[i]; s[Len()+2]=0; return s;}
-//	Base		*GetCopy_charSec(DNAStrand strnd=direct)  ;
-//	Base		*Copy_charSec(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd=direct)  ;
-//	private:
-//		int				_ID ;			// num de la sec en file original?? en total??, num unico?
-//		char			*_name ;		// nombre unico? FASTA id		
-//		long			_len ;			// longitud corregida, sin los '$'
-//		long			_GrDeg ;		// Grado de degeneracion. Cantidad total de diferentes molec, dependiendo de deg
-//		Base			*_c;			// sec char, comienzan y terminan con '$'0
-//		float			_GCp ;		
-//		long			_Count[n_dgba];	// An array of counters for each deg base - inicializar!!
-//		long			_NDB ;			// cantidad de bases deg
-//		char			*_Clas ;		// clasificacion
-//		CMultSec	*_NonDegSet ;
-
 
       //<Hsp_num>1</Hsp_num>
       //<Hsp_bit-score>482.786</Hsp_bit-score>
@@ -202,40 +171,42 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 					char *			Hsp_midline ,
 					bool			FormatOK ,
 					const char	*	sec	,	
-					NumRang<long>	SecLim,			//long			SecBeg, 	//long			SecEnd,
-					int				id,				//	Hit_num		//	char		*	nam,		Hit_def
-					std::shared_ptr<CSaltCorrNN>  NNpar,			//	long			l=0,		Hit_len   ------> _Hsp_align_len
+					NumRang<long>	SecLim,			                 //long	SecBeg,long	SecEnd,
+					int				id,				                 //	Hit_num	char	*	nam,	Hit_def
+                    std::shared_ptr<CSaltCorrNN>  NNpar,			 //	long  l=0,	Hit_len ------> _Hsp_align_len
 					char		*	clas=nullptr, 
 					float			conc=-1
-				):
-													CSec (sec, id, Hit_accession, NNpar, 
-															SecLim.Max()? SecLim.Max() - SecLim.Min() +1 : 0	,		//Hsp_align_len,  --  Long
-															SecLim.Min() - long(Hsp_query_from+1) , //     SecBeg
-															clas, conc ),
-													_BlastOutput_query_len( BlastOutput_query_len ) ,
-													// para cada hit
-													_Hit_num		( Hit_num ) ,
-													_Hit_id			( Hit_id ) ,				
-													_Hit_def		( Hit_def ) ,				
-													_Hit_accession	( Hit_accession )	,
-													_Hit_len		( Hit_len ) ,				
-													_Hsp_bit_score	( Hsp_bit_score ) ,
-													_Hsp_score		( Hsp_score ) ,
-													_Hsp_evalue		( Hsp_evalue ) ,
-													_Hsp_query_from	( Hsp_query_from ) ,
-													_Hsp_query_to	( Hsp_query_to ) ,
-													_Hsp_hit_from	( Hsp_hit_from ) ,
-													_Hsp_hit_to		( Hsp_hit_to ) ,
-													_Hsp_query_frame( Hsp_query_frame ) ,
-													_Hsp_hit_frame	( Hsp_hit_frame ) ,
-													_Hsp_identity	( Hsp_identity ) ,
-													_Hsp_positive	( Hsp_positive ) ,
-													_Hsp_gaps		( Hsp_gaps ) ,
-													_Hsp_align_len	( Hsp_align_len ) ,
-													_Hsp_midline	( Hsp_midline ) ,
-													_FormatOK		( FormatOK ) ,
-													_SecLim			( SecLim )	/*,_SecBeg	(SecBeg), 	_SecEnd		(SecEnd)*/
-													{}			
+				)  :
+						CSec (  sec,   id,   Hit_accession,   NNpar, 
+								(SecLim.Max() && long(Hsp_query_to) > SecLim.Max()   ) ? SecLim.Max()       - SecLim.Min() +1 
+                                                                                       : long(Hsp_query_to) - SecLim.Min() +1	,	//Hsp_align_len,  --  Long
+								SecLim.Min() - long(Hsp_query_from+1) ,                 //     SecBeg
+								clas,   conc ),
+							_BlastOutput_query_len( BlastOutput_query_len ) ,
+							// para cada hit
+							_Hit_num		( Hit_num ) ,
+							_Hit_id			( Hit_id ) ,				
+							_Hit_def		( Hit_def ) ,				
+							_Hit_accession	( Hit_accession )	,
+							_Hit_len		( Hit_len ) ,				
+							_Hsp_bit_score	( Hsp_bit_score ) ,
+							_Hsp_score		( Hsp_score ) ,
+							_Hsp_evalue		( Hsp_evalue ) ,
+							_Hsp_query_from	( Hsp_query_from ) ,
+							_Hsp_query_to	( Hsp_query_to ) ,
+							_Hsp_hit_from	( Hsp_hit_from ) ,
+							_Hsp_hit_to		( Hsp_hit_to ) ,
+							_Hsp_query_frame( Hsp_query_frame ) ,
+							_Hsp_hit_frame	( Hsp_hit_frame ) ,
+							_Hsp_identity	( Hsp_identity ) ,
+							_Hsp_positive	( Hsp_positive ) ,
+							_Hsp_gaps		( Hsp_gaps ) ,
+							_Hsp_align_len	( Hsp_align_len ) ,
+							_Hsp_midline	( Hsp_midline ) ,
+							_FormatOK		( FormatOK ) ,
+							_SecLim			( SecLim )	/*,_SecBeg	(SecBeg), 	_SecEnd		(SecEnd)*/
+							{
+                        }			
 
 
 	unsigned int	_BlastOutput_query_len ;

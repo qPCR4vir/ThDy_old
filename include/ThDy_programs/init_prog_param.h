@@ -171,6 +171,8 @@ class CParamEnumRange: public CParamBNRange<enumType>
 	 void AddEnumValues(                         enumType eTy )		{ _IntValues[int(eTy)]=eTy; }
 	 void AddStrValues (const std::string& strV, enumType eTy )		{ _StrValues[strV]    =eTy;
                                                                       AddEnumValues(eTy );      }
+     const std::map<std::string, enumType>&  StrValues()const{return _StrValues;}
+
 	 std::string ToString(enumType v)const
 		{ for (auto p : _StrValues) 
 			if (p.second==v)
@@ -184,7 +186,7 @@ class CParamEnumRange: public CParamBNRange<enumType>
 		return result.str();
 	 }
 	 std::string ToString()const {return ToString(get());}
-	 bool exist(int v)		const{		return _IntValues.end()!=_IntValues.find(v); }
+	 bool exist(int v)	        const{		return _IntValues.end()!=_IntValues.find(v); }
 	 bool exist(std::string v)	const{		return _StrValues.end()!=_StrValues.find(v); }
 
 
@@ -215,7 +217,7 @@ class CParamEnumRange: public CParamBNRange<enumType>
 								set(enumType(value));
 							else{
 								auto p=_IntValues.find(value);
-								if (p==_IntValues.end())	// TODO: Incluir value y rang que no concuerdan en mensaje to throw
+								if (p==_IntValues.end())	
 									throw ParamOutOfEnumRange(std::string("Value out of Range while trying to modify: \"")
 												     + Titel() 
 												     + "\" ("+ Etiq() + ")" + ", with know values "  + StringEnumerate() ,
@@ -223,15 +225,15 @@ class CParamEnumRange: public CParamBNRange<enumType>
 								CParamBNRange::set(enumType(p->second));
 							}
 	                    }
-	void set(std::string value){		auto p=_StrValues.find(value);
-								if (p==_StrValues.end())	// TODO: Incluir value y rang que no concuerdan en mensaje to throw
+	void set(const std::string& value){auto p=_StrValues.find(value);
+								if (p==_StrValues.end())	 
 									throw ParamOutOfEnumRange(std::string( "Value \"" ) + value + "\" out of Range while trying to modify: \"" 
 												     + Titel() 
-												     + "\" ("+ Etiq() + ")" + ", with have know values: "  + StringEnumerate()  );
+												     + "\" ("+ Etiq() + ")" + ", with have known values: "  + StringEnumerate()  );
 								CParamBNRange::set(p->second);
 								set(p->second);
 	                    }
-	void set(enumType value){ if (!inRang(value)) // TODO: Incluir value y rang que no concuerdan en mensaje to throw
+	void set(enumType value){ if (!inRang(value))  
 									throw ParamOutOfEnumRange(std::string("Value out of Range while trying to modify: \"")
 												     + Titel() 
 												     + "\" ("+ Etiq() + ")" + ", with know values "  + StringEnumerate() ,
@@ -239,7 +241,6 @@ class CParamEnumRange: public CParamBNRange<enumType>
 							 CParamBNRange::set(value) ; 
 	                    }
 
-	//virtual ostream	    &saveValue	(ostream	&osPr	) const  // =0;   ??No salva nada, no tiene "value" todavia
 	std::ostream &saveValue	(std::ostream	&osPr) const override   
 	                        {	for (auto p : _StrValues) 
 									if (p.second==get())

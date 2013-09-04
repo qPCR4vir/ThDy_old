@@ -52,7 +52,7 @@ namespace ThDy_DNAHybridWF {
 			//
 			//TODO: Add the constructor code here
 			//
-			this->comBoxSalMeth->SelectedIndex = TAMeth_Tm;    // 0
+			this->comBoxSalMeth->SelectedIndex = TAMeth_Tm;    // 0    ???????
             try{ 
 				    if (Environment::GetCommandLineArgs()->Length   > 1    )
                         _Pr.load( CreateCharFromManString(Environment::GetCommandLineArgs()[1]   ) );	

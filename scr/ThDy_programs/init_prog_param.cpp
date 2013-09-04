@@ -52,7 +52,7 @@ bool	CProject::load()
 	isPr >> skipws ;
 
 	do {	i=isPr.tellg();		// not good !!!
-			etiq ;			    
+			//etiq ;			    
 			getline (isPr, etiq) ;	
 			if (string::npos == etiq.find(":") ) 
 				continue;

@@ -126,19 +126,20 @@ class ThDyCommProgParam : public CCommProgParam
 	CParamC_str     _OutputFile;        
 	CParamC_str     _InputNNFile; 
 
-	SaltCorrection 	_SaltCorr ;			
+	SaltCorrection                 _SaltCorr ;			
     CParamEnumRange<SaltCorrection>	SaltCorr ;	 				//  SaltCorrection
 
 	float					_ConcSd,	_ConcTg,	_ConcSalt ;
 	CParamNumRange<float>	 ConcSd,	 ConcTg,	 ConcSalt;
 
-	Temperature		_Ta ;				CParamNumRange<Temperature>	Ta ;	
+	Temperature		_Ta ;				CParamNumRange <Temperature>	Ta ;	
 	AlignMeth		_TAMeth ;			CParamEnumRange<AlignMeth>	TAMeth ;	 
-	float			_MaxTgId ;			CParamNumRange<float>	MaxTgId ;	
-	LonSecPosRang	_SecLim;			CParamNumMinMax<LonSecPos> SecLim;	//	long _SecBeg, _SecEnd;  // convertir en NumRang<long> _SecLim;  ?????
-	SecPos			_MinSecLen;			CParamNumRange<SecPos>	MinSecLen;		
+	float			_MaxTgId ;			CParamNumRange <float>	    MaxTgId ;	
+	LonSecPosRang	_SecLim;			CParamNumMinMax<LonSecPos>  SecLim;	//	long _SecBeg, _SecEnd;  // convertir en NumRang<long> _SecLim;  ?????
+	SecPos			_MinSecLen;			CParamNumRange <SecPos>	    MinSecLen;		
 	
-	bool			_loadNNPar,		_saveNNPar ;	CParamBool loadNNPar,	saveNNPar ; 
+	bool			_loadNNPar,		_saveNNPar ;	
+    CParamBool       loadNNPar,	     saveNNPar ; 
 	bool			_st_savTm, _st_savPos, _st_savG, _st_savAlign, _st_savProj, _st_savG_Plasm, _st_savTm_Plasm, _st_savLog, _st_Exp_sond, _st_ExpTarg ;
 	CParamBool		 st_savTm,  st_savPos,  st_savG,  st_savAlign,  st_savProj,  st_savG_Plasm,  st_savTm_Plasm,  st_savLog,  st_Exp_sond,  st_ExpTarg ;
 
@@ -200,7 +201,7 @@ class CProgParam_microArray : public CEspThDyProgParam
 	{
 		return _cp.AddSeqFromFile(_probesMS.get(),FileName);
 	}
-	CParamC_str		_InputSondeFile ;   /*C_str			_InputSondeFile ; */
+	CParamC_str		_InputSondeFile ;   
 	//bool			    _I, _G;			// Outpu table of I, G. 
 	//CParamBool		 I,  G;			// Outpu table of I, G. 
 
@@ -278,7 +279,7 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 		        "MinSondeLn",  3,         200,		20,
 		        "MaxSondeLn",  4,         200,		35,
                 /*UnitG=*/"kcal/mol",  /*UnitT=*/"°C",  /*UnitL=*/"nt" 
-		),
+		   ),
 		_G_sig (10),		  G_sig  (this, "Significative G probe-target",		"MaxSd_Tg_G",    _G_sig,  -15.0f, 30.0f,	10.0f, "kcal/mol" ),	
 		_Tm_sig (30)	, 	  Tm_sig (this, "Significative Tm probe-target",	"MinSd_TgTm",    _Tm_sig, -0.0f,  80.0f,	30.0f, "°C" ),	
 
