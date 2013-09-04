@@ -62,14 +62,14 @@ char *ChangeCharStrAttaching(char *&CharStrToChange, const int Attach)
 	//							assert(_c && _b && _SdS && _SdH);	/* Hace algo ???? */ 
 };  
 
-		CSecBasInfo::CSecBasInfo (int id, const std::string& nam, char *clas) 
+		CSecBasInfo::CSecBasInfo (int id, const std::string& nam, const std::string& clas) 
 								:	_ID		( id ), 	_selected(true), _filtered(false),
 									_NonDegSet( nullptr ), 				_GCp( 0 ),	
 									_GrDeg( 1 ),			_NDB( 0 ),							
 									_name( trim_string	(nam )),	
-								_Clas(clas ? clone_c_str (clas) : nullptr )
+								_Clas(clas )
 		{}
-		CSec::CSec (const char *sec, int id, const std::string& nam, std::shared_ptr<CSaltCorrNN> NNpar, long lmax, long secBeg, char *clas, float conc) 
+		CSec::CSec (const char *sec, int id, const std::string& nam, std::shared_ptr<CSaltCorrNN> NNpar, long lmax, long secBeg,  const std::string& clas, float conc) 
 			:	CSecBasInfo ( id, nam, clas) ,		
 				_NNpar	( NNpar),	_parentMS(nullptr),			
 				_Conc	( conc )			
@@ -246,7 +246,7 @@ float	CSec::G	(long pi, long pf) const
 	delete [] _SdH ;
 	delete [] _c ;
 	delete [] _b ;
-	delete [] _Clas ;
+	//delete [] _Clas ;
 	//delete [] _name ;
 	if (_NonDegSet ) if (!_NonDegSet->Prev() && ! _NonDegSet->Next() ) delete _NonDegSet ;
 	Remove();
@@ -298,13 +298,13 @@ CSec *	CSec::CopyFirstBases(long pos)
 	CSec *sec = new CSec ( _len, _NNpar) ;
 	assert(sec);
     sec->_name =  _name ;
+    sec->_Clas =  _Clas ;
 	//sec->_name = new char[strlen(_name)+1];  assert(sec->_name); // al "final" se cambia anadiendo num _NSec
 	//strcpy( sec->_name, _name );
-
-	if (_Clas!=NULL) 
-	{	sec->_Clas = new char[strlen(_Clas)+1];	     assert(sec->_Clas );
-		strcpy( sec->_Clas, _Clas );
-	} else sec->_Clas=NULL ;
+	//if (_Clas!=NULL) 
+	//{	sec->_Clas = new char[strlen(_Clas)+1];	     assert(sec->_Clas );
+	//	strcpy( sec->_Clas, _Clas );
+	//} else sec->_Clas=NULL ;
 
 	sec->_GCp	= _GCp ;
 	sec->_GrDeg	= _GrDeg ;
