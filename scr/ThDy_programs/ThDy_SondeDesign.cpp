@@ -63,7 +63,7 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 	NNpar->SetTa(				CtoK(	IPrgPar_SdDes->_cp._Ta));			// Aqui por si acaso. Revisar.
 
 	std::shared_ptr<CMultSec>  tg(IPrgPar_SdDes->_cp._pSeqTargets );
-    if (!tg)
+    if (!tg || ! tg->_Global._NSec)
 		tg.reset ( new CMultSec	(	IPrgPar_SdDes->_cp._InputTargetFile.Get(), NNpar,
 								    IPrgPar_SdDes->_cp._MaxTgId,
 								    IPrgPar_SdDes->_cp._SecLim  ));		
