@@ -22,14 +22,22 @@ class FindSondenPage : public CompoWidget
     FilePickBox nTsec_;
     BindGroup   _findSond;
     nana::gui::NumUnitUpDown _Gmin, _Gmax, _Tmmin, _Tmmax, _Lengthmin, _Lengthmax, 
-                             _MaxG, _MinTm, _MinG, _MaxTm, _MinSelfG, _MaxSelfTm;
+                             _MaxG, _MinTm, _MinG, _MaxTm, _MinSelfG, _MaxSelfTm, 	
+                             numUpDw_MinTargCov ;	
+    nana::gui::button        _design, _compare;
     void SetDefLayout   () override
     {
       _DefLayout=  
         "vertical      gap=2             \n\t"
-	    "    <NonTargSeq weight=23>       \n\t "
-        "<weight=195 gap=2 <weight=320 vertical <weight=100 <weight=320 Sonde  grid[3,4]>>> "
-        "       <><weight=230 gap=1 vertical  options>  >   \n\t " ;
+	    "    <weight=10     >       \n\t "
+        "    <weight=195 gap=8 <weight=320 vertical <weight=100 <weight=320 Sonde  grid[3,4]>>     \n\t "
+        "                                           <TargCov                                 >     \n\t "
+        "                                           <weight=50 < <><weight=100 vertical gap=2 Run><>        >  >   \n\t "
+        "                      >   <><weight=230 gap=1 vertical  options>    >   \n\t "
+	    "    <weight=23   NonTargSeq >       \n\t "
+        ;
+
+       nTsec_.ResetLayout(100);
  
          _Gmin.ResetLayout     (60,45,55 );   _Gmax.ResetLayout     (1,40,50 );
         _Tmmin.ResetLayout     (60,45,55 );  _Tmmax.ResetLayout     (1,40,50 );
@@ -43,43 +51,8 @@ class FindSondenPage : public CompoWidget
         _MinSelfG.ResetLayout  (110,45,50);   
         _MaxSelfTm.ResetLayout (110,45,50 );  
 
-      //std::string min_lay(
-      //     " <                                       \n\t"    
-      //     "    <vertical   min=150            Num                 >                         \n\t"     
-      //     "    <vertical   min=48     <><vertical Unit weight=21><>          >                    \n\t"            
-      //    " >                \n\t"    )
-      //    ;
-      //  _Gmin.ResetDefLayout     ( min_lay );
-      //  _Tmmin.ResetDefLayout    (min_lay );
-      //  _Lengthmin.ResetDefLayout(min_lay );
-      //std::string nmin_lay(
-      //    "     <                      \n\t"    
-      //   
-      //         "  <vertical weight=90       <><label weight=15  gap=1 >        <>          >                  \n\t"       
-      //            "  <vertical weight=15       <><vertical UpDown weight=21><>          >               \n\t"    
-      //            "  <vertical                           <><Num weight=21>                    <>          >                 \n\t"     
-      //    "  >                \n\t"    )  ;
-      //  _Gmin._num.ResetDefLayout     ( nmin_lay ); 
-      //  _Tmmin._num.ResetDefLayout    ( nmin_lay ); 
-      //  _Lengthmin._num.ResetDefLayout( nmin_lay );
-      //std::string max_lay(
-      //   " <                                       \n\t"
-      //   "   <vertical   min=50            Num                 >                   \n\t"       
-      //   "   <vertical   min=48     <><vertical Unit weight=21><>          >                  \n\t"          
-      //   "  >                \n\t");
-      //  _Gmax.ResetDefLayout      ( max_lay ); 
-      //  _Tmmax.ResetDefLayout     ( max_lay ); 
-      //  _Lengthmax.ResetDefLayout ( max_lay ); 
-      //std::string nmax_lay(
-      //    " <                   \n\t"
-      //    "            \n\t"
-      //    "     <vertical weight=2       <><label weight=15  gap=1 >        <>          >              \n\t"    
-      //    "     <vertical weight=15       <><vertical UpDown weight=21><>          >            \n\t"
-      //    "     <vertical                           <><Num weight=21>                    <>          >               \n\t"
-      //    "  >             \n\t")          ;
-      //  _Gmax._num.ResetDefLayout        ( nmax_lay );  
-      //  _Tmmax._num.ResetDefLayout       ( nmax_lay ); 
-      //  _Lengthmax._num.ResetDefLayout   ( nmax_lay ); 
+        numUpDw_MinTargCov.ResetLayout (120,45,20 );  
+
 
     }
     void AsignWidgetToFields() override
@@ -90,9 +63,15 @@ class FindSondenPage : public CompoWidget
                                    <<  _place.room(_Gmin ,2,1) << _Gmax
                                    <<  _place.room(_Tmmin,2,1) << _Tmmax
                                    <<  _place.room(_Lengthmin,2,1) << _Lengthmax  ;
+        _place.field("TargCov" )   << numUpDw_MinTargCov       	;
+        _place.field("Run"     )   << _design	<< _compare	;
+                 
 	    _place.field("options" )   << "Sonde-target"    <<  _MaxG     << _MinTm
                                    << "Sonde-non-target"<<  _MinG     << _MaxTm
-                                   << "Sonde-self"      <<  _MinSelfG << _MaxSelfTm   ;    
+                                   << "Sonde-self"      <<  _MinSelfG << _MaxSelfTm  
+                                    ;    
+
+    }
 
     }
 };
@@ -142,11 +121,7 @@ class TmCalcPage : public CompoWidget
     }
     void Run()
     {
-        //_Pr._TmCal.      _Sec.CopyTrim (std::string(nana::charset (      sec_.caption ())).c_str() );		
-        //_Pr._TmCal._Sec2Align.CopyTrim (std::string(nana::charset (sec2align_.caption ())).c_str() );		
-
         _Pr._TmCal.Run ();
-
         txtBx_ResultSec      .caption (nana::charset (_Pr._TmCal._AlignedSec      .Get() ));
         txtBx_ResultSec2Align.caption (nana::charset (_Pr._TmCal._AlignedSec2Align.Get() ));
         Tm_min_Up.Value( _Pr._TmCal._TmS.Min ());
@@ -231,15 +206,17 @@ class SetupPage : public CompoWidget
 class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyProject
 {public: 
     OpenSaveBox                     proj_;
-    FilePickBox                     targets_ , results_;
+    FilePickBox                     targets_ , results_, PCRfiltre_;
 	nana::gui::tabbar<nana::string> tabbar_;
     FindSondenPage                  findSond_;
     TmCalcPage                      tmCalc_; 
     SetupPage                       setup_;
     BindGroup                       _commPP;
-    nana::gui::NumUnitUpDown        numUpDowTa, numUpDwMaxTgId, numUpDowSdConc, numUpDowTgConc, numUpDowSalConc;
+    nana::gui::combox               comBoxSalMeth, comBoxTAMeth;
+    nana::gui::NumUnitUpDown        numUpDwMaxTgId, numUpDowTgConc, numUpDowSalConc , numUpDw_TgBeg, numUpDw_TgEnd,	numUpDw_MinLen,
+                                    numUpDowTa,  numUpDowSdConc  ;
 
-   ThDyNanaForm ():nana::gui::form (nana::rectangle( nana::point(200,100), nana::size(700,500) )),
+   ThDyNanaForm ():nana::gui::form (nana::rectangle( nana::point(200,100), nana::size(700,550) )),
                    EditableForm    (nullptr, *this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")),
                    proj_           (*this, STR("Project:") ),
                    targets_        (*this, STR("Targets:") ),
@@ -254,6 +231,13 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
                    tmCalc_         (*this),
                    setup_          (*this)
    {
+        //nana::pixel_rgb_t bk;
+        //bk.u.color = background ();
+        //bk.u.element.blue =0; 
+        //background (0xEEEEEE);
+        //foreground(1);
+
+       
         add_page( findSond_ );
         add_page( tmCalc_   );
         add_page( setup_    );
@@ -279,14 +263,20 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
         _commPP  << link( _cp._InputTargetFile , targets_  )
                  << link( _cp._OutputFile      , results_  )
+                 << link( _cp._PCRfiltrPrFile  ,       PCRfiltre_)
                  << link( _cp.MaxTgId    , numUpDwMaxTgId  )
-                 << link( _cp.ConcSd	 , numUpDowSdConc  )          << link( _cp.ConcSalt	         , numUpDowSalConc  )
+                 << link( _cp.SecLim , numUpDw_TgBeg,numUpDw_TgEnd  )
+                 << link( _cp.MinSecLen  ,       numUpDw_MinLen  )
+                 << link( _cp.ConcSd	 ,       numUpDowSdConc  )
+                 << link( _cp.ConcSalt	      , numUpDowSalConc  )
                  << link( _cp.ConcTg	 , numUpDowTgConc  )
-                 << link( _cp.Ta	         , numUpDowTa  )        /*  << link( _cp._ConcSalt	         , numUpDowSalConc  )*/
+                 << link( _cp.Ta	         ,       numUpDowTa  )        
+                 << link( _cp.SaltCorr	  ,       comBoxSalMeth  )        
+                 << link( _cp.TAMeth       ,       comBoxTAMeth  )        
             ;
 
+
         InitMyLayout();
-        numUpDowTa.ResetLayout (110,45,50 );  
 
         AddMenuProgram();
         SelectClickableWidget( _menuBar);
