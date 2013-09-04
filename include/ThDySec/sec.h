@@ -49,7 +49,7 @@ class CSecBasInfo : public ISec
 	Base			*_c;			//< sec char, comienzan y terminan con '$'0
 	CMultSec		*_NonDegSet ;
 	static int	NewS_ID     ()	{static int last_ID(0);	return ++last_ID;	}
-		CSecBasInfo (int id, const char *nam, char *clas) ;
+		CSecBasInfo (int id, const std::string& nam, char *clas) ;
 		CSecBasInfo ():_filtered(false),_selected(true), _ID(NewS_ID()){}
 		CSecBasInfo ( long l);
 public:

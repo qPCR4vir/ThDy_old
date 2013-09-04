@@ -62,14 +62,14 @@ char *ChangeCharStrAttaching(char *&CharStrToChange, const int Attach)
 	//							assert(_c && _b && _SdS && _SdH);	/* Hace algo ???? */ 
 };  
 
-		CSecBasInfo::CSecBasInfo (int id, const char *nam, char *clas) 
+		CSecBasInfo::CSecBasInfo (int id, const std::string& nam, char *clas) 
 								:	_ID		( id ), 	_selected(true), _filtered(false),
 									_NonDegSet( nullptr ), 				_GCp( 0 ),	
 									_GrDeg( 1 ),			_NDB( 0 ),							
-									_name( clone_trim_str	(nam )),	
+									_name( trim_string	(nam )),	
 								_Clas(clas ? clone_c_str (clas) : nullptr )
 		{}
-		CSec::CSec (const char *sec, int id, const char *nam, std::shared_ptr<CSaltCorrNN> NNpar, long lmax, long secBeg, char *clas, float conc) 
+		CSec::CSec (const char *sec, int id, const std::string& nam, std::shared_ptr<CSaltCorrNN> NNpar, long lmax, long secBeg, char *clas, float conc) 
 			:	CSecBasInfo ( id, nam, clas) ,		
 				_NNpar	( NNpar),	_parentMS(nullptr),			
 				_Conc	( conc )			
@@ -159,10 +159,10 @@ char *ChangeCharStrAttaching(char *&CharStrToChange, const int Attach)
 
 CSec  * CSec::CreateCopy(DNAStrand strnd) // strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 {	Base *s=GetCopy_charSec(strnd); 
-	char *n; 
+	//char *n; 
 	CSec *newS=new CSec( (char*)s, 
 						NewS_ID(),				
-						n=AttachToCharStr(_name, DNAStrandName[strnd])	,
+						_name + DNAStrandName[strnd],//n=AttachToCharStr(_name, DNAStrandName[strnd])	,
 						_NNpar	,
 						0,1,
 						_Clas,
@@ -170,7 +170,7 @@ CSec  * CSec::CreateCopy(DNAStrand strnd) // strnd=direct...crea una copia muy s
 						);
 	newS->Selected(Selected());
 	newS->Filtered(Filtered());
-	delete []s;delete []n;
+	delete []s;/*delete []n;*/
 	return newS;
 }
 
@@ -247,7 +247,7 @@ float	CSec::G	(long pi, long pf) const
 	delete [] _c ;
 	delete [] _b ;
 	delete [] _Clas ;
-	delete [] _name ;
+	//delete [] _name ;
 	if (_NonDegSet ) if (!_NonDegSet->Prev() && ! _NonDegSet->Next() ) delete _NonDegSet ;
 	Remove();
 	// en otro caso, donde borrar _NonDegSet ????. Lo borra la lista en la que esta insertado
@@ -297,8 +297,9 @@ CSec *	CSec::CopyFirstBases(long pos)
 {	
 	CSec *sec = new CSec ( _len, _NNpar) ;
 	assert(sec);
-	sec->_name = new char[strlen(_name)+1];  assert(sec->_name); // al "final" se cambia anadiendo num _NSec
-	strcpy( sec->_name, _name );
+    sec->_name =  _name ;
+	//sec->_name = new char[strlen(_name)+1];  assert(sec->_name); // al "final" se cambia anadiendo num _NSec
+	//strcpy( sec->_name, _name );
 
 	if (_Clas!=NULL) 
 	{	sec->_Clas = new char[strlen(_Clas)+1];	     assert(sec->_Clas );
@@ -388,7 +389,8 @@ CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) // crear varia
 
 	sec->_Tm.Set(_NNpar->CalcTM( sec->_SdS[_len-1], sec->_SdH[_len-1])) ;  // usar _len or i ?????= sec->_maxTm = sec->_minTm 
 
-	ChangeCharStrAttaching(sec->_name, _NonDegSet->_Local._NSec);
+	sec->_name += std::to_string(_NonDegSet->_Local._NSec);
+    //ChangeCharStrAttaching(sec->_name, _NonDegSet->_Local._NSec);
 	return sec ;
 }
 //	assert ( ( (cout << sec->_name << "\t" << sec->_c << "\t" << (sec->_Tm - 273) << " °C" << "\n" ) , 1 ) ) ;
