@@ -7,6 +7,7 @@
 #include <iostream>    // temp, for debugging
 #include <fstream>     // temp, for debugging
 #include<filesystem>
+#include <nana/gui/wvl.hpp>
 
 #include "thdy_programs\init_thdy_prog_param.h"
 
@@ -28,7 +29,7 @@ class FindSondenPage : public CompoWidget
     void SetDefLayout   () override
     {
       _DefLayout=  
-        "vertical      gap=2             \n\t"
+        "vertical      gap=2                 \n\t"
 	    "    <weight=10     >       \n\t "
         "    <weight=195 gap=8 <weight=320 vertical <weight=100 <weight=320 Sonde  grid[3,4]>>     \n\t "
         "                                           <TargCov                                 >     \n\t "
@@ -38,7 +39,7 @@ class FindSondenPage : public CompoWidget
         ;
 
        nTsec_.ResetLayout(100);
- 
+
          _Gmin.ResetLayout     (60,45,55 );   _Gmax.ResetLayout     (1,40,50 );
         _Tmmin.ResetLayout     (60,45,55 );  _Tmmax.ResetLayout     (1,40,50 );
         _Lengthmin.ResetLayout (60,45,55 );  _Lengthmax.ResetLayout (1,40,50 );
@@ -73,7 +74,19 @@ class FindSondenPage : public CompoWidget
 
     }
 
-    }
+    void Run_Design(bool design)
+    {
+        _Pr._SdDes._design	 = design ;		
+		 
+		try{                                   
+		        _Pr.Run(_Pr._SdDes);	 //     _Pr._SdDes.Run ();	
+		}
+		catch ( std::exception& e)
+		{ 
+            (nana::gui::msgbox(*this,STR("Error during Sonde Design !"), nana::gui::msgbox::button_t::ok)<<e.what()) (  ) ;
+		    return;
+		}	 	        		 
+    }   
 };
 
 class TmCalcPage : public CompoWidget
@@ -121,7 +134,15 @@ class TmCalcPage : public CompoWidget
     }
     void Run()
     {
-        _Pr._TmCal.Run ();
+		try
+        {                                   
+            _Pr._TmCal.Run ();
+		}
+		catch ( std::exception& e)
+		{ 
+            (nana::gui::msgbox(*this,STR("Error during Tm calculation !"), nana::gui::msgbox::button_t::ok)<<e.what()) (  ) ;
+		    return;
+		}	 	        		 
         txtBx_ResultSec      .caption (nana::charset (_Pr._TmCal._AlignedSec      .Get() ));
         txtBx_ResultSec2Align.caption (nana::charset (_Pr._TmCal._AlignedSec2Align.Get() ));
         Tm_min_Up.Value( _Pr._TmCal._TmS.Min ());
@@ -221,11 +242,17 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
                    proj_           (*this, STR("Project:") ),
                    targets_        (*this, STR("Targets:") ),
                    results_        (*this, STR("Results:") ),
-                   numUpDwMaxTgId  (*this, STR("Max. ident.:"), 99, 50 , 100,"%"),
-                   numUpDowSdConc  (*this, STR("Sonde Conctr:"), 50, 0.1 , 1000,"µM"),
+                   PCRfiltre_      (*this, STR("PCR-filtre:") ),
+                   numUpDwMaxTgId  (*this, STR("Max. ident.:"        ), 99,  50 , 100,   "%"),
+                   numUpDw_TgBeg   (*this, STR("Beg.:"               ),  0,   0 , 100000,"nt"),        /// rev !!
+                   numUpDw_TgEnd   (*this, STR("End.:"               ),  0,   0 , 100000,"nt"),        /// rev !!
+                   numUpDw_MinLen  (*this, STR("Min.Len.:"           ),  0,   0 , 100000,"nt"),        /// rev !!
+                   numUpDowSdConc  (*this, STR("Sonde Conctr:"       ), 50, 0.1 , 1000,  "µM"),
                    numUpDowSalConc (*this, STR("Salt Conc [Cations]:"), 50, 0.1 , 10000000,"µM"),
-                   numUpDowTgConc  (*this, STR("Target Conctr:"), 50, 0.1 , 1000,"µM"),
-                   numUpDowTa      (*this, STR("Temp. Anneling:"), 55, 40 , 75,"°C"),
+                   numUpDowTgConc  (*this, STR("Target Conctr:"      ), 50, 0.1 , 1000,  "µM"),
+                   numUpDowTa      (*this, STR("Temp. Anneling:"     ), 55,  40 , 75,    "°C"),
+                   comBoxSalMeth   (*this),
+                   comBoxTAMeth    (*this),
                    tabbar_         (*this),
                    findSond_       (*this),
                    tmCalc_         (*this),
@@ -245,6 +272,47 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         tabbar_.active (0);
 
         proj_.FileName(nana::charset ( _ProjetFileName.Get () ));
+        //this->comBoxSalMeth->SelectedIndex = TAMeth_Tm;    // 0    ???????
+        try{ 
+			 //	    if (Environment::GetCommandLineArgs()->Length   > 1    )
+             //               _Pr.load( CreateCharFromManString(Environment::GetCommandLineArgs()[1]   ) );	
+			 //		else
+						load() ;				
+		    }
+		catch ( std::exception& e )      // Por ejemplo cuando no existe Def Project: 1ra vez que se usa el prog.
+		{   
+            (nana::gui::msgbox(*this,STR("Error during initial project load !\n\t"), nana::gui::msgbox::button_t::ok)
+                             << e.what()    << "\n\n A new Default Project will be created. "
+            ).show (  ) ;
+		    save_defPr() ; 					                
+        }
+		//this->comBoxTAMeth->SelectedIndex  = SMStLucia;     
+		//_seqExpl = gcnew SeqExpl(this->_Pr);
+
+
+        _commPP  << link( _cp._InputTargetFile ,       targets_  )
+                 << link( _cp._OutputFile      ,       results_  )
+                 << link( _cp._PCRfiltrPrFile  ,       PCRfiltre_)
+                 << link( _cp.MaxTgId    ,       numUpDwMaxTgId  )
+                 << link( _cp.SecLim , numUpDw_TgBeg,numUpDw_TgEnd  )
+                 << link( _cp.MinSecLen  ,       numUpDw_MinLen  )
+                 << link( _cp.ConcSd	 ,       numUpDowSdConc  )
+                 << link( _cp.ConcSalt	      , numUpDowSalConc  )
+                 << link( _cp.ConcTg	 ,       numUpDowTgConc  )
+                 << link( _cp.Ta	         ,       numUpDowTa  )        
+                 << link( _cp.SaltCorr	  ,       comBoxSalMeth  )        
+                 << link( _cp.TAMeth       ,       comBoxTAMeth  )        
+            ;
+ 
+
+        InitMyLayout();
+
+        AddMenuProgram();
+        SelectClickableWidget( _menuBar);
+
+        proj_.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
+        proj_.Open.make_event	<nana::gui::events::click> ([&](){ OpenProj() ;} );
+		proj_.Save.make_event	<nana::gui::events::click> ([&](){ SaveProj() ;} );
 
                 //targets_.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
                 //{  
@@ -261,39 +329,77 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
                 //    //    validate_edit( );
                 //}); 
 
-        _commPP  << link( _cp._InputTargetFile , targets_  )
-                 << link( _cp._OutputFile      , results_  )
-                 << link( _cp._PCRfiltrPrFile  ,       PCRfiltre_)
-                 << link( _cp.MaxTgId    , numUpDwMaxTgId  )
-                 << link( _cp.SecLim , numUpDw_TgBeg,numUpDw_TgEnd  )
-                 << link( _cp.MinSecLen  ,       numUpDw_MinLen  )
-                 << link( _cp.ConcSd	 ,       numUpDowSdConc  )
-                 << link( _cp.ConcSalt	      , numUpDowSalConc  )
-                 << link( _cp.ConcTg	 , numUpDowTgConc  )
-                 << link( _cp.Ta	         ,       numUpDowTa  )        
-                 << link( _cp.SaltCorr	  ,       comBoxSalMeth  )        
-                 << link( _cp.TAMeth       ,       comBoxTAMeth  )        
-            ;
-
-
-        InitMyLayout();
-
-        AddMenuProgram();
-        SelectClickableWidget( _menuBar);
-
-        proj_.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
-        proj_.Open.make_event	<nana::gui::events::click> ([&](){ OpenProj() ;} );
-		proj_.Save.make_event	<nana::gui::events::click> ([&](){ SaveProj() ;} );
-
-
    }
     //~ThDyNanaForm();
+    void SetDefLayout   () override
+    {
+        _DefLayout= "vertical      gap=2                   \n\t "
+	                 "       <weight=25>                   \n\t "
+	                 "       <Project     weight=23 >      \n\t "
+	                 "       <PagesTag    weight=23 >      \n\t "
+	                 "       <Pages       min=230   >      \n\t "
+	                 "       <Targets     weight=23 >      \n\t "
+	                 "       < <weight=30><TargetsOptions><weight=10> weight=23>      \n\t "
+	                 "       <weight=5 >                   \n\t "
+	                 "       <PCRfiltre   weight=23 >      \n\t "
+	                 "       <Results     weight=23 >      \n\t "
+                     "       <ComPar grid[3,4]  min=120 gap=2>       \n\t "
+	                 "       <weight=23>                   \n\t "
+            ;
+
+        numUpDwMaxTgId.ResetLayout (60,40,30 );  
+        numUpDw_TgBeg .ResetLayout (35,40,30 );  
+        numUpDw_TgEnd .ResetLayout (35,40,30 );  
+        numUpDw_MinLen.ResetLayout (60,40,30 );  
+        PCRfiltre_    .ResetLayout (60 );
+        numUpDowSdConc.ResetLayout (80 );  
+        numUpDowTa.    ResetLayout (90 );  
+        numUpDowTgConc.ResetLayout (80 );
+        numUpDowSalConc.ResetLayout (110 );
+    }
+    void AsignWidgetToFields() override
+    {
+	    _place.field("Project" )        << proj_   ;
+	    _place.field("PagesTag")        << tabbar_  ;
+	    _place.field("Targets" )        << targets_   ;
+	    _place.field("TargetsOptions" ) << numUpDwMaxTgId<<   numUpDw_TgBeg << numUpDw_TgEnd  << numUpDw_MinLen;
+	    _place.field("PCRfiltre" )      << PCRfiltre_   ;
+	    _place.field("Results" )        << results_   ;
+	    _place.field("ComPar"  )        << numUpDowSdConc  << _place.room   (numUpDowSalConc, 2, 1) 
+                                        << numUpDowTgConc  << "              Salt Correct. Method:"	   <<  comBoxSalMeth
+                                        << numUpDowTa	   << "              ThDy Align. Method"       <<  comBoxTAMeth
+                                        << ""              << "  INNT - FLI \n ArielVina.Rodriguez@fli.bund.de"
+
+                                ;
+
+    }                                        
+    void add_page(widget& w)
+    {   
+        //nana::pixel_rgb_t bk;
+        //bk.u.color = background ();
+        //bk.u.element.blue =0; 
+        //w.background (1);
+        tabbar_.push_back (                    w.caption());
+        tabbar_.relate    (tabbar_.length()-1, w          );
+	    _place.field("Pages"   ).fasten( w)  ;
+    }         
 
     void  OpenProj()
 	{	 
       if(  proj_.Canceled () )  return;
       ProjetFile (std::string(nana::charset ( proj_.FileName())).c_str());  /// TODO: revise ortografia
-      load (); 
+
+      try {
+                load (); 
+      }
+        catch(std::exception& e)
+        {
+             (nana::gui::msgbox(*this, STR("Error during project loading: ")) /*.icon(msgbox::icon_information)*/
+                                 <<STR("\nIn windows:\n\t ") << Titel()
+                                 <<STR("\nIn project:\n\t ") << proj_.FileName()
+                                 <<STR("\nException :\n\t ") << e.what() 
+             ).show();
+        }
       //tmCalc_._TmCalc.UpDateForm();
 	}
     void  SaveProj()
@@ -302,81 +408,41 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
       ProjetFile (std::string(nana::charset ( proj_.FileName())).c_str());  /// TODO: revise ortografia
       save (); 
 	}
-    void SetDefLayout   () override
-    {
-        _DefLayout= "vertical      gap=2               \n\t"
-	                 "       <weight=25>               \n\t"
-	                 "       <Project  weight=23>       \n\t "
-	                 "       <PagesTag weight=23 >          \n\t "
-	                 "       <Pages      min=220 >          \n\t "
-	                 "       <Targets  weight=23>       \n\t "
-	                 "       <weight=23>       \n\t "
-	                 "       <Results  weight=23>       \n\t "
-                     "       <ComPar grid[2,4]  min=50 gap=2>       \n\t "
-
-	                 "       <weight=23>       \n\t "
-
-            ;
-    }
-    void AsignWidgetToFields() override
-    {
-	    _place.field("Project" )<< proj_   ;
-	    _place.field("PagesTag")<< tabbar_  ;
-	    _place.field("Targets" )<< targets_   ;
-	    _place.field("Targets" )<< numUpDwMaxTgId   ;
-	    _place.field("Results" )<< results_   ;
-	    _place.field("ComPar"  )<< numUpDowSdConc  << numUpDowSalConc 
-                                << numUpDowTgConc  << "Salt Correct. Method:"	
-                                << numUpDowTa	   << "ThDy Align. Method"
-                                << ""              << "  INNT - FLI \n ArielVina.Rodriguez@fli.bund.de"
-
-                                ;
-
-    }                                        
-    void add_page(widget& w)
-    {        tabbar_.push_back (                    w.caption());
-             tabbar_.relate    (tabbar_.length()-1, w          );
-	         _place.field("Pages"   ).fasten( w)  ;
-    }         
 };
 
    FindSondenPage::FindSondenPage(ThDyNanaForm& tdForm)
         : _Pr        (tdForm), 
           CompoWidget(tdForm, STR("Find Sonden"), STR("FindSonden.lay.txt")),
-          nTsec_     (*this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt") ),
-          _Gmin   (*this, STR("G :" ), -5, -10 , 10,"kcal/mol"),     _Gmax  (*this, STR(""), -1, -10, 10, "kcal/mol" ),
-          _Tmmin  (*this, STR("Tm :"), 57, 40 , 60,"°C"),           _Tmmax  (*this, STR(""), 63, 45, 75, "°C"  ),
-      _Lengthmin  (*this, STR("Length:"), 20, 15 , 35,"nt"),    _Lengthmax  (*this, STR(""), 35, 15, 40, "nt"  ),
-          _MinG   (*this, STR("Min G" ), 15, -10 , 30,"kcal/mol"),   _MaxG  (*this, STR("Max G"), 10, -10, 30, "kcal/mol" ),
-          _MinTm  (*this, STR("Tm :"), 30, 10 , 60,"°C"),          _MaxTm  (*this, STR("Max Tm"), 10, -10, 75, "°C"  ),
-         _MinSelfG(*this, STR("Min G" ), 10, -10 , 30,"kcal/mol"), _MaxSelfTm(*this, STR("Max Tm"), 10, -10, 75, "°C"  )
+          nTsec_  (*this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt") ),
+          _Gmin   (*this, STR("G :"    ), -5, -10 , 10,"kcal/mol"),      _Gmax  (*this, STR(""), -1, -10, 10, "kcal/mol" ),
+          _Tmmin  (*this, STR("Tm :"   ), 57,  40 , 60,"°C"      ),     _Tmmax  (*this, STR(""), 63,  45, 75, "°C"       ),
+      _Lengthmin  (*this, STR("Length:"), 20,  15 , 35,"nt"      ), _Lengthmax  (*this, STR(""), 35,  15, 40, "nt"       ),
+      numUpDw_MinTargCov(*this, STR("Min. target coverage:"), 99.0, 0.0 , 100.0,"%"),
+          _MinG   (*this, STR("Min G" ), 15, -10 , 30,"kcal/mol"),    _MaxG  (*this, STR("Max G" ), 10, -10, 30, "kcal/mol" ),
+          _MinTm  (*this, STR("Tm :"  ), 30,  10 , 60,"°C"      ),   _MaxTm  (*this, STR("Max Tm"), 10, -10, 75, "°C"       ),
+         _MinSelfG(*this, STR("Min G" ), 10, -10 , 30,"kcal/mol"), _MaxSelfTm(*this, STR("Max Tm"), 10, -10, 75, "°C"       ),
+          _design (*this, STR("Design !" )),  
+          _compare(*this, STR("Compare !"))
     {
-        nTsec_._DefLayout=("vertical   <weight=1>    "
-                 "  <weight=20 <weight=3><   vertical weight=100 <><label weight=15><>     ><weight=1>     "
-		         "			   <cbFL >       "
-		         "			   <pick weight=30>  "
-		         "			   <weight=3> 	>            <weight=2>    ");
+                background (0xAAAAAA);
 
+        //nTsec_._DefLayout=("vertical   <weight=1>    "
+        //         "  <weight=20 <weight=3><   vertical weight=100 <><label weight=15><>     ><weight=1>     "
+		      //   "			   <cbFL >       "
+		      //   "			   <pick weight=30>  "
+		      //   "			   <weight=3> 	>            <weight=2>    ");
 
+        _findSond << link (   _Pr._SdDes.G_sig ,            _MaxG     )    
+                  << link (   _Pr._SdDes.Tm_sig ,           _MinTm    )
+                  << link (   _Pr._SdDes.MinSd_nTgG,        _MinG     )
+                  << link (   _Pr._SdDes.MaxSd_nTgTm,       _MaxTm    )
+                  << link (   _Pr._SdDes.MinSelfG,          _MinSelfG )
+                  << link (   _Pr._SdDes.MaxSelfTm,         _MaxSelfTm)
+                  << link (   _Pr._SdDes.sL.G,        _Gmin,_Gmax     )
+                  << link (   _Pr._SdDes.sL.T,       _Tmmin,_Tmmax    )
+                  << link (  _Pr._SdDes.sL.L,    _Lengthmin,_Lengthmax)
+                  << link ( _Pr._SdDes.MinTgCov,    numUpDw_MinTargCov)	
 
-                 _MaxG.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
-                {  
-                    std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: (set in FindSond Constr), NumerUnitUpDown: ";
-                    std::wcerr<< _Titel << std::endl;
-                    //if (!ei.focus.getting) 
-                    //    validate_edit( );
-                }); 
-
-
-        _findSond << link (   _Pr._SdDes.G_sig ,        _MaxG     )    
-                  << link (   _Pr._SdDes.Tm_sig ,       _MinTm    )
-                  << link (   _Pr._SdDes.MinSd_nTgG,    _MinG     )
-                  << link (   _Pr._SdDes.MaxSd_nTgTm,   _MaxTm    )
-                  << link (   _Pr._SdDes.MinSelfG,      _MinSelfG )
-                  << link (   _Pr._SdDes.MaxSelfTm,     _MaxSelfTm)
-                  << link (   _Pr._SdDes.sL.G,        _Gmin,_Gmax )
-                  << link (   _Pr._SdDes.sL.T,      _Tmmin,_Tmmax )
-                  << link (  _Pr._SdDes.sL.L,_Lengthmin,_Lengthmax)
 
 
                   //<< link (  _Pr._cp.  ,               nTsec_)
@@ -386,7 +452,13 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         SelectClickableWidget( nTsec_);
         SelectClickableWidget( *this);
 
-    }
+        _design .make_event<nana::gui::events::click>([&]() 
+        {
+            Run_Design(true );  });    
+        _compare.make_event<nana::gui::events::click>([&]() 
+        {
+            Run_Design(false);  });  
+     }
    TmCalcPage::TmCalcPage        (ThDyNanaForm& tdForm)
         : _Pr           (tdForm), 
           CompoWidget  (tdForm, STR("Tm Calc"), STR("Tm Calc.lay.txt")),
@@ -447,24 +519,24 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         SelectClickableWidget( *this);
     }
 
-int main()
+int main() try
 {
 	IParBind::SetDef(PriorizeDefault::Parametr );
 
     ThDyNanaForm tdForm;
 	tdForm.show();
-    try {
-	        nana::gui::exec();
-
-        } catch (std::exception e)
-        {
-            std::cout<< std::endl<< e.what();
-            throw ;
-        } catch (...)
-        {
-            std::cout<< std::endl<< "exeption !!";
-            throw ;
-        }
+	nana::gui::exec();
 	return 0;
-}
+
+} 
+catch (std::exception& e)
+    {
+        std::cerr<< std::endl<< e.what();
+        throw ;
+    } 
+catch (...)
+    {
+        std::cerr<< std::endl<< "exeption !!";
+        throw ;
+    }
 
