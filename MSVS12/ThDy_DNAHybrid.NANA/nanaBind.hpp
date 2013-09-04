@@ -89,10 +89,11 @@ public:
     }
 
     void          updateForm(nana::string val){ _w.caption (val); 
-    }
+                                              }
     nana::string  getFormVal(       ){ return   _w.caption (   );
-    }
+                                     }
 };
+
 
 class Bind_checkbox : public nanaWidgetBind  
 { 	
@@ -100,9 +101,9 @@ class Bind_checkbox : public nanaWidgetBind
     Bind_checkbox ( nana::gui::checkbox& c):nanaWidgetBind(c){} 
 
     void updateForm(bool val){  static_cast <nana::gui::checkbox&>(_w).check  (val); 
-    }
-    bool getFormVal(){  return  static_cast <nana::gui::checkbox&>(_w).checked(   ); 
-    }
+                             }
+    bool getFormVal()/*const*/ {  return  static_cast <nana::gui::checkbox&>(_w).checked(   ); 
+                               }
 };
 class Bind_UnitUpDw : public nanaWidgetBind  
 { 	
@@ -110,13 +111,13 @@ class Bind_UnitUpDw : public nanaWidgetBind
     Bind_UnitUpDw ( nana::gui::NumUnitUpDown & c):nanaWidgetBind(c/*,c._num._num*/){} 
 
     void   updateForm(double val){  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (val); 
-    }
-    double getFormVal(  ){  return  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (   ); 
-    }
+                                 }
+    double getFormVal(  )/*const*/{  return  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (   ); 
+                                  }
     void   updateForm(double val, const CUnit::unit_name &un){  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (val, un);
-    }
-    double getFormVal(const CUnit::unit_name &un    ){  return  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (un     );
-    }
+                                                             }
+    double getFormVal/*const*/(const CUnit::unit_name &un    ){  return  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (un     );
+                                                              }
 };
 class Bind_NumUpDw : public nanaWidgetBind  
 { 	
@@ -126,6 +127,10 @@ class Bind_NumUpDw : public nanaWidgetBind
     void   updateForm(double val){  static_cast <nana::gui::NumerUpDown&>(_w).Value  (val); }
     double getFormVal(  ){  return  static_cast <nana::gui::NumerUpDown&>(_w).Value  (   ); }
 };
+
+
+
+
 
 class Bind_CParamC_str_widget : public nanaWidgetBind, public Bind_CParamC_str  
 { 	
@@ -157,9 +162,9 @@ class Bind_NumR_UnitUpDw   : public Bind_UnitUpDw, public Bind_CParamRang<Num>
     } 
 
     void	UpDateForm(	 )	override {     updateForm(getProgVal(), _p.Unit() ); 
-    }
+                                     }
 	void	UpDateProg(	 )	override {     updateProg(getFormVal(   _p.Unit())); 
-    }
+                                     }
 };
    template <class Num> 
 class Bind_MinMaxUnitUpDw : public BindGroup 
@@ -172,6 +177,22 @@ class Bind_MinMaxUnitUpDw : public BindGroup
     }
 };
 
+template <typename enumType>
+class Bind_EnumRange_combox   : public nanaWidgetBind, public Bind_CParamEnumRange<enumType>
+{ 	
+ public:				
+    Bind_EnumRange_combox (CParamEnumRange<enumType>&  p, nana::gui::combox& c, bool initialize=true)
+                       :Bind_CParamEnumRange<enumType> (p),    nanaWidgetBind(c)
+    {
+        if (initialize)
+            for (const auto& e: p.StrValues())//static_cast <CParamEnumRange<enumType>& >(_p)
+                c.push_back (nana::charset (e.first));
+        SetDef();
+    } 
+
+    void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
+	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )).c_str());}
+};
 
 
 upPbind link(CParamC_str &p,            nana::gui::widget&      w)
@@ -186,18 +207,22 @@ upPbind link(CParamBool &p,             nana::gui::checkbox&    c)
 {
     return  upPbind(new BindBool (p, c));
 }
-    template <class Num> 
+             template <class Num> 
 upPbind link(CParamNumRange<Num>  &p, nana::gui::NumUnitUpDown& c)
 {
     return  upPbind(new  Bind_NumR_UnitUpDw<Num> (p,  c) );
 }
-    template <class Num> 
+             template <class Num> 
 upPbind link(CParamNumMinMax<Num> &p, nana::gui::NumUnitUpDown& min, 
                                       nana::gui::NumUnitUpDown& max)
 {
     return  upPbind(new  Bind_MinMaxUnitUpDw<Num> (p,min,max) );
 }
-
+             template <typename enumType>
+upPbind link(CParamEnumRange<enumType>& p, nana::gui::combox& c, bool initialize=true)
+{
+    return  upPbind(new  Bind_EnumRange_combox<enumType>(p,c,initialize));
+}
 
 
 

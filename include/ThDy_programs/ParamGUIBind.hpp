@@ -101,64 +101,33 @@ class Bind_CParamRang  : public ProgPBind
     Bind_CParamRang (CParamNumRange<Num> &p ):ProgPBind(p){} 
 
     void updateProg (Num val) { static_cast <CParamNumRange<Num>& >(_p).set  (val); 
-    }
+                              }
     Num  getProgVal (){ return  static_cast <CParamNumRange<Num>& >(_p).get  () ; 
-    }
+                      }
 };
 
-template <class Num>
-class Bind_CParamRang_Min  : public ProgPBind //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
+template <typename enumType>
+class Bind_CParamEnumRange: public ProgPBind
 { 	
  public:				
-    Bind_CParamRang_Min (CParamNumMinMax &p ):ProgPBind(p){} 
+    Bind_CParamEnumRange (CParamEnumRange<enumType> &p ):ProgPBind(p){} 
 
-    void updateProg(bool val){ static_cast <CParamBool&         >(_p).set    (val); }
-    bool getProgVal(){ return  static_cast <CParamBool&         >(_p).get    () ; }
+    void updateProg (const std::string& val) { static_cast <CParamEnumRange<enumType>& >(_p).set  (val); 
+                              }
+    std::string  getProgVal (){ return  static_cast <CParamEnumRange<enumType>& >(_p).ToString  () ; 
+                      }
 };
 
-
-
-
-//	template<typename Num>
-//ref		  class TagBinding_Rang_Min_b    : public TagBinding //    Bind a NumericUpDown.Value with a min of NumRang float variable ---- TagBinding_Rang_Min_b    :
-//{ 	protected:	float			_k ;
-//				NumRang<Num> &_p;
-//
-//	public:				TagBinding_Rang_Min_b (NumRang<Num> &p, NumericUpDown^ c, float k)	:TagBinding(c)	, _p(p), _k(k){ }
-//
-//	virtual void		set(Object^ f)	override{	_p.SetMin( (Num)(_k * Decimal::ToSingle( *(Decimal^)(f) ))); }
-//	virtual Object^		get(		 )	override{ return  gcnew Decimal(	_p.Min() / _k) ; }
-//	virtual void		UpDateForm(	 )	override{	   ((NumericUpDown^)(_c))->Value =  *(Decimal^) get()	;}
-//	virtual void		UpDateP(	 )	override{ set( ((NumericUpDown^)(_c))->Value )  					;}	
-//};
-//	template<typename Num>
-//ref		  class TagBinding_Rang_Min    : public TagBinding_Rang_Min_b<Num> //    Bind a NumericUpDown.Value with a a min of NumRang float variable ---- TagBinding_Rang_Min
-//{ 	public:				TagBinding_Rang_Min (NumRang<Num> &p, NumericUpDown^ c, float k)	:TagBinding_Rang_Min_b<Num>(p,c,k)	{ SetDef()		;}
-//};
-//	template<typename Num>
-//ref		  class TagBinding_Rang_Max    : public TagBinding_Rang_Min_b<Num> //    Bind a NumericUpDown.Value with a a max of NumRang float variable ---- TagBinding_Rang_Max
-//{ 	public:				TagBinding_Rang_Max (NumRang<Num> &p, NumericUpDown^ c, float k)	:TagBinding_Rang_Min_b<Num>(p,c,k)	{ SetDef()		;}
-//	virtual void		set(Object^ f)	override{	_p.SetMax((Num)(_k * Decimal::ToSingle( *(Decimal^)(f) ))); }
-//	virtual Object^		get(		 )	override{ return  gcnew Decimal(	_p.Max() / _k) ; }
-//};
-//	template<typename Num>
-//ref		  class TagBinding_Rang    : public TagBindGroup //    Bind a NumericUpDown.Value with a float variable ---- TagBinding_Dec    :
-//{ 	public:				TagBinding_Rang (NumericUpDown^ cmin, NumericUpDown^ cmax, NumRang<Num> &p, float k)
-//							{   Add( gcnew TagBinding_Rang_Min<Num>(p,cmin,k));
-//								Add( gcnew TagBinding_Rang_Max<Num>(p,cmax,k));}
-//};
-//					TagBinding_C_str^		TagBind		(Control^	c	, C_str &s							);
-//					TagBinding_strTrim^		TagBind_Trim(Control^	c	, C_str &s							);
-//template<class Num>	TagBinding_Dec<Num>^	TagBind(NumericUpDown^ c, Num &p, float k						){ return gcnew TagBinding_Dec<Num>(p,c,k)	;}	
-//template<class Num>	TagBinding_Dec<Num>^	TagBind(NumericUpDown^ c, Num &p								){ return TagBind<Num>(c,p,1)	;}	
-//template<class Num>	TagBinding_Rang<Num>^	TagBind(NumericUpDown^ cmin, NumericUpDown^ cmax, NumRang<Num> &p, float k){ return gcnew TagBinding_Rang<Num>(cmin, cmax,p,k)	;}	
-//template<class Num>	TagBinding_Rang<Num>^	TagBind(NumericUpDown^ cmin, NumericUpDown^ cmax, NumRang<Num> &p		  ){ return TagBind<Num>(cmin, cmax,p,1)	;}	
-//
-//TagBinding_bool^	TagBind(CheckBox^	  c , bool  &p			);
-//
-//}
-//
 }
 #endif
 
 
+//template <class Num>
+//class Bind_CParamRang_Min  : public ProgPBind //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
+//{ 	
+// public:				
+//    Bind_CParamRang_Min (CParamNumMinMax &p ):ProgPBind(p){} 
+//
+//    void updateProg(bool val){ static_cast <CParamBool&         >(_p).set    (val); }
+//    bool getProgVal(){ return  static_cast <CParamBool&         >(_p).get    () ; }
+//};
