@@ -88,14 +88,14 @@ public:
 
 class CSec : public CLink, public CSecBasInfo	// ---------------------------------------   CSec	---------------------------------------------------
 {public:
-	CSec (  const char  *sec, 
-            int          id, 
+	CSec (  const char          *sec, 
+            int                 id, 
             const std::string&  nam,     // char*
             std::shared_ptr<CSaltCorrNN>  NNpar, 
-            long         l=0, 
-            long         secBeg=1, 
-            const std::string& clas="", 
-            float        conc=-1);
+            long                lmax=0, //< limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
+            long                secBeg=1, 
+            const std::string&  clas="", 
+            float               conc=-1         );
 	CSec ( long l, std::shared_ptr<CSaltCorrNN>  NNpar) ;
 
 	    int                     x;
@@ -415,6 +415,7 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 		std::string			_name ;							// nombre unico?  
  		int					_ID ;							// num original?? en total??, num unico?
 		NumRang<LonSecPos>  _SecLim;					// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
+        LonSecPos           _MinSecLen;
 		float				_MaxTgId ;					// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
 		std::shared_ptr<CSaltCorrNN>	_NNPar ;		// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
 		CMultSec			*_parentMS	;								//std::weak_ptr<CMultSec> _parentMS	;
@@ -442,20 +443,21 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 
 explicit CMultSec (const std::string &Name  ) 
 				: _MaxTgId	(100), 
-				  _SecLim	(1,0),					//_SecBeg(1), _SecEnd(0), /*_Len(0),_TLen(0),*/
+				  _SecLim	(1,0),	_MinSecLen(0),				//_SecBeg(1), _SecEnd(0), /*_Len(0),_TLen(0),*/
 				 _Consenso	(nullptr),				
 				 _parentMS	(nullptr),
 			 	 _name		(trim_string(Name)),
 				 _ID		(NewMS_ID())
 		{	} 
 
-		 CMultSec (	const char	 *file	, 
+		 CMultSec (	const char	  *file	, 
 					std::shared_ptr<CSaltCorrNN>  NNpar	, 
-					float		  MaxTgId	=100, 
-					NumRang<long> SecLim	= NumRang<long> (1,0)	/* long SecBeg=1, long SecEnd=0*/  
+					float		   MaxTgId	=100, 
+					NumRang<long>  SecLim	= NumRang<long> (1,0),	/* long SecBeg=1, long SecEnd=0*/ 
+                    LonSecPos     MinSecLen =0
 				 ) :	/*_name(trim_string(file)),	*/
 						_SecLim		(SecLim),	
-						_MaxTgId	(MaxTgId),
+						_MaxTgId	(MaxTgId),_MinSecLen(MinSecLen),
 						_Consenso	(nullptr),			
 						_parentMS	(nullptr),
 						_NNPar		(NNpar)	,
@@ -466,10 +468,11 @@ explicit CMultSec (const std::string &Name  )
 		 CMultSec (	ifstream &	 file	,		// TODO: Unificar estos dos constr.
 					std::shared_ptr<CSaltCorrNN>  NNpar	, 
 					float		  MaxTgId	=100, 
-					NumRang<long> SecLim	= NumRang<long> (1,0)	/* long SecBeg=1, long SecEnd=0*/  
+					NumRang<long> SecLim	= NumRang<long> (1,0),	/* long SecBeg=1, long SecEnd=0*/  
+                    LonSecPos     MinSecLen =0
 				 ) :	/*_name(trim_string(file)),	*/
 						_SecLim		(SecLim),	
-						_MaxTgId	(MaxTgId),
+						_MaxTgId	(MaxTgId),_MinSecLen(MinSecLen),
 						_Consenso	(nullptr),			
 						_parentMS	(nullptr),
 						_NNPar		(NNpar)	,
@@ -480,7 +483,7 @@ explicit CMultSec (const std::string &Name  )
 explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar) 
 			: 
 			  _MaxTgId(100), 
-			  _SecLim(1,0),					
+			  _SecLim(1,0),	_MinSecLen(0),				
 			  _Consenso(nullptr), 
 			  _NNPar (NNpar),
 			  _parentMS(nullptr),
@@ -489,7 +492,7 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar)
 
 explicit CMultSec (CMultSec	*ms, const std::string &Name="") 
 			: _name		(trim_string(Name)),
-			  _MaxTgId	(ms->_MaxTgId), 
+			  _MaxTgId	(ms->_MaxTgId), _MinSecLen(ms->_MinSecLen ),
 			  _SecLim	(ms->_SecLim),					
 			  _Consenso	(nullptr), 
 			  _NNPar	(ms->_NNPar),

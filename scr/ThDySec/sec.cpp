@@ -69,10 +69,18 @@ char *ChangeCharStrAttaching(char *&CharStrToChange, const int Attach)
 									_name( trim_string	(nam )),	
 								_Clas(clas )
 		{}
-		CSec::CSec (const char *sec, int id, const std::string& nam, std::shared_ptr<CSaltCorrNN> NNpar, long lmax, long secBeg,  const std::string& clas, float conc) 
+		CSec::CSec (    const char          *sec, 
+                        int                 id, 
+                        const std::string&  nam, 
+                        std::shared_ptr<CSaltCorrNN> NNpar, 
+                        long                lmax, 
+                        long                secBeg,  
+                        const std::string&  clas, 
+                        float               conc        ) 
 			:	CSecBasInfo ( id, nam, clas) ,		
-				_NNpar	( NNpar),	_parentMS(nullptr),			
-				_Conc	( conc )			
+				_NNpar	    ( NNpar),	
+                _parentMS   (nullptr),			
+				_Conc	    ( conc )			
 							//_ID		( id ), 		_GCp	( 0 ), 	_GrDeg	( 1 ), 	_NDB	( 0 ),	_NonDegSet( 0 )
 {		//assert (nam);		_name	= clone_trim_str	(nam );					auto_ptr<char> ap_name(_name);
 		//					_Clas	= clas ? clone_c_str (clas) : nullptr ;		auto_ptr<char> ap_Clas(_Clas);
@@ -587,7 +595,7 @@ int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // -------------------    Add
 				else				 Fasta_SEC=Fasta_SEC.substr(_SecLim.Min()-1 ) ;					// hasta el final
 				CSec *sec=  new CSec(Fasta_SEC.c_str() , _Local._NSec, Fasta_NAME.c_str() , _NNPar); assert(sec);
 						
-				if ( sec->Len() >= _SecLim.Min()   )		
+				if ( sec->Len() >= _MinSecLen   )		
 				{	
 					CSec *idem=Idem(*sec);
 					InsertSecAfter ( sec , idem) ;	
@@ -740,7 +748,7 @@ int		CMultSec::AddFromFileBLAST (ifstream &ifile) // ----------------  CMultSec:
 														id,			//Hit_num   ???		//	char		*	nam,		Hit_def
 														_NNPar /*,  	//	long l=0,	(Hit_len ---> NO ) !!!  -->_Hsp_align_len -OK clas,	conc*/
 														);
-				if ( secH->Len() >= _SecLim.Min()   )		
+				if ( secH->Len() >= _MinSecLen  )		
 				{	
 					CSec *idem=Idem(*secH);
 					InsertSecAfter (secH  , idem) ;	
@@ -808,7 +816,7 @@ int		CMultSec::AddFromFileGBtxt (ifstream &ifile) // ----------------  CMultSec:
 												sec	,	
 												id,								//	char		*	nam,	DEFINITION	,	
 												_NNPar);
-				if ( secGBtxt->Len() >= _SecLim.Min()   )		
+				if ( secGBtxt->Len() >= _MinSecLen   )		
 				{	
 					CSec *idem=Idem(*secGBtxt);
 					InsertSecAfter (secGBtxt  , idem) ;	
@@ -891,7 +899,7 @@ int		CMultSec::AddFromFileGB (ifstream &ifile)  // ----------------  CMultSec:: 
 										);
 			delete []sec ;
 
-				if ( secGB->Len() >= _SecLim.Min()   )		
+				if ( secGB->Len() >= _MinSecLen  )		
 				{	
 					CSec *idem=Idem(*secGB);
 					InsertSecAfter (secGB  , idem) ;	

@@ -29,7 +29,10 @@ CMultSec* ThDyCommProgParam::AddSeqFromFile(CMultSec   *parentGr, const std::str
 	if (! _pSaltCorrNNp)
 		_pSaltCorrNNp=Create_NNpar(*this);			//Comprobar que no ha cambiado????????
 
-	CMultSec *sG=new CMultSec (FileName.c_str(), _pSaltCorrNNp);
+	CMultSec *sG=new CMultSec (FileName.c_str(), _pSaltCorrNNp,
+								    _MaxTgId,
+								    _SecLim ,
+                                    _MinSecLen);
 	if(parentGr)
 		parentGr->AddMultiSec(sG);
 	return sG;
