@@ -61,7 +61,7 @@ public:
 	bool		Selected(bool select)	{return _selected=select;} 			//< make protected: ??
 	bool		Selected(		) const {return _selected;}					 //< User-editable
 	void				Description (std::string	description)		{ _description=description;}
-	virtual std::string	Description ()const	{return _description.length() ? _description : Name() ; }
+	virtual std::string	Description ()const	{return !_description.empty() ? _description : Name() ; }
 
 	virtual Base		*GetCopyFullSec	(						)override
 								{	Base *s=new Base[Len()+3]; 
@@ -175,7 +175,7 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 					NumRang<long>	SecLim,			                 //long	SecBeg,long	SecEnd,
 					int				id,				                 //	Hit_num	char	*	nam,	Hit_def
                     std::shared_ptr<CSaltCorrNN>  NNpar,			 //	long  l=0,	Hit_len ------> _Hsp_align_len
-					char		*	clas=nullptr, 
+					std::string	    clas="", 
 					float			conc=-1
 				)  :
 						CSec (  sec,   

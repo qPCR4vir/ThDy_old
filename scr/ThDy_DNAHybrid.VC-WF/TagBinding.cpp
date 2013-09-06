@@ -20,12 +20,12 @@ TagBinding_bool^	TagBind(CheckBox^	  c , bool  &p			){ return gcnew TagBinding_b
 
 //using namespace System;   // http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.marshal.stringtohglobalansi.aspx
 //using namespace System::Runtime::InteropServices;
-char *CreateCharFromManString(String ^Text)   //   ---> StringToHGlobalAnsi : http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.marshal.stringtohglobalansi.aspx
+char *CreateCharFromManString(String ^text)   //   ---> StringToHGlobalAnsi : http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.marshal.stringtohglobalansi.aspx
 {	size_t					convertedChars	= 0;
-	size_t					sizeInBytes		= ((Text->Length + 1) * 2);
+	size_t					sizeInBytes		= ((text->Length + 1) * 2);
 	errno_t					err				= 0;
 	char					*CharText		= new char [sizeInBytes];
-	pin_ptr<const wchar_t>  wchText			= PtrToStringChars(Text);
+	pin_ptr<const wchar_t>  wchText			= PtrToStringChars(text);
 	
 	err = wcstombs_s ( &convertedChars, 
 						CharText, 
@@ -42,6 +42,15 @@ char *CreateCharFromManString(String ^Text)   //   ---> StringToHGlobalAnsi : ht
 
 
 }
+std::string CreateStdFromManString (String ^Text)   //   ---> StringToHGlobalAnsi : http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.marshal.stringtohglobalansi.aspx
+{	
+	char		*CharText= CreateCharFromManString(Text) 	;
+    std::string  res(CharText);
+    delete [] CharText;
+    return res;
+}
+
+
 }
 
 

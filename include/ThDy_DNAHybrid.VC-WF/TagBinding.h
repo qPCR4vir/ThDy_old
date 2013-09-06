@@ -16,7 +16,8 @@ namespace TagBindingNS
 	using namespace System::Drawing;
 	using namespace System::Collections::Generic;
 
-char *CreateCharFromManString(System::String ^Text);		//char *CreateTrimCharFromManString(System::String ^Text);
+char       *CreateCharFromManString(System::String ^Text);		//char *CreateTrimCharFromManString(System::String ^Text);
+std::string CreateStdFromManString (System::String ^Text);	
 	
 
 void			UpDateP		(Control^  control);          // Posible because in .NET all control have a Tag^
