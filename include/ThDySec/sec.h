@@ -88,7 +88,7 @@ public:
 
 class CSec : public CLink, public CSecBasInfo	// ---------------------------------------   CSec	---------------------------------------------------
 {public:
-	CSec (  const char          *sec, 
+	CSec (  const std::string&  sec, 
             int                 id, 
             const std::string&  nam,     // char*
             std::shared_ptr<CSaltCorrNN>  NNpar, 

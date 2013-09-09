@@ -67,6 +67,7 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 		tg.reset ( new CMultSec	(	IPrgPar_SdDes->_cp._InputTargetFile.Get(), NNpar,
 								    IPrgPar_SdDes->_cp._MaxTgId,
 								    IPrgPar_SdDes->_cp._SecLim  ));		
+	//return 1;
 	time_t t_sec = time(NULL);
 
 	CMSecCand	msCand	(	

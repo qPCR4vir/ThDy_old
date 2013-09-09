@@ -69,34 +69,62 @@ char *ChangeCharStrAttaching(char *&CharStrToChange, const int Attach)
 									_name( trim_string	(nam )),	
 								_Clas(clas )
 		{}
-		CSec::CSec (    const char          *sec, 
-                        int                 id, 
-                        const std::string&  nam, 
-                        std::shared_ptr<CSaltCorrNN> NNpar, 
-                        long                lmax, 
-                        long                secBeg,  
-                        const std::string&  clas, 
-                        float               conc        ) 
-			:	CSecBasInfo ( id, nam, clas) ,		
-				_NNpar	    ( NNpar),	
-                _parentMS   (nullptr),			
-				_Conc	    ( conc )			
-							//_ID		( id ), 		_GCp	( 0 ), 	_GrDeg	( 1 ), 	_NDB	( 0 ),	_NonDegSet( 0 )
-{		//assert (nam);		_name	= clone_trim_str	(nam );					auto_ptr<char> ap_name(_name);
-		//					_Clas	= clas ? clone_c_str (clas) : nullptr ;		auto_ptr<char> ap_Clas(_Clas);
+CSec::CSec (    const std::string&  sec, 
+                int                 id, 
+                const std::string&  nam, 
+                std::shared_ptr<CSaltCorrNN> NNpar, 
+                long                lmax,   /// lamx - limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
+                long                secBeg,  
+                const std::string&  clas, 
+                float               conc        ) 
+:	CSecBasInfo ( id, nam, clas) ,		
+	_NNpar	    ( NNpar),
+    _parentMS   ( nullptr),		/*_c( nullptr),*/	 _b( nullptr),	 _SdS( nullptr),	 _SdH( nullptr),	 		
+	_Conc	    ( conc )
+							//	_GCp	( 0 ), 	_GrDeg	( 1 ), 	_NDB	( 0 ),	_NonDegSet( 0 )
+{		
 		if (secBeg<1) secBeg=1;
+        _len  = 0 ;
 
-		assert (sec);		
-		long sl	 ;		// seguro?????     "Midamos" la sec. Long de sec orig (sl) y  num de bases validas despues de secBeg (_len) 
-		if (lmax)			// limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
-		{	for (  sl= 0 ; sec[sl] && sl<secBeg-1 ; sl++)  ;		// salta las primeras secBeg-1 bases 
-			long secEnd=sl+lmax ;
-			for (_len= 0 ; sec[sl] && sl<secEnd   ; sl++) if( is_degbase	[Base (sec[sl])] ) _len++ ;	// salta no-bases 
+        LonSecPos sb,        se,  sp,      /// s - string seq. Original string text of the seq.  (index in sec[])
+                  ob=secBeg, oe,  op,      /// o - original "abstract" seq for with s intent to be the representation
+                  fb,        fe,  fp;      /// f - filtred seq, or what will be the resulting seq   (index in _c[], _b, etc.)
+               //  beg ,      end, position  
+
+        const LonSecPos sLen=sec.length();
+			
+        for (sp= 0, op= 0 ; sp<sLen   ; sp++) 	// salta no-bases y las primeras secBeg-1 bases 
+            if( is_degbase	[Base (sec[sp])] ) 
+            {   
+                if ( op == ob-1 )
+                    break;
+                ++op ;
+            }  
+        if ( sp >= sLen-1 )   /// return if only 0 or 1 base to analize
+            return;
+        sb=sp; 
+
+ 		if (lmax)			
+		{	
+            oe=ob+lmax-1 ;
+			for (         ; sp<sLen   ; sp++) 
+                if( is_degbase	[Base (sec[sp])] ) 
+                {   
+                    ++op ;
+                    if ( op == oe )
+                        break;
+                }  
 		}else
-		{	for (  sl= 0 ; sec[sl] && sl<secBeg-1 ; sl++)  ;											// salta las primeras secBeg-1 bases 
-			for (_len= 0 ; sec[sl]  			  ; sl++) if( is_degbase	[Base (sec[sl])] ) _len++ ;	// salta no-bases 
+		{	 
+			for (         ; sp<sLen            ; sp++) 
+                if( is_degbase	[Base (sec[sp])] ) 
+                    ++op ;	// salta no-bases 
 		}
-													      // '$' principio y fin de Kadelari.=" TGCA$", + '\0'
+        oe=op ;
+        _len = oe-ob+1;   /// _len is the numer of "bases" to be readed (posible including gaps and deg-bases)
+			              /// as in:" TGCA$" . Dont count the 2 '$' - principio y fin de Kadelari and the final '\0'
+        if ( _len < 2 )   /// return if only 0 or 1 base to analize
+            return;
 		_c   = new Base   [_len+3];      			auto_ptr<Base>	  ap_c  (_c  );
 		_b   = new Base   [_len+3];      			auto_ptr<Base>    ap_b  (_b  );
 		_SdS = new Entropy[_len+2];      			auto_ptr<Entropy> ap_SdS(_SdS);
@@ -104,38 +132,33 @@ char *ChangeCharStrAttaching(char *&CharStrToChange, const int Attach)
 		register Base a_1, a;
 		for (a=0; a<n_dgba; a++)	_Count[a]=0 ;
 
-		long curPos	= 0 ;//descarta no bases
-		_c  [0]	= basek[n_basek-1] ; // '$' principio y fin de Kadelari.=" TGCA$"
+		_c  [0]	= basek[n_basek-1] ; // '$' principio y fin de Kadelari.=" TGCA$"   in fp=0
 		_b  [0]	= n_basek-1 ; 	  	
 		_SdS[0] = _NNpar->GetInitialEntropy(); // Solo dep de las conc, no de la sec. Ajustar primero la conc del target, y despues volverla a poner,?? 
 		_SdH[0] = 0 ;							// y comprobar que se hacen los calculos necesarios
 
+	    a_1=is_degbase	[ sec[sb] ] ; 		// in fp=1 when sp=sb
+		_GCp	+= is_GC	[a_1] ;
+		_GrDeg	*= grad_deg	[a_1] ;
+		_Count  [  db2nu	[a_1]]++ ;
+		if (grad_deg[a_1] >1) _NDB++ ;
+		_c[1] =	a_1 ;
+		_b[1] = a_1 =bk2nu[is_base[a_1]] ;						// que hacer si en la sec hay bases deg que Kadelari no considera?
 
-		long j;
-		for (j=secBeg-1	; j<sl  ;j++)   //solo para la primera base, descarta la primeras secBeg-1 bases y no-bases anteriores
-			if ( a_1=is_degbase	[ sec[j] ] ) 				//if ( ++b_ant < secBeg ) continue ; -significaria contar solo bases validas antes de beg
-			{	_GCp	+= is_GC	[a_1] ;
-				_GrDeg	*= grad_deg	[a_1] ;
-				_Count  [  db2nu	[a_1]]++ ;
-				if (grad_deg[a_1] >1) _NDB++ ;
-				_c[1] =	a_1 ;
-				_b[1] = a_1 =bk2nu[is_base[a_1]] ;						// que hacer si en la sec hay bases deg que Kadelari no considera?
-				curPos= 1 ;
-				break ;
-			}	
-
-		for (j++; curPos <= _len && j<sl ;j++)						// suficiente    curPos <= _len   ???
-			if ( a=is_degbase	[ sec[j] ] ) 	
-			{	curPos++ ;
+		fp= 2 ;
+		for (sp=sb+1; fp <= _len /*&& sp<se*/ ; ++sp)						// suficiente    curPos <= _len   ???
+			if ( a=is_degbase	[ sec[sp] ] ) 	
+			{	
 				_GCp	+= is_GC		[a] ;						// 1-G or C, 0-lo demas.      Y que con las bases deg ??????????????????
 				_GrDeg	*= grad_deg		[a] ;
 				_Count  [  db2nu		[a] ]++ ;
 				if (grad_deg[a] >1) _NDB++ ;
-				_c  [curPos  ] = a ;
-				_b  [curPos  ] = a =bk2nu[is_base[a]] ;				// que hacer si en la sec hay bases deg que Kadelari no considera?
-				_SdS[curPos-1] = _SdS[curPos-2] + NNpar->GetSelfEntr (	a_1 , a);
-				_SdH[curPos-1] = _SdH[curPos-2] + NNpar->GetSelfEnth (	a_1 , a);
+				_c  [fp  ] = a ;
+				_b  [fp  ] = a =bk2nu[is_base[a]] ;				// que hacer si en la sec hay bases deg que Kadelari no considera?
+				_SdS[fp-1] = _SdS[fp-2] + NNpar->GetSelfEntr (	a_1 , a);
+				_SdH[fp-1] = _SdH[fp-2] + NNpar->GetSelfEnth (	a_1 , a);
 				a_1 = a ;
+                fp++ ;
 			}	
 		_c[_len+1]= basek[n_basek-1] ; // '$' principio y fin de Kadelari.=" TGCA$", + '\0'
 		_b[_len+1]=	    n_basek-1  ; 	  	
@@ -144,25 +167,8 @@ char *ChangeCharStrAttaching(char *&CharStrToChange, const int Attach)
 		_GCp	= _GCp*100/_len ;	
 		_Tm.Set( NNpar->CalcTM( _SdS[_len-1], _SdH[_len-1]) ) ; //_maxTm = _minTm =
 
-		//ap_name.release();ap_Clas.release();
-		ap_c.release();ap_b.release();ap_SdS.release();ap_SdS.release();ap_SdH.release();
+		ap_c.release();ap_b.release();ap_SdS.release();ap_SdS.release();ap_SdH.release();// eliminar cambiando por vector
 
-
-		//for (nl=0;		isalpha([nl])
-		//			||	ispunct(nam[nl]) 
-		//			||	isdigit(nam[nl])		;nl++ ) ;
-		////{	if ( nam[nl]==0 )		break;
-		////	if (isspace(nam[nl]) )	break;
-		////}
-		//		assert ( ( (cout << _name << "\t" << _c << "\t" << (_Tm - 273) << " °C" << "\n" ) , 1 ) ) ;
-		//	NNpar->_ConcSd=c1 ; NNpar->_ConcTg=c2	;	// y comprobar que se hacen los calculos necesarios
-		// ver como se usa concPrimers,concSequences
-		//		if (_Conc != -1) _Conc = _NNpar->_ConcSd ;	// concSequences ;	// ajustar primero la conc del target, y despues volverla a poner, 
-//		double c1=_NNpar->_ConcSd, c2=_NNpar->_ConcTg	;	// y comprobar que se hacen los calculos necesarios
-//		// NNpar->Ct1 = NNpar->Ct2	= Conc	;	// por ahoa uso Ct de primers y Ct de target, ambos, nada cambia.	
-//		// ver como se usa concPrimers,concSequences,  USO la conc de PRIMERS
-		//if	(l==0)	l =     sl-secBeg+1   ;
-		//else		l = ( l<sl-secBeg+1 ? l : sl-secBeg+1 ) ;
 }
 
 CSec  * CSec::CreateCopy(DNAStrand strnd) // strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
