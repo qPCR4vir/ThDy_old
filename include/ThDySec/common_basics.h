@@ -267,9 +267,9 @@ inline TemperatureRang KtoC	( TemperatureRang T  ) {	     T.Set( KtoC (     T.Mi
 inline SondeLimits    CtoK	( SondeLimits    sL ) { sL._Tm.Set( CtoK (sL._Tm.Min()) , CtoK (sL._Tm.Max()) ) ; return sL;}
 inline SondeLimits    KtoC	( SondeLimits    sL ) { sL._Tm.Set( KtoC (sL._Tm.Min()) , KtoC (sL._Tm.Max()) ) ; return sL;}
 inline SondeLimits    convCtoK_ctok	( SondeLimits    sL ) { sL._Tm.Set( CtoK (sL._Tm.Min()) , CtoK (sL._Tm.Max()) )		;	
-															sL._G.Set ( sL._G.Min()*1000    , sL._Tm.Max()*1000   )		; return sL;}
+															sL._G.Set ( sL._G.Min()*1000    ,  sL._G.Max()*1000   )		; return sL;}
 inline SondeLimits    convKtoC_ktoc	( SondeLimits    sL ) { sL._Tm.Set( KtoC (sL._Tm.Min()) , KtoC (sL._Tm.Max()) )		;	
-															sL._G.Set ( sL._G.Min()/1000    , sL._Tm.Max()/1000   )		; return sL;}
+															sL._G.Set ( sL._G.Min()/1000    ,  sL._G.Max()/1000   )		; return sL;}
 
 class DegRes			//------------------------------------------------------------	DegRes	-------------------------------------
 {public: float min,ave,max; 
