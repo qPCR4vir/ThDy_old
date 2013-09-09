@@ -1,11 +1,10 @@
-#include "ThDy_DNAHybrid.VC-WF/th_dy_programs.h"  // aqui esta ya : // #include "..\ThDy_programs\init_prog_param.h"  ;    #include "..\ThDySec\common_basics.h" 
 #pragma once
+#include "ThDy_DNAHybrid.VC-WF/th_dy_programs.h"  // aqui esta ya : // #include "..\ThDy_programs\init_prog_param.h"  ;    #include "..\ThDySec\common_basics.h" 
 #include "ThDy_DNAHybrid.VC-WF/Results.h"
-#include "SeqExpl.h" //"ThDy_DNAHybrid.VC-WF/Results.h"
 #include "ThDySec\matrix.h" 
 #include "ThDySec\common_basics.h" 
 #pragma managed
-
+#include "SeqExpl.h" //"ThDy_DNAHybrid.VC-WF/Results.h"
 #include "ThDy_DNAHybrid.VC-WF/TagBinding.h"
 
 namespace ThDy_DNAHybridWF {
@@ -95,7 +94,7 @@ namespace ThDy_DNAHybridWF {
 			delete pr ;
 		}
 
-private: void UpdateThDyForm					()		//  ------------------------ UpdateThDyForm.  Todo el prog		---------------------
+public: void UpdateThDyForm					()		//  ------------------------ UpdateThDyForm.  Todo el prog		---------------------
 			{	UpdateCommThDyForm() ;
 				_uArrThDyP->UpDateForm() ;
 				_mPCRThDyP->UpDateForm () ;
@@ -104,7 +103,7 @@ private: void UpdateThDyForm					()		//  ------------------------ UpdateThDyForm
 
 				this->Update(); 	
 			}
-private: void UpdateThDyP						()	{		UpdateCommThDyP() ;		}////				_uArrThDyP->UpDateP() ;			
+public: void UpdateThDyP						()	{		UpdateCommThDyP() ;		}////				_uArrThDyP->UpDateP() ;			
 
 private: void UpdateCommThDyForm				()		//  -------------------- UpdateCommThDyForm.  Parametros comunes		------
 	{	_CommThDyP->UpDateForm();
@@ -208,7 +207,8 @@ private: System::Void commandSaveResultFile		(System::Object^  sender, System::E
 		 }
 private: System::Void butSeqExplorer_Click		(System::Object^  sender, System::EventArgs^  e) 
 		 {		  try{                                       
-						 _seqExpl->Show();		 
+						 UpdateThDyP(); 
+                         _seqExpl->Show();		 
 		            }
 		          catch ( std::exception& e)
 		          { MessageBox::Show ( gcnew String(e.what())  ) ;
