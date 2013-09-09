@@ -152,9 +152,9 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 	CSecBLASTHit(	unsigned int	BlastOutput_query_len ,
 					// para cada hit
 					unsigned int	Hit_num ,
-					char		*	Hit_id ,				
-					char		*	Hit_def ,				
-					char		*	Hit_accession	,
+					std::string&&   Hit_id ,				
+					std::string&&   Hit_def ,				
+					std::string&&   Hit_accession	,
 					long			Hit_len ,				
 					float			Hsp_bit_score ,
 					unsigned int	Hsp_score ,
@@ -169,18 +169,18 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 					unsigned int	Hsp_positive ,
 					unsigned int	Hsp_gaps ,
 					unsigned int	Hsp_align_len ,
-					char *			Hsp_midline ,
+					std::string&&   Hsp_midline ,
 					bool			FormatOK ,
-					const char	*	sec	,	
+					std::string&&   sec	,	
 					NumRang<long>	SecLim,			                 //long	SecBeg,long	SecEnd,
 					int				id,				                 //	Hit_num	char	*	nam,	Hit_def
                     std::shared_ptr<CSaltCorrNN>  NNpar,			 //	long  l=0,	Hit_len ------> _Hsp_align_len
 					std::string	    clas="", 
 					float			conc=-1
 				)  :
-						CSec (  sec,   
+						CSec (  std::move(sec),   
                                 id,   
-                                Hit_accession,   
+                                std::move(Hit_accession),   
                                 NNpar, 
 								(SecLim.Max() && long(Hsp_query_to) > SecLim.Max()   ) ? SecLim.Max()       - SecLim.Min() +1 
                                                                                        : long(Hsp_query_to) - SecLim.Min() +1	,	//Hsp_align_len,  --  Long
@@ -190,9 +190,9 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 							_BlastOutput_query_len( BlastOutput_query_len ) ,
 							// para cada hit
 							_Hit_num		( Hit_num ) ,
-							_Hit_id			( Hit_id ) ,				
-							_Hit_def		( Hit_def ) ,				
-							_Hit_accession	( Hit_accession )	,
+							_Hit_id			( std::move(Hit_id) ) ,				
+							_Hit_def		( std::move(Hit_def) ) ,				
+							_Hit_accession	( std::move(Hit_accession) )	,
 							_Hit_len		( Hit_len ) ,				
 							_Hsp_bit_score	( Hsp_bit_score ) ,
 							_Hsp_score		( Hsp_score ) ,
@@ -207,7 +207,7 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 							_Hsp_positive	( Hsp_positive ) ,
 							_Hsp_gaps		( Hsp_gaps ) ,
 							_Hsp_align_len	( Hsp_align_len ) ,
-							_Hsp_midline	( Hsp_midline ) ,
+							_Hsp_midline	( std::move(Hsp_midline) ) ,
 							_FormatOK		( FormatOK ) ,
 							_SecLim			( SecLim )	/*,_SecBeg	(SecBeg), 	_SecEnd		(SecEnd)*/
 							{
@@ -217,9 +217,9 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 	unsigned int	_BlastOutput_query_len ;
 	// para cada hit
 	unsigned int	_Hit_num ;
-	char		*	_Hit_id ;				
-	char		*	_Hit_def ;				
-	char		*	_Hit_accession	;
+	std::string	    _Hit_id ;				
+	std::string	    _Hit_def ;				
+	std::string	    _Hit_accession	;
 	long			_Hit_len ;				
 	float			_Hsp_bit_score ;
 	unsigned int	_Hsp_score ;
@@ -234,16 +234,16 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 	unsigned int	_Hsp_positive ;
 	unsigned int	_Hsp_gaps ;
 	unsigned int	_Hsp_align_len ;
-	char *			_Hsp_midline ;
+	std::string	    _Hsp_midline ;
 	bool			_FormatOK ;
-	NumRang<long>	_SecLim;   	//long			_SecBeg;	//long			_SecEnd;
-	//// para CSec	//char	*sec;	//int			id=0;	//char		*nam;	//long		l;	//char		*clas;
+	NumRang<long>	_SecLim;   	                              //long	_SecBeg;	//long	_SecEnd;
 	std::string	Description ()const	override {return _description.length() ? _description : _Hit_def ; }
+	//// para CSec	//char	*sec;	//int			id=0;	//char		*nam;	//long		l;	//char		*clas;
 
-	virtual ~CSecBLASTHit() {	delete []_Hit_id; 
-								delete []_Hit_def;
-								delete []_Hit_accession;
-								delete []_Hsp_midline;	}
+	//virtual ~CSecBLASTHit() {	delete []_Hit_id; 
+	//							delete []_Hit_def;
+	//							delete []_Hit_accession;
+	//							delete []_Hsp_midline;	}
 
 };
 

@@ -622,18 +622,18 @@ int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // -------------------    Add
 	return j;	
 }
 
-int		CMultSec::AddFromFileBLAST (ifstream &ifile) // ----------------  CMultSec::            AddFromFileBLAST  -----------------------------
+int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::            AddFromFileBLAST  -----------------------------
 {	unsigned int	_BlastOutput_query_len ;		// x todos los "hits"
 	int			 id=0;
-	string xml_line ;
+	string li ;  //  xml_line
 
-	do  {	getline (ifile, xml_line,'>') ;			if ( ! ifile.good() ) return 0; }   // BLAST format error
-	while  (string::npos==xml_line.find("BlastOutput_query-len") ); ifile>>_BlastOutput_query_len;//  <BlastOutput_query-len>267</BlastOutput_query-len>
+	do  {	getline (fi, li,'>') ;			if ( ! fi.good() ) return 0; }   // BLAST format error
+	while  (string::npos==li.find("BlastOutput_query-len") ); fi>>_BlastOutput_query_len;//  <BlastOutput_query-len>267</BlastOutput_query-len>
 	
 	do {	unsigned int	_Hit_num=0 ;			// para cada hit
-			char		*	_Hit_id=nullptr ;				
-			char		*	_Hit_def=nullptr ;				// descriptor ??
-			char		*	_Hit_accession=nullptr	;
+			std::string	    _Hit_id  ;				
+			std::string	    _Hit_def ;				// descriptor ??
+			std::string	    _Hit_accession 	;
 			long			_Hit_len=0 ;				
 			float			_Hsp_bit_score=0 ;
 			unsigned int	_Hsp_score=0 ;
@@ -648,92 +648,96 @@ int		CMultSec::AddFromFileBLAST (ifstream &ifile) // ----------------  CMultSec:
 			LonSecPos 		_Hsp_positive=0 ;
 			LonSecPos 		_Hsp_gaps=0 ;
 			LonSecPos 		_Hsp_align_len=0 ;
-			char *			_Hsp_midline=nullptr ;
+			std::string	    _Hsp_midline ;
 			bool			_FormatOK=0 ;
-		char		*sec=nullptr;						// para CSec
-		char		*nam=nullptr;
-		long		 l=0;
-		char		*clas=nullptr;
+		std::string	   sec;						// para CSec
+		std::string	   nam;
+		long		   l=0;
+		std::string	   clas;
 
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  // BLAST format error
-			while  (string::npos==xml_line.find("Hit_num") ) ; ifile>>_Hit_num;					//  <Hit_num>1</Hit_num>
-			
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; } 	//<Hit_id>gi|84028434|gb|DQ318020.1|</Hit_id> 
-			while  (string::npos==xml_line.find("Hit_id") );
-			getline (ifile, xml_line,'<') ;				_Hit_id=new char[xml_line.length()+1] ;
-			xml_line.copy(_Hit_id,xml_line.length()) ;	_Hit_id	[xml_line.length()]=0;
+	while(getline(fi,li,'>')&& string::npos==li.find("Hit_num"      ) ) ;  fi>>_Hit_num;				//  <Hit_num>1</Hit_num>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hit_id"       ) ) ;  getline (fi, _Hit_id, '<') ;	//<Hit_id>gi|84028434|gb|DQ318020.1|</Hit_id> 
+	while(getline(fi,li,'>')&& string::npos==li.find("Hit_def"      ) ) ;  getline (fi, _Hit_def,'<') ;	//<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hit_accession") ) ;  getline (fi, _Hit_accession,'<') ;	//<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hit_len"      ) ) ;  fi>>_Hit_len;				//  <Hit_len>11048</Hit_len> 
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_bit-score") ) ;  fi>>_Hsp_bit_score;			//  <Hsp_bit-score>482.786</Hsp_bit-score>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_score"    ) ) ;  fi>>_Hsp_score;              //  <Hsp_score>534</Hsp_score>		
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_evalue"   ) ) ;  fi>>_Hsp_evalue;		    	//  <Hsp_evalue>3.71782e-133</Hsp_evalue>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_query-from")) ;  fi>>_Hsp_query_from;		    //  <Hsp_query-from>1</Hsp_query-from>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_query-to" ) ) ;  fi>>_Hsp_query_to;			//  <Hsp_query-to>267</Hsp_query-to>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_hit-from" ) ) ;  fi>>_Hsp_hit_from;			//  <Hsp_hit-from>9043</Hsp_hit-from>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_hit-to"   ) ) ;  fi>>_Hsp_hit_to;			    //  <Hsp_hit-to>9309</Hsp_hit-to>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_query-frame"));  fi>>_Hsp_query_frame;		//  <Hsp_query-frame>1</Hsp_query-frame>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_identity" ) ) ;  fi>>_Hsp_identity;			//  <Hsp_identity>267</Hsp_identity>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_positive" ) ) ;  fi>>_Hsp_positive;			//  <Hsp_positive>267</Hsp_positive>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_gaps"     ) ) ;  fi>>_Hsp_gaps;	 		    //  <Hsp_gaps>0</Hsp_gaps>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_align-len") ) ;  fi>>_Hsp_align_len;		    //  <Hsp_align-len>267</Hsp_align-len>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_hseq") ) ;  getline (fi, sec,'<') ;	// <Hsp_hseq>TACAACATGATGGGAAAGAGAGAGAAGAAG 
+if ( ! fi.good() ) return id;
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_midline") ) ;  getline (fi, _Hsp_midline,'<') ;	//       <Hsp_midline>|||||||||||||||||||||||||||||||||||||||||
+if ( ! fi.good() ) return id;
 
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
-			while  (string::npos==xml_line.find("Hit_def") );
-			getline (ifile, xml_line,'<') ; _Hit_def=new char[xml_line.length()+1] ;
-			xml_line.copy(_Hit_def,xml_line.length()) ;	_Hit_def[xml_line.length()]=0;	
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }		//<Hit_accession>DQ318020</Hit_accession>
-			while  (string::npos==xml_line.find("Hit_accession") );
-			getline (ifile, xml_line,'<') ; _Hit_accession=new char[xml_line.length()+1] ;
-			xml_line.copy(_Hit_accession,xml_line.length()) ;	_Hit_accession[xml_line.length()]=0;	
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //  <Hit_len>11048</Hit_len>
-			while  (string::npos==xml_line.find("Hit_len") );ifile>>_Hit_len;			
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //  <Hsp_bit-score>482.786</Hsp_bit-score>
-			while  (string::npos==xml_line.find("Hsp_bit-score") );ifile>>_Hsp_bit_score;			
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //  <Hsp_score>534</Hsp_score>
-			while  (string::npos==xml_line.find(  "Hsp_score"  ) );ifile>>   _Hsp_score   ;			
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //  <Hsp_evalue>3.71782e-133</Hsp_evalue>
-			while  (string::npos==xml_line.find(  "Hsp_evalue"  ) );ifile>>   _Hsp_evalue   ;			
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //  <Hsp_query-from>1</Hsp_query-from>
-			while  (string::npos==xml_line.find(  "Hsp_query-from"  ) );ifile>>   _Hsp_query_from   ;			
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //  <Hsp_query-to>267</Hsp_query-to>
-			while  (string::npos==xml_line.find(  "Hsp_query-to"  ) );ifile>>   _Hsp_query_to   ;			
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //  <Hsp_hit-from>9043</Hsp_hit-from>
-			while  (string::npos==xml_line.find(  "Hsp_hit-from"  ) );ifile>>   _Hsp_hit_from   ;			
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //  <Hsp_hit-to>9309</Hsp_hit-to>
-			while  (string::npos==xml_line.find(  "Hsp_hit-to"  ) );ifile>>   _Hsp_hit_to   ;			
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //  <Hsp_query-frame>1</Hsp_query-frame>
-			while  (string::npos==xml_line.find(  "Hsp_query-frame"  ) );ifile>>   _Hsp_query_frame   ;			
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //  <Hsp_hit-frame>1</Hsp_hit-frame>
-			while  (string::npos==xml_line.find(  "Hsp_hit-frame"  ) );ifile>>   _Hsp_hit_frame   ;			
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //  <Hsp_identity>267</Hsp_identity>
-			while  (string::npos==xml_line.find(  "Hsp_identity"  ) );ifile>>   _Hsp_identity   ;			
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //  <Hsp_positive>267</Hsp_positive>
-			while  (string::npos==xml_line.find(  "Hsp_positive"  ) );ifile>>   _Hsp_positive   ;			
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //  <Hsp_gaps>0</Hsp_gaps>
-			while  (string::npos==xml_line.find(  "Hsp_gaps"  ) );ifile>>   _Hsp_gaps   ;			
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }  //  <Hsp_align-len>267</Hsp_align-len>
-			while  (string::npos==xml_line.find(  "Hsp_align-len"  ) );ifile>>   _Hsp_align_len   ;			
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }	// <Hsp_hseq>TACAACATGATGGGAAAGAGAGAGAAGAAG
-			while  (string::npos==xml_line.find(  "Hsp_hseq"  ) );
-			getline (ifile, xml_line,'<') ;         sec=new char[xml_line.length()+1] ;
-			xml_line.copy(sec,xml_line.length()) ;	sec[xml_line.length()]=0;	
-
-			do  {	getline (ifile, xml_line,'>') ;	if ( ! ifile.good() ) return id; }	//       <Hsp_midline>|||||||||||||||||||||||||||||||||||||||||
-			while  (string::npos==xml_line.find(  "Hsp_midline"  ) );
-			getline (ifile, xml_line,'<') ;         _Hsp_midline=new char[xml_line.length()+1] ;
-			xml_line.copy(_Hsp_midline,xml_line.length()) ;	_Hsp_midline[xml_line.length()]=0;	
-
+            //do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  // BLAST format error
+	//		
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; } 	//<Hit_id>gi|84028434|gb|DQ318020.1|</Hit_id> 
+			//while  (string::npos==li.find("Hit_id") );  				_Hit_id=new char[li.length()+1] ;
+			//li.copy(_Hit_id,li.length()) ;	_Hit_id	[li.length()]=0;
+            //
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
+			//while  (string::npos==li.find("Hit_def") );
+			//getline (fi, li,'<') ; _Hit_def=new char[li.length()+1] ;
+			//li.copy(_Hit_def,li.length()) ;	_Hit_def[li.length()]=0;	
+    //
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }		//<Hit_accession>DQ318020</Hit_accession>
+			//while  (string::npos==li.find("Hit_accession") );
+			//getline (fi, li,'<') ; _Hit_accession=new char[li.length()+1] ;
+			//li.copy(_Hit_accession,li.length()) ;	_Hit_accession[li.length()]=0;	
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  
+			//while  (string::npos==li.find("Hit_len") );fi>>_Hit_len;			
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  
+			//while  (string::npos==li.find("Hsp_bit-score") );fi>>_Hsp_bit_score;			
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }
+			//while  (string::npos==li.find(  "Hsp_score"  ) );fi>>   _Hsp_score   ; 	
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_evalue>3.71782e-133</Hsp_evalue>
+			//while  (string::npos==li.find(  "Hsp_evalue"  ) );fi>>   _Hsp_evalue   ;			
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_query-from>1</Hsp_query-from>
+			//while  (string::npos==li.find(  "Hsp_query-from"  ) );fi>>   _Hsp_query_from   ;			
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_query-to>267</Hsp_query-to>
+			//while  (string::npos==li.find(  "Hsp_query-to"  ) );fi>>   _Hsp_query_to   ;			
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_hit-from>9043</Hsp_hit-from>
+			//while  (string::npos==li.find(  "Hsp_hit-from"  ) );fi>>   _Hsp_hit_from   ;			
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_hit-to>9309</Hsp_hit-to>
+			//while  (string::npos==li.find(  "Hsp_hit-to"  ) );fi>>   _Hsp_hit_to   ;			
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_query-frame>1</Hsp_query-frame>
+			//while  (string::npos==li.find(  "Hsp_query-frame"  ) );fi>>   _Hsp_query_frame   ;			
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_hit-frame>1</Hsp_hit-frame>
+			//while  (string::npos==li.find(  "Hsp_hit-frame"  ) );fi>>   _Hsp_hit_frame   ;			
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_identity>267</Hsp_identity>
+			//while  (string::npos==li.find(  "Hsp_identity"  ) );fi>>   _Hsp_identity   ;			
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_positive>267</Hsp_positive>
+			//while  (string::npos==li.find(  "Hsp_positive"  ) );fi>>   _Hsp_positive   ;			
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_gaps>0</Hsp_gaps>
+			//while  (string::npos==li.find(  "Hsp_gaps"  ) );fi>>   _Hsp_gaps   ;			
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_align-len>267</Hsp_align-len>
+			//while  (string::npos==li.find(  "Hsp_align-len"  ) );fi>>   _Hsp_align_len   ;			
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }	// <Hsp_hseq>TACAACATGATGGGAAAGAGAGAGAAGAAG
+			//while  (string::npos==li.find(  "Hsp_hseq"  ) );
+			//getline (fi, li,'<') ;         sec=new char[li.length()+1] ;
+			//li.copy(sec,li.length()) ;	sec[li.length()]=0;	
+			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }	//       <Hsp_midline>|||||||||||||||||||||||||||||||||||||||||
+			//while  (string::npos==li.find(  "Hsp_midline"  ) );
+			//getline (fi, li,'<') ;         _Hsp_midline=new char[li.length()+1] ;
+			//li.copy(_Hsp_midline,li.length()) ;	_Hsp_midline[li.length()]=0;	
 			// long SecBeg = _SecBeg - _Hsp_query_from +1 ;			// if (_SecBeg >= _Hsp_query_from)
 			//if ( (_SecBeg		<= _Hsp_query_to) && ( (!_SecEnd)		 || _SecEnd		  >=_Hsp_query_from) ) // _SecEnd=0 significa no recortar la sec.
+
 			if ( (_SecLim.Min() <= _Hsp_query_to) && ( (!_SecLim.Max())  || _SecLim.Max() >=_Hsp_query_from) ) // _SecLim.Max()=0 significa no recortar la sec.
 			{	CSecBLASTHit *secH=  new CSecBLASTHit(      _BlastOutput_query_len ,
 														// para cada hit
 														_Hit_num ,
-														_Hit_id ,				
-														_Hit_def ,				
-														_Hit_accession	,
+														std::move(_Hit_id) ,				
+														std::move(_Hit_def) ,				
+														std::move(_Hit_accession)	,
 														_Hit_len ,				
 														_Hsp_bit_score ,
 														_Hsp_score ,
@@ -748,11 +752,11 @@ int		CMultSec::AddFromFileBLAST (ifstream &ifile) // ----------------  CMultSec:
 														_Hsp_positive ,
 														_Hsp_gaps ,
 														_Hsp_align_len ,
-														_Hsp_midline ,
+														std::move(_Hsp_midline) ,
 														_FormatOK ,
-														sec		,_SecLim, // _SecBeg, _SecEnd,
-														id,			//Hit_num   ???		//	char		*	nam,		Hit_def
-														_NNPar /*,  	//	long l=0,	(Hit_len ---> NO ) !!!  -->_Hsp_align_len -OK clas,	conc*/
+														std::move(sec)		,_SecLim,                         // _SecBeg, _SecEnd,
+														id,			                    //Hit_num   ???		//	char	*	nam,	Hit_def
+														_NNPar               /*,  //long l=0,(Hit_len ---> NO ) !!!  -->_Hsp_align_len -OK clas,	conc*/
 														);
 				if ( secH->Len() >= _MinSecLen  )		
 				{	
@@ -763,14 +767,12 @@ int		CMultSec::AddFromFileBLAST (ifstream &ifile) // ----------------  CMultSec:
 						secH->Selected(false);
 						secH->Filtered(true);
 					}
-					else
-						id++;		
+					id++;		
 				}
 				else delete secH;
 			}
-			delete []sec ;
 		}
-	while (ifile.good() ); 
+	while (fi.good() ); 
 	return id; 
 }
 
