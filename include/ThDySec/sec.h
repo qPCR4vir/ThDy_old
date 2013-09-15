@@ -6,6 +6,8 @@
 #include <cassert>
 #include <string>
 #include <memory>
+#include <filesystem>
+
 
 using namespace std;
 
@@ -464,6 +466,9 @@ explicit CMultSec (const std::string &Name  )
 						_ID			(NewMS_ID())			
 				{	
 					AddFromFile (file) ;
+                    std::tr2::sys::path  itf(file);
+	                if(itf.has_filename())
+	                _name=itf.basename();	
 				} 
 		 CMultSec (	ifstream &	 file	,		// TODO: Unificar estos dos constr.
 					std::shared_ptr<CSaltCorrNN>  NNpar	, 

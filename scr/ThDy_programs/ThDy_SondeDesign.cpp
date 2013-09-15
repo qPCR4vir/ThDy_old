@@ -45,6 +45,9 @@ void FindSonden( CMultSec *tg, int& tgN, int& compN, CMSecCand& msCand, ofstream
 int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 {	
 	time_t t_0 = time(NULL);
+
+    IPrgPar_SdDes->_cp.Check_NNp_Targets( );
+
 	string OutputCand = IPrgPar_SdDes->_cp._OutputFile.Get() ; OutputCand += ".TgCand.csv";	ofstream osNCand(OutputCand.c_str());
 	osNCand.precision(2);
 	osNCand	<<endl<<"Num T Pos" <<sep<< "Num T Cand"	
@@ -57,17 +60,6 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 			<<sep<< "Num T Pos" <<sep<< "Num T Cand"	
 			<< fixed			; 
 
-	std::shared_ptr<CSaltCorrNN>  NNpar(IPrgPar_SdDes->_cp._pSaltCorrNNp );
-    if (!NNpar)
-	    NNpar = Create_NNpar(IPrgPar_SdDes->_cp); 	
-	NNpar->SetTa(				CtoK(	IPrgPar_SdDes->_cp._Ta));			// Aqui por si acaso. Revisar.
-
-	std::shared_ptr<CMultSec>  tg(IPrgPar_SdDes->_cp._pSeqTargets );
-    if (!tg || ! tg->_Global._NSec)
-		tg.reset ( new CMultSec	(	IPrgPar_SdDes->_cp._InputTargetFile.Get(), NNpar,
-								    IPrgPar_SdDes->_cp._MaxTgId,
-								    IPrgPar_SdDes->_cp._SecLim ,
-                                    IPrgPar_SdDes->_cp._MinSecLen ));
 	time_t t_sec = time(NULL);
 
 	CMSecCand	msCand	(	

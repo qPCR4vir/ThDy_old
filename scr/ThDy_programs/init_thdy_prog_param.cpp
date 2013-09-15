@@ -5,29 +5,36 @@
 #include "ThDySec/sec.h"
 
 
-ThDyCommProgParam::~ThDyCommProgParam(void)        {/*delete []_ProgList;*/}
+//ThDyCommProgParam::~ThDyCommProgParam(void)        {/*delete []_ProgList;*/}
 
 CProgParam_microArray::~CProgParam_microArray()		{ /*delete _tlTm;*/}
 
 CMultSec* ThDyCommProgParam::CreateRoot	() 
 {
+	//if (! _pSaltCorrNNp)
+	//	_pSaltCorrNNp=Create_NNpar(*this);			//Comprobar que no ha cambiado????????
 	return new CMultSec("All seq");
 }
 CMultSec* ThDyCommProgParam::AddSeqGroup		(CMultSec   *parentGr, const std::string&     Name)
 {
-	if (! _pSaltCorrNNp)
-		_pSaltCorrNNp=Create_NNpar(*this);			//Comprobar que no ha cambiado????????
 	CMultSec *sG=new CMultSec(Name);                // Revisar esto    !!!!!!!!!!!!!!!!
-	sG->_NNPar= _pSaltCorrNNp ;
 	if(parentGr)
-		parentGr->AddMultiSec(sG);
-	return sG;
+	{
+        parentGr->AddMultiSec(sG);
+	    if (  parentGr->_NNPar ) 
+	    {
+            sG->_NNPar= parentGr->_NNPar ;
+            return sG;
+        }
+    }
+	if ( _pSaltCorrNNp)
+            sG->_NNPar= _pSaltCorrNNp ;
+    return sG;
 }
 
 CMultSec* ThDyCommProgParam::AddSeqFromFile(CMultSec   *parentGr, const std::string& FileName)
 {
-	if (! _pSaltCorrNNp)
-		_pSaltCorrNNp=Create_NNpar(*this);			//Comprobar que no ha cambiado????????
+    if (! _pSaltCorrNNp )     Actualice_NNp ();
 
 	CMultSec *sG=new CMultSec (FileName.c_str(), _pSaltCorrNNp,
 								    _MaxTgId,

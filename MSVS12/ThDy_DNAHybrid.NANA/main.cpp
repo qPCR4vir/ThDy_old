@@ -79,6 +79,7 @@ class FindSondenPage : public CompoWidget
         _Pr._SdDes._design	 = design ;		
 		 
 		try{                                   
+		    _Pr._SdDes._cp.Actualice_NNp();  
 		        _Pr.Run(_Pr._SdDes);	 //     _Pr._SdDes.Run ();	
 		}
 		catch ( std::exception& e)
@@ -136,6 +137,7 @@ class TmCalcPage : public CompoWidget
     {
 		try
         {                                   
+		   _Pr._TmCal._cp.Actualice_NNp();  
             _Pr._TmCal.Run ();
 		}
 		catch ( std::exception& e)

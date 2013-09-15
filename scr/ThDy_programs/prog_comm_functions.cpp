@@ -4,22 +4,7 @@
 
 
 
-auto_ptr<CSaltCorrNN> Create_NNpar(ThDyCommProgParam& _cp)
-{
-	auto_ptr<CSaltCorrNN> apNNpar ( new   
-				CSaltCorrNN			(	_cp._ConcSd, 
-										_cp._ConcTg, 
-										_cp._ConcSalt   )); 		CSaltCorrNN& NNpar = *apNNpar.get() ;
-	NNpar.SetTa(				CtoK(	_cp._Ta));			// Aqui por si acaso. Revisar.
 
-	if (_cp._loadNNPar){ifstream isTDP(_cp._InputNNFile.Get());	assert(isTDP);	NNpar.LoadNNParam(isTDP) ;	}
-	if (_cp._saveNNPar)
-	{	string OutputTDP(_cp._OutputFile.Get()) ; 		OutputTDP += ".ThDyParam.csv";
-		ofstream osTDP	(OutputTDP.c_str());				assert(osTDP);	
-		osTDP << NNpar ;
-	}
-	return apNNpar ;
-}
 
 auto_ptr<ThDyAlign> Create_ThDyAlign(ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar)
 {

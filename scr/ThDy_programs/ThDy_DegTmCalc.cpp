@@ -9,24 +9,28 @@ int DegTmCalc ( CProgParam_TmCalc *IPrgPar_Calc)
 {
 	const int MaxGrDeg=300 ;			// crear NonDegSet para las sondas con menos de este gr de deg. Poner como ProgParam??
 
-	std::shared_ptr<CSaltCorrNN>  NNpar(IPrgPar_Calc->_cp._pSaltCorrNNp );
-    if (!NNpar)
-	    NNpar = Create_NNpar(IPrgPar_Calc->_cp); 	
-	NNpar->SetTa(				CtoK(	IPrgPar_Calc->_cp._Ta));			// Aqui por si acaso. Revisar.
-	Temperature Ta=  NNpar->Ta() ; //CtoK(IPrgPar_Calc->_cp._Ta);        //  Aqui no habia puesto CtoK()  // Mejor usar Ta=NNpar->Ta() ;   ??????   
+	//std::shared_ptr<CSaltCorrNN>  NNpar(IPrgPar_Calc->_cp._pSaltCorrNNp );
+ //   if (!NNpar)
+	//    NNpar = Create_NNpar(IPrgPar_Calc->_cp); 	
+	//NNpar->SetTa(				CtoK(	IPrgPar_Calc->_cp._Ta));			// Aqui por si acaso. Revisar.
+	Temperature Ta=  IPrgPar_Calc->_cp._pSaltCorrNNp->Ta() ; //CtoK(IPrgPar_Calc->_cp._Ta);        //  Aqui no habia puesto CtoK()  // Mejor usar Ta=NNpar->Ta() ;   ??????   
+    if (IPrgPar_Calc->_save)  
+        IPrgPar_Calc->_cp.Check_NNp_Targets ();
+    else 
+        IPrgPar_Calc->_cp.Actualice_NNp ( );
 
-	CSec			Sec		  (			IPrgPar_Calc->_Sec.Get() ,		0, "Sec",		NNpar); 
+	CSec			Sec		  (			IPrgPar_Calc->_Sec.Get() ,		0, "Sec",		IPrgPar_Calc->_cp._pSaltCorrNNp); 
 	if (Sec.Len() < 1)  return 0 ; // Error :  no sec !!!!!!
 	Sec.CreateNonDegSet();	
 
 	if (CountDegBases(					IPrgPar_Calc->_Sec2Align.Get())		< 1)				
 										IPrgPar_Calc->Update_Sec_Sec2Align(true,true);	
-	CSec			Sec2Align (			IPrgPar_Calc->_Sec2Align.Get() ,	0, "Sec2Align",	NNpar);
+	CSec			Sec2Align (			IPrgPar_Calc->_Sec2Align.Get() ,	0, "Sec2Align",	IPrgPar_Calc->_cp._pSaltCorrNNp);
 	Sec2Align.CreateNonDegSet();
 
 	CMultSec	*pr,	*tg;			// Esto se puede hacer mejor
-	if   (      Sec.NonDegSet()) pr=      Sec.NonDegSet() ; 	else {pr =new CMultSec(NNpar); pr->AddSec(      &Sec);}	
-	if   (Sec2Align.NonDegSet()) tg=Sec2Align.NonDegSet() ;		else {tg =new CMultSec(NNpar); tg->AddSec(&Sec2Align);}	
+	if   (      Sec.NonDegSet()) pr=      Sec.NonDegSet() ; 	else {pr =new CMultSec(IPrgPar_Calc->_cp._pSaltCorrNNp); pr->AddSec(      &Sec);}	
+	if   (Sec2Align.NonDegSet()) tg=Sec2Align.NonDegSet() ;		else {tg =new CMultSec(IPrgPar_Calc->_cp._pSaltCorrNNp); tg->AddSec(&Sec2Align);}	
 
 		
 	IPrgPar_Calc->_TmS  = KtoC(pr->_Local._Tm) ;// (    KtoC(pr->_minTm)   ,   KtoC(pr->_maxTm)   ) ; 
@@ -40,7 +44,7 @@ int DegTmCalc ( CProgParam_TmCalc *IPrgPar_Calc)
 	//LonSecPos TgMaxLen= (tg->_TMaxLen > pr->_TMaxLen) ? tg->_TMaxLen : pr->_TMaxLen ;
 
 	if ( IPrgPar_Calc->_align)	
-	{	apAl= Create_ThDyAlign(	IPrgPar_Calc->_cp, pr->_Global._Len.Max() , tg->_Global._Len.Max(), NNpar);
+	{	apAl= Create_ThDyAlign(	IPrgPar_Calc->_cp, pr->_Global._Len.Max() , tg->_Global._Len.Max(), IPrgPar_Calc->_cp._pSaltCorrNNp);
 		
 	apAl->Align( pr_maxTmH, tg_maxTmH);					apAl->SelectOptParam( Ta);	//  virtual !!! Si G la Ta pudo cambiar, por eso aqui explicita
 								
@@ -49,7 +53,7 @@ int DegTmCalc ( CProgParam_TmCalc *IPrgPar_Calc)
 
 	}
 	else 
-	{	AlignedSecPar al( pr_maxTmH->GetCopyFullSec() , tg_maxTmH->GetCopyFullSec(), NNpar ); // la Ta en NNpar no cambio
+	{	AlignedSecPar al( pr_maxTmH->GetCopyFullSec() , tg_maxTmH->GetCopyFullSec(), IPrgPar_Calc->_cp._pSaltCorrNNp ); // la Ta en NNpar no cambio
 
 		IPrgPar_Calc->_TmHy.Set ( KtoC( al.Tm() ) );
 		IPrgPar_Calc->_GHy.Set  (	al.G ()/1000  );
@@ -78,7 +82,7 @@ int DegTmCalc ( CProgParam_TmCalc *IPrgPar_Calc)
 
 			} else 
 			{
-				AlignedSecPar al( (s.GetCopyFullSec())  , (t.GetCopyFullSec()), NNpar ); 		
+				AlignedSecPar al( (s.GetCopyFullSec())  , (t.GetCopyFullSec()), IPrgPar_Calc->_cp._pSaltCorrNNp ); 		
 															g= al.G ()/1000 ;	float tm=KtoC( al.Tm() ) ; 
 				IPrgPar_Calc->_GHy.Expand(g) ;
 				if       (IPrgPar_Calc->_TmHy.Max() <  tm  ) 
@@ -102,7 +106,7 @@ int DegTmCalc ( CProgParam_TmCalc *IPrgPar_Calc)
 	//delete pAl;	
 	if (IPrgPar_Calc->_save)	
 	{
-		CMultSec primers(NNpar); primers.AddSec(      &Sec);
+		CMultSec primers(IPrgPar_Calc->_cp._pSaltCorrNNp); primers.AddSec(      &Sec);
 								 primers.AddSec(&Sec2Align);
 
 		int t=MultiplexPCRProg ( IPrgPar_Calc, primers		)  ;

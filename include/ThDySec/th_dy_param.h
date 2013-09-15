@@ -99,14 +99,29 @@ class CSaltCorrNN : public COriNN
 	float			_dS[6][6][6][6];	//	float	_dH[6][6][6][6];  // A-C-G-T + gap + initiation (dangling end, $ sign)
 	
 public:
-	CSaltCorrNN	(float C1	 =50e-9     ,  float		 C2= 50e-9, 
+	CSaltCorrNN	(float  ConcSd	 =50e-9     ,  float		  ConcTg= 50e-9, 
 				 float CationConc=50e-3, SaltCorrection sc = StLucia) 
-			: 	COriNN			( C1, C2) ,
-				_ConcSd	( C1 ),
-				_ConcTg	( C2 ),
+			: 	COriNN			( ConcSd, ConcTg) ,
+				_ConcSd	( ConcSd ),
+				_ConcTg	( ConcTg ),
 				_ConcSalt		( CationConc),
 				_SaltCorr		( sc )						{	InitSaltNNMatriz()  ;}
 	bool    LoadNNParam(istream &isTDP)  ;
+    bool    NeedActualization (float  ConcSd	 =50e-9     ,  float		  ConcTg= 50e-9, 
+				               float CationConc=50e-3, SaltCorrection sc = StLucia) const
+    {
+        if (sc != _SaltCorr)
+             return true;
+        if ( ! IsEq (CationConc,_ConcSalt)  )
+		     return true ;
+
+        float RlogC	= R * log( (ConcSd>ConcTg)?ConcSd-ConcTg/2:ConcTg-ConcSd/2  ) ;
+
+	    if ( IsEq (_RlogC, RlogC)  )
+		    return false ;
+
+        return true;
+    }
 
     SaltCorrection SCMet() const{ return _SaltCorr ; }
     bool	UseOwczarzy () const{ return _SaltCorr == Owczarzy ;}

@@ -8,7 +8,10 @@
 #include "..\ThDySec\matrix.h"
 
 
-auto_ptr<CSaltCorrNN> Create_NNpar    (ThDyCommProgParam& _cp);
+//unique_ptr<CSaltCorrNN> Create_NNpar    (ThDyCommProgParam& _cp);
+//
+//void Check_NNp_Targets (ThDyCommProgParam& cp);
+
 
 auto_ptr<ThDyAlign>   Create_ThDyAlign(ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar);
 

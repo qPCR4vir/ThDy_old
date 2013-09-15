@@ -70,6 +70,35 @@ class CSaltCorrNN;
 /// concreta los parametros comunes. Mantiene lista de los prog Espec que los usan
 class ThDyCommProgParam : public CCommProgParam 
 {public:	
+	CParamC_str     _InputTargetFile ;  
+	CParamC_str     _PCRfiltrPrFile;    
+	CParamC_str     _OutputFile;        
+	CParamC_str     _InputNNFile; 
+
+	SaltCorrection                 _SaltCorr ;			
+    CParamEnumRange<SaltCorrection>	SaltCorr ;	 				//  SaltCorrection
+
+	float					_ConcSd,	_ConcTg,	_ConcSalt ;
+	CParamNumRange<float>	 ConcSd,	 ConcTg,	 ConcSalt;
+
+	Temperature		_Ta ;				CParamNumRange <Temperature>	Ta ;	
+	AlignMeth		_TAMeth ;			CParamEnumRange<AlignMeth>	TAMeth ;	 
+	float			_MaxTgId ;			CParamNumRange <float>	    MaxTgId ;	
+	LonSecPosRang	_SecLim;			CParamNumMinMax<LonSecPos>  SecLim;	//	long _SecBeg, _SecEnd;  // convertir en NumRang<long> _SecLim;  ?????
+	SecPos			_MinSecLen;			CParamNumRange <SecPos>	    MinSecLen;		
+	
+	bool			_loadNNPar,		_saveNNPar ;	
+    CParamBool       loadNNPar,	     saveNNPar ; 
+	bool			_st_savTm, _st_savPos, _st_savG, _st_savAlign, _st_savProj, _st_savG_Plasm, _st_savTm_Plasm, _st_savLog, _st_Exp_sond, _st_ExpTarg ;
+	CParamBool		 st_savTm,  st_savPos,  st_savG,  st_savAlign,  st_savProj,  st_savG_Plasm,  st_savTm_Plasm,  st_savLog,  st_Exp_sond,  st_ExpTarg ;
+
+	std::shared_ptr<CSaltCorrNN>  _pSaltCorrNNp;
+	std::shared_ptr<CMultSec>     _pSeqTree;
+	std::shared_ptr<CMultSec>     _pSeqNoUsed;
+	std::shared_ptr<CMultSec>     _pSeqTargets;
+	std::shared_ptr<CMultSec>     _pSeqNonTargets;
+	std::shared_ptr<CMultSec>     _pPCRfiltrePrimers;
+
     ThDyCommProgParam(const std::string& titel,   CProject *proj)
 		:	CCommProgParam(titel,proj), 
 			_loadNNPar(false),    loadNNPar (this, "Programm option- Load NN parametr",		"LoadNNPara", _loadNNPar,  false),
@@ -114,41 +143,62 @@ class ThDyCommProgParam : public CCommProgParam
 		SaltCorr.AddStrValues("StLucia",	StLucia);
 		SaltCorr.AddStrValues("Owczarzy",	Owczarzy);
 	} 
-	//enum SaltCorrection {NoSelect  =-1 , StLucia  =0 , Owczarzy  =1 }; // ya se puede usar StLucia inicializando todo en el constructor. Parcialmente implementado cambio de Conc
-	//enum SaltCorrecP	{NoSMSelect=-1 , SMStLucia=0 , SMOwczarzy=1 }; // Unificar !!
-	//enum AlignMeth		{TAMeth_Tm =0  , TAMeth_G    , TAMeth_Fract };
-    //        /*C_str			_InputTargetFile ;	*/
-    //        /*C_str			_PCRfiltrPrFile ;	*/
-    //        /*C_str			_OutputFile    ;	*/
-    //        /*C_str			_InputNNFile    ;	*/
-	CParamC_str     _InputTargetFile ;  
-	CParamC_str     _PCRfiltrPrFile;    
-	CParamC_str     _OutputFile;        
-	CParamC_str     _InputNNFile; 
-
-	SaltCorrection                 _SaltCorr ;			
-    CParamEnumRange<SaltCorrection>	SaltCorr ;	 				//  SaltCorrection
-
-	float					_ConcSd,	_ConcTg,	_ConcSalt ;
-	CParamNumRange<float>	 ConcSd,	 ConcTg,	 ConcSalt;
-
-	Temperature		_Ta ;				CParamNumRange <Temperature>	Ta ;	
-	AlignMeth		_TAMeth ;			CParamEnumRange<AlignMeth>	TAMeth ;	 
-	float			_MaxTgId ;			CParamNumRange <float>	    MaxTgId ;	
-	LonSecPosRang	_SecLim;			CParamNumMinMax<LonSecPos>  SecLim;	//	long _SecBeg, _SecEnd;  // convertir en NumRang<long> _SecLim;  ?????
-	SecPos			_MinSecLen;			CParamNumRange <SecPos>	    MinSecLen;		
 	
-	bool			_loadNNPar,		_saveNNPar ;	
-    CParamBool       loadNNPar,	     saveNNPar ; 
-	bool			_st_savTm, _st_savPos, _st_savG, _st_savAlign, _st_savProj, _st_savG_Plasm, _st_savTm_Plasm, _st_savLog, _st_Exp_sond, _st_ExpTarg ;
-	CParamBool		 st_savTm,  st_savPos,  st_savG,  st_savAlign,  st_savProj,  st_savG_Plasm,  st_savTm_Plasm,  st_savLog,  st_Exp_sond,  st_ExpTarg ;
+unique_ptr<CSaltCorrNN> Create_NNpar        ( )   //< Create a new set of NeirN parametrs based on current concentr. and Ta set in com-par.
+{
+	unique_ptr<CSaltCorrNN> NNpar ( new  	CSaltCorrNN	(	 _ConcSd,  _ConcTg,  _ConcSalt   )); 		
+	NNpar->SetTa(	CtoK(	 _Ta));			 
+	return NNpar ;
+}
+unique_ptr<CSaltCorrNN> Init_NNpar          ()   //< Initialize the set of NeirN parametrs  in com-par, loading/saving if necesary
+{                                      /// Depend on  _ConcSd,  _ConcTg,  _ConcSalt , _Ta, _loadNNPar,  _InputNNFile,  _saveNNPar,_OutputFile      
+    unique_ptr<CSaltCorrNN> NNpar=Create_NNpar();
+	if (_loadNNPar) 
+    {
+        ifstream isTDP(_InputNNFile.Get());	assert(isTDP);	
+        NNpar->LoadNNParam(isTDP) ;	
+    }
+	if ( _saveNNPar)
+	{	
+        std::string OutputTDP( _OutputFile.Get()) ; OutputTDP += ".ThDyParam.csv";
 
-	std::shared_ptr<CSaltCorrNN>  _pSaltCorrNNp;
-	std::shared_ptr<CMultSec>     _pSeqTree;
-	std::shared_ptr<CMultSec>     _pSeqNoUsed;
-	std::shared_ptr<CMultSec>     _pSeqTargets;
-	std::shared_ptr<CMultSec>     _pSeqNonTargets;
-	std::shared_ptr<CMultSec>     _pPCRfiltrePrimers;
+		ofstream osTDP	(OutputTDP.c_str());				assert(osTDP);	
+		osTDP << *NNpar ;
+	}
+	return NNpar ;
+}
+shared_ptr<CSaltCorrNN> Get_Actualiced_NNpar(const shared_ptr<CSaltCorrNN>& currNNpar )
+{
+	if ( currNNpar)
+    {
+        if ( currNNpar->NeedActualization(_ConcSd, _ConcTg, _ConcSalt, _SaltCorr)  )
+            return Create_NNpar ();
+
+        currNNpar->SetTa(	CtoK(_Ta));	
+ 	    return currNNpar ;
+    }
+    if ( _pSaltCorrNNp )
+        return Get_Actualiced_NNpar(_pSaltCorrNNp);
+    return Init_NNpar ();
+}
+void                    Actualice_NNp       ()
+{
+    _pSaltCorrNNp=Get_Actualiced_NNpar(_pSaltCorrNNp);
+}
+
+void Check_NNp_Targets (/*ThDyCommProgParam& cp*/)
+{
+    if (! _pSaltCorrNNp )
+        Actualice_NNp();
+
+    assert( _pSeqTargets );
+    if ( !  _pSeqTargets->_Global._NSec)
+		    AddSeqFromFile (    _pSeqTargets.get (), 
+                                _InputTargetFile.Get()  );
+}
+    CMultSec* CreateRoot	();
+	CMultSec *AddSeqGroup	(CMultSec *parentGr, const std::string&     Name);
+
 	CMultSec *AddSeqFromFile(CMultSec *parentGr, const std::string& FileName);
 	CMultSec *AddTargetFromFile(const std::string& FileName)
 	{
@@ -163,8 +213,6 @@ class ThDyCommProgParam : public CCommProgParam
 		return AddSeqFromFile(_pPCRfiltrePrimers.get(),FileName);
 	}
 
-	CMultSec *AddSeqGroup	(CMultSec *parentGr, const std::string&     Name);
-	CMultSec* CreateRoot	();
 
 	// convertirlas en funciones "previas a la paralelizacion", que hacen copias propias de los parametros en serie, no en paralelo
 	void    TargetFile(const char *InputTargetFile)	{	_InputTargetFile.CopyTrim(InputTargetFile);	}
@@ -176,14 +224,18 @@ class ThDyCommProgParam : public CCommProgParam
 	void SetOutputFile(      char *Output_File    )	{	OutputFile(Output_File )	;	delete []Output_File		;	}
 	void SetNNParaFile(      char *InputNNFile    )	{	NNParaFile(InputNNFile )	;	delete []InputNNFile		;	}
 
-	virtual	~ThDyCommProgParam(void) override;//	{	/*delete []_ProgList;*/}
+	virtual	~ThDyCommProgParam(void) override//;	
+    {	/*delete []_ProgList;*/
+       _pSeqTree->Free();
+    }
 };
 
+
 class CProgParam_microArray ;
-int microArrayProg	( char *InputPrimer, char *InputTarget, char *OutputTm)  ;
+//int microArrayProg	( char *InputPrimer, char *InputTarget, char *OutputTm)  ;
 int microArrayProg   ( CProgParam_microArray   *IPrgPar_uArr )  ;
-template <typename Num> class CTable ;
-//typedef uArr_RT CTable<TmGPos> ;
+
+template <typename Num> class CTable ;          //typedef uArr_RT CTable<TmGPos> ;
 class CEspThDyProgParam : public CEspProg
 {public:
 	ThDyCommProgParam& _cp;
@@ -205,7 +257,7 @@ class CProgParam_microArray : public CEspThDyProgParam
 	//bool			    _I, _G;			// Outpu table of I, G. 
 	//CParamBool		 I,  G;			// Outpu table of I, G. 
 
-    explicit 	CProgParam_microArray(const std::string& titel, ThDyCommProgParam &commThDyParam) 
+    CProgParam_microArray(const std::string& titel, ThDyCommProgParam &commThDyParam) 
 		    :	CEspThDyProgParam(titel, commThDyParam), 
 				_InputSondeFile	(this, "Imput file for Sondes",				"iSonde_uAr", ""			) ,
 				_rtbl(nullptr),
@@ -215,6 +267,16 @@ class CProgParam_microArray : public CEspThDyProgParam
 
 	CTable<TmGPos> *_rtbl;		                                    //uArr_RT *_rtbl;
     void RenameSondesMS(const std::string& name);
+    void Check_NNp_Targets_probes      (CMultSec *probes) 
+{
+	_cp.Check_NNp_Targets ();
+    assert(("Traing to load sonden seq into inexisten MultiSec", probes));
+	if(_InputSondeFile.Get()[0] )
+		probes->AddFromFile ( _InputSondeFile.Get() );	
+
+}
+    
+
 	virtual int Run (){	return microArrayProg ( this )  ;}
 
 	void    SondeFile (const char *InputSondeFile )	{	_InputSondeFile.CopyTrim(InputSondeFile) ;	}
@@ -261,7 +323,9 @@ int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr )  ;
 class CProgParam_MultiplexPCR : public CProgParam_microArray
 {public:
 	CProgParam_MultiplexPCR(const std::string& titel, ThDyCommProgParam &commThDyParam) ;
-	int		Run		(){	return MultiplexPCRProg ( this )  ;}
+	int		Run		()   {	
+                            return MultiplexPCRProg ( this )  ;
+                         }
 	CTable<TmGPos> *_rtbl_self;		                                    //uArr_RT *_rtbl;
 };
 
@@ -312,7 +376,10 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 	float		           _MinTgCov ;
 	CParamNumRange<float>	MinTgCov ;
 
-	int		Run		(){	return  SondeDesignProg( this )  ;}
+	int		Run		(){	
+                        //Check_NNp_Targets (/*IPrgPar_SdDes->*/_cp);
+                        return  SondeDesignProg( this )  ;
+                      }
 };
 
 
@@ -354,7 +421,11 @@ class CProgParam_TmCalc : public CProgParam_MultiplexPCR
 	bool	Update_Sec2Align_Sec(bool rev, bool compl)	{return Set_Sec		 ( Generate_DegSec_char( _Sec2Align.Get(),	rev, compl)  ); }
 
 	~CProgParam_TmCalc(){}
-	int		Run		(){	return DegTmCalc ( this )  ;}
+	int		Run		()
+    {	
+        //if (_save)   Check_NNp_Targets ( _cp);
+        return DegTmCalc ( this )  ;
+    }
 //private:
 	CParamC_str	 _Sec ,			_Sec2Align ;
 	C_str	 _AlignedSec,	_AlignedSec2Align ;
@@ -377,7 +448,7 @@ class ThDyProject : public CProject // Permite manejar todo el projecto: con un 
 							_TmCal("Tm calculator"                  ,_cp)
 					{}
  	virtual std::ofstream &saveTMP() const     override       // Se me habia olvidado redefinir esta funcion para usar _cp.OutF
-	{	return saveToFile((std::auto_ptr<char>(AddFileExt(_cp._OutputFile.Get(),".ThDy.txt"))).get());	}
+	{	return saveToFile(   (std::string(_cp._OutputFile.Get()) + ".ThDy.txt" ).c_str()   );	}
 };  
 
 

@@ -24,34 +24,28 @@ void CreateComplProbes(	CMultSec		&pr	)
 	int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr, CMultSec		&pr)  
 {
 	time_t t_0 = time(NULL);
+    IPrgPar_uArr->_cp.Check_NNp_Targets ();
 	CreateComplProbes(	pr	);
 
 	microArrayProg   ( IPrgPar_uArr, pr	, pr, t_0, 300    , "_self"	)  ;
 	delete IPrgPar_uArr->_rtbl_self ;
 	       IPrgPar_uArr->_rtbl_self=	IPrgPar_uArr->_rtbl;
 
-	std::shared_ptr<CMultSec>  tg(		IPrgPar_uArr->_cp._pSeqTargets );
-			if (!tg)
-				tg.reset ( new CMultSec(IPrgPar_uArr->_cp._InputTargetFile.Get(),	pr._NNPar,
-										IPrgPar_uArr->_cp._MaxTgId,
-										IPrgPar_uArr->_cp._SecLim  ));	
-	return microArrayProg ( IPrgPar_uArr, pr	, *tg.get(), t_0  /*, "_self"*/	)  ;
+	//std::shared_ptr<CMultSec>  tg(		IPrgPar_uArr->_cp._pSeqTargets );
+	//		if (!tg)
+	//			tg.reset ( new CMultSec(IPrgPar_uArr->_cp._InputTargetFile.Get(),	pr._NNPar,
+	//									IPrgPar_uArr->_cp._MaxTgId,
+	//									IPrgPar_uArr->_cp._SecLim  ));	
+	return microArrayProg ( IPrgPar_uArr, pr	, *IPrgPar_uArr->_cp._pSeqTargets.get(), t_0  /*, "_self"*/	)  ;
 }
 
 
 	int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr)  
 {
 
-	std::shared_ptr<CSaltCorrNN>  NNpar(IPrgPar_uArr->_cp._pSaltCorrNNp );
-    if (!NNpar)
-	    NNpar = Create_NNpar(IPrgPar_uArr->_cp); 	
-	NNpar->SetTa(				CtoK(	IPrgPar_uArr->_cp._Ta));			// Aqui por si acaso. Revisar.
+    IPrgPar_uArr->Check_NNp_Targets_probes (IPrgPar_uArr->_probesMS.get());
 
-	std::shared_ptr<CMultSec>  pr(		IPrgPar_uArr->_probesMS );
-			if (!pr)
-				pr.reset ( new CMultSec(IPrgPar_uArr->_InputSondeFile.Get() ,		NNpar));	
-
-	return MultiplexPCRProg ( IPrgPar_uArr, *pr.get())  ;
+	return MultiplexPCRProg ( IPrgPar_uArr, *IPrgPar_uArr->_probesMS.get())  ;
 
 	
 }

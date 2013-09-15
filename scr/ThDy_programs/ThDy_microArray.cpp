@@ -1,36 +1,8 @@
 //#include "StdAfx.h"
 #pragma unmanaged
-#include <filesystem>
 #include "ThDy_programs/prog_comm_functions.h"
-int microArrayProg ( CProgParam_microArray *IPrgPar_uArr, CMultSec &pr, CMultSec &tg, time_t t_0,  int MAxGrDegTg=1, const std::string of_x=""	);
+//int microArrayProg ( CProgParam_microArray *IPrgPar_uArr, CMultSec &pr, CMultSec &tg, time_t t_0,  int MAxGrDegTg=1, const std::string of_x=""	);
 
-int microArrayProg ( CProgParam_microArray *IPrgPar_uArr)  
-{
-	time_t t_0 = time(NULL);
-
-	std::shared_ptr<CSaltCorrNN>  NNpar(IPrgPar_uArr->_cp._pSaltCorrNNp );
-    if (!NNpar)
-	    NNpar = Create_NNpar(IPrgPar_uArr->_cp); 	
-	NNpar->SetTa(				CtoK(	IPrgPar_uArr->_cp._Ta));			// Aqui por si acaso. Revisar.
-
-	assert(("IPrgPar_uArr->_probesMS - debiera existir siempre",IPrgPar_uArr->_probesMS));
-	CMultSec  &pr(		*IPrgPar_uArr->_probesMS.get() ); 
-	if(IPrgPar_uArr->_InputSondeFile.Get()[0] )
-		pr.AddFromFile ( IPrgPar_uArr->_InputSondeFile.Get() );	
-	
-
-	assert(("IPrgPar_uArr->_cp._pSeqTargets - debiera existir siempre",IPrgPar_uArr->_cp._pSeqTargets));
-	CMultSec  &tg(		*IPrgPar_uArr->_cp._pSeqTargets.get() ); 
-
-	std::tr2::sys::path  itf(IPrgPar_uArr->_cp._InputTargetFile.Get());
-	if(itf.has_filename())
-		tg.AddMultiSec ( new CMultSec(itf.file_string().c_str(),	NNpar,
-										IPrgPar_uArr->_cp._MaxTgId,
-										IPrgPar_uArr->_cp._SecLim  ))
-			->_name=itf.basename();	
-
-	return microArrayProg ( IPrgPar_uArr, pr	, tg, t_0 	)  ; 
-}
 
 void	CreateColumns(CTable<TmGPos> &rtbl, CMultSec &pr, int MaxGrDeg, OutStr &os )
 {
@@ -89,7 +61,15 @@ void	Hybrid(CTable<TmGPos> &rtbl, CMultSec &tg, CMultSec &pr, ThDyAlign	&Al, Out
 		Hybrid(rtbl, *tg.CurMSec(),  pr, Al,os, MAxGrDegTg);
 }
 
-int microArrayProg ( CProgParam_microArray *IPrgPar_uArr, CMultSec &pr, CMultSec &tg, time_t t_0,  int MAxGrDegTg, const std::string of_x 	)
+int microArrayProg ( CProgParam_microArray *IPrgPar_uArr, CMultSec &pr, CMultSec &tg, time_t t_0, int MAxGrDegTg=1, const std::string of_x=""	);
+
+
+int microArrayProg ( CProgParam_microArray *IPrgPar_uArr, 
+                    CMultSec &pr, 
+                    CMultSec &tg, 
+                    time_t t_0,  
+                    int MAxGrDegTg, 
+                    const std::string of_x 	)
 {
 	const int MaxGrDeg=300 ;			// crear NonDegSet para las sondas con menos de este gr de deg. Poner como ProgParam??
 
@@ -140,32 +120,20 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr, CMultSec &pr, CMultSec
 				<< endl <<"Time Tm calc= "		<< sep<< t_tm_cal		-t_al_created ;
 	return 1;
 }
-		//CTable(string TitTable,index capRow, index capCol): CMatrix_RA<Num>(capRow, capCol),		_titTable(TitTable), 
+int microArrayProg ( CProgParam_microArray *IPrgPar_uArr)  
+{
+	time_t t_0 = time(NULL);
+
+    IPrgPar_uArr->Check_NNp_Targets_probes (IPrgPar_uArr->_probesMS.get());
+
+	//assert(("IPrgPar_uArr->_probesMS - debiera existir siempre",IPrgPar_uArr->_probesMS));
+	//CMultSec  &pr(		*IPrgPar_uArr->_probesMS.get() ); 
+	//if(IPrgPar_uArr->_InputSondeFile.Get()[0] )
+	//	pr.AddFromFile ( IPrgPar_uArr->_InputSondeFile.Get() );	
 
 	
-	//CMultSec		pr		(			IPrgPar_uArr->_InputSondeFile.Get() ,		NNpar),
-	//				tg		(			IPrgPar_uArr->_cp._InputTargetFile.Get(),	NNpar,
-	//									IPrgPar_uArr->_cp._MaxTgId	,	
-	//									IPrgPar_uArr->_cp._SecLim		); /*,IPrgPar_uArr->_cp._SecBeg,	IPrgPar_uArr->_cp._SecEnd */
-	//delete IPrgPar_uArr->_tlTm ;	delete IPrgPar_uArr->_tlG ;		delete IPrgPar_uArr->_tlPos ;
-	//CTable<Temperature> &tlTm = *(  IPrgPar_uArr->_tlTm = new	CTable<Temperature> ("Tm: " + TableName )   );
-	//CTable<Energy>		&tlG  = *(  IPrgPar_uArr->_tlG  = new	CTable<Energy>		(" G: " + TableName )   );	
-	//CTable<SecPos>		&tlPos= *(  IPrgPar_uArr->_tlPos= new	CTable<SecPos>		("Pos: " + TableName)   );	
-	//tlTm.CreateMatrix(tg._TNSec);	tlG.CreateMatrix(tg._TNSec);	tlPos.CreateMatrix(tg._TNSec);
-				//tlTm.AddColummnTit(s._name	);tlG.AddColummnTit(s._name	);tlPos.AddColummnTit(s._name	);
-				//tlTm.AddColummnTit(s._name	);tlG.AddColummnTit(s._name	);tlPos.AddColummnTit(s._name	);
-		//tlTm.AddRow(t.Name());		tlG.AddRow(t.Name());		tlPos.AddRow(t.Name());
-		//HybridPr (pr, t, 	Al, osTm, osG,osPos,osPl_Tm,osPl_G,osAl, &tlTm, &tlG, &tlPos);
-		
-	//for (  tg.goFirstSec()   ; tg.NotEndSec()   ;   tg.goNextSec() )  // recorre todos los targets
-	//{	CSec &t = *tg.CurSec() ;
-	//	if ( t.Degeneracy() > 1 ) continue ;				// No analiza las target deg...por ahora.Facil de ampliar
-	//	osTm	<<endl<< t.Name()		;		osG		<<endl<< t.Name()		;	osPos	<<endl<< t.Name()		;	
-	//	osPl_Tm <<endl<< t.Name()<<" \t"	;		osPl_G  <<endl<< t.Name()<<" \t"	 ;		
-	//	rtbl.AddRow(t.Name());	
-	//	//tlTm.AddRow(t.Name());		tlG.AddRow(t.Name());		tlPos.AddRow(t.Name());
-	//	HybridPr (pr, t, 	Al, osTm, osG,osPos,osPl_Tm,osPl_G,osAl, &rtbl);
-	//	//HybridPr (pr, t, 	Al, osTm, osG,osPos,osPl_Tm,osPl_G,osAl, &tlTm, &tlG, &tlPos);
-	//	
-	//}// recorre todos los targets
-	//tlTm.compact();	tlG.compact();	tlPos.compact();
+	return microArrayProg (  IPrgPar_uArr, 
+                            *IPrgPar_uArr->_probesMS.get()	, 
+                            *IPrgPar_uArr->_cp._pSeqTargets.get() , 
+                             t_0 	)  ; 
+}
