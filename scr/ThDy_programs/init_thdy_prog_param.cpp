@@ -43,14 +43,14 @@ void CProgParam_microArray::RenameSondesMS(const std::string& name)
 }
 
 
-CProgParam_uArrExp::CProgParam_uArrExp (const string& titel, ThDyCommProgParam &commThDyParam):	
-	                _exclSd(false),		
-					_IxI(true),		_IxI_d(true),			
-					_Normalize(true), 
-					_Isat(Energy(0.87f)),_Isen(Energy(0.01f)),	_Gsat(Energy(-2.0f)),	_Gsen(Energy(2.0f)),
-					CProgParam_microArray (titel,commThDyParam) 
-					{  _probesMS->_name="Probes of Exp uArr";
-					} 
+//CProgParam_uArrExp::CProgParam_uArrExp (const string& titel, ThDyCommProgParam &commThDyParam):	
+//	                _exclSd(false),		
+//					_IxI(true),		_IxI_d(true),			
+//					_Normalize(true), 
+//					_Isat(Energy(0.87f)),_Isen(Energy(0.01f)),	_Gsat(Energy(-2.0f)),	_Gsen(Energy(2.0f)),
+//					CProgParam_microArray (titel,commThDyParam) 
+//					{  _probesMS->_name="Probes of Exp uArr";
+//					} 
 CProgParam_MultiplexPCR::CProgParam_MultiplexPCR(const string& titel, ThDyCommProgParam &commThDyParam) 
 	: CProgParam_microArray(titel,commThDyParam), _rtbl_self(nullptr)
 	{	_InputSondeFile.SetTitel("Imput file for primers"); 

@@ -261,7 +261,8 @@ public:
 								    return true ;
 						    return IProg::load(etiq, isPr);					 }
 	int		Run (IProg &prog)	override                    //   ??????
-	                 {	saveTMP( ) ; 
+	                 {	
+                        saveTMP( ) ; 
 	                    return prog.Run();
 	                 }
 

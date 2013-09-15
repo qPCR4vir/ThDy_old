@@ -229,28 +229,32 @@ class CProgParam_microArray : public CEspThDyProgParam
 				  _G(true),    G				(this, "Programm option- Save Tm Table",			"SavTmTable", _G,   true), */
 
 
-class	CProgParam_uArrExp;
-int		microArrayProgTest ( CProgParam_uArrExp *IPrgPar_uArr)  ;
-class CProgParam_uArrExp  : public CProgParam_microArray
-{public:	
-	C_str		_Input_uArrExpFile ; 
-	bool		_exclSd;					// No analizar (excluir) determinadas sondas (otros org - micobact, contaminadas, Post contr, Neg contr, etc)
-	C_str		_exclSdMark;				// solo las sondas con esta marca son excl. Si ="" todas las marcadas. Si _exclSd -  se ignora, y nada se excl.
-	bool		_IxI,		_IxI_d;			// output these table (metodo de comparacion - solo similitudes o similitudes menos diferencias?)
-	bool		_Normalize;					// las tablas anteriores : puede suponer perdida de informacion para calcular signif estadistica??
-	Energy		_Isat, _Isen, _Gsat, _Gsen;
-
-    explicit 	CProgParam_uArrExp (const std::string& titel, ThDyCommProgParam &commThDyParam);
-
-	int		Run		(	){	return microArrayProg ( this )  ;}
-	void    ExpFile (const char *Input_uArrExpFile )	{	_Input_uArrExpFile.CopyTrim(Input_uArrExpFile) ;	}
-
-	// OJO !!!!!!!!!   la sig funcion se aduena del pointer, y luego lo deletea   !!!!!!!!
-	void SetExpFile (      char *Input_uArrExpFile )	{	ExpFile( Input_uArrExpFile) ;	delete []Input_uArrExpFile   ;	}
-
-	// cuando se corre un proceso paralelo ver donde es mejor hacer estos delete.
-	virtual ~CProgParam_uArrExp()		{}
-};
+//class	CProgParam_uArrExp;
+//int		microArrayProgTest ( CProgParam_uArrExp *IPrgPar_uArr)  ;
+//class CProgParam_uArrExp  : public CProgParam_microArray
+//{public:	
+//	C_str		_Input_uArrExpFile ; 
+//	bool		_exclSd;					// No analizar (excluir) determinadas sondas (otros org - micobact, contaminadas, Post contr, Neg contr, etc)
+//	C_str		_exclSdMark;				// solo las sondas con esta marca son excl. Si ="" todas las marcadas. Si _exclSd -  se ignora, y nada se excl.
+//	bool		_IxI,		_IxI_d;			// output these table (metodo de comparacion - solo similitudes o similitudes menos diferencias?)
+//	bool		_Normalize;					// las tablas anteriores : puede suponer perdida de informacion para calcular signif estadistica??
+//	Energy		_Isat, _Isen, _Gsat, _Gsen;
+//
+//    explicit 	CProgParam_uArrExp (const std::string& titel, ThDyCommProgParam &commThDyParam);
+//
+//	int		Run		(	){	
+//                            Check_NNp_Targets (/*IPrgPar_SdDes->*/_cp);
+//                            Check_probes      (/*IPrgPar_SdDes->*/_probesMS);
+//                            return microArrayProg ( this )  ;
+//                         }
+//	void    ExpFile (const char *Input_uArrExpFile )	{	_Input_uArrExpFile.CopyTrim(Input_uArrExpFile) ;	}
+//
+//	// OJO !!!!!!!!!   la sig funcion se aduena del pointer, y luego lo deletea   !!!!!!!!
+//	void SetExpFile (      char *Input_uArrExpFile )	{	ExpFile( Input_uArrExpFile) ;	delete []Input_uArrExpFile   ;	}
+//
+//	// cuando se corre un proceso paralelo ver donde es mejor hacer estos delete.
+//	virtual ~CProgParam_uArrExp()		{}
+//};
 
 class CProgParam_MultiplexPCR ;
 int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr )  ;

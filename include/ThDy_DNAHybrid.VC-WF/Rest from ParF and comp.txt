@@ -1,4 +1,14 @@
 
+C:\Prog\ThDySec\include\ThDy_programs\init_ThDy_prog_param.h
+
+	//enum SaltCorrection {NoSelect  =-1 , StLucia  =0 , Owczarzy  =1 }; // ya se puede usar StLucia inicializando todo en el constructor. Parcialmente implementado cambio de Conc
+	//enum SaltCorrecP	{NoSMSelect=-1 , SMStLucia=0 , SMOwczarzy=1 }; // Unificar !!
+	//enum AlignMeth		{TAMeth_Tm =0  , TAMeth_G    , TAMeth_Fract };
+    //        /*C_str			_InputTargetFile ;	*/
+    //        /*C_str			_PCRfiltrPrFile ;	*/
+    //        /*C_str			_OutputFile    ;	*/
+    //        /*C_str			_InputNNFile    ;	*/
+
 			//	"";
 	//Sec			=       Sec->Format("{0,6:f1} |{1,6:f1} |{2,6:f1} ||",
 	//				Decimal(_Pr._TmCal._TmS.Min()),Decimal(_Pr._TmCal._TmS.Ave()),Decimal(_Pr._TmCal._TmS.Max()))
@@ -365,3 +375,34 @@ private: System::Void txtBx_Sec2Align_TextChanged(System::Object^  sender, Syste
 			this->chkBx_compl->Update();
 		 }
 
+from C:\Prog\ThDySec\scr\ThDy_programs\ThDy_microArray.cpp
+
+		 		//CTable(string TitTable,index capRow, index capCol): CMatrix_RA<Num>(capRow, capCol),		_titTable(TitTable), 
+
+	
+	//CMultSec		pr		(			IPrgPar_uArr->_InputSondeFile.Get() ,		NNpar),
+	//				tg		(			IPrgPar_uArr->_cp._InputTargetFile.Get(),	NNpar,
+	//									IPrgPar_uArr->_cp._MaxTgId	,	
+	//									IPrgPar_uArr->_cp._SecLim		); /*,IPrgPar_uArr->_cp._SecBeg,	IPrgPar_uArr->_cp._SecEnd */
+	//delete IPrgPar_uArr->_tlTm ;	delete IPrgPar_uArr->_tlG ;		delete IPrgPar_uArr->_tlPos ;
+	//CTable<Temperature> &tlTm = *(  IPrgPar_uArr->_tlTm = new	CTable<Temperature> ("Tm: " + TableName )   );
+	//CTable<Energy>		&tlG  = *(  IPrgPar_uArr->_tlG  = new	CTable<Energy>		(" G: " + TableName )   );	
+	//CTable<SecPos>		&tlPos= *(  IPrgPar_uArr->_tlPos= new	CTable<SecPos>		("Pos: " + TableName)   );	
+	//tlTm.CreateMatrix(tg._TNSec);	tlG.CreateMatrix(tg._TNSec);	tlPos.CreateMatrix(tg._TNSec);
+				//tlTm.AddColummnTit(s._name	);tlG.AddColummnTit(s._name	);tlPos.AddColummnTit(s._name	);
+				//tlTm.AddColummnTit(s._name	);tlG.AddColummnTit(s._name	);tlPos.AddColummnTit(s._name	);
+		//tlTm.AddRow(t.Name());		tlG.AddRow(t.Name());		tlPos.AddRow(t.Name());
+		//HybridPr (pr, t, 	Al, osTm, osG,osPos,osPl_Tm,osPl_G,osAl, &tlTm, &tlG, &tlPos);
+		
+	//for (  tg.goFirstSec()   ; tg.NotEndSec()   ;   tg.goNextSec() )  // recorre todos los targets
+	//{	CSec &t = *tg.CurSec() ;
+	//	if ( t.Degeneracy() > 1 ) continue ;				// No analiza las target deg...por ahora.Facil de ampliar
+	//	osTm	<<endl<< t.Name()		;		osG		<<endl<< t.Name()		;	osPos	<<endl<< t.Name()		;	
+	//	osPl_Tm <<endl<< t.Name()<<" \t"	;		osPl_G  <<endl<< t.Name()<<" \t"	 ;		
+	//	rtbl.AddRow(t.Name());	
+	//	//tlTm.AddRow(t.Name());		tlG.AddRow(t.Name());		tlPos.AddRow(t.Name());
+	//	HybridPr (pr, t, 	Al, osTm, osG,osPos,osPl_Tm,osPl_G,osAl, &rtbl);
+	//	//HybridPr (pr, t, 	Al, osTm, osG,osPos,osPl_Tm,osPl_G,osAl, &tlTm, &tlG, &tlPos);
+	//	
+	//}// recorre todos los targets
+	//tlTm.compact();	tlG.compact();	tlPos.compact();

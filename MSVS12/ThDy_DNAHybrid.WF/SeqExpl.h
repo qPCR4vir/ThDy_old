@@ -551,6 +551,9 @@ private: System::Void treeV_Seq_DragDrop        (System::Object^  sender, System
             this->splitContainer2->Panel2->SuspendLayout();
             this->splitContainer2->SuspendLayout();
             this->SuspendLayout();
+            // 
+            // menuStripSeqExpl
+            // 
             this->menuStripSeqExpl->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->sequencesToolStripMenuItem, 
                 this->viewToolStripMenuItem});
             this->menuStripSeqExpl->Location = System::Drawing::Point(0, 0);
@@ -558,6 +561,9 @@ private: System::Void treeV_Seq_DragDrop        (System::Object^  sender, System
             this->menuStripSeqExpl->Size = System::Drawing::Size(1076, 24);
             this->menuStripSeqExpl->TabIndex = 0;
             this->menuStripSeqExpl->Text = L"menuStripSeqExpl";
+            // 
+            // sequencesToolStripMenuItem
+            // 
             this->sequencesToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(10) {this->addFromFileToolStripMenuItem, 
                 this->toolStripSeparator2, this->addTargetToolStripMenuItem, this->addNontargetToolStripMenuItem, this->setUArrProbesToolStripMenuItem, 
                 this->setMulriplexPCRPrimersToolStripMenuItem, this->setPCRFiltreToolStripMenuItem, this->getPCRFiltreFrommTmCalcToolStripMenuItem, 
@@ -565,61 +571,106 @@ private: System::Void treeV_Seq_DragDrop        (System::Object^  sender, System
             this->sequencesToolStripMenuItem->Name = L"sequencesToolStripMenuItem";
             this->sequencesToolStripMenuItem->Size = System::Drawing::Size(75, 20);
             this->sequencesToolStripMenuItem->Text = L"Sequences";
+            // 
+            // addFromFileToolStripMenuItem
+            // 
             this->addFromFileToolStripMenuItem->Name = L"addFromFileToolStripMenuItem";
             this->addFromFileToolStripMenuItem->Size = System::Drawing::Size(220, 22);
             this->addFromFileToolStripMenuItem->Text = L"Add from file";
             this->addFromFileToolStripMenuItem->Click += gcnew System::EventHandler(this, &SeqExpl::toolStripButtonAddSeq_Click);
+            // 
+            // toolStripSeparator2
+            // 
             this->toolStripSeparator2->Name = L"toolStripSeparator2";
             this->toolStripSeparator2->Size = System::Drawing::Size(217, 6);
+            // 
+            // addTargetToolStripMenuItem
+            // 
             this->addTargetToolStripMenuItem->Name = L"addTargetToolStripMenuItem";
             this->addTargetToolStripMenuItem->Size = System::Drawing::Size(220, 22);
             this->addTargetToolStripMenuItem->Text = L"Add Target ";
             this->addTargetToolStripMenuItem->Click += gcnew System::EventHandler(this, &SeqExpl::addTargetToolStripMenuItem_Click);
+            // 
+            // addNontargetToolStripMenuItem
+            // 
             this->addNontargetToolStripMenuItem->Name = L"addNontargetToolStripMenuItem";
             this->addNontargetToolStripMenuItem->Size = System::Drawing::Size(220, 22);
             this->addNontargetToolStripMenuItem->Text = L"Add Non-target";
             this->addNontargetToolStripMenuItem->Click += gcnew System::EventHandler(this, &SeqExpl::addNontargetToolStripMenuItem_Click);
+            // 
+            // setUArrProbesToolStripMenuItem
+            // 
             this->setUArrProbesToolStripMenuItem->Name = L"setUArrProbesToolStripMenuItem";
             this->setUArrProbesToolStripMenuItem->Size = System::Drawing::Size(220, 22);
             this->setUArrProbesToolStripMenuItem->Text = L"Set uArr probes";
             this->setUArrProbesToolStripMenuItem->Click += gcnew System::EventHandler(this, &SeqExpl::setUArrProbesToolStripMenuItem_Click);
+            // 
+            // setMulriplexPCRPrimersToolStripMenuItem
+            // 
             this->setMulriplexPCRPrimersToolStripMenuItem->Name = L"setMulriplexPCRPrimersToolStripMenuItem";
             this->setMulriplexPCRPrimersToolStripMenuItem->Size = System::Drawing::Size(220, 22);
             this->setMulriplexPCRPrimersToolStripMenuItem->Text = L"Set (Multiplex-)PCR primers";
             this->setMulriplexPCRPrimersToolStripMenuItem->Click += gcnew System::EventHandler(this, &SeqExpl::setMulriplexPCRPrimersToolStripMenuItem_Click);
+            // 
+            // setPCRFiltreToolStripMenuItem
+            // 
             this->setPCRFiltreToolStripMenuItem->Name = L"setPCRFiltreToolStripMenuItem";
             this->setPCRFiltreToolStripMenuItem->Size = System::Drawing::Size(220, 22);
             this->setPCRFiltreToolStripMenuItem->Text = L"Set PCR filtre";
             this->setPCRFiltreToolStripMenuItem->Click += gcnew System::EventHandler(this, &SeqExpl::setPCRFiltreToolStripMenuItem_Click);
+            // 
+            // getPCRFiltreFrommTmCalcToolStripMenuItem
+            // 
             this->getPCRFiltreFrommTmCalcToolStripMenuItem->Name = L"getPCRFiltreFrommTmCalcToolStripMenuItem";
             this->getPCRFiltreFrommTmCalcToolStripMenuItem->Size = System::Drawing::Size(220, 22);
             this->getPCRFiltreFrommTmCalcToolStripMenuItem->Text = L"Get PCR filtre from Tm Calc";
             this->getPCRFiltreFrommTmCalcToolStripMenuItem->Click += gcnew System::EventHandler(this, &SeqExpl::getPCRFiltreFrommTmCalcToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
             this->toolStripSeparator3->Name = L"toolStripSeparator3";
             this->toolStripSeparator3->Size = System::Drawing::Size(217, 6);
+            // 
+            // newGroupToolStripMenuItem
+            // 
             this->newGroupToolStripMenuItem->Name = L"newGroupToolStripMenuItem";
             this->newGroupToolStripMenuItem->Size = System::Drawing::Size(220, 22);
             this->newGroupToolStripMenuItem->Text = L"New group";
             this->newGroupToolStripMenuItem->Click += gcnew System::EventHandler(this, &SeqExpl::toolStripButAddSeqGr_Click);
+            // 
+            // viewToolStripMenuItem
+            // 
             this->viewToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->allSeqinclInternalGroupsToolStripMenuItem, 
                 this->deletedSeqToolStripMenuItem});
             this->viewToolStripMenuItem->Enabled = false;
             this->viewToolStripMenuItem->Name = L"viewToolStripMenuItem";
             this->viewToolStripMenuItem->Size = System::Drawing::Size(44, 20);
             this->viewToolStripMenuItem->Text = L"View";
+            // 
+            // allSeqinclInternalGroupsToolStripMenuItem
+            // 
             this->allSeqinclInternalGroupsToolStripMenuItem->Checked = true;
             this->allSeqinclInternalGroupsToolStripMenuItem->CheckState = System::Windows::Forms::CheckState::Checked;
             this->allSeqinclInternalGroupsToolStripMenuItem->Name = L"allSeqinclInternalGroupsToolStripMenuItem";
             this->allSeqinclInternalGroupsToolStripMenuItem->Size = System::Drawing::Size(222, 22);
             this->allSeqinclInternalGroupsToolStripMenuItem->Text = L"All seq (incl internal groups)";
             this->allSeqinclInternalGroupsToolStripMenuItem->CheckStateChanged += gcnew System::EventHandler(this, &SeqExpl::toolStripLabel_show_seq_Click);
+            // 
+            // deletedSeqToolStripMenuItem
+            // 
             this->deletedSeqToolStripMenuItem->Checked = true;
             this->deletedSeqToolStripMenuItem->CheckState = System::Windows::Forms::CheckState::Checked;
             this->deletedSeqToolStripMenuItem->Name = L"deletedSeqToolStripMenuItem";
             this->deletedSeqToolStripMenuItem->Size = System::Drawing::Size(222, 22);
             this->deletedSeqToolStripMenuItem->Text = L"Show filtered seq";
             this->deletedSeqToolStripMenuItem->CheckStateChanged += gcnew System::EventHandler(this, &SeqExpl::tStripLab_showFiltered_Click);
+            // 
+            // toolStripContainer1
+            // 
             this->toolStripContainer1->BottomToolStripPanelVisible = false;
+            // 
+            // toolStripContainer1.ContentPanel
+            // 
             this->toolStripContainer1->ContentPanel->Size = System::Drawing::Size(687, 0);
             this->toolStripContainer1->LeftToolStripPanelVisible = false;
             this->toolStripContainer1->Location = System::Drawing::Point(0, 27);
@@ -628,7 +679,13 @@ private: System::Void treeV_Seq_DragDrop        (System::Object^  sender, System
             this->toolStripContainer1->Size = System::Drawing::Size(687, 23);
             this->toolStripContainer1->TabIndex = 1;
             this->toolStripContainer1->Text = L"toolStripContainer1";
+            // 
+            // toolStripContainer1.TopToolStripPanel
+            // 
             this->toolStripContainer1->TopToolStripPanel->Controls->Add(this->toolStrip1);
+            // 
+            // toolStrip1
+            // 
             this->toolStrip1->Dock = System::Windows::Forms::DockStyle::None;
             this->toolStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(5) {this->toolStripButAddSeqGr, 
                 this->toolStripButtonAddSeq, this->toolStripSeparator1, this->toolStripLabel_show_seq, this->tStripLab_showFiltered});
@@ -636,6 +693,9 @@ private: System::Void treeV_Seq_DragDrop        (System::Object^  sender, System
             this->toolStrip1->Name = L"toolStrip1";
             this->toolStrip1->Size = System::Drawing::Size(251, 25);
             this->toolStrip1->TabIndex = 0;
+            // 
+            // toolStripButAddSeqGr
+            // 
             this->toolStripButAddSeqGr->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
             this->toolStripButAddSeqGr->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"toolStripButAddSeqGr.Image")));
             this->toolStripButAddSeqGr->ImageTransparentColor = System::Drawing::Color::Magenta;
@@ -644,6 +704,9 @@ private: System::Void treeV_Seq_DragDrop        (System::Object^  sender, System
             this->toolStripButAddSeqGr->Text = L"New Group";
             this->toolStripButAddSeqGr->ToolTipText = L"Add a new Group";
             this->toolStripButAddSeqGr->Click += gcnew System::EventHandler(this, &SeqExpl::toolStripButAddSeqGr_Click);
+            // 
+            // toolStripButtonAddSeq
+            // 
             this->toolStripButtonAddSeq->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
             this->toolStripButtonAddSeq->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"toolStripButtonAddSeq.Image")));
             this->toolStripButtonAddSeq->ImageTransparentColor = System::Drawing::Color::Magenta;
@@ -652,8 +715,14 @@ private: System::Void treeV_Seq_DragDrop        (System::Object^  sender, System
             this->toolStripButtonAddSeq->Text = L"Add Seq";
             this->toolStripButtonAddSeq->ToolTipText = L"Add Sequences from a file";
             this->toolStripButtonAddSeq->Click += gcnew System::EventHandler(this, &SeqExpl::toolStripButtonAddSeq_Click);
+            // 
+            // toolStripSeparator1
+            // 
             this->toolStripSeparator1->Name = L"toolStripSeparator1";
             this->toolStripSeparator1->Size = System::Drawing::Size(6, 25);
+            // 
+            // toolStripLabel_show_seq
+            // 
             this->toolStripLabel_show_seq->BackColor = System::Drawing::SystemColors::ButtonFace;
             this->toolStripLabel_show_seq->ForeColor = System::Drawing::SystemColors::HotTrack;
             this->toolStripLabel_show_seq->ImageScaling = System::Windows::Forms::ToolStripItemImageScaling::None;
@@ -661,29 +730,50 @@ private: System::Void treeV_Seq_DragDrop        (System::Object^  sender, System
             this->toolStripLabel_show_seq->Size = System::Drawing::Size(111, 22);
             this->toolStripLabel_show_seq->Text = L"Show only local seq";
             this->toolStripLabel_show_seq->Click += gcnew System::EventHandler(this, &SeqExpl::toolStripLabel_show_seq_Click);
+            // 
+            // tStripLab_showFiltered
+            // 
             this->tStripLab_showFiltered->ForeColor = System::Drawing::Color::Gray;
             this->tStripLab_showFiltered->Name = L"tStripLab_showFiltered";
             this->tStripLab_showFiltered->Size = System::Drawing::Size(76, 22);
             this->tStripLab_showFiltered->Text = L"Show filtered";
             this->tStripLab_showFiltered->Click += gcnew System::EventHandler(this, &SeqExpl::tStripLab_showFiltered_Click);
+            // 
+            // statusStrip1
+            // 
             this->statusStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->toolStripStatusLabel1});
             this->statusStrip1->Location = System::Drawing::Point(0, 534);
             this->statusStrip1->Name = L"statusStrip1";
             this->statusStrip1->Size = System::Drawing::Size(1076, 22);
             this->statusStrip1->TabIndex = 2;
             this->statusStrip1->Text = L"statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
             this->toolStripStatusLabel1->Name = L"toolStripStatusLabel1";
             this->toolStripStatusLabel1->Size = System::Drawing::Size(0, 17);
+            // 
+            // splitContainer1
+            // 
             this->splitContainer1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
                 | System::Windows::Forms::AnchorStyles::Left) 
                 | System::Windows::Forms::AnchorStyles::Right));
             this->splitContainer1->Location = System::Drawing::Point(0, 59);
             this->splitContainer1->Name = L"splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
             this->splitContainer1->Panel1->Controls->Add(this->treeV_Seq);
+            // 
+            // splitContainer1.Panel2
+            // 
             this->splitContainer1->Panel2->Controls->Add(this->splitContainer2);
             this->splitContainer1->Size = System::Drawing::Size(1076, 475);
             this->splitContainer1->SplitterDistance = 171;
             this->splitContainer1->TabIndex = 3;
+            // 
+            // treeV_Seq
+            // 
             this->treeV_Seq->AllowDrop = true;
             this->treeV_Seq->Dock = System::Windows::Forms::DockStyle::Fill;
             this->treeV_Seq->FullRowSelect = true;
@@ -703,15 +793,27 @@ private: System::Void treeV_Seq_DragDrop        (System::Object^  sender, System
             this->treeV_Seq->DragEnter += gcnew System::Windows::Forms::DragEventHandler(this, &SeqExpl::treeV_Seq_DragEnter);
             this->treeV_Seq->DragOver += gcnew System::Windows::Forms::DragEventHandler(this, &SeqExpl::treeV_Seq_DragOver);
             this->treeV_Seq->DragLeave += gcnew System::EventHandler(this, &SeqExpl::treeV_Seq_DragLeave);
+            // 
+            // splitContainer2
+            // 
             this->splitContainer2->Dock = System::Windows::Forms::DockStyle::Fill;
             this->splitContainer2->Location = System::Drawing::Point(0, 0);
             this->splitContainer2->Name = L"splitContainer2";
             this->splitContainer2->Orientation = System::Windows::Forms::Orientation::Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
             this->splitContainer2->Panel1->Controls->Add(this->listV_Seq);
+            // 
+            // splitContainer2.Panel2
+            // 
             this->splitContainer2->Panel2->Controls->Add(this->textBox_Seq);
             this->splitContainer2->Size = System::Drawing::Size(901, 475);
             this->splitContainer2->SplitterDistance = 434;
             this->splitContainer2->TabIndex = 0;
+            // 
+            // listV_Seq
+            // 
             this->listV_Seq->CheckBoxes = true;
             this->listV_Seq->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(6) {this->colHead_name, this->columnHeader_len, 
                 this->colH_Tm, this->colH_deg, this->colH_descript, this->colH_seq});
@@ -725,35 +827,68 @@ private: System::Void treeV_Seq_DragDrop        (System::Object^  sender, System
             this->listV_Seq->UseCompatibleStateImageBehavior = false;
             this->listV_Seq->View = System::Windows::Forms::View::Details;
             this->listV_Seq->ItemDrag += gcnew System::Windows::Forms::ItemDragEventHandler(this, &SeqExpl::listV_Seq_ItemDrag);
+            // 
+            // colHead_name
+            // 
             this->colHead_name->Text = L"Name";
             this->colHead_name->Width = 112;
+            // 
+            // columnHeader_len
+            // 
             this->columnHeader_len->Text = L"Lenght";
             this->columnHeader_len->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
             this->columnHeader_len->Width = 49;
+            // 
+            // colH_Tm
+            // 
             this->colH_Tm->Text = L"Tm °C";
             this->colH_Tm->Width = 44;
+            // 
+            // colH_deg
+            // 
             this->colH_deg->Text = L"Deg.";
             this->colH_deg->Width = 43;
+            // 
+            // colH_descript
+            // 
             this->colH_descript->Text = L"Description";
             this->colH_descript->Width = 286;
+            // 
+            // colH_seq
+            // 
             this->colH_seq->Text = L"Seq";
             this->colH_seq->Width = 973;
+            // 
+            // textBox_Seq
+            // 
             this->textBox_Seq->Dock = System::Windows::Forms::DockStyle::Fill;
             this->textBox_Seq->Location = System::Drawing::Point(0, 0);
             this->textBox_Seq->Multiline = true;
             this->textBox_Seq->Name = L"textBox_Seq";
             this->textBox_Seq->Size = System::Drawing::Size(901, 37);
             this->textBox_Seq->TabIndex = 0;
+            // 
+            // openFileDialog_targets
+            // 
             this->openFileDialog_targets->Filter = L"fasta|*.fas;*.fasta|NCBI BLAST|*-Alignment.xml|GB|*.gb;*-sequence.xml|Text|*.txt|" 
                 L"All file|*.*";
             this->openFileDialog_targets->InitialDirectory = L"C:\\Users\\Rodriguez\\Documents\\ThDySec\\targets";
             this->openFileDialog_targets->Title = L"Open Targets File";
+            // 
+            // openSondesFileDialog
+            // 
             this->openSondesFileDialog->DefaultExt = L"txt";
             this->openSondesFileDialog->Filter = L"fasta|*.fas;*.fasta|Text|*.txt|All file|*.*";
             this->openSondesFileDialog->InitialDirectory = L"C:\\Users\\Rodriguez\\Documents\\ThDySec\\sonden";
             this->openSondesFileDialog->Title = L"Open Sondes File";
+            // 
+            // openFileDialog_non_targets
+            // 
             this->openFileDialog_non_targets->Filter = L"fasta|*.fas|fasta|*.fasta|Text|*.txt|All file|*.*";
             this->openFileDialog_non_targets->Title = L"Open Non-Targets Sec File";
+            // 
+            // SeqExpl
+            // 
             this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->ClientSize = System::Drawing::Size(1076, 556);
