@@ -80,7 +80,7 @@ class FindSondenPage : public CompoWidget
 		 
 		try{                                   
 		    _Pr._SdDes._cp.Actualice_NNp();  
-		        _Pr.Run(_Pr._SdDes);	 //     _Pr._SdDes.Run ();	
+            _Pr.Run(_Pr._SdDes);	 //     _Pr._SdDes.Run ();	
 		}
 		catch ( std::exception& e)
 		{ 
@@ -88,6 +88,54 @@ class FindSondenPage : public CompoWidget
 		    return;
 		}	 	        		 
     }   
+};
+
+class MplexPCR : public CompoWidget
+{public: 
+    ThDyProject        &_Pr;
+    BindGroup          _mPCR;
+    nana::gui::button  _do_mPCR;
+    FilePickBox        _PrimersFilePCR;
+
+    MplexPCR (ThDyNanaForm& tdForm);
+
+    void SetDefLayout   () override
+    {
+        _DefLayout= "vertical      gap=2             \n\t"
+	        "  <_PrimersFilePCR weight=23>       \n\t "
+            "  <<><_do_mPCR  vertical min=50 max=200><> weight=50>       \n\t "
+            //"  <wieght=300 <vertical min=50 max=200 buttons> <> <weight=80 checks>>   \n\t"
+
+            ;
+    }
+    void AsignWidgetToFields() override
+    {
+	    _place.field("_PrimersFilePCR" )<<_PrimersFilePCR;
+	    _place.field("_do_mPCR"         )<<_do_mPCR;
+	    //_place.field("checks"          )<<"save result";
+    }
+
+    private: void buttPCR_Click				( ) //	  Run      _IPrgPar_mPCR
+			 {	 			
+		           try{                                   
+		                    _Pr._mPCR._cp.Actualice_NNp();  
+ 		                    _Pr.Run(_Pr._mPCR);	
+		           }
+		           catch ( std::exception& e)
+		           { cerr<< e.what()    ;
+                    (nana::gui::msgbox(*this,STR("Error during multiplex PCR analis !"), 
+                                                         nana::gui::msgbox::button_t::ok)   <<e.what()) (  ) ;
+		            return;
+		           }
+		//ShowResTbl(_Pr._mPCR._rtbl );
+		//_Pr._uArr._rtbl = nullptr;
+
+		//ShowResTbl(_Pr._mPCR._rtbl_self );
+		//_Pr._mPCR._rtbl_self = nullptr;
+
+		    }
+
+
 };
 
 class TmCalcPage : public CompoWidget
@@ -138,7 +186,7 @@ class TmCalcPage : public CompoWidget
 		try
         {                                   
 		   _Pr._TmCal._cp.Actualice_NNp();  
-            _Pr._TmCal.Run ();
+           _Pr._TmCal.Run ();
 		}
 		catch ( std::exception& e)
 		{ 
@@ -234,6 +282,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     FindSondenPage                  findSond_;
     TmCalcPage                      tmCalc_; 
     SetupPage                       setup_;
+    MplexPCR                        mPCR_;
     BindGroup                       _commPP;
     nana::gui::combox               comBoxSalMeth, comBoxTAMeth;
     nana::gui::NumUnitUpDown        numUpDwMaxTgId, numUpDowTgConc, numUpDowSalConc , numUpDw_TgBeg, numUpDw_TgEnd,	numUpDw_MinLen,
@@ -258,7 +307,8 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
                    tabbar_         (*this),
                    findSond_       (*this),
                    tmCalc_         (*this),
-                   setup_          (*this)
+                   setup_          (*this),
+                   mPCR_           (*this)   
    {
         //nana::pixel_rgb_t bk;
         //bk.u.color = background ();
@@ -268,6 +318,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
        
         add_page( findSond_ );
+        add_page( mPCR_     );
         add_page( tmCalc_   );
         add_page( setup_    );
 
@@ -518,6 +569,21 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
         InitMyLayout();
         SelectClickableWidget( set_def_proj_);
+        SelectClickableWidget( *this);
+    }
+   MplexPCR::MplexPCR          (ThDyNanaForm& tdForm)
+        : _Pr             (tdForm), 
+          CompoWidget     (tdForm, STR("MplexPCR"), STR("MplexPCR.lay.txt")),
+          _do_mPCR        (*this, STR(" PCR ! ") ),
+          _PrimersFilePCR (*this, STR("Primers seq. file:") )
+    {
+        _mPCR<< link(   _Pr._mPCR._InputSondeFile , _PrimersFilePCR)
+            ;
+
+        _do_mPCR      .make_event <nana::gui::events::click>([&](){buttPCR_Click ();});
+
+        InitMyLayout();
+        SelectClickableWidget( _PrimersFilePCR);
         SelectClickableWidget( *this);
     }
 
