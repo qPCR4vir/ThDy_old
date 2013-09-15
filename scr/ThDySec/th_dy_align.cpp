@@ -517,6 +517,7 @@ CSecCand	&CMSecCand::AddBeging(CSec &sec)
 	_NumPosCand +=newtg->_NumPosCand;
 	_LSecCand.goBeging() ;		// cur = first
 	_TDATmC->_cs=newtg;
+    ++_NSecCand ;
 	return *newtg;
 }
 // _TNumPosCand= _TNumCand = 0;
@@ -792,8 +793,11 @@ void	ThDyAlign::Export_Hits(ofstream &osHits, char *sep)		// mientras estan cone
 	}
 }
 /// MEJORAR !!!
-void	CMSecCand::ExportCommonSonden(char*fileName, bool colpased,float MinCov, int format)
-{	bool	f_fas=format && fasta,
+void	CMSecCand::ExportCommonSonden(char*fileName, bool colpased, NumRang<float> ExtrCovPerc, int format)
+{	
+	NumRang<int> ExtrCov ( (_NSecCand * ExtrCovPerc.Min()) /100.0  , (_NSecCand * ExtrCovPerc.Max()) /100.0 ) ;  // TODO: REVISAR !!!! global ? local????
+    
+    bool	f_fas=format && fasta,
 			f_csv=format && csv;
 	string  f_name(fileName) ;
 	ofstream	osFasta, osCSV;
@@ -812,7 +816,6 @@ void	CMSecCand::ExportCommonSonden(char*fileName, bool colpased,float MinCov, in
 	}
 
 	Base *sonde=new Base [ _sL._L.Max() + 1];
-	int minTcov= int (_MSec->_Local._NSec * MinCov/100.0 ) -1;  // TODO: REVISAR !!!! global ? local????
 	set <string> SondeList;
 	//for (auto x : SondeList);
 	FracTDAlign fAl( _sL._L.Max() + 1 ,  _sL._L.Max() + 1, _TDATmC->_NNpar);
@@ -829,7 +832,7 @@ void	CMSecCand::ExportCommonSonden(char*fileName, bool colpased,float MinCov, in
 				string cur_s((char*)s._Sec.Copy_charSec(sonde,pi, fi) ); 
 			    int matchs=r->matchs[pi- r->Min()];
 
-				if ( (colpased && SondeList.insert(cur_s).second)   || (matchs == 0) || (matchs >=minTcov ) )
+				if ( (colpased || !ExtrCov.isIntern (matchs) ) && SondeList.insert(cur_s).second )
 				{	CSec cand  (cur_s.c_str(),1,"s", _TDATmC->_NNpar);     char *cs=(char*)cand.GetCopy_charSec(rev_compl);
 					CSec c_cand(cs           ,1,"c", _TDATmC->_NNpar);
 					delete cs;

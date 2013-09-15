@@ -187,6 +187,7 @@ class NumRang				// ------------------------------------------------------------
 
 
 	bool inRang  ( Num		X)   const {return (min<= X			&& X<=max)		;}
+    bool isIntern( Num		X)   const {return (min<  X			&& X< max)		;}
 	bool inRang  ( NumRang	R)   const {return ( R.inRang(min) && R.inRang(max));}
 	bool isExtrem( Num		X)   const {return (min== X			|| X==max)		;}
 	bool isExtrem( NumRang	R)   const {return (min== R.Min()	|| R.Max()==max);}

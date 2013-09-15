@@ -4,19 +4,19 @@
 #include "ThDySec\th_dy_align.h"
 #include "ThDy_programs/prog_comm_functions.h"
 
-void FindSonden( CMultSec *tg, int& tgN, int& compN, CMSecCand& msCand, ofstream &osNCand, CProgParam_SondeDesign *IPrgPar_SdDes )
+void FindSonden( CMultSec *tg, /*int& tgN,*/ int& compN, CMSecCand& msCand, ofstream &osNCand, CProgParam_SondeDesign *IPrgPar_SdDes )
 {
 	for (  tg->goFirstSec(); tg->NotEndSec()   ;   tg->goNextSec() )  // recorre todos los targets
 	{	CSec &nt = *tg->CurSec() ;
 		
 		if ( nt.Degeneracy() > 1 )  continue ; 		  // No analiza las target deg...por ahora.Facil de ampliar
 		if ( ! nt.Selected() )      continue ; 		  // No analiza las target non selected
-        tgN++;
+        //tgN++;
 		for(CSecCand &newtg =msCand.AddBeging(nt)	;msCand.NotFinisch() ; msCand.CompNext())  // anade el curr tg y lo comp con todos los anteriormente anadidos
 		{	CSecCand &curtg =msCand.curTg();
             compN++;
 			osNCand	<<endl<< msCand._TNumPosCand << sep<< msCand._TNumCand  
-					<<sep<< tgN				<<sep<<	compN	
+					<<sep<< msCand._NSecCand	<<sep<<	compN	
 					<<sep<<	newtg._Sec.Name()	<<sep<<	newtg._NumPosCand/*In*/  << sep<< newtg._NumCand/*In*/	
 					<<sep<<	curtg._Sec.Name()	<<sep<<	curtg._NumPosCand/*In */ << sep<< curtg._NumCand/*In*/;	
 					//<<sep<< msCand._TDATmC->_THits<< sep<< msCand._TDATmC->_HitsOK 
@@ -33,7 +33,7 @@ void FindSonden( CMultSec *tg, int& tgN, int& compN, CMSecCand& msCand, ofstream
 	}
 	for (  tg->goFirstMSec(); tg->NotEndMSec()   ;   tg->goNextMSec())  // recorre todos los targets
 	{	
-        FindSonden(tg->CurMSec(), tgN, compN, msCand, osNCand, IPrgPar_SdDes );
+        FindSonden(tg->CurMSec(), /*tgN,*/ compN, msCand, osNCand, IPrgPar_SdDes );
 	}
 }
 		//msCand.Add(t1);
@@ -67,17 +67,25 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 							CtoK(IPrgPar_SdDes->_Tm_sig),		 IPrgPar_SdDes->_G_sig      * 1000,
 							CtoK(IPrgPar_SdDes->_MaxSd_nTgTm),	 IPrgPar_SdDes->_MinSd_nTgG * 1000,	
 							CtoK(IPrgPar_SdDes->_MaxSelfTm),	 IPrgPar_SdDes->_MinSelfG   * 1000	 );
-	msCand.Use(tg);
-	msCand._TDATmC->SetTa	(CtoK(IPrgPar_SdDes->_cp._Ta));
+
+    if (!IPrgPar_SdDes->_cp._pSeqTargets->_NNPar)   /// Make seq espesific
+        IPrgPar_SdDes->_cp._pSeqTargets->_NNPar=IPrgPar_SdDes->_cp._pSaltCorrNNp;
+
+    msCand.Use                 (IPrgPar_SdDes->_cp._pSeqTargets);
+	msCand._TDATmC->SetTa (CtoK(IPrgPar_SdDes->_cp._Ta         ));
 
 	time_t t_al_created = time(NULL);
 
-	int tgN(0), compN=0;
-    FindSonden(tg.get(), tgN, compN, msCand, osNCand, IPrgPar_SdDes );
+	int /*tgN(0),*/ compN=0;
+
+    FindSonden(IPrgPar_SdDes->_cp._pSeqTargets.get(), /*tgN,*/ compN, msCand, osNCand, IPrgPar_SdDes );
 
 
 	if (IPrgPar_SdDes->_MinTgCov) 
-		msCand.ExportCommonSonden(IPrgPar_SdDes->_cp._OutputFile.Get(), IPrgPar_SdDes->_design, IPrgPar_SdDes->_MinTgCov, fasta | csv);
+		msCand.ExportCommonSonden(  IPrgPar_SdDes->_cp._OutputFile.Get(), 
+                                    IPrgPar_SdDes->_design, 
+                                    NumRang<float>(-1,IPrgPar_SdDes->_MinTgCov), 
+                                    fasta | csv);
 
 
 
@@ -88,4 +96,18 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 	return 1;
 }
 
+
+
+
+        
+        
+    //if (!tg || ! tg->_Global._NSec)
+	//std::shared_ptr<CMultSec>  tg(IPrgPar_SdDes->_cp._pSeqTargets );
+        //._pSeqTargets.reset ( new CMultSec	(	, NNpar,
+								//    IPrgPar_SdDes->_cp._MaxTgId,
+								//    IPrgPar_SdDes->_cp._SecLim ,
+        //                            IPrgPar_SdDes->_cp._MinSecLen ));
+					//CMultSec     *nms=_Pr._cp.AddSeqFromFile	
+					//									(ms, CreateStdFromManString
+					//											(this->openFileDialog_targets->FileName)	);
 
