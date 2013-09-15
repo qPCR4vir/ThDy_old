@@ -109,11 +109,11 @@ inline std::basic_string<_Elem, _Traits, _Alloc> trim_string(const std::basic_st
 
 
 
-char *AttachToCharStr       (const char *CharStr   , const char *Attach); //defined in : sec.cpp: no olvide delete este pointer
-char *ChangeCharStrAttaching(char *&CharStrToChange, const char *Attach);	// CharStrToChange : debe ser una cadena que se creo con new, 
-char *ChangeCharStrAttaching(char *&CharStrToChange, const int   Attach);	// y que sera borrada y vuelta a crear !!!
+//char *AttachToCharStr       (const char *CharStr   , const char *Attach); //defined in : sec.cpp: no olvide delete este pointer
+//char *ChangeCharStrAttaching(char *&CharStrToChange, const char *Attach);	// CharStrToChange : debe ser una cadena que se creo con new, 
+//char *ChangeCharStrAttaching(char *&CharStrToChange, const int   Attach);	// y que sera borrada y vuelta a crear !!!
 
-inline char *AddFileExt(const char *FileName, const char *Ext="")	{return AttachToCharStr(FileName,Ext);}// no olvide delete este pointer
+//inline char *AddFileExt(const char *FileName, const char *Ext="")	{return AttachToCharStr(FileName,Ext);}// no olvide delete este pointer
 
 typedef unsigned char Base;
 //char operator Base(){return }

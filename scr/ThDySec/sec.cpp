@@ -13,32 +13,11 @@
 using namespace std ; 
 
 #include "ThDySec/sec.h"
-#include "ThDySec/link.h"
 #include "ThDySec/common_basics.h" 
 
 #define SEQUENCES_MAX_SIZE 100000
 char *DNAStrandName[]=	{""		, "(c)", ""		, "(r)"	, "(i)", "(c)"		} ;
 // enum DNAStrand		{plus	, minus, direct	, rev	, compl, rev_compl	} ;
-
-//inline char *clone_c_str   (const char *str);
-//inline char *clone_trim_str(const char *str);
-//char *AddFileExt(const char *FileName, const char *Ext="")	;	// no olvide delete este pointer
-char *AttachToCharStr(const char *CharStr, const char *Attach)			// no olvide delete este pointer
-{	char *NewCharStr=new char[strlen(CharStr) +1+ strlen(Attach)];
-	strcpy (NewCharStr,CharStr);	strcat (NewCharStr,Attach);
-	return NewCharStr ;
-}
-char *ChangeCharStrAttaching (char *&CharStrToChange, const char *Attach) // CharStrToChange : debe ser una cadena que se creo con new, 
-																	// y que sera borrada y vuelta a crear !!!
-{	char *OldCharStr=CharStrToChange;
-	CharStrToChange=AttachToCharStr(CharStrToChange, Attach)	;
-	delete OldCharStr;
-	return CharStrToChange ;
-}
-char *ChangeCharStrAttaching(char *&CharStrToChange, const int Attach)
-{	char num[20];
-	return ChangeCharStrAttaching(CharStrToChange, itoa (Attach, num, 10) ) ;
-}
 
 		CSecBasInfo::CSecBasInfo( long l):			
 			_len( l ) , 			
@@ -57,9 +36,7 @@ char *ChangeCharStrAttaching(char *&CharStrToChange, const int Attach)
 				_SdS(new Entropy[l+3]),		
 				_SdH(new Energy[l+3])
 
-{	//auto_ptr<Base>		c(new Base[l+3]);	auto_ptr<Base>		b(new Base[l+3]);	auto_ptr<Entropy> 	SdS(new Entropy[l+3]);	
-	//auto_ptr<Energy>	SdH(new Energy[l+3]);	_c=c.release() ;_b=b.release() ;	_SdS=SdS.release() ;	_SdH=SdH.release() ;
-	//							assert(_c && _b && _SdS && _SdH);	/* Hace algo ???? */ 
+{	
 };  
 
 		CSecBasInfo::CSecBasInfo (int id, const std::string& nam, const std::string& clas) 
@@ -176,7 +153,7 @@ CSec  * CSec::CreateCopy(DNAStrand strnd) // strnd=direct...crea una copia muy s
 	//char *n; 
 	CSec *newS=new CSec( (char*)s, 
 						NewS_ID(),				
-						_name + DNAStrandName[strnd],//n=AttachToCharStr(_name, DNAStrandName[strnd])	,
+						_name + DNAStrandName[strnd],
 						_NNpar	,
 						0,1,
 						_Clas,
@@ -187,20 +164,6 @@ CSec  * CSec::CreateCopy(DNAStrand strnd) // strnd=direct...crea una copia muy s
 	delete []s;/*delete []n;*/
 	return newS;
 }
-
-//CSec  * CSec::CreateCopy(DNAStrand strnd) // strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
-//{	Base *s=GetCopy_charSec(strnd); 
-//	char *n; 
-//	CSec *newS=new CSec( (char*)s, 
-//						_ID,				// el mismo ????
-//						n=AttachToCharStr(_name, DNAStrandName[strnd])	,
-//						_NNpar	,
-//						0,1,
-//						_Clas,
-//						_Conc);
-//	delete []s;delete []n;
-//	return newS;
-//}
 
 Base  *	CSecBasInfo::Copy_charSec(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd)//DNAStrand strnd=direct)
 {	if ( EndBase< 1 || _len <EndBase ) EndBase=_len; 
@@ -313,12 +276,6 @@ CSec *	CSec::CopyFirstBases(long pos)
 	assert(sec);
     sec->_name =  _name ;
     sec->_Clas =  _Clas ;
-	//sec->_name = new char[strlen(_name)+1];  assert(sec->_name); // al "final" se cambia anadiendo num _NSec
-	//strcpy( sec->_name, _name );
-	//if (_Clas!=NULL) 
-	//{	sec->_Clas = new char[strlen(_Clas)+1];	     assert(sec->_Clas );
-	//	strcpy( sec->_Clas, _Clas );
-	//} else sec->_Clas=NULL ;
 
 	sec->_GCp	= _GCp ;
 	sec->_GrDeg	= _GrDeg ;
