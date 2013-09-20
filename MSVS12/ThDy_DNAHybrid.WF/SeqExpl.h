@@ -442,6 +442,12 @@ private: System::Void treeV_Seq_DragDrop        (System::Object^  sender, System
 	    }
 	} 
 
+private: System::Void SeqExpl_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) 
+         {
+            e->Cancel=true ;
+            this->Hide();
+         }
+
 	private: System::Windows::Forms::ToolStripLabel^		toolStripLabel_show_seq;
 	private: System::Windows::Forms::ToolStripMenuItem^		getPCRFiltreFrommTmCalcToolStripMenuItem;
 	private: System::Windows::Forms::ColumnHeader^			colH_deg;
@@ -899,6 +905,7 @@ private: System::Void treeV_Seq_DragDrop        (System::Object^  sender, System
             this->MainMenuStrip = this->menuStripSeqExpl;
             this->Name = L"SeqExpl";
             this->Text = L"Sequences Explorer";
+            this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &SeqExpl::SeqExpl_FormClosing);
             this->menuStripSeqExpl->ResumeLayout(false);
             this->menuStripSeqExpl->PerformLayout();
             this->toolStripContainer1->TopToolStripPanel->ResumeLayout(false);
