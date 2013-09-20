@@ -24,16 +24,18 @@ class FindSondenPage : public CompoWidget
     BindGroup   _findSond;
     nana::gui::NumUnitUpDown _Gmin, _Gmax, _Tmmin, _Tmmax, _Lengthmin, _Lengthmax, 
                              _MaxG, _MinTm, _MinG, _MaxTm, _MinSelfG, _MaxSelfTm, 	
-                             numUpDw_MinTargCov ;	
+                             numUpDw_MinTargCov, numUpDw_MaxTargCov ;	
     nana::gui::button        _design, _compare;
+    nana::gui::checkbox      chkBx_unique, chkBx_common;
     void SetDefLayout   () override
     {
       _DefLayout=  
         "vertical      gap=2                 \n\t"
 	    "    <weight=10     >       \n\t "
-        "    <weight=195 gap=8 <weight=320 vertical <weight=100 <weight=320 Sonde  grid[3,4]>>     \n\t "
-        "                                           <TargCov                                 >     \n\t "
-        "                                           <weight=50 < <><weight=100 vertical gap=2 Run><>        >  >   \n\t "
+        "    <weight=195 gap=8 <weight=5><weight=350 vertical <weight=100 <weight=320 Sonde  grid[3,4]>>     \n\t "
+        "                                           <TargCov    grid[2,2]                            >     \n\t "
+        "                                           <weight=40 <   <><weight=300   gap=20 Run>       > >    \n\t "
+        "                                           <weight=10>                                 \n\t "
         "                      >   <><weight=230 gap=1 vertical  options>    >   \n\t "
 	    "    <weight=23   NonTargSeq >       \n\t "
         ;
@@ -52,7 +54,8 @@ class FindSondenPage : public CompoWidget
         _MinSelfG.ResetLayout  (110,45,50);   
         _MaxSelfTm.ResetLayout (110,45,50 );  
 
-        numUpDw_MinTargCov.ResetLayout (120,45,20 );  
+        numUpDw_MinTargCov.ResetLayout (115,45,20 );  
+        numUpDw_MaxTargCov.ResetLayout (115,45,20 );  
 
 
     }
@@ -60,16 +63,17 @@ class FindSondenPage : public CompoWidget
     {
 	     /// Use room (wd,w,h) in combination with a <Table grid[W,H]>
         _place.field("NonTargSeq" )<<nTsec_;
-	    _place.field("Sonde" )     << "Sonde"     << "Min."    << "   Max."   
+	    _place.field("Sonde" )     << "Probes"     << "Min."    << "   Max."   
                                    <<  _place.room(_Gmin ,2,1) << _Gmax
                                    <<  _place.room(_Tmmin,2,1) << _Tmmax
                                    <<  _place.room(_Lengthmin,2,1) << _Lengthmax  ;
-        _place.field("TargCov" )   << numUpDw_MinTargCov       	;
+        _place.field("TargCov" )   << chkBx_unique << numUpDw_MinTargCov       
+                                   << chkBx_common << numUpDw_MaxTargCov     	;
         _place.field("Run"     )   << _design	<< _compare	;
                  
-	    _place.field("options" )   << "Sonde-target"    <<  _MaxG     << _MinTm
-                                   << "Sonde-non-target"<<  _MinG     << _MaxTm
-                                   << "Sonde-self"      <<  _MinSelfG << _MaxSelfTm  
+	    _place.field("options" )   << "Probe-target"    <<  _MaxG     << _MinTm
+                                   << "Probe-non-target"<<  _MinG     << _MaxTm
+                                   << "Probe-self"      <<  _MinSelfG << _MaxSelfTm  
                                     ;    
 
     }
@@ -390,7 +394,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 	                 "       <weight=25>                   \n\t "
 	                 "       <Project     weight=23 >      \n\t "
 	                 "       <PagesTag    weight=23 >      \n\t "
-	                 "       <Pages       min=230   >      \n\t "
+	                 "       <Pages       min=255   >      \n\t "
 	                 "       <Targets     weight=23 >      \n\t "
 	                 "       < <weight=30><TargetsOptions><weight=10> weight=23>      \n\t "
 	                 "       <weight=5 >                   \n\t "
@@ -465,15 +469,18 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
    FindSondenPage::FindSondenPage(ThDyNanaForm& tdForm)
         : _Pr        (tdForm), 
-          CompoWidget(tdForm, STR("Find Sonden"), STR("FindSonden.lay.txt")),
+          CompoWidget(tdForm, STR("Find probes"), STR("FindSonden.lay.txt")),
           nTsec_  (*this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt") ),
           _Gmin   (*this, STR("G :"    ), -5, -10 , 10,"kcal/mol"),      _Gmax  (*this, STR(""), -1, -10, 10, "kcal/mol" ),
           _Tmmin  (*this, STR("Tm :"   ), 57,  40 , 60,"°C"      ),     _Tmmax  (*this, STR(""), 63,  45, 75, "°C"       ),
       _Lengthmin  (*this, STR("Length:"), 20,  15 , 35,"nt"      ), _Lengthmax  (*this, STR(""), 35,  15, 40, "nt"       ),
-      numUpDw_MinTargCov(*this, STR("Min. target coverage:"), 99.0, 0.0 , 100.0,"%"),
+      chkBx_unique(*this, STR("Report unique probes, ")),          chkBx_common (*this, STR("Report common probes, ")),
           _MinG   (*this, STR("Min G" ), 15, -10 , 30,"kcal/mol"),    _MaxG  (*this, STR("Max G" ), 10, -10, 30, "kcal/mol" ),
           _MinTm  (*this, STR("Tm :"  ), 30,  10 , 60,"°C"      ),   _MaxTm  (*this, STR("Max Tm"), 10, -10, 75, "°C"       ),
          _MinSelfG(*this, STR("Min G" ), 10, -10 , 30,"kcal/mol"), _MaxSelfTm(*this, STR("Max Tm"), 10, -10, 75, "°C"       ),
+
+      numUpDw_MaxTargCov(*this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%"),
+      numUpDw_MinTargCov(*this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%"),
           _design (*this, STR("Design !" )),  
           _compare(*this, STR("Compare !"))
     {
@@ -494,7 +501,9 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
                   << link (   _Pr._SdDes.sL.G,        _Gmin,_Gmax     )
                   << link (   _Pr._SdDes.sL.T,       _Tmmin,_Tmmax    )
                   << link (  _Pr._SdDes.sL.L,    _Lengthmin,_Lengthmax)
-                  << link ( _Pr._SdDes.MinTgCov,    numUpDw_MinTargCov)	
+                  << link (  _Pr._SdDes.common,           chkBx_common)
+                  << link (  _Pr._SdDes.unique,           chkBx_unique)
+                  << link ( _Pr._SdDes.Coverage,  numUpDw_MinTargCov,  numUpDw_MaxTargCov)	
 
 
 

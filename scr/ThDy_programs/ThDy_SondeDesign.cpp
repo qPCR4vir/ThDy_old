@@ -80,13 +80,18 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 
     FindSonden(IPrgPar_SdDes->_cp._pSeqTargets.get(), /*tgN,*/ compN, msCand, osNCand, IPrgPar_SdDes );
 
+    NumRang<float> ExtrCovPerc(IPrgPar_SdDes->Coverage.get());
+    if (! IPrgPar_SdDes->common.get())         ExtrCovPerc.SetMax(101.0f);
+    if (! IPrgPar_SdDes->unique.get())         ExtrCovPerc.SetMin( -1.0f);
 
-	if (IPrgPar_SdDes->_MinTgCov) 
-		msCand.ExportCommonSonden(  IPrgPar_SdDes->_cp._OutputFile.Get(), 
-                                    IPrgPar_SdDes->_design, 
-                                    NumRang<float>(-1,IPrgPar_SdDes->_MinTgCov), 
-                                    fasta | csv);
+    /// Will return probes with a percent of other-target coverage with is not intern to the range ExtrCovPerc.
+    /// That is: probes with hybrid in one target but in not than more than in ExtrCovPerc.Min % of the others, 
+    /// and addicionaly, probes with hybrid in one target and at last in ExtrCovPerc.Max % of the others.
 
+	msCand.ExportCommonSonden(  IPrgPar_SdDes->_cp._OutputFile.Get(), 
+                                IPrgPar_SdDes->_design, 
+                                ExtrCovPerc, 
+                                fasta | csv);
 
 
 	time_t t_tm_cal = time(NULL);

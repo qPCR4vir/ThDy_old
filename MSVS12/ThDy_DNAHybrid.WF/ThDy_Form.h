@@ -453,6 +453,16 @@ private: System::Void but_Sec2AlignUpd_Click	(System::Object^  sender, System::E
 		UpDateForm	(txtBx_Sec2Align);		
 		this->txtBx_Sec2Align->Update();	
 	}
+	private: System::Windows::Forms::Button^  btPCRfiltrFile;
+	private: System::Windows::Forms::TextBox^  txtBoxPCRfiltr;
+	private: System::Windows::Forms::Label^  label1;
+	private: System::Windows::Forms::GroupBox^  groBox_ComUnic;
+	private: System::Windows::Forms::FlowLayoutPanel^  flowLayoutPanel1;
+	private: System::Windows::Forms::Button^  butSeqExplorer;
+    private: System::Windows::Forms::CheckBox^  chkBx_unique;
+    private: System::Windows::Forms::CheckBox^  chkBx_common;
+    private: System::Windows::Forms::NumericUpDown^  numUpDw_MinTargCov;
+    private: System::Windows::Forms::OpenFileDialog^  opPCRfiltrFDlg;
 
 
 	private: System::Windows::Forms::DataGridView^  dGVw_TmCalcRes;
@@ -539,9 +549,10 @@ private: System::Windows::Forms::CheckBox^		ckBx_savProj;
 	private: System::Windows::Forms::NumericUpDown^		nUpDw_MaxSdLength;
 
 	private: System::Windows::Forms::NumericUpDown^  nUpDowMaxSdTm;
+private: System::Windows::Forms::NumericUpDown^  numUpDw_MaxTargCov;
 
 
-	private: System::Windows::Forms::NumericUpDown^  numUpDw_MinTargCov;
+
 
 	private: System::Windows::Forms::TabControl^  tabControl;
 
@@ -678,7 +689,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->nUpDw_MinSdLength = (gcnew System::Windows::Forms::NumericUpDown());
 			this->nUpDw_MaxSdLength = (gcnew System::Windows::Forms::NumericUpDown());
 			this->nUpDowMaxSdTm = (gcnew System::Windows::Forms::NumericUpDown());
-			this->numUpDw_MinTargCov = (gcnew System::Windows::Forms::NumericUpDown());
+			this->numUpDw_MaxTargCov = (gcnew System::Windows::Forms::NumericUpDown());
 			this->tabControl = (gcnew System::Windows::Forms::TabControl());
 			this->tabPagFindSonden = (gcnew System::Windows::Forms::TabPage());
 			this->but_Compare = (gcnew System::Windows::Forms::Button());
@@ -690,8 +701,9 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox_Sd_Min_Max = (gcnew System::Windows::Forms::GroupBox());
 			this->lab_sMax = (gcnew System::Windows::Forms::Label());
 			this->groBox_ComUnic = (gcnew System::Windows::Forms::GroupBox());
-			this->radBut_UnicSond = (gcnew System::Windows::Forms::RadioButton());
-			this->radBut_CommSond = (gcnew System::Windows::Forms::RadioButton());
+			this->numUpDw_MinTargCov = (gcnew System::Windows::Forms::NumericUpDown());
+			this->chkBx_unique = (gcnew System::Windows::Forms::CheckBox());
+			this->chkBx_common = (gcnew System::Windows::Forms::CheckBox());
 			this->flowLayoutPanel1 = (gcnew System::Windows::Forms::FlowLayoutPanel());
 			this->groupBox_SdTg = (gcnew System::Windows::Forms::GroupBox());
 			this->nUpDowMinSd_TgTm = (gcnew System::Windows::Forms::NumericUpDown());
@@ -885,11 +897,11 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// Design
 			// 
-			this->Design->Location = System::Drawing::Point(44, 226);
+			this->Design->Location = System::Drawing::Point(42, 226);
 			this->Design->Name = L"Design";
-			this->Design->Size = System::Drawing::Size(75, 23);
+			this->Design->Size = System::Drawing::Size(122, 23);
 			this->Design->TabIndex = 2;
-			this->Design->Text = L"Design !";
+			this->Design->Text = L"Only 100% common !";
 			this->Design->UseVisualStyleBackColor = true;
 			this->Design->Click += gcnew System::EventHandler(this, &ThPr_Form::commandDesign);
 			// 
@@ -1001,16 +1013,16 @@ private: System::ComponentModel::IContainer^  components;
 			this->nUpDowMaxSdTm->TabIndex = 4;
 			this->nUpDowMaxSdTm->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {63, 0, 0, 0});
 			// 
-			// numUpDw_MinTargCov
+			// numUpDw_MaxTargCov
 			// 
-			this->numUpDw_MinTargCov->DecimalPlaces = 1;
-			this->numUpDw_MinTargCov->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 65536});
-			this->numUpDw_MinTargCov->Location = System::Drawing::Point(222, 15);
-			this->numUpDw_MinTargCov->MinimumSize = System::Drawing::Size(30, 0);
-			this->numUpDw_MinTargCov->Name = L"numUpDw_MinTargCov";
-			this->numUpDw_MinTargCov->Size = System::Drawing::Size(52, 20);
-			this->numUpDw_MinTargCov->TabIndex = 4;
-			this->numUpDw_MinTargCov->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {100, 0, 0, 0});
+			this->numUpDw_MaxTargCov->DecimalPlaces = 1;
+			this->numUpDw_MaxTargCov->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 65536 });
+			this->numUpDw_MaxTargCov->Location = System::Drawing::Point(222, 40);
+			this->numUpDw_MaxTargCov->MinimumSize = System::Drawing::Size(30, 0);
+			this->numUpDw_MaxTargCov->Name = L"numUpDw_MaxTargCov";
+			this->numUpDw_MaxTargCov->Size = System::Drawing::Size(52, 20);
+			this->numUpDw_MaxTargCov->TabIndex = 4;
+			this->numUpDw_MaxTargCov->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 100, 0, 0, 0 });
 			// 
 			// tabControl
 			// 
@@ -1053,7 +1065,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->tabPagFindSonden->Padding = System::Windows::Forms::Padding(3);
 			this->tabPagFindSonden->Size = System::Drawing::Size(548, 255);
 			this->tabPagFindSonden->TabIndex = 0;
-			this->tabPagFindSonden->Text = L"Find Sonden";
+			this->tabPagFindSonden->Text = L"Find probes";
 			this->tabPagFindSonden->UseVisualStyleBackColor = true;
 			// 
 			// but_Compare
@@ -1063,7 +1075,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->but_Compare->Name = L"but_Compare";
 			this->but_Compare->Size = System::Drawing::Size(83, 23);
 			this->but_Compare->TabIndex = 2;
-			this->but_Compare->Text = L"Compare !";
+			this->but_Compare->Text = L"Find !";
 			this->but_Compare->UseVisualStyleBackColor = true;
 			this->but_Compare->Click += gcnew System::EventHandler(this, &ThPr_Form::but_Compare_Click);
 			// 
@@ -1131,7 +1143,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox_Sd_Min_Max->Size = System::Drawing::Size(200, 111);
 			this->groupBox_Sd_Min_Max->TabIndex = 5;
 			this->groupBox_Sd_Min_Max->TabStop = false;
-			this->groupBox_Sd_Min_Max->Text = L"Sonde (PM)";
+			this->groupBox_Sd_Min_Max->Text = L"Probe (PM)";
 			// 
 			// lab_sMax
 			// 
@@ -1146,37 +1158,53 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// groBox_ComUnic
 			// 
-			this->groBox_ComUnic->Controls->Add(this->radBut_UnicSond);
-			this->groBox_ComUnic->Controls->Add(this->radBut_CommSond);
 			this->groBox_ComUnic->Controls->Add(this->numUpDw_MinTargCov);
+			this->groBox_ComUnic->Controls->Add(this->chkBx_unique);
+			this->groBox_ComUnic->Controls->Add(this->numUpDw_MaxTargCov);
+			this->groBox_ComUnic->Controls->Add(this->chkBx_common);
 			this->groBox_ComUnic->Location = System::Drawing::Point(8, 148);
 			this->groBox_ComUnic->Name = L"groBox_ComUnic";
 			this->groBox_ComUnic->Size = System::Drawing::Size(286, 67);
 			this->groBox_ComUnic->TabIndex = 6;
 			this->groBox_ComUnic->TabStop = false;
-			this->groBox_ComUnic->Text = L"Find Sondes";
+			this->groBox_ComUnic->Text = L"Find probes";
 			// 
-			// radBut_UnicSond
+			// numUpDw_MinTargCov
 			// 
-			this->radBut_UnicSond->AutoSize = true;
-			this->radBut_UnicSond->Location = System::Drawing::Point(11, 39);
-			this->radBut_UnicSond->Name = L"radBut_UnicSond";
-			this->radBut_UnicSond->Size = System::Drawing::Size(52, 17);
-			this->radBut_UnicSond->TabIndex = 5;
-			this->radBut_UnicSond->Text = L"Unics";
-			this->radBut_UnicSond->UseVisualStyleBackColor = true;
+			this->numUpDw_MinTargCov->DecimalPlaces = 1;
+			this->numUpDw_MinTargCov->Increment = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 65536 });
+			this->numUpDw_MinTargCov->Location = System::Drawing::Point(222, 16);
+			this->numUpDw_MinTargCov->MinimumSize = System::Drawing::Size(30, 0);
+			this->numUpDw_MinTargCov->Name = L"numUpDw_MinTargCov";
+			this->numUpDw_MinTargCov->Size = System::Drawing::Size(52, 20);
+			this->numUpDw_MinTargCov->TabIndex = 7;
 			// 
-			// radBut_CommSond
+			// chkBx_unique
 			// 
-			this->radBut_CommSond->AutoSize = true;
-			this->radBut_CommSond->Checked = true;
-			this->radBut_CommSond->Location = System::Drawing::Point(11, 16);
-			this->radBut_CommSond->Name = L"radBut_CommSond";
-			this->radBut_CommSond->Size = System::Drawing::Size(211, 17);
-			this->radBut_CommSond->TabIndex = 5;
-			this->radBut_CommSond->TabStop = true;
-			this->radBut_CommSond->Text = L"Common, with Min Target Coverage (%)";
-			this->radBut_CommSond->UseVisualStyleBackColor = true;
+			this->chkBx_unique->AutoSize = true;
+			this->chkBx_unique->Checked = true;
+			this->chkBx_unique->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->chkBx_unique->Location = System::Drawing::Point(11, 18);
+			this->chkBx_unique->Name = L"chkBx_unique";
+			this->chkBx_unique->Size = System::Drawing::Size(208, 17);
+			this->chkBx_unique->TabIndex = 8;
+			this->chkBx_unique->Text = L"Unique, with Max Target Coverage (%)";
+			this->toolTip->SetToolTip(this->chkBx_unique, L"Probes with hybrid in one target but in not more than in a % of the others target"
+				L"s");
+			this->chkBx_unique->UseVisualStyleBackColor = true;
+			// 
+			// chkBx_common
+			// 
+			this->chkBx_common->AutoSize = true;
+			this->chkBx_common->Checked = true;
+			this->chkBx_common->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->chkBx_common->Location = System::Drawing::Point(11, 41);
+			this->chkBx_common->Name = L"chkBx_common";
+			this->chkBx_common->Size = System::Drawing::Size(212, 17);
+			this->chkBx_common->TabIndex = 6;
+			this->chkBx_common->Text = L"Common, with Min Target Coverage (%)";
+			this->toolTip->SetToolTip(this->chkBx_common, L"Probes with hybrid in one target and at last in a % of the others targets");
+			this->chkBx_common->UseVisualStyleBackColor = true;
 			// 
 			// flowLayoutPanel1
 			// 
@@ -1205,7 +1233,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox_SdTg->Size = System::Drawing::Size(237, 61);
 			this->groupBox_SdTg->TabIndex = 5;
 			this->groupBox_SdTg->TabStop = false;
-			this->groupBox_SdTg->Text = L"Sonde-target";
+			this->groupBox_SdTg->Text = L"Probe-target";
 			this->toolTip->SetToolTip(this->groupBox_SdTg, L"Only sonde with stronger interaction with target will be \"include\"");
 			// 
 			// nUpDowMinSd_TgTm
@@ -1278,7 +1306,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox_Sd_nTg->Size = System::Drawing::Size(237, 62);
 			this->groupBox_Sd_nTg->TabIndex = 5;
 			this->groupBox_Sd_nTg->TabStop = false;
-			this->groupBox_Sd_nTg->Text = L"Sonde-non-target";
+			this->groupBox_Sd_nTg->Text = L"Probe-non-target";
 			this->toolTip->SetToolTip(this->groupBox_Sd_nTg, L"Only sonde with weak interaction with non-target will be \"include\"");
 			// 
 			// nUpDowMaxSd_nonTgTm
@@ -1349,7 +1377,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox_Sd_selft->Size = System::Drawing::Size(237, 62);
 			this->groupBox_Sd_selft->TabIndex = 5;
 			this->groupBox_Sd_selft->TabStop = false;
-			this->groupBox_Sd_selft->Text = L"Sonde-selft ";
+			this->groupBox_Sd_selft->Text = L"Probe-selft ";
 			this->toolTip->SetToolTip(this->groupBox_Sd_selft, L"Only sonde with weaksecundary structur will be \"include\"");
 			// 
 			// numUpDwMinSelfG
@@ -1486,7 +1514,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->buttonSondeFile->Name = L"buttonSondeFile";
 			this->buttonSondeFile->Size = System::Drawing::Size(94, 23);
 			this->buttonSondeFile->TabIndex = 5;
-			this->buttonSondeFile->Text = L"Sonde SecFile";
+			this->buttonSondeFile->Text = L"Probes SecFile";
 			this->buttonSondeFile->UseVisualStyleBackColor = true;
 			this->buttonSondeFile->Click += gcnew System::EventHandler(this, &ThPr_Form::commandopenSondeFile);
 			// 
@@ -1725,9 +1753,9 @@ private: System::ComponentModel::IContainer^  components;
 			this->lab_please->AutoSize = true;
 			this->lab_please->Location = System::Drawing::Point(27, 7);
 			this->lab_please->Name = L"lab_please";
-			this->lab_please->Size = System::Drawing::Size(228, 13);
+			this->lab_please->Size = System::Drawing::Size(223, 13);
 			this->lab_please->TabIndex = 9;
-			this->lab_please->Text = L"Please, first fill in \"Find Sonden\" parametr page";
+			this->lab_please->Text = L"Please, first fill in \"Find probes\" parametr page";
 			// 
 			// numericUpDown_MaxProdLength
 			// 
@@ -1831,7 +1859,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->butSdSecFilePCR->Name = L"butSdSecFilePCR";
 			this->butSdSecFilePCR->Size = System::Drawing::Size(116, 23);
 			this->butSdSecFilePCR->TabIndex = 13;
-			this->butSdSecFilePCR->Text = L"Sonde SecFile";
+			this->butSdSecFilePCR->Text = L"Probe SecFile";
 			this->butSdSecFilePCR->UseVisualStyleBackColor = true;
 			this->butSdSecFilePCR->Click += gcnew System::EventHandler(this, &ThPr_Form::butSdSecFilePCR_Click);
 			// 
@@ -2478,9 +2506,9 @@ private: System::ComponentModel::IContainer^  components;
 			this->labSdConc->AutoSize = true;
 			this->labSdConc->Location = System::Drawing::Point(17, 495);
 			this->labSdConc->Name = L"labSdConc";
-			this->labSdConc->Size = System::Drawing::Size(111, 13);
+			this->labSdConc->Size = System::Drawing::Size(108, 13);
 			this->labSdConc->TabIndex = 3;
-			this->labSdConc->Text = L"Sonde Concentr. (nM)";
+			this->labSdConc->Text = L"Probe Concentr. (nM)";
 			// 
 			// numUpDowTgConc
 			// 
@@ -2901,6 +2929,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox_Sd_Min_Max->PerformLayout();
 			this->groBox_ComUnic->ResumeLayout(false);
 			this->groBox_ComUnic->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numUpDw_MinTargCov))->EndInit();
 			this->flowLayoutPanel1->ResumeLayout(false);
 			this->groupBox_SdTg->ResumeLayout(false);
 			this->groupBox_SdTg->PerformLayout();

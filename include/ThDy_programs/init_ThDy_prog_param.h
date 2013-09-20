@@ -338,7 +338,9 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 
 	CProgParam_SondeDesign(const std::string& titel,ThDyCommProgParam &commThDyParam):		
 		CEspThDyProgParam (titel, commThDyParam),
-		_design (true), design(this, "Make only design or full comp",	"DesigVsCmp", _design,  true),
+		_design (true), design(this, "Make only design or full comp",	        "DesigVsCmp", _design,  true),
+		                unique(this, "Find probes unique for a few sequences",	"FindUnique",           true),
+		                common(this, "Find probes common for most sequences",	"FindCommon",           true),
         sL(this, "Sondes to design limits", _sL,							 
 		        "MinSonde_G",  -100.0f,   100.0f,  -5.0f,
 		        "MaxSonde_G",  -100.0f,   100.0f,  -1.0f,
@@ -356,12 +358,16 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 
 		_MinSelfG (10),		 MinSelfG(this, "Significative selfprobe G",		"MinSdSlf_G", _MinSelfG,  0.0f, 30.0f,		10.0f, "kcal/mol" ),		
 		_MaxSelfTm (10),    MaxSelfTm(this, "Significative selfprobe Tm",		"MaxSdSlfTm",_MaxSelfTm, -0.0f,  70.0f,		10.0f, "°C" ),	
-		_MinTgCov (100),	MinTgCov (this, "Find sondes with more % coverage",	"Min_Tg_Cov",  _MinTgCov,  0.0f,100.0f,		99.0f  ,"%")							
+        Coverage (this, "Find sondes with % of target coverage",  
+						    " less than of the others (unique probes)", "PercUnique",  0.0f,  100.0f,   0.0f, 
+						    " at last of the others (common probes)"  , "PercCommon",  0.0f,  100.0f, 100.0f, 
+						    "%")	
+		//_MinTgCov (100),	MinTgCov (this, "Find sondes with more % coverage",	"Min_Tg_Cov",  _MinTgCov,  0.0f,100.0f,		99.0f  ,"%")							
         {
 	    }  // revisar cuales deben ser estos valores !!!!	
 
     bool		_design ;  // realizar solo diseno de sondas o solo comparacion de sec????
-	CParamBool	design ;  // realizar solo diseno de sondas o solo comparacion de sec????
+	CParamBool	design, unique, common ;  // realizar solo diseno de sondas o solo comparacion de sec????
 
 	SondeLimits _sL ;	
 	CParamSondeLimits sL;                                    
@@ -373,8 +379,11 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 	CParamNumRange<Temperature>	MaxSd_nTgTm ;	CParamNumRange<Energy>   MinSd_nTgG ;			// sonde  - non target
 	CParamNumRange<Temperature>	MaxSelfTm ;		CParamNumRange<Energy>   MinSelfG  ;			// sonde 
 
-	float		           _MinTgCov ;
-	CParamNumRange<float>	MinTgCov ;
+	//float		           _MinTgCov ;
+	//CParamNumRange<float>	MinTgCov ;
+
+    CParamNumMinMax<float> Coverage ; 
+
 
 	int		Run		(){	
                         //Check_NNp_Targets (/*IPrgPar_SdDes->*/_cp);

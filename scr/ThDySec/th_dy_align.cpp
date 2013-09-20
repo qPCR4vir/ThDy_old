@@ -795,7 +795,7 @@ void	ThDyAlign::Export_Hits(ofstream &osHits, char *sep)		// mientras estan cone
 /// MEJORAR !!!
 void	CMSecCand::ExportCommonSonden(char*fileName, bool colpased, NumRang<float> ExtrCovPerc, int format)
 {	
-	NumRang<int> ExtrCov ( (_NSecCand * ExtrCovPerc.Min()) /100.0  , (_NSecCand * ExtrCovPerc.Max()) /100.0 ) ;  // TODO: REVISAR !!!! global ? local????
+	NumRang<int> ExtrCov ( ((_NSecCand-1) * ExtrCovPerc.Min()) /100.0  , ((_NSecCand-1) * ExtrCovPerc.Max()) /100.0 ) ;  
     
     bool	f_fas=format && fasta,
 			f_csv=format && csv;

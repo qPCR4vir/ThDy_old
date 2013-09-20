@@ -7,6 +7,23 @@
 // tpF.cpp : main project file.
 // thermodynamics, hibridación  hybridization  
 
+namespace TagBindingNS 
+{
+//CParamBool
+    ref		  class TagBinding_CParamBool : public TagBinding //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
+    { 	protected:	CParamBool	&_p ;
+	    public:				TagBinding_CParamBool (CParamBool &p, CheckBox^ c):TagBinding(c), _p(p){SetDef()		;} 
+
+	    virtual void		set(bool p	 )			{						_p.set( p )	; }// OJO  nuevas get y set !!! no las virtuales heredadas
+	    virtual	bool		get(		 )	new		{ return  _p.get()					; }
+	    virtual void		UpDateForm(	 )	override{ ((CheckBox^ )_c)->Checked = get()	;}
+	    virtual void		UpDateP(	 )	override{ set (((CheckBox^ )_c)->Checked)	;}
+    };
+    TagBinding_CParamBool^	TagBind(CheckBox^	  c , CParamBool  &p			){ return gcnew TagBinding_CParamBool(p,c)	;}
+
+
+}
+
 using namespace TagBindingNS ;
 using namespace ThDy_DNAHybridWF;
 
@@ -66,11 +83,20 @@ void 		ThPr_Form::InitializeTagBindings()
 			<<		TagBind 		( nUpDowMaxSd_nonTgTm					, _Pr._SdDes._MaxSd_nTgTm		)				
 			<<		TagBind 		( numUpDwMinSelfG						, _Pr._SdDes._MinSelfG			)				
 			<<		TagBind 		( numUpDwMaxSelfTm						, _Pr._SdDes._MaxSelfTm			)				
-			<<		TagBind 		( numUpDw_MinTargCov					, _Pr._SdDes._MinTgCov			)	
+			<<		TagBind		( chkBx_common		 , _Pr._SdDes.common	)  
+			<<		TagBind		( chkBx_unique		 , _Pr._SdDes.unique	)  
+			<<		TagBind 	( numUpDw_MinTargCov,		numUpDw_MaxTargCov			, _Pr._SdDes.Coverage.getRef ()			)	
 			<<		TagBind 		(nUpDw_MinSd_G		,nUpDw_MaxSd_G		,_Pr._SdDes._sL._G				)	
 			<<		TagBind 		(nUpDowMinSdTm		,nUpDowMaxSdTm		,_Pr._SdDes._sL._Tm				)	
 			<<		TagBind 		(nUpDw_MinSdLength	,nUpDw_MaxSdLength	,_Pr._SdDes._sL._L				)	
 			;
+
+ /*                 << link (  _Pr._SdDes.common,           chkBx_common)
+                  << link (  _Pr._SdDes.unique,           chkBx_unique)
+                  << link ( _Pr._SdDes.Coverage,  numUpDw_MaxTargCov,  numUpDw_MinTargCov)	
+*/
+
+
 
 	_TmCalThDyP = gcnew	TagBindGroup()
 			<<		TagBind 	( txtBx_Sec			 , _Pr._TmCal._Sec		)	
