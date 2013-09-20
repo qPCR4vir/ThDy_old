@@ -73,8 +73,8 @@ class IParam : public IBParam
 	 std::string Unit()const{return _unit;}      ///< Human redeable and optional
 
 	 std::ostream	&save	(std::ostream	&osPr) const override
-			            {   osPr<< _etiq << ": "; 
-			                saveValue(osPr)<<" "<<_unit<<" ";
+			            {   osPr<< _etiq << ":\t"; 
+			                saveValue(osPr)<<"\t"<<_unit<<"\t";
 							IBParam::save(osPr)	; 
 							return osPr;
 			            } 

@@ -58,10 +58,10 @@ bool	CProject::load()
 				continue;
 			isPr.seekg(i);
 
-			getline (isPr, etiq,':') ;	
-			etiq=trim_string(etiq) ;
-			if ( ! isPr.good() )                // hace falta??? execption ???
+			if (!getline(isPr, etiq, ':'))                // hace falta??? execption ???
 				return true;
+	//        isPr >> skipws ;
+			etiq=trim_string(etiq) ;
 			if ( ! load_all(etiq, isPr))	         
 				isPr.ignore(1000,'\n')  ;
 		}

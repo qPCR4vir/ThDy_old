@@ -12,9 +12,11 @@ class CParamBool: public IParam
 					) : IParam (pp, titel, etiq), _value(parRef)            {  _value= defValue;	          }
 
 	               /// Use the internal parameter and dont need an external one
-    CParamBool (IProg *pp,  const std::string& titel, const std::string& etiq, 
-		            bool defValue
-					) : IParam (pp, titel, etiq), _v(defValue) , _value(_v) {            }
+    CParamBool ( IProg              *pp,  
+                 const std::string& titel, 
+                 const std::string& etiq, 
+		         bool               defValue
+				) : IParam (pp, titel, etiq), _v(defValue) , _value(_v) {            }
 
 	void set(bool value){ if (value == _value) return; _value = value;  changed();    }
 	bool get()const{ return _value;    }
@@ -84,6 +86,7 @@ class CParamC_str: public IParam, public C_str
 
 	bool        loadValue (std::istream   &isPr) override   // Descarta el Titel que queda detras del ultimo tab
 	                    {   std::string t; std::getline(isPr,t); 
+							t = trim_string(t);
 	                        trim( t.substr(0, t.rfind("\t")).c_str()   );
 							return true;
 	                    } 
@@ -291,6 +294,8 @@ class CParamNumMinMax: public IBParam
 	          }
     CParamNumRange<Num> &Min(){ return min;}
     CParamNumRange<Num> &Max(){ return max;}
+    NumRang<Num>   get()const { return _v; }
+    NumRang<Num>&  getRef()   { return _v; }
 };
 }
 using namespace Programs ;
