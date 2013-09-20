@@ -811,7 +811,7 @@ void	CMSecCand::ExportCommonSonden(char*fileName, bool colpased, NumRang<float> 
 	{	string		CSVFile;
 		CSVFile= f_name + ".sonden.csv";
 		osCSV.open(CSVFile);
-		osCSV << "SecName" <<sep<<	"Len" <<sep<<	"Inic" <<sep<< "Fin"  <<sep<< "Tm" <<sep<< "Sec"
+		osCSV << "Num" <<sep<< "SecName" <<sep<<	"Inic" <<sep<< "Fin" <<sep<<	"Len"  <<sep<< "Tm" <<sep<< "Sec"
 				<< sep <<"H"<< sep <<"S"<< sep <<"G(Ta=" << KtoC(_TDATmC->Ta()) << " gr)" << sep << "No.matchs";
 	}
 
@@ -819,7 +819,8 @@ void	CMSecCand::ExportCommonSonden(char*fileName, bool colpased, NumRang<float> 
 	set <string> SondeList;
 	//for (auto x : SondeList);
 	FracTDAlign fAl( _sL._L.Max() + 1 ,  _sL._L.Max() + 1, _TDATmC->_NNpar);
-	fAl.SetTa(_TDATmC->Ta());
+    fAl.SetTa ( _TDATmC->Ta () );
+    long Num{0};
 
 	for ( _LSecCand.goBeging() ;  _LSecCand.NotEnd() ;  _LSecCand.goNext()   )	
 	{	CSecCand &s=*((CSecCand *)_LSecCand.Cur());
@@ -837,13 +838,14 @@ void	CMSecCand::ExportCommonSonden(char*fileName, bool colpased, NumRang<float> 
 					CSec c_cand(cs           ,1,"c", _TDATmC->_NNpar);
 					delete cs;
 					fAl.Align(&cand,&c_cand);
+                    ++Num;
 					if (fAl.Tm() < _MaxSelfTm && fAl.G(_TDATmC->Ta()) > _MinSelfG)
 					{
 					// anadir otras comprobaciones: estruct secund (self-align-compl)
 					if (f_csv)	
-						osCSV <<endl<< s._Sec.Name()<<'.'<<pi<<'.'<<fi	<<sep<< fi-pi+1 <<sep<<pi <<sep<< fi <<sep
+						osCSV <<endl<<     Num<<sep<<    s._Sec.Name()<<'.'<<pi<<'.'<<fi<<sep<<    pi<<sep<<     fi<<sep<<    fi-pi+1<<sep
 							  << KtoC(s._Sec.Tm(pi,fi)) <<sep<< cur_s 
-							  << sep <<"H"<< sep <<"S"<< sep <<"G(Ta=" << KtoC(_TDATmC->Ta()) << " gr)" << sep << matchs; 
+							  << sep <<cand._SdH[cand.Len ()-1] << sep <<cand._SdS[cand.Len ()-1]<< sep <<cand.G() << sep << matchs+1; 
 					if (f_fas)
 						osFasta	<<endl << '>' << s._Sec.Name()<<'.'<<pi<<'.'<<fi	<<"  ; Tm="<< KtoC(s._Sec.Tm(pi,fi))  
 								<<endl<< cur_s  ; 
