@@ -541,41 +541,41 @@ int		CMultSec::AddFromFile (ifstream& ifile)		// return la cantidad de sec add -
 
 int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // -------------------    AddFromFileFASTA   ------------
 {	int j=0 ;													//long l= (_SecEnd ? _SecEnd-_SecBeg +1 : 0) ;
+	string Descriptor  ;
+	while (getline (ifile, Descriptor) )
+    {
+		size_t b_d=Descriptor.find_first_not_of(
+								"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890!#$()*+-./<=>@[]^_{|}~"    );
+		string Fasta_NAME = Descriptor.substr(0,b_d );
+		Descriptor=Descriptor.substr(Fasta_NAME.length());
 
-	do	{	string Descriptor  ;
-			getline (ifile, Descriptor); 
-			if ( ! ifile.good() )  return 0;					// cerr FASTA sec not readed 
-			size_t b_d=Descriptor.find_first_not_of(
-									"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890!#$()*+-./<=>@[]^_{|}~"    );
-			string Fasta_NAME = Descriptor.substr(0,b_d );
-			Descriptor=Descriptor.substr(Fasta_NAME.length());
+  		string Fasta_SEC ;					
+		if (!getline (ifile, Fasta_SEC,'>')) 		break ;		
 
-  			string Fasta_SEC ;					
-			getline (ifile, Fasta_SEC,'>') ;	
+		if ( Fasta_SEC.length() < _SecLim.Min() )	continue;
 
-			if ( Fasta_SEC.length() >= _SecLim.Min() )			//  if ( _SecBeg <= ifile.gcount ( ) )
-			{	if ( _SecLim.Max() ) Fasta_SEC=Fasta_SEC.substr(_SecLim.Min()-1, _SecLim.Max()-_SecLim.Min()+1 ) ;//if (_SecEnd) Seq[_SecEnd]=0 ;
-				else				 Fasta_SEC=Fasta_SEC.substr(_SecLim.Min()-1 ) ;					// hasta el final
-				CSec *sec=  new CSec(Fasta_SEC.c_str() , _Local._NSec, Fasta_NAME.c_str() , _NNPar); assert(sec);
+		unique_ptr<CSec> sec (  new CSec(   Fasta_SEC , 
+                                            _Local._NSec, 
+                                            Fasta_NAME , 
+                                            _NNPar,
+                                            _SecLim.Max() ? _SecLim.Max()-_SecLim.Min()+1 : 0 ,
+                                            _SecLim.Min()
+                                         )) ;                  assert(sec);
 						
-				if ( sec->Len() >= _MinSecLen   )		
-				{	
-					CSec *idem=Idem(*sec);
-					InsertSecAfter ( sec , idem) ;	
-					sec->Description(trim_string(Descriptor));
-					if (idem) 
-					{
-						sec->Selected(false);
-						sec->Filtered(true);
-					}
-					else
-						j++;		
-				}
-				else delete sec;
+		if ( sec->Len() >= _MinSecLen   )		
+		{	
+			CSec *idem=Idem(*sec);
+			if (idem) 
+			{
+				sec->Selected(false);
+				sec->Filtered(true);
 			}
-			if (!ifile.good()) 				break ;		//			ifile.getline( line, SEQUENCES_MAX_SIZE);
+			else
+				j++;		
+			sec->Description(trim_string(Descriptor));
+			InsertSecAfter ( sec.release() , idem) ;	
 		}
-	while (ifile.good() );
+	}
 	return j;	
 }
 
