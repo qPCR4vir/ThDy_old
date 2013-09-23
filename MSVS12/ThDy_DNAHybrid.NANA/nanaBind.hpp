@@ -18,74 +18,107 @@ class nanaWidgetBind : public virtual IParBind
   protected:
     nana::gui::widget& _w;
 public: 
-    nanaWidgetBind (CompoWidget & CW ): _w(CW)
+    nanaWidgetBind (nana::gui::widget& w ): _w(w)
     {
-        std::cerr<< "\nSetting validating: , nanaWidgetBind: ";
-        std::wcerr<< CW._Titel  << std::endl;
-        CW.add_validated ( [&]()
-                {  
-                    std::cerr<< "\nBefore validating: , nanaWidgetBind: ";
-                    std::wcerr<< CW._Titel  << std::endl;
-                }); 
-        CW.add_validated ([&]()
+        //_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        //        {  
+        //            std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+        //            std::wcerr<< _w.caption() << std::endl;
+        //            //if (!ei.focus.getting) 
+        //            //    validate_edit( );
+        //        }); 
+        _w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
         {  
+                    std::cerr<< "\n" << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+                    std::wcerr<< _w.caption() << std::endl;
+            
+            if (!ei.focus.getting) 
                 UpDateProg ();
         });
-        CW.add_validated ([&]()
-                {  
-                    std::cerr<< "\nAfter validating: , nanaWidgetBind: ";
-                    std::wcerr<< CW._Titel  << std::endl;
-                }); 
+        //_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        //        {  
+        //            std::cerr<< "\nAfter " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+        //            std::wcerr<< _w.caption() << std::endl;
+        //            //if (!ei.focus.getting) 
+        //            //    validate_edit( );
+        //        }); 
     }
     nanaWidgetBind (nana::gui::widget& w, nana::gui::widget& resp_w): _w(w)
     {
-        resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
-                {  
-                    std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
-                    std::wcerr<< _w.caption() << std::endl;
-                    //if (!ei.focus.getting) 
-                    //    validate_edit( );
-                }); 
+        //resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        //        {  
+        //            std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+        //            std::wcerr<< _w.caption() << std::endl;
+        //            //if (!ei.focus.getting) 
+        //            //    validate_edit( );
+        //        }); 
         resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
         {  
-                    std::cerr<< "\n" << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
-                    std::wcerr<< _w.caption() << std::endl;
+                    //std::cerr<< "\n" << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+                    //std::wcerr<< _w.caption() << std::endl;
             
             if (!ei.focus.getting) 
                 UpDateProg ();
         });
-        resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
-                {  
-                    std::cerr<< "\nAfter " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
-                    std::wcerr<< _w.caption() << std::endl;
-                    //if (!ei.focus.getting) 
-                    //    validate_edit( );
-                }); 
+        //resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        //        {  
+        //            std::cerr<< "\nAfter " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+        //            std::wcerr<< _w.caption() << std::endl;
+        //            //if (!ei.focus.getting) 
+        //            //    validate_edit( );
+        //        }); 
     }
-    nanaWidgetBind (nana::gui::widget& w ): _w(w)
+    nanaWidgetBind (CompoWidget & CW ): _w(CW)
     {
-        _w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
-                {  
-                    std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
-                    std::wcerr<< _w.caption() << std::endl;
-                    //if (!ei.focus.getting) 
-                    //    validate_edit( );
-                }); 
-        _w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        //std::cerr<< "\nSetting validating: , nanaWidgetBind: ";
+        //std::wcerr<< CW._Titel  << std::endl;
+        //CW.add_validated ( [&]()
+        //        {  
+        //            std::cerr<< "\nBefore validated: , nanaWidgetBind: ";
+        //            std::wcerr<< CW._Titel  << std::endl;
+        //        }); 
+        CW.add_validated ([&]()
         {  
-                    std::cerr<< "\n" << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+                    std::cerr<< "\nBefore validated: , nanaWidgetBind: ";
+                    std::wcerr<< CW._Titel  << std::endl;
+                UpDateProg ();
+        });
+        //CW.add_validated ([&]()
+        //        {  
+        //            std::cerr<< "\nAfter validated: , nanaWidgetBind: ";
+        //            std::wcerr<< CW._Titel  << std::endl;
+        //        }); 
+    }
+    nanaWidgetBind (CompoWidget & CW, nana::gui::widget& resp_w): _w(CW)
+    {
+        CW.add_validated ([&]()
+        {  
+                    std::cerr<< "\nBefore validated: , nanaWidgetBind-duo: ";
+                    std::wcerr<< CW._Titel  << std::endl;
+                UpDateProg ();
+        });
+        //resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        //        {  
+        //            std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+        //            std::wcerr<< _w.caption() << std::endl;
+        //            //if (!ei.focus.getting) 
+        //            //    validate_edit( );
+        //        }); 
+        resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        {  
+                    std::cerr<< "\n" << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind-duo: ";
                     std::wcerr<< _w.caption() << std::endl;
             
             if (!ei.focus.getting) 
                 UpDateProg ();
         });
-        _w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
-                {  
-                    std::cerr<< "\nAfter " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
-                    std::wcerr<< _w.caption() << std::endl;
-                    //if (!ei.focus.getting) 
-                    //    validate_edit( );
-                }); 
+        //resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        //        {  
+        //            std::cerr<< "\nAfter " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
+        //            std::wcerr<< _w.caption() << std::endl;
+        //            //if (!ei.focus.getting) 
+        //            //    validate_edit( );
+        //        }); 
     }
 
     void          updateForm(nana::string val){ _w.caption (val); 
@@ -105,10 +138,18 @@ class Bind_checkbox : public nanaWidgetBind
     bool getFormVal()/*const*/ {  return  static_cast <nana::gui::checkbox&>(_w).checked(   ); 
                                }
 };
+class Bind_NumUpDw : public nanaWidgetBind  
+{ 	
+ public:				
+    Bind_NumUpDw ( nana::gui::NumerUpDown & c):nanaWidgetBind(c,c._num){} 
+
+    void   updateForm(double val){  static_cast <nana::gui::NumerUpDown&>(_w).Value  (val); }
+    double getFormVal(  ){  return  static_cast <nana::gui::NumerUpDown&>(_w).Value  (   ); }
+};
 class Bind_UnitUpDw : public nanaWidgetBind  
 { 	
  public:				
-    Bind_UnitUpDw ( nana::gui::NumUnitUpDown & c):nanaWidgetBind(c/*,c._num._num*/){} 
+    Bind_UnitUpDw ( nana::gui::NumUnitUpDown & c):nanaWidgetBind(c    ,c._num._num){} 
 
     void   updateForm(double val){  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (val); 
                                  }
@@ -119,18 +160,6 @@ class Bind_UnitUpDw : public nanaWidgetBind
     double getFormVal/*const*/(const CUnit::unit_name &un    ){  return  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (un     );
                                                               }
 };
-class Bind_NumUpDw : public nanaWidgetBind  
-{ 	
- public:				
-    Bind_NumUpDw ( nana::gui::NumerUpDown & c):nanaWidgetBind(c/*,c._num*/){} 
-
-    void   updateForm(double val){  static_cast <nana::gui::NumerUpDown&>(_w).Value  (val); }
-    double getFormVal(  ){  return  static_cast <nana::gui::NumerUpDown&>(_w).Value  (   ); }
-};
-
-
-
-
 
 class Bind_CParamC_str_widget : public nanaWidgetBind, public Bind_CParamC_str  
 { 	
