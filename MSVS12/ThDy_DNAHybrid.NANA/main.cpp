@@ -292,7 +292,8 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     nana::gui::NumUnitUpDown        numUpDwMaxTgId, numUpDowTgConc, numUpDowSalConc , numUpDw_TgBeg, numUpDw_TgEnd,	numUpDw_MinLen,
                                     numUpDowTa,  numUpDowSdConc  ;
 
-   ThDyNanaForm ():nana::gui::form (nana::rectangle( nana::point(200,100), nana::size(700,550) )),
+   ThDyNanaForm (int argc, char *argv[])
+                  :nana::gui::form (nana::rectangle( nana::point(200,100), nana::size(700,550) )),
                    EditableForm    (nullptr, *this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")),
                    proj_           (*this, STR("Project:") ),
                    targets_        (*this, STR("Targets:") ),
@@ -319,7 +320,6 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         //bk.u.element.blue =0; 
         //background (0xEEEEEE);
         //foreground(1);
-
        
         add_page( findSond_ );
         add_page( mPCR_     );
@@ -330,18 +330,19 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
         proj_.FileName(nana::charset ( ProjetFile()  ));
         try{ 
-			 //	    if (Environment::GetCommandLineArgs()->Length   > 1    )
-             //               _Pr.load( CreateCharFromManString(Environment::GetCommandLineArgs()[1]   ) );	
-			 //		else
-						load() ;				
+			    if ( argc > 1 )
+				    LoadProject( argv[1] )   ;
+			    else
+				    load() ;						// cuando no existe Def Project: 1ra vez que se usa el prog??
 		    }
-		catch ( std::exception& e )      // Por ejemplo cuando no existe Def Project: 1ra vez que se usa el prog.
+    	catch ( std::exception& e )      // Por ejemplo cuando no existe Def Project: 1ra vez que se usa el prog.
 		{   
             (nana::gui::msgbox(*this,STR("Error during initial project load !\n\t"), nana::gui::msgbox::button_t::ok)
-                             << e.what()    << "\n\n A new Default Project will be created. "
-            ).show (  ) ;
+                               << e.what()    << "\n\n A new Default Project will be created. "
+                          ).show (  ) ;
 		    save_defPr() ; 					                
         }
+
 		//this->comBoxTAMeth->SelectedIndex  = SMStLucia;     
 		//_seqExpl = gcnew SeqExpl(this->_Pr);
 
@@ -629,11 +630,11 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         SelectClickableWidget( *this);
     }
 
-int main() try
+int main(int argc, char *argv[]) try
 {
 	IParBind::SetDef(PriorizeDefault::Parametr );
 
-    ThDyNanaForm tdForm;
+    ThDyNanaForm tdForm(  argc,  argv);
 	tdForm.show();
 	nana::gui::exec();
 	return 0;
