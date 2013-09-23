@@ -386,6 +386,41 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
                 //}); 
 
    }
+   		void LoadProject(std::string file)
+		{
+			try
+			{
+				load(   file );
+				proj_.FileName(nana::charset ( file  ));
+ 			}
+			catch (std::exception& e)
+			{
+				string caption = "Error trying to load the project file:";
+				string message = file         + "\n\n"
+								+  e.what()   + "\n\n"
+								+  "Use the Default project?"   + "\n\n"
+								+ "\tYes:  The default project file will be loaded. " + "\n"
+								+ "\tNo:  Select a project file to be loaded. " + "\n"
+								+ "\tCancel: Use the values correctly loaded mixed with the\t\t\t previus existing. "
+								;
+				switch ( (nana::gui::msgbox(  *this, nana::charset (caption) , nana::gui::msgbox::yes_no_cancel )
+                              <<  message
+                            ).icon(nana::gui::msgbox::icon_error) .show (  ))
+				{
+				    case  nana::gui::msgbox::pick_yes :  
+					        load_defPr();
+                            proj_.FileName(nana::charset ( ProjetFile ()  ));
+					    return;
+
+				    case  nana::gui::msgbox::pick_no:    
+                            proj_.open (nana::charset (file));
+                            if ( ! proj_.Canceled() )
+                                  LoadProject(nana::charset ( proj_.FileName()));
+                         return;
+				}
+			}
+		}
+
     //~ThDyNanaForm();
     void SetDefLayout   () override
     {
@@ -443,26 +478,25 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     void  OpenProj()
 	{	 
       if(  proj_.Canceled () )  return;
-      ProjetFile (std::string(nana::charset ( proj_.FileName())).c_str());  /// TODO: revise ortografia
+         LoadProject ( nana::charset ( proj_.FileName() )) ;  
 
-      try {
-                load (); 
-      }
-        catch(std::exception& e)
-        {
-             (nana::gui::msgbox(*this, STR("Error during project loading: ")) /*.icon(msgbox::icon_information)*/
-                                 <<STR("\nIn windows:\n\t ") << Titel()
-                                 <<STR("\nIn project:\n\t ") << proj_.FileName()
-                                 <<STR("\nException :\n\t ") << e.what() 
-             ).show();
-        }
-      //tmCalc_._TmCalc.UpDateForm();
+      //try {
+      //          load (); 
+      //}
+      //  catch(std::exception& e)
+      //  {
+      //       (nana::gui::msgbox(*this, STR("Error during project loading: ")) /*.icon(msgbox::icon_information)*/
+      //                           <<STR("\nIn windows:\n\t ") << Titel()
+      //                           <<STR("\nIn project:\n\t ") << proj_.FileName()
+      //                           <<STR("\nException :\n\t ") << e.what() 
+      //       ).show();
+      //  }
+      ////tmCalc_._TmCalc.UpDateForm();
 	}
     void  SaveProj()
 	{	 
       if(  proj_.Canceled () )  return;
-      ProjetFile (std::string(nana::charset ( proj_.FileName())).c_str());  /// TODO: revise ortografia
-      save (); 
+        save (nana::charset ( proj_.FileName())); 
 	}
 };
 
