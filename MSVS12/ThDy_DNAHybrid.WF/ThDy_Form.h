@@ -93,8 +93,8 @@ namespace ThDy_DNAHybridWF {
 		{
 			try
 			{
-				_Pr.load( CreateCharFromManString ( file ));
-					   this->textBoxPrFile->Text = this->loadPrFileDialog->FileName;
+				_Pr.load( CreateStdFromManString ( file ));
+					   this->textBoxPrFile->Text = file;
 					   this->textBoxPrFile->Update();
 		               UpdateThDyForm();
 			}
@@ -115,8 +115,10 @@ namespace ThDy_DNAHybridWF {
 				{
 				case  System::Windows::Forms::DialogResult::Abort:  
 
-					    _Pr.ProjetFile(_Pr._defPr.Get());
-						_Pr.load();
+					    _Pr.load_defPr();
+                        this->textBoxPrFile->Text = gcnew String (_Pr.ProjetFile ().c_str());
+					       this->textBoxPrFile->Update();
+		                   UpdateThDyForm();
 					return;
 
 				case  System::Windows::Forms::DialogResult::Retry:    

@@ -43,9 +43,9 @@ IProg::IProg (const string& titel, CProject *proj) // CProject *proj=nullptr)
 bool	CProject::load()
 {   streamoff i=0;
 	string etiq ;	
-	ifstream isPr( _ProjetFileName.Get() ); 
+	ifstream isPr( _ProjetFileName); 
 	if (!isPr) 
-		throw std::ios_base::failure(string("Could not open project file: ")+_ProjetFileName.Get() );
+		throw std::ios_base::failure(string("Could not open project file: ")+_ProjetFileName );
 		
 	//	return false;	 // TODO: en realidad hay que trabajar con las exepciones aqui !!!!!!!!!!!!!!!!!
    // isPr.exceptions(ifstream::failbit | ifstream::badbit);   // no eofbit: http://www.cplusplus.com/reference/iostream/ios/exceptions/

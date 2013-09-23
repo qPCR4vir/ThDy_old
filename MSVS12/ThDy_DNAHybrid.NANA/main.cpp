@@ -328,8 +328,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
         tabbar_.active (0);
 
-        proj_.FileName(nana::charset ( _ProjetFileName.Get () ));
-        //this->comBoxSalMeth->SelectedIndex = TAMeth_Tm;    // 0    ???????
+        proj_.FileName(nana::charset ( ProjetFile()  ));
         try{ 
 			 //	    if (Environment::GetCommandLineArgs()->Length   > 1    )
              //               _Pr.load( CreateCharFromManString(Environment::GetCommandLineArgs()[1]   ) );	

@@ -194,45 +194,37 @@ class IProg : public IBParam // -------	  Clase base "interfase" para param de p
 
 class CProject : public IProg
 {
+		std::string		    _defPr ;
+		std::string		    _ProjetFileName ;
+	    std::vector<IProg*> _ProgList;
 public:
-	CProject(const std::string& titel, const char *prFname="", const char*defProFN="Def.Proj.txt")
-		:IProg(titel), _defPr(defProFN)  ,
-		_ProjetFileName(prFname)   
-							
-	        {  if (!prFname || !prFname[0]) 
-			    _ProjetFileName.Copy(_defPr);   //    ???????????????????????????????????????ß
-	        } 
-
-		C_str					_defPr ;
-		C_str					_ProjetFileName ;
+	CProject(const std::string& titel, std::string	&&prFname="", std::string	&&defProFN="Def.Proj.txt")
+		:   IProg(titel), 
+            _defPr(std::move(defProFN))  ,
+		    _ProjetFileName(prFname.empty () ? _defPr :  std::move(prFname) )  
+	{  
+	} 
 
    ~CProject()override { }
+
+	void	    ProjetFile	(const std::string &ProjetFileName){	_ProjetFileName=trim_string(ProjetFileName);	}
+	std::string ProjetFile	(                            )const{	return _ProjetFileName;	}
+
+    bool	         load		(); 
+	bool	         load_defPr	()                                 {  ProjetFile(_defPr);         return load();	}
+	bool	         load	    (const std::string &ProjetFileName){  ProjetFile(ProjetFileName); return load();	}
 
     //  Este es el verdadero save !!! El que abre el fichero y lo salva todo.
 	std::ofstream	&saveToFile	(const char *ProjetFileName) const{	std::ofstream osPr(ProjetFileName);			return save_all(osPr);}
 
-	std::ofstream	&save		()		const		{	return saveToFile(_ProjetFileName.Get())	;   }
-	std::ofstream	&save_defPr	()                  {ProjetFile(_defPr.Get()); return save();	        }
-	void	    ProjetFile	(const char *ProjetFileName){	_ProjetFileName.CopyTrim(	ProjetFileName);	}
+	std::ofstream	&save		()		const		            {	return saveToFile(_ProjetFileName.c_str())	;   }
+	std::ofstream	&save_defPr	()                              {   ProjetFile(_defPr);         return save();	    }
+	std::ofstream	&save_asDefPr()		const		            {	return saveToFile(_defPr.c_str())	        ;   }
+	std::ofstream   &save	 (const std::string &ProjetFileName){	ProjetFile(ProjetFileName); return save();	    }
 
-	bool	    load		(); 
-
-		// OJO !!!!!!!!!   las sig funciones se aduenan del pointer, y luego lo deletean    !!!!!!!!
-	void	    SetProjetFile(char  *ProjetFileName)
-	                    {   ProjetFile(ProjetFileName) ; 		
-	                        delete []ProjetFileName ;				
-	                    }
-	std::ofstream &save	 (char	*ProjetFileName){	SetProjetFile(ProjetFileName); return save();			}
-	bool	    load	 (char	*ProjetFileName){	SetProjetFile(ProjetFileName); return load();			}
-
-
-
-    ///  Derivar para usar el MakeProgName de un CComP
 	virtual std::ofstream &saveTMP() const            /// Reescribe el projecto actual. Pensar algo mejor? Preguntar al user? usar # conscuti?
 	                            {	return save();	}
 
-	//ofstream	&	save    (ofstream &osPr)	const	override	 ;//{  	return true ;    }
-	//      bool	load    (string &etiq, ifstream &isPr);//{ 	if (true) return false ; return true ;}
 	   std::ofstream&	save_all(std::ofstream &osPr)	const 			
 	                        {   for(auto p : _ProgList) 
 						            p->save(osPr) ;		
@@ -255,21 +247,22 @@ public:
 	   return (osPr) ;
 	   
 	   }   // por que solo funciona con el IProg:: ???
-	bool	    load_all(std::string &etiq, std::ifstream &isPr)	//override
+	bool	            load_all(std::string &etiq, std::ifstream &isPr)	//override
 	                    {   for(auto p : _ProgList)	
 					            if ( p->load(etiq, isPr)) 
 								    return true ;
 						    return IProg::load(etiq, isPr);					 }
-	int		Run (IProg &prog)	override                    //   ??????
+
+    int		Run (IProg &prog)	override                    //   ??????
 	                 {	
                         saveTMP( ) ; 
 	                    return prog.Run();
 	                 }
 
 	void AddProg (IProg* par) {_ProgList.push_back(par);}
-private:
-	std::vector<IProg*> _ProgList;
+
 };
+
 class CCommProgParam : public IProg 
 {	CProject *_proj;
  public:	
