@@ -29,9 +29,9 @@ public:
         //        }); 
         _w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
         {  
-                    std::cerr<< "\n" << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
-                    std::wcerr<< _w.caption() << std::endl;
-            
+                    //assert((   std::cerr<< "\n" << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: "  , true  ));;
+                    //assert((   std::wcerr<< _w.caption() << std::endl  , true  ));;
+
             if (!ei.focus.getting) 
                 UpDateProg ();
         });
@@ -79,8 +79,8 @@ public:
         //        }); 
         CW.add_validated ([&]()
         {  
-                    std::cerr<< "\nBefore validated: , nanaWidgetBind: ";
-                    std::wcerr<< CW._Titel  << std::endl;
+                    //assert((  std::cerr<< "\nBefore validated: , nanaWidgetBind: "  , true  ));;
+                    //assert((  std::wcerr<< CW._Titel  << std::endl  , true  ));;
                 UpDateProg ();
         });
         //CW.add_validated ([&]()
@@ -93,8 +93,8 @@ public:
     {
         CW.add_validated ([&]()
         {  
-                    std::cerr<< "\nBefore validated: , nanaWidgetBind-duo: ";
-                    std::wcerr<< CW._Titel  << std::endl;
+                    //assert((  std::cerr<< "\nBefore validated: , nanaWidgetBind-duo: " , true  ));;
+                    //assert((  std::wcerr<< CW._Titel  << std::endl , true  ));;
                 UpDateProg ();
         });
         //resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
@@ -106,8 +106,8 @@ public:
         //        }); 
         resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
         {  
-                    std::cerr<< "\n" << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind-duo: ";
-                    std::wcerr<< _w.caption() << std::endl;
+                    //assert((  std::cerr<< "\n" << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind-duo: " , true  ));;
+                    //assert((  std::wcerr<< _w.caption() << std::endl , true  ));;
             
             if (!ei.focus.getting) 
                 UpDateProg ();
