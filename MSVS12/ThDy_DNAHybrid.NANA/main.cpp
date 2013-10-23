@@ -22,7 +22,7 @@ class FindSondenPage : public CompoWidget
     ThDyProject &_Pr;
     FilePickBox nTsec_;
     BindGroup   _findSond;
-    nana::gui::NumUnitUpDown _Gmin, _Gmax, _Tmmin, _Tmmax, _Lengthmin, _Lengthmax, 
+    nana::gui::NumUnitUpDown _Gmin, _Gmax, _Tmmin, _Tmmax, _Lengthmin, _Lengthmax,
                              _MaxG, _MinTm, _MinG, _MaxTm, _MinSelfG, _MaxSelfTm, 	
                              numUpDw_MinTargCov, numUpDw_MaxTargCov ;	
     nana::gui::button        _design, _compare;
@@ -144,18 +144,27 @@ class MplexPCR : public CompoWidget
 
 class TmCalcPage : public CompoWidget
 {public: 
-    ThDyProject        &_Pr;
-    nana::gui::textbox  sec_, sec2align_, txtBx_ResultSec, txtBx_ResultSec2Align;
-    nana::gui::checkbox chkBx_Tm_save_asPCR, chkBx_align, chkBx_copy_rev, chkBx_copy_compl;
-    nana::gui::button   copy_f_s_2, copy_s, copy_s_a, run_;
-    nana::gui::label    error_;
+    ThDyProject             &_Pr;
     BindGroup              _TmCalc;
-    nana::gui::NumberBox    Tm_min_Up,  Tm_Up, Tm_max_Up ,
-                            Tm_min_Dw,  Tm_Dw, Tm_max_Dw,
-                            Tm_min_In,  Tm_In, Tm_max_In,
-                            G_min_Up,   G_Up,  G_max_Up ,
-                            G_min_Dw,   G_Dw,  G_max_Dw ,
-                            G_min_In,   G_In,  G_max_In ;
+    nana::gui::textbox          sec_                {*this},  
+                                sec2align_          {*this},  
+                                txtBx_ResultSec     {*this},  
+                                txtBx_ResultSec2Align{*this};
+    nana::gui::checkbox         chkBx_Tm_save_asPCR {*this, STR("save")},   
+                                chkBx_align         {*this, STR("align")},
+                                chkBx_copy_rev      {*this, STR("rev")},    
+                                chkBx_copy_compl    {*this, STR("cpl")};
+    nana::gui::button           run_                {*this, STR("Tm !")},
+                                copy_f_s_2          {*this, STR("copy")},   
+                                copy_s              {*this, STR("c")},
+                                copy_s_a            {*this, STR("c")};      
+    nana::gui::label            error_              {*this, STR("no error")};
+    nana::gui::NumberBox        Tm_min_Up{*this}, Tm_Up{*this}, Tm_max_Up{*this} ,
+                                Tm_min_Dw{*this}, Tm_Dw{*this}, Tm_max_Dw{*this} ,
+                                Tm_min_In{*this}, Tm_In{*this}, Tm_max_In{*this} ,
+                                G_min_Up{*this},   G_Up{*this},  G_max_Up{*this} ,
+                                G_min_Dw{*this},   G_Dw{*this},  G_max_Dw{*this} ,
+                                G_min_In{*this},   G_In{*this},  G_max_In{*this} ;
 
     TmCalcPage (ThDyNanaForm& tdForm);
 
@@ -257,8 +266,8 @@ class SetupPage : public CompoWidget
 {public: 
     ThDyProject        &_Pr;
     BindGroup          _setup;
-    nana::gui::button  set_def_proj_;
-    FilePickBox        _NNParamFile;
+    nana::gui::button  set_def_proj_    {*this,STR("Set as Def. project") };
+    FilePickBox        _NNParamFile     {*this, STR("NN param:")};
 
     SetupPage (ThDyNanaForm& tdForm);
 
@@ -280,40 +289,31 @@ class SetupPage : public CompoWidget
 
 class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyProject
 {public: 
-    OpenSaveBox                     proj_;
-    FilePickBox                     targets_ , results_, PCRfiltre_;
-	nana::gui::tabbar<nana::string> tabbar_;
-    FindSondenPage                  findSond_;
-    TmCalcPage                      tmCalc_; 
-    SetupPage                       setup_;
-    MplexPCR                        mPCR_;
-    BindGroup                       _commPP;
-    nana::gui::combox               comBoxSalMeth, comBoxTAMeth;
-    nana::gui::NumUnitUpDown        numUpDwMaxTgId, numUpDowTgConc, numUpDowSalConc , numUpDw_TgBeg, numUpDw_TgEnd,	numUpDw_MinLen,
-                                    numUpDowTa,  numUpDowSdConc  ;
+    nana::gui::tabbar<nana::string> tabbar_     {*this};
+    OpenSaveBox                     proj_       { *this, STR("Project:") };
+    FilePickBox                     targets_    { *this, STR("Targets:") }, 
+                                    results_    { *this, STR("Results:") }, 
+                                    PCRfiltre_  { *this, STR("PCR-filtre:")};
+    nana::gui::checkbox             chkBx_RecDir{ *this, STR("RecurDir") };
+    FindSondenPage                  findSond_   {*this};
+    TmCalcPage                      tmCalc_     {*this}; 
+    SetupPage                       setup_      {*this};
+    MplexPCR                        mPCR_       {*this};
+    BindGroup                       _commPP     ;
+    nana::gui::combox               comBoxSalMeth   {*this}, 
+                                    comBoxTAMeth    {*this};
+    nana::gui::NumUnitUpDown        numUpDwMaxTgId  {*this, STR("Max. ident.:"        ), 99,  50 , 100,   "%"}, 
+                                    numUpDowTgConc  {*this, STR("Target Conctr:"      ), 50, 0.1 , 1000,  "然"}, 
+                                    numUpDowSalConc {*this, STR("Salt Conc [Cations]:"), 50, 0.1 , 10000000,"然"} , 
+                                    numUpDw_TgBeg   {*this, STR("Beg.:"               ),  0,   0 , 100000,"nt"},    /// rev !!
+                                    numUpDw_TgEnd   {*this, STR("End.:"               ),  0,   0 , 100000,"nt"},    /// rev !!	
+                                    numUpDw_MinLen  {*this, STR("Min.Len.:"           ),  0,   0 , 100000,"nt"},    /// rev !!
+                                    numUpDowTa      {*this, STR("Temp. Anneling:"     ), 55,  40 , 75,    "蚓"},  
+                                    numUpDowSdConc  {*this, STR("Sonde Conctr:"       ), 50, 0.1 , 1000,  "然"}  ;
 
    ThDyNanaForm (int argc, char *argv[])
-                  :nana::gui::form (nana::rectangle( nana::point(200,100), nana::size(700,550) )),
-                   EditableForm    (nullptr, *this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")),
-                   proj_           (*this, STR("Project:") ),
-                   targets_        (*this, STR("Targets:") ),
-                   results_        (*this, STR("Results:") ),
-                   PCRfiltre_      (*this, STR("PCR-filtre:") ),
-                   numUpDwMaxTgId  (*this, STR("Max. ident.:"        ), 99,  50 , 100,   "%"),
-                   numUpDw_TgBeg   (*this, STR("Beg.:"               ),  0,   0 , 100000,"nt"),        /// rev !!
-                   numUpDw_TgEnd   (*this, STR("End.:"               ),  0,   0 , 100000,"nt"),        /// rev !!
-                   numUpDw_MinLen  (*this, STR("Min.Len.:"           ),  0,   0 , 100000,"nt"),        /// rev !!
-                   numUpDowSdConc  (*this, STR("Sonde Conctr:"       ), 50, 0.1 , 1000,  "然"),
-                   numUpDowSalConc (*this, STR("Salt Conc [Cations]:"), 50, 0.1 , 10000000,"然"),
-                   numUpDowTgConc  (*this, STR("Target Conctr:"      ), 50, 0.1 , 1000,  "然"),
-                   numUpDowTa      (*this, STR("Temp. Anneling:"     ), 55,  40 , 75,    "蚓"),
-                   comBoxSalMeth   (*this),
-                   comBoxTAMeth    (*this),
-                   tabbar_         (*this),
-                   findSond_       (*this),
-                   tmCalc_         (*this),
-                   setup_          (*this),
-                   mPCR_           (*this)   
+                  :nana::gui::form (nana::rectangle( nana::point(200,100), nana::size(700,600) )),
+                   EditableForm    (nullptr, *this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")) 
    {
         //nana::pixel_rgb_t bk;
         //bk.u.color = background ();
@@ -478,7 +478,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
     void  OpenProj()
 	{	 
-      if(  proj_.Canceled () )  return;
+         if(  proj_.Canceled () )  return;
          LoadProject ( nana::charset ( proj_.FileName() )) ;  
 
       //try {
@@ -496,7 +496,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 	}
     void  SaveProj()
 	{	 
-      if(  proj_.Canceled () )  return;
+        if(  proj_.Canceled () )  return;
         save (nana::charset ( proj_.FileName())); 
 	}
 };
@@ -557,19 +557,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
      }
    TmCalcPage::TmCalcPage        (ThDyNanaForm& tdForm)
         : _Pr           (tdForm), 
-          CompoWidget  (tdForm, STR("Tm Calc"), STR("Tm Calc.lay.txt")),
-          sec_(*this),  sec2align_(*this),  txtBx_ResultSec(*this),  txtBx_ResultSec2Align(*this), 
-          chkBx_Tm_save_asPCR(*this, STR("save")),   chkBx_align     (*this, STR("align")),
-          chkBx_copy_rev     (*this, STR("rev")),    chkBx_copy_compl(*this, STR("cpl")),
-          copy_f_s_2         (*this, STR("copy")),   copy_s          (*this, STR("c")),
-          copy_s_a           (*this, STR("c")),      error_          (*this, STR("no error")),
-          run_               (*this, STR("Tm !")),
-           Tm_min_Up(*this), Tm_Up(*this), Tm_max_Up(*this) ,
-           Tm_min_Dw(*this), Tm_Dw(*this), Tm_max_Dw(*this) ,
-           Tm_min_In(*this), Tm_In(*this), Tm_max_In(*this) ,
-           G_min_Up(*this),   G_Up(*this),  G_max_Up(*this) ,
-           G_min_Dw(*this),   G_Dw(*this),  G_max_Dw(*this) ,
-           G_min_In(*this),   G_In(*this),  G_max_In(*this)
+          CompoWidget  (tdForm, STR("Tm Calc"), STR("Tm Calc.lay.txt"))
     {
                          sec_.multi_lines(false);
                    sec2align_.multi_lines(false);
@@ -603,9 +591,10 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     }
    SetupPage::SetupPage          (ThDyNanaForm& tdForm)
         : _Pr           (tdForm), 
-          CompoWidget  (tdForm, STR("Setup"), STR("Setup.lay.txt")),
+          CompoWidget  (tdForm, STR("Setup"), STR("Setup.lay.txt"))
+          /*,
           set_def_proj_(*this,STR("Set as Def. project") ),
-          _NNParamFile (*this, STR("NN param:") )
+          _NNParamFile (*this, STR("NN param:") )*/
     {
         _setup<< link(   _Pr._cp._InputNNFile , _NNParamFile)
             ;
