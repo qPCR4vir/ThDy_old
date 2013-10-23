@@ -73,7 +73,8 @@ class ThDyCommProgParam : public CCommProgParam
 	CParamC_str     _InputTargetFile ;  
 	CParamC_str     _PCRfiltrPrFile;    
 	CParamC_str     _OutputFile;        
-	CParamC_str     _InputNNFile; 
+    CParamC_str     _InputNNFile;
+    CParamBool      _RecurDir{this, "Recursively add all seq-files from all dir",			"RecursiDir", false};
 
 	SaltCorrection                 _SaltCorr ;			
     CParamEnumRange<SaltCorrection>	SaltCorr ;	 				//  SaltCorrection
@@ -199,7 +200,7 @@ void Check_NNp_Targets (/*ThDyCommProgParam& cp*/)
     CMultSec* CreateRoot	();
 	CMultSec *AddSeqGroup	(CMultSec *parentGr, const std::string&     Name);
 
-	CMultSec *AddSeqFromFile(CMultSec *parentGr, const std::string& FileName);
+	CMultSec *AddSeqFromFile(CMultSec *parentGr, const std::string& FileName, bool all_in_dir=false);
 	CMultSec *AddTargetFromFile(const std::string& FileName)
 	{
 		return AddSeqFromFile(_pSeqTargets.get(),FileName);

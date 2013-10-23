@@ -6,7 +6,6 @@
 #include <cassert>
 #include <string>
 #include <memory>
-#include <filesystem>
 
 
 using namespace std;
@@ -53,9 +52,11 @@ class CSecBasInfo : public ISec
 	static int	NewS_ID     ()	{static int last_ID(0);	return ++last_ID;	}
 
 		CSecBasInfo (int id,     const std::string& nam    , const std::string& clas) ;
-		CSecBasInfo ():_filtered(false),_selected(true), _ID(NewS_ID()){}
+		CSecBasInfo() :_filtered(false), _selected(true), _ID(NewS_ID()), _NonDegSet(nullptr),_c(nullptr) {}
 		CSecBasInfo ( long l);
 public:
+	CSecBasInfo			*CopyFirstBases	(long pos)	;			// copia parcialmente hasta la pos
+    ~CSecBasInfo();
     std::string Name		()const		{return _name;} //< User-editable
 	int			ID			()const		{return _ID;}	//< Run-time-sistem define, non-editable
 	bool		Filtered(bool filter)	{return _filtered=filter;}   //< User-editable ?????
@@ -76,7 +77,6 @@ public:
 	virtual Base		*GetCopy_charSec(long InicBase, long EndBase, DNAStrand strnd=direct) override ;
 	virtual Base		*Copy_charSec	(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd=direct) override ;
 	virtual bool		 NotIdem		(CSecBasInfo *sec) {return false;}
-	CSecBasInfo			*CopyFirstBases	(long pos)	;			// copia parcialmente hasta la pos
 	Base		operator[]	(int i)const{return _c[i];}
 
 	long		Len			()const		{return _len;} //
@@ -240,13 +240,6 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 	bool			_FormatOK ;
 	NumRang<long>	_SecLim;   	                              //long	_SecBeg;	//long	_SecEnd;
 	std::string	Description ()const	override {return _description.length() ? _description : _Hit_def ; }
-	//// para CSec	//char	*sec;	//int			id=0;	//char		*nam;	//long		l;	//char		*clas;
-
-	//virtual ~CSecBLASTHit() {	delete []_Hit_id; 
-	//							delete []_Hit_def;
-	//							delete []_Hit_accession;
-	//							delete []_Hsp_midline;	}
-
 };
 
 class CSecGB : public CSec // ---------------------------------------   CSecGB	------------------------------------------------
@@ -443,67 +436,24 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 			return ++ID;
 		}
 
-explicit CMultSec (const std::string &Name  ) 
-				: _MaxTgId	(100), 
-				  _SecLim	(1,0),	_MinSecLen(0),				//_SecBeg(1), _SecEnd(0), /*_Len(0),_TLen(0),*/
-				 _Consenso	(nullptr),				
-				 _parentMS	(nullptr),
-			 	 _name		(trim_string(Name)),
-				 _ID		(NewMS_ID())
-		{	} 
+explicit CMultSec (const std::string &Name  ) ;
 
 		 CMultSec (	const char	  *file	, 
 					std::shared_ptr<CSaltCorrNN>  NNpar	, 
+					bool           all_dir=false,
 					float		   MaxTgId	=100, 
 					NumRang<long>  SecLim	= NumRang<long> (1,0),	/* long SecBeg=1, long SecEnd=0*/ 
                     LonSecPos     MinSecLen =0
-				 ) :	/*_name(trim_string(file)),	*/
-						_SecLim		(SecLim),	
-						_MaxTgId	(MaxTgId),_MinSecLen(MinSecLen),
-						_Consenso	(nullptr),			
-						_parentMS	(nullptr),
-						_NNPar		(NNpar)	,
-						_ID			(NewMS_ID())			
-				{	
-					AddFromFile (file) ;
-                    std::tr2::sys::path  itf(file);
-	                if(itf.has_filename())
-	                _name=itf.basename();	
-				} 
+				 ) ;
 		 CMultSec (	ifstream &	 file	,		// TODO: Unificar estos dos constr.
 					std::shared_ptr<CSaltCorrNN>  NNpar	, 
 					float		  MaxTgId	=100, 
 					NumRang<long> SecLim	= NumRang<long> (1,0),	/* long SecBeg=1, long SecEnd=0*/  
                     LonSecPos     MinSecLen =0
-				 ) :	/*_name(trim_string(file)),	*/
-						_SecLim		(SecLim),	
-						_MaxTgId	(MaxTgId),_MinSecLen(MinSecLen),
-						_Consenso	(nullptr),			
-						_parentMS	(nullptr),
-						_NNPar		(NNpar)	,
-						_ID			(NewMS_ID())			
-				{	
-					AddFromFile (file) ;
-				} 
-explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar) 
-			: 
-			  _MaxTgId(100), 
-			  _SecLim(1,0),	_MinSecLen(0),				
-			  _Consenso(nullptr), 
-			  _NNPar (NNpar),
-			  _parentMS(nullptr),
-			_ID(NewMS_ID())
-		{} 	
+				 ) ;
+explicit CMultSec(std::shared_ptr<CSaltCorrNN> NNpar);
 
-explicit CMultSec (CMultSec	*ms, const std::string &Name="") 
-			: _name		(trim_string(Name)),
-			  _MaxTgId	(ms->_MaxTgId), _MinSecLen(ms->_MinSecLen ),
-			  _SecLim	(ms->_SecLim),					
-			  _Consenso	(nullptr), 
-			  _NNPar	(ms->_NNPar),
-			  _parentMS	(nullptr),
-			  _ID		(NewMS_ID())
-		{} 	
+         CMultSec(CMultSec	*ms, const std::string &Name = "");
 
 
 
@@ -601,8 +551,8 @@ explicit CMultSec (CMultSec	*ms, const std::string &Name="")
 		//bool isLocExtreme (const CMultSec *ms){return _Tm.isExtrem (ms->_TTm) || _Len.isExtrem (ms->_TLen );}
 		//void setGloExtreme(const CMultSec *ms){return _Tm.isExtrem (ms->_TTm) || _Len.isExtrem (ms->_TLen );}
 
-
-		int			AddFromFile		(const char *file);
+		int			AddFromDir		(const std::string& dir );
+		int			AddFromFile		(const std::string& file);
 		int			AddFromFile     (ifstream& ifile);	
 		int			CMultSec::AddFromFileFASTA	(ifstream &ifileFASTA);
 		int			CMultSec::AddFromFileBLAST	(ifstream &ifileBLAST);

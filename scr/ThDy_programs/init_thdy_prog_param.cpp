@@ -32,11 +32,11 @@ CMultSec* ThDyCommProgParam::AddSeqGroup		(CMultSec   *parentGr, const std::stri
     return sG;
 }
 
-CMultSec* ThDyCommProgParam::AddSeqFromFile(CMultSec   *parentGr, const std::string& FileName)
+CMultSec* ThDyCommProgParam::AddSeqFromFile(CMultSec   *parentGr, const std::string& FileName, bool all_in_dir)
 {
     if (! _pSaltCorrNNp )     Actualice_NNp ();
 
-	CMultSec *sG=new CMultSec (FileName.c_str(), _pSaltCorrNNp,
+	CMultSec *sG=new CMultSec (FileName.c_str(), _pSaltCorrNNp, all_in_dir,
 								    _MaxTgId,
 								    _SecLim ,
                                     _MinSecLen);

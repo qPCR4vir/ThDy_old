@@ -348,6 +348,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
 
         _commPP  << link( _cp._InputTargetFile ,       targets_  )
+                 << link( _cp._RecurDir      ,       chkBx_RecDir)
                  << link( _cp._OutputFile      ,       results_  )
                  << link( _cp._PCRfiltrPrFile  ,       PCRfiltre_)
                  << link( _cp.MaxTgId    ,       numUpDwMaxTgId  )
@@ -453,7 +454,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     {
 	    _place.field("Project" )        << proj_   ;
 	    _place.field("PagesTag")        << tabbar_  ;
-	    _place.field("Targets" )        << targets_   ;
+	    _place.field("Targets" )        << targets_  << _place.fixed(chkBx_RecDir,90)  ;
 	    _place.field("TargetsOptions" ) << numUpDwMaxTgId<<   numUpDw_TgBeg << numUpDw_TgEnd  << numUpDw_MinLen;
 	    _place.field("PCRfiltre" )      << PCRfiltre_   ;
 	    _place.field("Results" )        << results_   ;
