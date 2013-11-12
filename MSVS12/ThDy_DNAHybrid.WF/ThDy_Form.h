@@ -309,7 +309,7 @@ void ShowResTbl(	CTable<TmGPos> *rtbl)
 
 		CTable<TmGPos> &tb = *rtbl ; // Alias para _Pr._uArr._rtbl 
 
-		String^ wname = gcnew String( tb.TitTable().c_str() ) + L"  ( " + gcnew String ( _Pr._cp._OutputFile.Get() ) + L" )";
+		String^ wname = gcnew String( (tb.TitTable() + "  ( " + _Pr._cp._OutputFile.get()  + " )" ).c_str()   );
 
 		rsTm->Text		= L" Tm: " + wname;
 		rsG->Text		= L"  G: " + wname;

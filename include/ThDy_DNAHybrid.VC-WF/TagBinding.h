@@ -1,9 +1,13 @@
 #pragma once
+//#include "StdAfx.h"
+
 #include < vcclr.h >
 //#include "ThDy_DNAHybrid.VC-WF/StdAfx.h"
 
 #include "ThDySec\matrix.h" 
 #include "ThDySec\common_basics.h" 
+#include "ThDy_programs\init_prog_param.h"
+
 #pragma managed
 namespace TagBindingNS 
 {
@@ -17,7 +21,7 @@ namespace TagBindingNS
 	using namespace System::Collections::Generic;
 
 char       *CreateCharFromManString(System::String ^Text);		//char *CreateTrimCharFromManString(System::String ^Text);
-std::string CreateStdFromManString (System::String ^Text);	
+ std::string CreateStdFromManString (System::String ^Text);	
 	
 
 void			UpDateP		(Control^  control);          // Posible because in .NET all control have a Tag^
@@ -57,8 +61,12 @@ public:
 	virtual void		set(Object^ s)	{			getTagBinding()->set(s)			;}
 	virtual Object^		get(		 )	{ return	getTagBinding()->get( )			;}
 
-	virtual void		UpDateForm(	 )	{			getTagBinding()->UpDateForm(	 )	;}
-	virtual void		UpDateP(	 )	{			getTagBinding()->UpDateP(	 )		;}
+	virtual void		UpDateForm(	 )	{			
+                                            getTagBinding()->UpDateForm(	 )	;
+                                        }
+	virtual void		UpDateP(	 )	{			
+                                            getTagBinding()->UpDateP(	 )		;
+                                        }
 
 };
 
@@ -84,16 +92,46 @@ ref		  class TagBinding_C_str_b : public TagBinding //    Bind a Control.Text wi
 
 	virtual void		set(Object^ s)	override{						_p.Take (  CreateCharFromManString((String^ )s)	) ; }
 	virtual Object^		get(		 )	override{ return  gcnew String(	_p.Get()								) ; }
-	virtual void		UpDateForm(	 )	override{ _c->Text = (String^)get()	;}
-	virtual void		UpDateP(	 )	override{ set (_c->Text)				;}
+	virtual void		UpDateForm(	 )	override{ 
+        _c->Text = (String^)get()	;}
+	virtual void		UpDateP(	 )	override{ 
+        set (_c->Text)				;}
 };
 ref		  class TagBinding_C_str    : public TagBinding_C_str_b  //    Bind a Control.Text with a C_str variable using Trim ---- TagBinding_strTrim    :
 { 	public:				TagBinding_C_str   (C_str &s, Control^ c):TagBinding_C_str_b(s,c)		{SetDef()		;}
 };
+
 ref		  class TagBinding_strTrim  : public TagBinding_C_str_b  //    Bind a Control.Text with a C_str variable using Trim ---- TagBinding_strTrim    :
 { 	public:				TagBinding_strTrim (C_str &s, Control^ c):TagBinding_C_str_b(s,c)		{SetDef()		;}
-	virtual void		set(Object^ s)	override{						_p.TakeTrim (  CreateCharFromManString((String^ )s)	) ; }
+	virtual void		set(Object^ s)	override{						
+        _p.TakeTrim (  CreateCharFromManString((String^ )s)	) ; }
 };
+
+
+ref		  class TagBinding_string : public TagBinding //    Bind a Control.Text with a string variable 
+{ 	protected:	std::string 	&_p ;
+	public:				TagBinding_string (std::string  &s, Control^ c):TagBinding(c)	, _p(s)	{} 
+
+	virtual void		set(Object^ s)	override{					
+                                                    _p= CreateStdFromManString( (String^ )s ) ;
+                                                }
+	virtual Object^		get(		 )	override{ 
+                                                    return  gcnew String(	_p.c_str()							    ) ;
+                                                }
+	virtual void		UpDateForm(	 )	override{ 
+                                                    _c->Text = (String^)get()	;
+                                                }
+	virtual void		UpDateP(	 )	override{ 
+                                                    set (_c->Text)				;
+                                                }
+};
+ref		  class TagBinding_stringTrim  : public TagBinding_string  //    Bind a Control.Text with a str variable using Trim  
+{ 	public:				TagBinding_stringTrim (std::string  &s, Control^ c):TagBinding_string(s,c)		{SetDef()		;}
+	virtual void		set(Object^ s)	override{		
+        _p = trim_string (  CreateStdFromManString((String^ )s)	) ; }
+};
+
+
 
 template<typename Num>
 ref		  class TagBinding_Dec    : public TagBinding //    Bind a NumericUpDown.Value with a float variable ---- TagBinding_Dec    :
@@ -103,8 +141,10 @@ ref		  class TagBinding_Dec    : public TagBinding //    Bind a NumericUpDown.Va
 
 	virtual void		set(Object^ f)	override{	_p	 = (Num)(_k * Decimal::ToSingle( *(Decimal^)(f) )); }
 	virtual Object^		get(		 )	override{ return  gcnew Decimal(	_p / _k) ; }
-	virtual void		UpDateForm(	 )	override{	   ((NumericUpDown^)(_c))->Value =  *(Decimal^) get()	;}
-	virtual void		UpDateP(	 )	override{ set( ((NumericUpDown^)(_c))->Value )  					;}	
+	virtual void		UpDateForm(	 )	override{	  
+        ((NumericUpDown^)(_c))->Value =  *(Decimal^) get()	;}
+	virtual void		UpDateP(	 )	override{
+        set( ((NumericUpDown^)(_c))->Value )  					;}	
 };
 
 	template<typename Num>
@@ -142,18 +182,45 @@ ref		  class TagBinding_bool : public TagBinding //    Bind a Control.CheckBox w
 
 	virtual void		set(bool p	 )			{						_p= p		; }// OJO  nuevas get y set !!! no las virtuales heredadas
 	virtual	bool		get(		 )	new		{ return  _p						; }
-	virtual void		UpDateForm(	 )	override{ ((CheckBox^ )_c)->Checked = get()	;}
-	virtual void		UpDateP(	 )	override{ set (((CheckBox^ )_c)->Checked)	;}
+	virtual void		UpDateForm(	 )	override{
+        ((CheckBox^ )_c)->Checked = get()	;}
+	virtual void		UpDateP(	 )	override{
+        set (((CheckBox^ )_c)->Checked)	;}
 };
 
 					TagBinding_C_str^		TagBind		(Control^	c	, C_str &s							);
 					TagBinding_strTrim^		TagBind_Trim(Control^	c	, C_str &s							);
+					TagBinding_string^		TagBind		(Control^	c	, std::string &s					);
+					TagBinding_stringTrim^	TagBind_Trim(Control^	c	, std::string &s					);
 template<class Num>	TagBinding_Dec<Num>^	TagBind(NumericUpDown^ c, Num &p, float k						){ return gcnew TagBinding_Dec<Num>(p,c,k)	;}	
 template<class Num>	TagBinding_Dec<Num>^	TagBind(NumericUpDown^ c, Num &p								){ return TagBind<Num>(c,p,1)	;}	
 template<class Num>	TagBinding_Rang<Num>^	TagBind(NumericUpDown^ cmin, NumericUpDown^ cmax, NumRang<Num> &p, float k){ return gcnew TagBinding_Rang<Num>(cmin, cmax,p,k)	;}	
 template<class Num>	TagBinding_Rang<Num>^	TagBind(NumericUpDown^ cmin, NumericUpDown^ cmax, NumRang<Num> &p		  ){ return TagBind<Num>(cmin, cmax,p,1)	;}	
 
 TagBinding_bool^	TagBind(CheckBox^	  c , bool  &p			);
+
+
+
+ref		  class TagBinding_CPstring : public TagBinding //    Bind a Control.Text with a string variable 
+{ 	protected:	CParamString 	&_p ;
+	public:				TagBinding_CPstring (CParamString  &s, Control^ c):TagBinding(c)	, _p(s)	{} 
+
+	virtual void		set(Object^ s)	override{						_p.set( CreateStdFromManString( (String^ )s )) ; }
+	virtual Object^		get(		 )	override{ return  gcnew String(	_p.get().c_str()		 				     ) ; }
+	virtual void		UpDateForm(	 )	override{
+        _c->Text = (String^)get()	;}
+	virtual void		UpDateP(	 )	override{
+        set (_c->Text)				;}
+};
+ref		  class TagBinding_CPstringTrim  : public TagBinding_CPstring  //    Bind a Control.Text with a str variable using Trim  
+{ 	public:				TagBinding_CPstringTrim (CParamString  &s, Control^ c):TagBinding_CPstring(s,c)		{SetDef()		;}
+	virtual void		set(Object^ s)	override{		
+        _p.set( trim_string (  CreateStdFromManString((String^ )s)	)) ; }
+};
+
+	TagBinding_CPstring^		TagBind		(Control^	c	, CParamString &s					);
+	TagBinding_CPstringTrim^	TagBind_Trim(Control^	c	, CParamString &s					);
+
 
 }
 

@@ -15,8 +15,7 @@
 #include <vector>
 #include <string>
 #include "common_basics.h"
-//using namespace std::string;
-using  std::string;
+//using  std::string;
 
 	typedef int index;	
 
@@ -71,26 +70,26 @@ public:
 
 		template <typename Num>
 class CTable : public CMatrix_RA<Num>
-{	std::vector<string>   _titRows, _titColumns;
-	string				  _titTable ;
+{	std::vector<std::string>   _titRows, _titColumns;
+	std::string				  _titTable ;
 public:
-//	string				  _titTable ;
-	CTable(string TitTable)							  : _titTable(TitTable) {}
-	CTable(string TitTable,index capRow, index capCol): CMatrix_RA<Num>(capRow, capCol),		_titTable(TitTable), 
+//	std::string				  _titTable ;
+	CTable(std::string TitTable)							  : _titTable(TitTable) {}
+	CTable(std::string TitTable,index capRow, index capCol): CMatrix_RA<Num>(capRow, capCol),		_titTable(TitTable), 
 														_titRows(capRow),						_titColumns(capCol)
 														{	_titRows.reserve (capRow ); _titColumns.reserve(capCol);}
-	index AddColummnTit	(const string &newColTit)	{ _titColumns.push_back (newColTit); return _titColumns.size(); }
-	index AddRowTit		(const string &newRowTit)	{ _titRows.push_back	 (newRowTit); return _titRows.size	 ();}
+	index AddColummnTit	(const std::string &newColTit)	{ _titColumns.push_back (newColTit); return _titColumns.size(); }
+	index AddRowTit		(const std::string &newRowTit)	{ _titRows.push_back	 (newRowTit); return _titRows.size	 ();}
 	void CreateMatrix	(index capRow, index capCol){/* assert (!_mtx); */forceResize(capRow		 , capCol);	
 														expand(_titRows.size() -1, _titColumns.size() -1);	}// si predices las posibles dimenciones
 	void CreateMatrix	(index capRow)				{ /*assert (!_mtx);*/ forceResize(capRow		 , _titColumns.size() );	
 														expand(_titRows.size() -1, _titColumns.size() -1);	}// si predices las posibles col
 	void CreateMatrix	(			 )				{ /*assert (!_mtx);*/ forceResize(_titRows.size(), _titColumns.size() );	
 														expand(_titRows.size() -1, _titColumns.size() -1);		}// deduciendo las dimenc a partir de los tit
-	index	AddRow		(const string &newRowTit)	{ AddRowTit(newRowTit); AddRows(); return totalRow()-1;}
-	string	TitColumn	(index Col) const{	return _titColumns.at(Col);	}
-	string	TitRow		(index Row) const{	return    _titRows.at(Row);	}
-	string	TitTable	(		  ) const{	return    _titTable		  ;	}
+	index	AddRow		(const std::string &newRowTit)	{ AddRowTit(newRowTit); AddRows(); return totalRow()-1;}
+	std::string	TitColumn	(index Col) const{	return _titColumns.at(Col);	}
+	std::string	TitRow		(index Row) const{	return    _titRows.at(Row);	}
+	std::string	TitTable	(		  ) const{	return    _titTable		  ;	}
 //	bool	compact		();
 };
 

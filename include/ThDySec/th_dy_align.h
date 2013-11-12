@@ -241,7 +241,7 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 	void		FindCommon	(CSecCand  &cand1, CSecCand &cand2, bool design=true)	;
 	CSecCand	*CompNext	();
 
-	void		ExportCommonSonden(char*fileName, bool colpased, NumRang<float> ExtrCov, int format);
+	void		ExportCommonSonden(const std::string &fileName, bool colpased, NumRang<float> ExtrCovPerc, int format);
 	virtual ~CMSecCand(){	 
 							_LSecCand.Destroy() ; 
 							_LMSecCand.Destroy() ; }

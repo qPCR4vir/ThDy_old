@@ -61,7 +61,12 @@ void	Hybrid(CTable<TmGPos> &rtbl, CMultSec &tg, CMultSec &pr, ThDyAlign	&Al, Out
 		Hybrid(rtbl, *tg.CurMSec(),  pr, Al,os, MAxGrDegTg);
 }
 
-int microArrayProg ( CProgParam_microArray *IPrgPar_uArr, CMultSec &pr, CMultSec &tg, time_t t_0, int MAxGrDegTg=1, const std::string of_x=""	);
+//int microArrayProg ( CProgParam_microArray *IPrgPar_uArr, 
+//                    CMultSec &pr, 
+//                    CMultSec &tg, 
+//                    time_t t_0,  
+//                    int MAxGrDegTg, 
+//                    const std::string& of_x =""	);
 
 
 int microArrayProg ( CProgParam_microArray *IPrgPar_uArr, 
@@ -69,11 +74,11 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr,
                     CMultSec &tg, 
                     time_t t_0,  
                     int MAxGrDegTg, 
-                    const std::string of_x 	)
+                    const std::string& of_x   =""  	)
 {
-	const int MaxGrDeg=300 ;			// crear NonDegSet para las sondas con menos de este gr de deg. Poner como ProgParam??
+    const int MaxGrDeg = 300;			// crear NonDegSet para las sondas con menos de este gr de deg. Poner como ProgParam??
 
-		string of=string( IPrgPar_uArr->_cp._OutputFile.Get() ) + of_x    , f;
+    string of{ IPrgPar_uArr->_cp._OutputFile.get() + of_x }, f;
 
 	f=of+".uArr.Tm.csv" ;	ofstream osTm;		if (IPrgPar_uArr->_cp._st_savTm		)	{ osTm.open		(f.c_str()	);	assert(osTm		);}
 	f=of+".uArr.G.csv"  ;	ofstream osG ;		if (IPrgPar_uArr->_cp._st_savG		)	{ osG.open		(f.c_str()	);	assert(osG		);}
@@ -135,5 +140,6 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr)
 	return microArrayProg (  IPrgPar_uArr, 
                             *IPrgPar_uArr->_probesMS.get()	, 
                             *IPrgPar_uArr->_cp._pSeqTargets.get() , 
-                             t_0 	)  ; 
+                             t_0 ,
+                             300)  ; 
 }

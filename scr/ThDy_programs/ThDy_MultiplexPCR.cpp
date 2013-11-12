@@ -2,7 +2,13 @@
 #pragma unmanaged
 //#include "ThDySec\th_dy_align.h"
 #include "ThDy_programs/prog_comm_functions.h"
-int microArrayProg ( CProgParam_microArray *IPrgPar_uArr, CMultSec &pr, CMultSec &tg, time_t t_0, int MAxGrDegTg=1, const std::string of_x=""	);
+
+int microArrayProg ( CProgParam_microArray *IPrgPar_uArr, 
+                    CMultSec &pr, 
+                    CMultSec &tg, 
+                    time_t t_0,  
+                    int MAxGrDegTg, 
+                    const std::string& of_x =""	);
 
 void CreateComplProbes(	CMultSec		&pr	)
 {
@@ -34,7 +40,12 @@ void CreateComplProbes(	CMultSec		&pr	)
 	//			tg.reset ( new CMultSec(IPrgPar_uArr->_cp._InputTargetFile.Get(),	pr._NNPar,
 	//									IPrgPar_uArr->_cp._MaxTgId,
 	//									IPrgPar_uArr->_cp._SecLim  ));	
-	return microArrayProg ( IPrgPar_uArr, pr	, *IPrgPar_uArr->_cp._pSeqTargets.get(), t_0  /*, "_self"*/	)  ;
+	return microArrayProg ( IPrgPar_uArr, 
+                            pr	, 
+                            *IPrgPar_uArr->_cp._pSeqTargets.get(), 
+                            t_0  , 300 
+                            /*, "_self"*/	
+                            )  ;
 }
 
 

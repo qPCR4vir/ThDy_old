@@ -3,6 +3,41 @@
 #include "ThDy_programs/init_prog_param_impl.h"
 
 namespace Programs{
+template <typename Param_t>  /// Param_t have to be copiable, comparable and stream <<, >> 
+    class CParam: public IParam
+{    Param_t  _v, &_value;
+ public:
+    /// Link to an existing parameter. Do not use the internal _v. For compatibility.
+    CParam (        IProg        *pp,  
+              const std::string  &titel, 
+              const std::string  &etiq, 
+                    Param_t      &parRef,  
+		      const Param_t      &defValue
+			) 
+            : IParam (pp, titel, etiq), _value(parRef)     {  _value= defValue;	      }
+ 
+	/// Use the internal parameter and dont need an external one
+    CParam (        IProg        *pp,  
+              const std::string  &titel, 
+              const std::string  &etiq, 
+		      const Param_t      &defValue
+			) 
+            : CParamString (pp,  titel, etiq, _v,  defValue	)  {            }
+
+	void    set(const Param_t& value)     { if (value == _value) return; _value = value;  changed();    }
+	Param_t get(                    )const{ return _value;    }
+
+	virtual std::ostream	    &saveValue	(std::ostream	&osPr) const override   
+	                        {   return osPr << _value   ;     
+	                        } 
+
+	bool        loadValue (std::istream   &isPr) override    
+	                    {   isPr >> _value;
+							return true;
+	                    } 
+};
+
+
 class CParamBool: public IParam
 {    bool  _v, &_value;
  public:
@@ -37,20 +72,23 @@ class CParamString: public IParam
  public:
     /// Link to an existing parameter. Do not use the internal string _v. For compatibility.
     CParamString (IProg *pp,  const std::string& titel, const std::string& etiq, std::string &parRef,  
-		            const std::string defValue
+		            const std::string& defValue
 					) : IParam (pp, titel, etiq), _value(parRef)            {  _value= defValue;	          }
+	///// Use the internal parameter and dont need an external one
+       CParamString (IProg *pp,      const std::string& titel, const std::string& etiq, 
+		            const std::string& defValue
+					) : IParam (pp, titel, etiq), _v(defValue) , _value(_v) {            }
 
 	/// Use the internal parameter and dont need an external one
-    CParamString (IProg *pp,      const std::string& titel, const std::string& etiq, 
-		            const std::string defValue
-					) : IParam (pp, titel, etiq), _v(defValue) , _value(_v) {            }
+    //CParamString (IProg *pp,      const std::string& titel, const std::string& etiq, 
+		  //          const std::string& defValue
+				//	) : CParamString (pp,  titel, etiq, _v,  defValue	)  {            }
 
 	void set(const std::string& value){ if (value == _value) return; _value = value;  changed();    }
 	std::string get()const{ return _value;    }
 
 	virtual std::ostream	    &saveValue	(std::ostream	&osPr) const override   
-	                        {   osPr << _value << std::endl <<"\t\t\t\t" ;     
-	                            return osPr;        // sera solo un problema de IntelliSense ??
+	                        {   return osPr << _value << std::endl <<"\t\t\t\t" ;     
 	                        } 
 
 	bool        loadValue (std::istream   &isPr) override   /// Descarta el Titel que queda detras del ultimo tab
@@ -123,7 +161,7 @@ class CParamNumRange: public CParamBNRange<Num>
 {
     
  public:
-								/// It accepts a parameter and therefore does not use _v. For compatibility.
+					/// It accepts a parameter and therefore does not use _v. For compatibility.
     CParamNumRange ( IProg *pp, const std::string& titel, const std::string& etiq, Num &parRef, 
 					 Num min, Num max, Num defValue,
 					const std::string& unit=""					) 

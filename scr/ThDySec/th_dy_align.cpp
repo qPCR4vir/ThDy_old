@@ -793,24 +793,19 @@ void	ThDyAlign::Export_Hits(ofstream &osHits, char *sep)		// mientras estan cone
 	}
 }
 /// MEJORAR !!!
-void	CMSecCand::ExportCommonSonden(char*fileName, bool colpased, NumRang<float> ExtrCovPerc, int format)
+void	CMSecCand::ExportCommonSonden(const std::string &fileName, bool colpased, NumRang<float> ExtrCovPerc, int format)
 {	
 	NumRang<int> ExtrCov ( ((_NSecCand-1) * ExtrCovPerc.Min()) /100.0  , ((_NSecCand-1) * ExtrCovPerc.Max()) /100.0 ) ;  
     
     bool	f_fas=format && fasta,
 			f_csv=format && csv;
-	string  f_name(fileName) ;
 	ofstream	osFasta, osCSV;
 	char sep[]=";";							// cambiar a global sep
 	if (f_fas)
-	{	string		FastaFile;
-		FastaFile= f_name + ".sonden.fasta";
-		osFasta.open(FastaFile);
-	}
+		osFasta.open(fileName + ".sonden.fasta");
 	if (f_csv)
-	{	string		CSVFile;
-		CSVFile= f_name + ".sonden.csv";
-		osCSV.open(CSVFile);
+	{	 
+		osCSV.open(fileName + ".sonden.csv");
 		osCSV << "Num" <<sep<< "SecName" <<sep<<	"Inic" <<sep<< "Fin" <<sep<<	"Len"  <<sep<< "Tm" <<sep<< "Sec"
 				<< sep <<"H"<< sep <<"S"<< sep <<"G(Ta=" << KtoC(_TDATmC->Ta()) << " gr)" << sep << "No.matchs";
 	}

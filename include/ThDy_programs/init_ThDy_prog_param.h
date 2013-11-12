@@ -7,7 +7,7 @@
 
 
 
-class CParamSondeLimits: public IBParam
+class CParamSondeLimits: public IBParam  /// \todo Use delegating constructor to limit code duplication
 {   SondeLimits sL;
  public: 
     CParamNumMinMax<Energy> G; 
@@ -71,8 +71,9 @@ class CSaltCorrNN;
 class ThDyCommProgParam : public CCommProgParam 
 {public:	
 	CParamC_str     _InputTargetFile ;  
-	CParamC_str     _PCRfiltrPrFile;    
-	CParamC_str     _OutputFile;        
+    CParamC_str     _PCRfiltrPrFile;
+    CParamString    _OutputFile{ this, "Results output file", "OutputFile", "" };
+   
     CParamC_str     _InputNNFile;
     CParamBool      _RecurDir{this, "Recursively add all seq-files from all dir",			"RecursiDir", false};
 
@@ -128,7 +129,6 @@ class ThDyCommProgParam : public CCommProgParam
 			_st_Exp_sond(false),  st_Exp_sond(this, "Programm option- re-export probes",	"Exp_probes", _st_Exp_sond,false),  
 			_st_ExpTarg(false),   st_ExpTarg(this, "Programm option- re-export targets",	"Exp_target", _st_ExpTarg, false),
 							_InputTargetFile(this, "Imput file for Targets",				"TargetFile", ""			) ,
-							_OutputFile     (this, "Results output file",					"OutputFile", ""			) ,
 							_InputNNFile    (this, "Imput file with NN parametrs",			"iNNParFile", ""			) , 
 							_PCRfiltrPrFile (this, "Imput file with primers for filtering",	"PCRftrFile", ""			),
 			//_pSaltCorrNNp(nullptr),
@@ -161,9 +161,9 @@ unique_ptr<CSaltCorrNN> Init_NNpar          ()   //< Initialize the set of NeirN
     }
 	if ( _saveNNPar)
 	{	
-        std::string OutputTDP( _OutputFile.Get()) ; OutputTDP += ".ThDyParam.csv";
+        //std::string OutputTDP( _OutputFile.Get()) ; OutputTDP += ".ThDyParam.csv";
 
-		ofstream osTDP	(OutputTDP.c_str());				assert(osTDP);	
+		ofstream osTDP	(_OutputFile.get() + ".ThDyParam.csv");				assert(osTDP);	
 		osTDP << *NNpar ;
 	}
 	return NNpar ;
@@ -216,9 +216,9 @@ void Check_NNp_Targets (/*ThDyCommProgParam& cp*/)
 
 
 	// convertirlas en funciones "previas a la paralelizacion", que hacen copias propias de los parametros en serie, no en paralelo
-	void    TargetFile(const char *InputTargetFile)	{	_InputTargetFile.CopyTrim(InputTargetFile);	}
-	void    OutputFile(const char *OutputFile     )	{	_OutputFile.CopyTrim(OutputFile)    ;	}
-	void    NNParaFile(const char *InputNNFile)		{	_InputNNFile.CopyTrim(InputNNFile)	;	}
+	void    TargetFile(const char *InputTargetFile)	 {	_InputTargetFile.CopyTrim(InputTargetFile);	}
+	void    OutputFile(const std::string &OutputFile){	_OutputFile.set( trim_string(OutputFile  ) )   ;	}
+	void    NNParaFile(const char *InputNNFile)		 {	_InputNNFile.CopyTrim(InputNNFile)	;	}
 	
 	// OJO !!!!!!!!!   las sig funciones se aduenan del pointer, y luego lo deletean    !!!!!!!!
 	void SetTargetFile(      char *InputTargetFile)	{	TargetFile(InputTargetFile)	;	delete []InputTargetFile;	}
@@ -250,23 +250,22 @@ class CEspThDyProgParam : public CEspProg
 class CProgParam_microArray : public CEspThDyProgParam
 {public:	
 	std::shared_ptr<CMultSec>   _probesMS;
-		CMultSec *AdduArrFromFile(const std::string& FileName)
-	{
-		return _cp.AddSeqFromFile(_probesMS.get(),FileName);
-	}
-	CParamC_str		_InputSondeFile ;   
+    CParamC_str		            _InputSondeFile{ this, "Imput file for Sondes", "iSonde_uAr", "" };
+    CTable<TmGPos>             *_rtbl{nullptr};		                //uArr_RT *_rtbl;
+
 	//bool			    _I, _G;			// Outpu table of I, G. 
 	//CParamBool		 I,  G;			// Outpu table of I, G. 
 
     CProgParam_microArray(const std::string& titel, ThDyCommProgParam &commThDyParam) 
 		    :	CEspThDyProgParam(titel, commThDyParam), 
-				_InputSondeFile	(this, "Imput file for Sondes",				"iSonde_uAr", ""			) ,
-				_rtbl(nullptr),
-                _probesMS(_cp.AddSeqGroup(_cp._pSeqTree.get(), "Probes of Virtual uArr"))
+                _probesMS        (_cp.AddSeqGroup(_cp._pSeqTree.get(), "Probes of Virtual uArr"))
 	        {		
 			} 
 
-	CTable<TmGPos> *_rtbl;		                                    //uArr_RT *_rtbl;
+    CMultSec *AdduArrFromFile(const std::string& FileName)
+	{
+		return _cp.AddSeqFromFile(_probesMS.get(),FileName);
+    }
     void RenameSondesMS(const std::string& name);
     void Check_NNp_Targets_probes      (CMultSec *probes) 
 {
@@ -458,7 +457,7 @@ class ThDyProject : public CProject // Permite manejar todo el projecto: con un 
 							_TmCal("Tm calculator"                  ,_cp)
 					{}
  	virtual std::ofstream &saveTMP() const     override       // Se me habia olvidado redefinir esta funcion para usar _cp.OutF
-	{	return saveToFile(   (std::string(_cp._OutputFile.Get()) + ".ThDy.txt" ).c_str()   );	}
+	{	return saveToFile(   ( _cp._OutputFile.get() + ".ThDy.txt" ).c_str()   );	}
 };  
 
 

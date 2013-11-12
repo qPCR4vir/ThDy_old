@@ -48,7 +48,7 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 
     IPrgPar_SdDes->_cp.Check_NNp_Targets( );
 
-	string OutputCand = IPrgPar_SdDes->_cp._OutputFile.Get() ; OutputCand += ".TgCand.csv";	ofstream osNCand(OutputCand.c_str());
+    ofstream osNCand(IPrgPar_SdDes->_cp._OutputFile.get() + ".TgCand.csv");
 	osNCand.precision(2);
 	osNCand	<<endl<<"Num T Pos" <<sep<< "Num T Cand"	
 			<<sep<<	"Targ Num"	<<sep<< "Iterat#"  	
@@ -88,7 +88,7 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
     /// That is: probes with hybrid in one target but in not than more than in ExtrCovPerc.Min % of the others, 
     /// and addicionaly, probes with hybrid in one target and at last in ExtrCovPerc.Max % of the others.
 
-	msCand.ExportCommonSonden(  IPrgPar_SdDes->_cp._OutputFile.Get(), 
+	msCand.ExportCommonSonden(  IPrgPar_SdDes->_cp._OutputFile.get().c_str(), 
                                 IPrgPar_SdDes->_design, 
                                 ExtrCovPerc, 
                                 fasta | csv);

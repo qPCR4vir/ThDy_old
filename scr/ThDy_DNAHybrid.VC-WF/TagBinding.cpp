@@ -1,19 +1,35 @@
 //#include "ThDy_DNAHybrid.VC-WF/StdAfx.h"
 #include "StdAfx.h"
 #include "ThDy_DNAHybrid.VC-WF/TagBinding.h"
+//#include <string>
 //using namespace ParamF;
 namespace TagBindingNS 
 {
 ITagBinding^	isTagBinding	(Control^ c){ return  getTagBinding	(c)					;}
 ITagBinding^	getTagBinding	(Control^ c){ return  dynamic_cast<ITagBinding^>(c->Tag);}
 
-void			UpDateP		(Control^  control){ if(isTagBinding( control ))  getTagBinding( control )->UpDateP   ()  ;}
-void			UpDateForm	(Control^  control){ if(isTagBinding( control ))  getTagBinding( control )->UpDateForm()  ;}
+void			UpDateP		(Control^  control) { 
+                                                    if(isTagBinding( control ))  
+                                                        getTagBinding( control )->UpDateP   ()  ;
+                                                }
+void			UpDateForm	(Control^  control) {   
+                                                    if(isTagBinding( control ))  
+                                                        getTagBinding( control )->UpDateForm()  ;
+                                                }
 
-System::Void	Validated_TB(System::Object^  senderControl, System::EventArgs^  e) {  UpDateP((Control^)senderControl) ;	}	
+System::Void	Validated_TB(System::Object^  senderControl, System::EventArgs^  e) {  
+                                                                                        UpDateP((Control^)senderControl) ;	
+                                                                                    }	
 
 TagBinding_C_str^	TagBind		(Control^	c	, C_str &s							){ return gcnew TagBinding_C_str(s,c)	;}
 TagBinding_strTrim^	TagBind_Trim(Control^	c	, C_str &s							){ return gcnew TagBinding_strTrim(s,c)	;}
+
+TagBinding_string^	    TagBind		(Control^	c	, std::string &s				){ return gcnew TagBinding_string(s,c)	;}
+TagBinding_stringTrim^	TagBind_Trim(Control^	c	, std::string &s				){ return gcnew TagBinding_stringTrim(s,c)	;}
+
+TagBinding_CPstring^		TagBind		(Control^	c	, CParamString &s			){ return gcnew TagBinding_CPstring(s,c)	;}
+TagBinding_CPstringTrim^	TagBind_Trim(Control^	c	, CParamString &s			){ return gcnew TagBinding_CPstringTrim(s,c)	;}
+
 
 TagBinding_bool^	TagBind(CheckBox^	  c , bool  &p			){ return gcnew TagBinding_bool(p,c)	;}
 

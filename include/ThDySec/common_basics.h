@@ -7,12 +7,8 @@
 
 #include <cctype> 
 #include <string>
-//#include <string.h>
 #include <sstream> 
 #include <stdexcept>
-
-
-//#include "matrix.h"
 
 
 inline char *clone_c_str   (const char *str) {return strcpy (new char[strlen(str) +1] , str);}  // ;char *clone_c_str(const char *str)
@@ -40,7 +36,8 @@ inline char *clone_trim_str(const char *str)		// definida en    :   init_prog_pa
 	NewStr[0]=0;
 	return NewStr;
 }
- template<typename CharType>               //   elimina espacios al principio y al final
+
+template<typename CharType>               //   elimina espacios al principio y al final
 inline CharType *clone_trim(const CharType *str)		// definida en    :   init_prog_param.cpp   -  elimina espacios al principio y al final
 													//char *clone_trim_str(const char *str)
 {	if(str && str[0]) 
