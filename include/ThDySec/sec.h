@@ -244,63 +244,58 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 
 class CSecGB : public CSec // ---------------------------------------   CSecGB	------------------------------------------------
 {public:
-	char		*	_Textseq_id_accession ;	
-	char		*	_Org_ref_taxname	 ;
-	char		*	_Seqdesc_title		 ;
+	std::string 	_Textseq_id_accession ;	
+	std::string 	_Org_ref_taxname	 ;
+	std::string 	_Seqdesc_title		 ;
 	long			_Seq_inst_length	 ;	    
 	
-	CSecGB(			char		*	Textseq_id_accession ,	
-					char		*	Org_ref_taxname	 ,
-					char		*	Seqdesc_title	,
+	CSecGB(			std::string&&	Textseq_id_accession ,	
+					std::string&&	Org_ref_taxname	 ,
+					std::string&&	Seqdesc_title	,
 					long			Seq_inst_length	 ,    
 					const char	*	sec	,	
 					int				id,						//	char		*	nam,	Seqdesc_title	,	
 					std::shared_ptr<CSaltCorrNN>  NNpar,  				//	long			l=0,		Seq_inst_length
-					char		*	clas=NULL, 
+					std::string 	clas="", 
 					float			conc=-1
 				):
 						CSec (sec, id, Textseq_id_accession, NNpar, Seq_inst_length,1, clas, conc ),// actualizar Beg-End
 
-										_Textseq_id_accession	( Textseq_id_accession ) ,
-										_Org_ref_taxname		( Org_ref_taxname ) ,
-										_Seqdesc_title			( Seqdesc_title ) ,				
+										_Textseq_id_accession	( std::move(Textseq_id_accession) ) ,
+										_Org_ref_taxname		( std::move(Org_ref_taxname )) ,
+										_Seqdesc_title			( std::move(Seqdesc_title) ) ,				
 										_Seq_inst_length		( Seq_inst_length ) 				{}			
 	virtual std::string	Description ()const override	{return _description.length() ? _description : _Seqdesc_title ; }
 
-	virtual ~CSecGB(){			delete []_Textseq_id_accession; 
-								delete []_Org_ref_taxname;
-								delete []_Seqdesc_title;}
+	virtual ~CSecGB(){	}
 };
 
 class CSecGBtxt : public CSec // ---------------------------------------   CSecGBtxt	------------------------------------------------
 {public:
-	char	*	_LOCUS			;
+	std::string	_LOCUS			;
 	long		_Seq_inst_length;	
-	char	*	_DEFINITION      ;
-	char	*	_ACCESSION       ;
-	char	*	_ORGANISM        ;			// ORIGIN      
-	CSecGBtxt(		char	*	LOCUS       ,
+	std::string	_DEFINITION      ;
+	std::string	_ACCESSION       ;
+	std::string	_ORGANISM        ;			// ORIGIN      
+	CSecGBtxt(		std::string&&	LOCUS       ,
 					long		Seq_inst_length,	
-					char	*	DEFINITION     ,
-					char	*	ACCESSION      ,
-					char	*	ORGANISM       ,
+					std::string&&	DEFINITION     ,
+					std::string&&	ACCESSION      ,
+					std::string&&	ORGANISM       ,
 					const char	*	sec	,	
 					int				id,						//	char		*	nam,	DEFINITION	,	
 					std::shared_ptr<CSaltCorrNN>  NNpar,  				//	long			l=0,		Seq_inst_length
-					char		*	clas=NULL, 
+					std::string	    clas="", 
 					float			conc=-1
 				):		CSec (sec, id, LOCUS, NNpar, 0,1, clas, conc ), // actualizar Beg-End
-							_LOCUS			( LOCUS ) ,
+							_LOCUS			( std::move(LOCUS )) ,
 							_Seq_inst_length( Seq_inst_length ) ,
-							_DEFINITION		( DEFINITION ) ,				
-							_ACCESSION		( ACCESSION ) 	,			
-							_ORGANISM		( ORGANISM ) 				{}	
+							_DEFINITION		( std::move(DEFINITION) ) ,				
+							_ACCESSION		( std::move(ACCESSION) ) 	,			
+							_ORGANISM		( std::move(ORGANISM )) 				{}	
 	virtual std::string	Description ()const override	{return _description.length() ? _description : _DEFINITION ; }
 	
-	virtual ~CSecGBtxt() {		delete []_LOCUS; 
-								delete []_DEFINITION;
-								delete []_ACCESSION;
-								delete []_ORGANISM;		}	
+	virtual ~CSecGBtxt() {				}	
 };
 
 
@@ -659,13 +654,13 @@ class CMultAlign   // EXPERIMENTAL
 
 class CSecLink   : public CLink    // NO es dueno de la sec, no la borra, no delete
 {	public:
-		CSecLink (CSec *s, CSecLink *p, CSecLink *n=NULL) : _sec(s), CLink (n, p) {} ;
+		CSecLink (CSec *s, CSecLink *p, CSecLink *n=nullptr) : _sec(s), CLink (n, p) {} ;
 		CSec *_sec ;
 };
 		
 class CMSecLink    : public CLink     // NO es dueno de la sec, no la borra, no delete
 {	public:
-		CMSecLink (CMultSec *ms, CMSecLink *p, CMSecLink *n=NULL) : _msec(ms), CLink (n, p) {} ;
+		CMSecLink (CMultSec *ms, CMSecLink *p, CMSecLink *n=nullptr) : _msec(ms), CLink (n, p) {} ;
 		CMultSec *_msec ;
 };
 #endif
