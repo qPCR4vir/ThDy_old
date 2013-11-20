@@ -24,7 +24,7 @@
 		
 inline IErrorInfo *GetCOM_ErrorInfo()
 {
-	IErrorInfo* perrinfo= NULL;
+	IErrorInfo* perrinfo= nullptr;
 	GetErrorInfo(0,&perrinfo);  //http://msdn.microsoft.com/en-us/library/ms221268(v=vs.85).aspx
 	return perrinfo;
 }
@@ -94,7 +94,7 @@ public:
 
 	IDispatch *CoCreateInstance(CLSID ClsID)
 	{	IDispatch *pIDispatch ;
-		HRESULT hr = ::CoCreateInstance(	ClsID,      NULL,	CLSCTX_LOCAL_SERVER,  IID_PPV_ARGS(&pIDispatch));
+		HRESULT hr = ::CoCreateInstance(	ClsID,      nullptr,	CLSCTX_LOCAL_SERVER,  IID_PPV_ARGS(&pIDispatch));
 		if (FAILED(hr)) 					
 			throw(COM_exeption(hr,"Error creating COM instance of ... \n")); 
 		return pIDispatch;

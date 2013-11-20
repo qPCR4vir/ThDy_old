@@ -47,7 +47,7 @@ END_MESSAGE_MAP()
 
 
 
-CThDy_DNAHybridMFCDlg::CThDy_DNAHybridMFCDlg(CWnd* pParent /*=NULL*/)
+CThDy_DNAHybridMFCDlg::CThDy_DNAHybridMFCDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(CThDy_DNAHybridMFCDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -85,7 +85,7 @@ BOOL CThDy_DNAHybridMFCDlg::OnInitDialog()
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
-	if (pSysMenu != NULL)
+	if (pSysMenu != nullptr)
 	{
 		BOOL bNameValid;
 		CString strAboutMenu;

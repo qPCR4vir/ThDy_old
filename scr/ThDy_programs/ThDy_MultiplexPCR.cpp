@@ -27,7 +27,7 @@ void CreateComplProbes(	CMultSec		&pr	)
 
 	int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr, CMultSec		&pr)  
 {
-	time_t t_0 = time(NULL);
+	time_t t_0 = time(nullptr);
     IPrgPar_uArr->_cp.Check_NNp_Targets ();
 	CreateComplProbes(	pr	);
 
@@ -63,7 +63,7 @@ void CreateComplProbes(	CMultSec		&pr	)
 //int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr, 	CMultSec		&pr		)  
 //{
 //	std::shared_ptr<CSaltCorrNN>  NNpar =  pr._NNPar;
-//	time_t t_0 = time(NULL);
+//	time_t t_0 = time(nullptr);
 //	const int MaxGrDeg=300 ;			// crear NonDegSet para las sondas con menos de este gr de deg. Poner como ProgParam??
 //
 //		string of( IPrgPar_uArr->_cp._OutputFile.Get() ), f;
@@ -81,7 +81,7 @@ void CreateComplProbes(	CMultSec		&pr	)
 //										IPrgPar_uArr->_cp._MaxTgId,
 //										IPrgPar_uArr->_cp._SecLim  ));		
 //
-//	time_t t_sec = time(NULL);
+//	time_t t_sec = time(nullptr);
 //
 //	LonSecPos TgMaxLen= (tg->_Global._Len.Max() > pr._Global._Len.Max()) ? tg->_Global._Len.Max() : pr._Global._Len.Max() ; // Los primers tambien los voy a usar como target !!
 //	auto_ptr<ThDyAlign> apAl; 	
@@ -120,7 +120,7 @@ void CreateComplProbes(	CMultSec		&pr	)
 //				osTm	<<sep <<s.Name()		;	osG		<<sep <<s.Name()		;	osPos	<<sep <<s.Name()		;	
 //				osPl_Tm <<"  "<< s.Name()	;	osPl_G  <<"  "<< s.Name()	;
 //			}
-//	}	time_t t_al_created = time(NULL);
+//	}	time_t t_al_created = time(nullptr);
 //
 //	// Ahora comenzamos los analisis con la hibridacion entre primmer y sondas (no los targets)
 //
@@ -160,7 +160,7 @@ void CreateComplProbes(	CMultSec		&pr	)
 //
 //	}// recorre todos los targets	
 //
-//	time_t t_tm_cal = time(NULL);
+//	time_t t_tm_cal = time(nullptr);
 //	osTm<< endl << endl <<"Time sec= "			<< sep<< t_sec			- t_0		
 //				<< endl <<"Time Ob crea="		<< sep<< t_al_created	- t_sec		
 //				<< endl <<"Time Tm calc= "		<< sep<< t_tm_cal		-t_al_created ;
@@ -238,7 +238,7 @@ void CreateComplProbes(	CMultSec		&pr	)
 //				osTm	<<sep <<s.Name()		;	osG		<<sep <<s.Name()		;	osPos	<<sep <<s.Name()		;	
 //				osPl_Tm <<"  "<< s.Name()	;	osPl_G  <<"  "<< s.Name()	;
 //			}
-//	}	time_t t_al_created = time(NULL);
+//	}	time_t t_al_created = time(nullptr);
 //
 //	// Ahora comenzamos los analisis con la hibridacion entre primmer y sondas (no los targets)
 //
@@ -278,7 +278,7 @@ void CreateComplProbes(	CMultSec		&pr	)
 //
 //	}// recorre todos los targets	
 //
-//	time_t t_tm_cal = time(NULL);
+//	time_t t_tm_cal = time(nullptr);
 //	osTm<< endl << endl <<"Time sec= "			<< sep<< t_sec			- t_0		
 //				<< endl <<"Time Ob crea="		<< sep<< t_al_created	- t_sec		
 //				<< endl <<"Time Tm calc= "		<< sep<< t_tm_cal		-t_al_created ;

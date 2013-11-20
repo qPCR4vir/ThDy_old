@@ -13,7 +13,7 @@ class CThDy_DNAHybridMFCDlg : public CDialogEx
 {
 // Construction
 public:
-	CThDy_DNAHybridMFCDlg(CWnd* pParent = NULL);	// standard constructor
+	CThDy_DNAHybridMFCDlg(CWnd* pParent = nullptr);	// standard constructor
 
 // Dialog Data
 	enum { IDD = IDD_THDY_DNAHYBRIDMFC_DIALOG };

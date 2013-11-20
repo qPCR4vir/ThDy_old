@@ -44,7 +44,7 @@ void FindSonden( CMultSec *tg, /*int& tgN,*/ int& compN, CMSecCand& msCand, ofst
 
 int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 {	
-	time_t t_0 = time(NULL);
+	time_t t_0 = time(nullptr);
 
     IPrgPar_SdDes->_cp.Check_NNp_Targets( );
 
@@ -60,7 +60,7 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 			<<sep<< "Num T Pos" <<sep<< "Num T Cand"	
 			<< fixed			; 
 
-	time_t t_sec = time(NULL);
+	time_t t_sec = time(nullptr);
 
 	CMSecCand	msCand	(	
 				   convCtoK_ctok( IPrgPar_SdDes->_sL ) ,
@@ -74,7 +74,7 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
     msCand.Use                 (IPrgPar_SdDes->_cp._pSeqTargets);
 	msCand._TDATmC->SetTa (CtoK(IPrgPar_SdDes->_cp._Ta         ));
 
-	time_t t_al_created = time(NULL);
+	time_t t_al_created = time(nullptr);
 
 	int /*tgN(0),*/ compN=0;
 
@@ -94,7 +94,7 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
                                 fasta | csv);
 
 
-	time_t t_tm_cal = time(NULL);
+	time_t t_tm_cal = time(nullptr);
 	osNCand<< endl << endl <<"Time sec= "			<< sep<< t_sec			- t_0		
 				   << endl <<"Time Ob crea="		<< sep<< t_al_created	- t_sec		
 				   << endl <<"Time Tm calc= "		<< sep<< t_tm_cal		-t_al_created ;

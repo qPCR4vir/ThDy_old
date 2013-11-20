@@ -14,7 +14,7 @@
 //int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr, 	CMultSec		&pr		)  
 //{
 //	CSaltCorrNN *NNpar =  pr._NNPar;
-//	time_t t_0 = time(NULL);
+//	time_t t_0 = time(nullptr);
 //	const int MaxGrDeg=300 ;			// crear NonDegSet para las sondas con menos de este gr de deg. Poner como ProgParam??
 //	
 //	string OutputTm		= IPrgPar_uArr->_cp._OutputFile.Get(); OutputTm		+=".uArr.Tm.csv" ;	ofstream osTm	(OutputTm.c_str()	);	assert(osTm	);
@@ -28,4 +28,4 @@
 //	CMultSec		tg		(			IPrgPar_uArr->_cp._InputTargetFile.Get(),		NNpar,
 //										IPrgPar_uArr->_cp._MaxTgId,
 //										IPrgPar_uArr->_cp._SecLim 	);/*,IPrgPar_uArr->_cp._SecBeg,	IPrgPar_uArr->_cp._SecEnd */	
-//	time_t t_sec = time(NULL);
+//	time_t t_sec = time(nullptr);

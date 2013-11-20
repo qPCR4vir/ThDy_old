@@ -35,7 +35,7 @@ inline char* copyAs(const wchar_t* wstr, size_t len)  //<char*,const wchar_t*>
 {	
     std::mbstate_t state = std::mbstate_t();
 	if (!len)
-		len =std::wcsrtombs(NULL, &wstr, 0, &state);		/* +1  */
+		len =std::wcsrtombs(nullptr, &wstr, 0, &state);		/* +1  */
 	std::auto_ptr<char> mbstr(new char[len+1]);				//    std::vector<char> mbstr(len);
     std::wcsrtombs(mbstr.get(), &wstr, len+1, &state);	
 	return mbstr.release();	
@@ -46,7 +46,7 @@ inline wchar_t* copyAs/*<wchar_t*,const char*>*/(const char* mbstr, size_t len)
 {	
     std::mbstate_t state = std::mbstate_t();
 	if (!len)
-		len =std::mbsrtowcs(NULL, &mbstr, 0, &state);/* +1  */
+		len =std::mbsrtowcs(nullptr, &mbstr, 0, &state);/* +1  */
 	std::auto_ptr<wchar_t> wstr(new wchar_t[len+1]);      // std::vector<wchar_t> wstr(len);
     std::mbsrtowcs(wstr.get(), &mbstr, len+1, &state);
 	return wstr.release();	
@@ -62,7 +62,7 @@ inline std::wstring StrTo_wstring(std::string str)
 {
     std::mbstate_t state = std::mbstate_t();
 	const char *mbstr= str.c_str();
-    int len = 1 + std::mbsrtowcs(NULL, &mbstr, 0, &state);
+    int len = 1 + std::mbsrtowcs(nullptr, &mbstr, 0, &state);
 	std::auto_ptr<wchar_t> wstr(new wchar_t[len]);      // std::vector<wchar_t> wstr(len);
     std::mbsrtowcs(&wstr.get()[0], &mbstr, len, &state);
 	std::wstring ws(wstr.get());
@@ -79,7 +79,7 @@ inline std::string  StrTo_string(std::wstring str)
 {	
     std::mbstate_t state = std::mbstate_t();
 	const wchar_t *wstr= str.c_str();
-    int len = 1 + std::wcsrtombs(NULL, &wstr, 0, &state);
+    int len = 1 + std::wcsrtombs(nullptr, &wstr, 0, &state);
 	std::auto_ptr<char> mbstr(new char[len]);      //    std::vector<char> mbstr(len);
     std::wcsrtombs(&mbstr.get()[0], &wstr, len, &state);	
 	std::string mbs(mbstr.get());
@@ -122,7 +122,7 @@ void f()
 //void print_as_wide(const char* mbstr)	//http://en.cppreference.com/w/cpp/string/multibyte/mbsrtowcs
 //{
 //    std::mbstate_t state = std::mbstate_t();
-//    int len = 1 + std::mbsrtowcs(NULL, &mbstr, 0, &state);
+//    int len = 1 + std::mbsrtowcs(nullptr, &mbstr, 0, &state);
 //    std::vector<wchar_t> wstr(len);
 //    std::mbsrtowcs(&wstr[0], &mbstr, wstr.size(), &state);
 //    std::wcout << "Wide string: " << &wstr[0] << '\n'
@@ -131,7 +131,7 @@ void f()
 //void print_wide(const wchar_t* wstr)    // http://en.cppreference.com/w/cpp/string/multibyte/wcsrtombs
 //{   
 //    std::mbstate_t state = std::mbstate_t();
-//    int len = 1 + std::wcsrtombs(NULL, &wstr, 0, &state);
+//    int len = 1 + std::wcsrtombs(nullptr, &wstr, 0, &state);
 //    std::vector<char> mbstr(len);
 //    std::wcsrtombs(&mbstr[0], &wstr, mbstr.size(), &state);
 //    std::cout << "multibyte string: " << &mbstr[0] << '\n'

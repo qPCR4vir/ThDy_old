@@ -89,7 +89,7 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr,
 
 	std::shared_ptr<CSaltCorrNN>  NNpar =  pr._NNPar;
 
-	time_t t_sec = time(NULL);
+	time_t t_sec = time(nullptr);
 
 	auto_ptr<ThDyAlign> apAl; 	
 	apAl= Create_ThDyAlign(		IPrgPar_uArr->_cp, pr._Global._Len.Max() , tg._Global._Len.Max(), NNpar);	ThDyAlign	&Al=*apAl.get();
@@ -113,13 +113,13 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr,
 	rtbl.CreateMatrix(tg.CountSelectedSeqRec());	
 
 
-	time_t t_al_created = time(NULL);
+	time_t t_al_created = time(nullptr);
 
 	Hybrid(rtbl, tg,  pr, Al, os, MAxGrDegTg);
 
 	rtbl.compact();	
 
-	time_t t_tm_cal = time(NULL);
+	time_t t_tm_cal = time(nullptr);
 	osTm<< endl << endl <<"Time sec= "			<< sep<< t_sec			- t_0		
 				<< endl <<"Time Ob crea="		<< sep<< t_al_created	- t_sec		
 				<< endl <<"Time Tm calc= "		<< sep<< t_tm_cal		-t_al_created ;
@@ -127,7 +127,7 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr,
 }
 int microArrayProg ( CProgParam_microArray *IPrgPar_uArr)  
 {
-	time_t t_0 = time(NULL);
+	time_t t_0 = time(nullptr);
 
     IPrgPar_uArr->Check_NNp_Targets_probes (IPrgPar_uArr->_probesMS.get());
 

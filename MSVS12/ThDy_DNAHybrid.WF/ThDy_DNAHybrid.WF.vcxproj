@@ -55,7 +55,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTdebug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -69,7 +69,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -83,7 +83,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MT_rel_XP|Win32'" Label="Configuration">
@@ -115,7 +115,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDrelease|x64'" Label="Configuration">
