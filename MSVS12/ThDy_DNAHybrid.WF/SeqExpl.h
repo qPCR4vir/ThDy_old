@@ -297,7 +297,7 @@ private:  void AddSeq 	(String^ file, bool  all_in_dir)
 
 private: System::Void toolStripButtonAddSeq_Click			(System::Object^  sender, System::EventArgs^  e) 
     {
-        this->openFileDialog_targets->ShowDialog();
+        if (this->openFileDialog_targets->ShowDialog()== System::Windows::Forms::DialogResult::OK )
         AddSeq(this->openFileDialog_targets->FileName,false);
 	}
 private: System::Void toolStripButtonAddDir_Click(System::Object^  sender, System::EventArgs^  e) 
@@ -306,7 +306,7 @@ private: System::Void toolStripButtonAddDir_Click(System::Object^  sender, Syste
         d->Description = "Select the directory containing the sequences.";
         d->ShowNewFolderButton = false;
         //d->RootFolder = Environment::SpecialFolder::Personal; // this->openFileDialog_targets->InitialDirectory;
-        d->ShowDialog();
+        if (d->ShowDialog()== System::Windows::Forms::DialogResult::OK )
         AddSeq(d->SelectedPath, true);
     }
 
