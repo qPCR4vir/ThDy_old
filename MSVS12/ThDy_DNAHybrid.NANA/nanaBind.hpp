@@ -192,7 +192,7 @@ class Bind_NumR_UnitUpDw   : public Bind_UnitUpDw, public Bind_CParamRang<Num>
 
     void	UpDateForm(	 )	override {     updateForm(getProgVal(), _p.Unit() ); 
                                      }
-	void	UpDateProg(	 )	override {     updateProg(getFormVal(   _p.Unit())); 
+	void	UpDateProg(	 )	override {     updateProg(Num (getFormVal(   _p.Unit()))); 
                                      }
 };
    template <class Num> 
