@@ -118,6 +118,9 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
 	virtual CSec*CreateCopy		(DNAStrand strnd=direct) override;//< crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 	const char	*Get_charSec			()const{return (const char*)_c;}
 
+    bool		Selected() const;				 //< User-editable    ???????????????????????????????????????????????????????????????????????????
+	bool		Selected(bool select)	{return _selected=select;} 			//< make protected: ?????????????????????????????????????????????????
+
 	Base		operator()		(int i)const{return _b[i];}
 	Temperature	Tm	(long pi, long pf	)const;				        //< Tm de la sonda con sec desde pi hasta pf, inclusive ambas!! 
 	Temperature	Tm	(long pi			)const	{return Tm(pi,Len())   ;}   //< Tm de la sonda con sec desde pi hasta el final, inclusive ambos!!
@@ -278,7 +281,7 @@ class CSecGBtxt : public CSec // ---------------------------------------   CSecG
 	std::string	_ACCESSION       ;
 	std::string	_ORGANISM        ;			// ORIGIN      
 	CSecGBtxt(		std::string&&	LOCUS       ,
-					long		Seq_inst_length,	
+					long		    Seq_inst_length,	
 					std::string&&	DEFINITION     ,
 					std::string&&	ACCESSION      ,
 					std::string&&	ORGANISM       ,
@@ -405,11 +408,14 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 		std::string			_name ;							// nombre unico?  
  		int					_ID ;							// num original?? en total??, num unico?
 		NumRang<LonSecPos>  _SecLim;					// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
-        LonSecPos           _MinSecLen;
+        LonSecPos           _MinSecLen;  // TODO: NumRang<LonSecPos> _SecRange{1,0};// def-unlimited: the range used, not the limits
 		float				_MaxTgId ;					// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
 		std::shared_ptr<CSaltCorrNN>	_NNPar ;		// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
 		CMultSec			*_parentMS	;								//std::weak_ptr<CMultSec> _parentMS	;
-		CSec				*_Consenso ;
+        CSec				*_Consenso;
+        bool                 _selected{ true };
+	bool		Selected(bool select)	{return _selected=select;} 			//< make protected: ??
+	bool		Selected(		) const {return _selected ;}					 //< User-editable
 
 		//std::string Path(const std::string& path_sep="/")
 		//{

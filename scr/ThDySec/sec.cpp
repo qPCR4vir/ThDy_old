@@ -50,6 +50,9 @@ char *DNAStrandName[]=	{""		, "(c)", ""		, "(r)"	, "(i)", "(c)"		} ;
 {	
 };  
 
+        bool		CSec::Selected(		) const {return CSecBasInfo::Selected() && (_parentMS ? _parentMS->Selected(): true)  ;}					 //< User-editable
+
+
 		CSecBasInfo::CSecBasInfo (int id, const std::string& nam, const std::string& clas) 
 								:	_ID		( id ), 	_selected(true), _filtered(false),
 									_NonDegSet( nullptr ), _c(nullptr), 				_GCp( 0 ),	

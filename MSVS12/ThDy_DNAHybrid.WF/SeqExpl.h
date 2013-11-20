@@ -37,7 +37,7 @@ namespace ThDy_DNAHybridWF {
 			//
 			//TODO: Add the constructor code here
 			//
-
+            treeV_Seq->CheckBoxes = true;
 			SecChecked= gcnew System::Windows::Forms::ItemCheckedEventHandler(this, &SeqExpl::listV_Seq_ItemChecked);
             this->SuspendLayout();
 
@@ -298,7 +298,7 @@ private:  void AddSeq 	(String^ file, bool  all_in_dir)
 private: System::Void toolStripButtonAddSeq_Click			(System::Object^  sender, System::EventArgs^  e) 
     {
         if (this->openFileDialog_targets->ShowDialog()== System::Windows::Forms::DialogResult::OK )
-        AddSeq(this->openFileDialog_targets->FileName,false);
+            AddSeq(this->openFileDialog_targets->FileName,false);
 	}
 private: System::Void toolStripButtonAddDir_Click(System::Object^  sender, System::EventArgs^  e) 
     {
@@ -307,7 +307,7 @@ private: System::Void toolStripButtonAddDir_Click(System::Object^  sender, Syste
         d->ShowNewFolderButton = false;
         //d->RootFolder = Environment::SpecialFolder::Personal; // this->openFileDialog_targets->InitialDirectory;
         if (d->ShowDialog()== System::Windows::Forms::DialogResult::OK )
-        AddSeq(d->SelectedPath, true);
+            AddSeq(d->SelectedPath, true);
     }
 
 private: System::Void     addTargetToolStripMenuItem_Click	(System::Object^  sender, System::EventArgs^  e) 

@@ -8,6 +8,8 @@
 #include <fstream>     // temp, for debugging
 #include<filesystem>
 #include <nana/gui/wvl.hpp>
+#include <nana/gui/widgets/treebox.hpp>
+#include <nana/gui/widgets/listbox.hpp>
 
 #include "thdy_programs\init_thdy_prog_param.h"
 
@@ -139,6 +141,171 @@ class MplexPCR : public CompoWidget
 
 		    }
 
+
+};
+
+class SeqExpl : public CompoWidget
+{
+    using Tree = nana::gui::treebox;
+    using Node = Tree::item_proxy;
+    using List = nana::gui::listbox;
+
+    ThDyProject        &_Pr;
+    Tree                _tree{ *this };
+    List                _list{ *this };
+    bool				_showAllseq{true}, _showFiltered{true};
+
+
+    using pSec = CSec*;
+    class ListSeqMaker : public List::resolver_interface <pSec>
+    {
+        //    		virtual nana::string decode(std::size_t, const target&) const = 0;
+        //virtual void encode(target&, std::size_t, const nana::string&) const = 0;
+
+        nana::string decode(size_t col, const pSec &sec) const override
+        {
+            static const int    blen{ 50 }, slen{ 1000 };
+            nana::char_t val[blen];
+
+            switch (col)
+            {
+            case 0: return nana::charset(sec->Name());
+            case 1: swprintf(val,blen,     STR("%*d")  , 6,           sec->Len()       );
+                    return val;
+            case 2: swprintf(val,blen, STR("% *.*f °C"), 6, 1,  KtoC( sec->_Tm.Ave() ) );
+                    return val;
+            case 3: swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());
+                    return val;  
+            case 4: return nana::charset( sec->Description());
+            case 5: return nana::charset( std::string(sec->Get_charSec(), slen));
+
+            default:
+                return nana::string{};
+            }
+        }
+        void encode(pSec&, std::size_t col, const nana::string& txt) const override
+        {
+            switch (col)
+            {
+            case 0:  /*sec->Name(nana::charset(txt));*/                        break;
+                //case 1:  nana::charset(std::to_string(sec->Len()));          break;
+                //case 2:  nana::charset(std::to_string(sec->_Tm.Ave() ));       break;
+                //case 3:  nana::charset(std::to_string(sec->Degeneracy()));       break;
+                //case 4:  nana::charset( sec->Description() );                break;
+                //case 5:  nana::charset( sec->Get_charSec()  );                break;
+
+            default:
+                break;
+            }
+        }
+    };
+    //BindGroup          _mExpl;
+    //static const CMultSec* msec(Tree::item_proxy& node)
+    //{
+    //    return (node.value<CMultSec*>());
+    //}
+    //static const CSec*      sec(List::item_proxy& item)
+    //{
+    //    return (item.value<CSec*>());
+    //}
+
+    void SetDefLayout() override
+    {
+        _DefLayout = "    horizontal  gap=2   <Tree 20% > <List >         \n\t"
+
+            ;
+    }
+    void AsignWidgetToFields() override
+    {
+        _place.field("Tree") << _tree;
+        _place.field("List") << _list;
+        //_place.field("Tree" ) << _place.percent( _tree, 20, nana::gui::vplace::minmax(100,300)) << _list;
+
+    }
+    Node insert(CMultSec*ms)  /// Que pasa si la uso dos veces??? Iserta un nuevo node? donde? en root?Cual es el efecto de tener el mismo nombre?
+    {
+        nana::string name = nana::charset(ms->_name);
+        return _tree.insert(name, name).check(ms->Selected()).value(ms);
+    }
+    Node append(Node &node, CMultSec*ms)
+    {
+        nana::string name = nana::charset(ms->_name);
+        return node->append(name, name).check(ms->Selected()).value(ms);
+    }
+    void populate(Node &node)
+    {
+        //while(!node.empty()) 
+        //    _tree.erase(node.child());
+
+        CMultSec *ms = node.value<CMultSec*>(); //  msec(node);
+		for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
+			populate( append(node, ms->CurMSec())) ;
+    }
+////private: System::Void toolStripButAddSeqGr_Click			(System::Object^  sender, System::EventArgs^  e) 
+////		{	try{    
+////					System::Windows::Forms::TreeNode^ tn= treeV_Seq->SelectedNode;
+////                    if (!tn)
+////                        return;
+////					CMultSec     *ms= safe_cast<CMSref^> (tn->Tag)->ms;
+////
+////					ms=_Pr._cp.AddSeqGroup(ms,"New group");
+////					tn=tn->Nodes->Add(gcnew String( ms->_name.c_str())  );
+////					tn->Tag= gcnew CMSref(ms);
+////					tn->EnsureVisible ();
+////					tn->BeginEdit() ;
+////		        }
+////                catch(InvalidCastException^ e) 
+////			    {   
+////				    MessageBox::Show (  gcnew String( "Caught expected exception. \n Add seq gr: Tag is not CMref. \n") + e->Message ) ;
+////                }
+////				catch ( std::exception& e)
+////		        { 
+////					MessageBox::Show ( gcnew String(e.what())  ) ;
+////		        }		
+////		}
+    List::item_proxy& AddToList(CSec* s)
+    {
+        return _list.at(0).append(s).check(s->Selected()).fgcolor( nana::gui::color ::gray_border );
+    }
+    void populate_list(CMultSec*ms)
+    {
+        for ( ms->goFirstSec() ;  ms->NotEndSec() ; ms->goNextSec() )
+		  if ( _showFiltered || !ms->CurSec()->Filtered() ) 
+              AddToList(ms->CurSec());
+    }
+    void populate_list_recur(Tree::item_proxy& node)
+    {
+        populate_list_recur(node.value<CMultSec*>()); // msec(node)  );
+    }
+    void populate_list_recur(CMultSec     *ms)
+		{
+			populate_list(ms);
+            if ( _showAllseq )
+	            for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
+                    populate_list_recur(ms->CurMSec());
+		}
+    void AddSeq 	(const std::string &file, bool  all_in_dir) 
+		{	 
+        //try{ 
+				auto tn= _tree.selected();
+                //if (tn.empty())
+                //        return;
+				_Pr._cp.AddSeqFromFile	( tn.value<CMultSec*>(), file, all_in_dir	);
+                populate(tn);
+                populate_list_recur(tn.value<CMultSec*>());
+					//tn->EnsureVisible ();
+			//}
+   //         catch(InvalidCastException^ ex) 
+			//{   
+			//	MessageBox::Show (  gcnew String( "Caught expected exception. \n After Add Seq from file bott click: Tag is not CMref. \n") + ex->Message ) ;
+   //         }
+			//catch ( std::exception& ex)
+			//{ MessageBox::Show ( gcnew String(ex.what())  ) ;
+			//}		 
+		}
+
+public:
+    SeqExpl(ThDyNanaForm& tdForm);
 
 };
 
@@ -299,6 +466,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     TmCalcPage                      tmCalc_     {*this}; 
     SetupPage                       setup_      {*this};
     MplexPCR                        mPCR_       {*this};
+    SeqExpl                         mExpl_      {*this};
     BindGroup                       _commPP     ;
     nana::gui::combox               comBoxSalMeth   {*this}, 
                                     comBoxTAMeth    {*this};
@@ -321,6 +489,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         //background (0xEEEEEE);
         //foreground(1);
        
+        add_page( mExpl_    );
         add_page( findSond_ );
         add_page( mPCR_     );
         add_page( tmCalc_   );
@@ -349,7 +518,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
         _commPP  << link( _cp._InputTargetFile ,       targets_  )
                  << link( _cp._RecurDir      ,       chkBx_RecDir)
-                 << link( _cp._OutputFile      ,       results_  )
+                 //<< link( _cp._OutputFile      ,       results_  )
                  << link( _cp._PCRfiltrPrFile  ,       PCRfiltre_)
                  << link( _cp.MaxTgId    ,       numUpDwMaxTgId  )
                  << link( _cp.SecLim , numUpDw_TgBeg,numUpDw_TgEnd  )
@@ -436,7 +605,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 	                 "       <weight=5 >                   \n\t "
 	                 "       <PCRfiltre   weight=23 >      \n\t "
 	                 "       <Results     weight=23 >      \n\t "
-                     "       <ComPar grid[3,4]  min=120 gap=2>       \n\t "
+                     "       <ComPar grid[3,4]  weight=120 gap=2>       \n\t "
 	                 "       <weight=23>                   \n\t "
             ;
 
@@ -619,11 +788,147 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         SelectClickableWidget( _PrimersFilePCR);
         SelectClickableWidget( *this);
     }
+   SeqExpl::SeqExpl          (ThDyNanaForm& tdForm)
+        : _Pr             (tdForm), 
+          CompoWidget     (tdForm, STR("Seq Explorer"), STR("SeqExpl.lay.txt"))
+    {
+        InitMyLayout();
+        SelectClickableWidget( _tree);
+        SelectClickableWidget( *this);
+        _tree.checkable(true);
+        _list.checkable(true);
+        _list.append_header(STR("Name")  , 120);
+        _list.append_header(STR("Lenght"), 50);
+        _list.append_header(STR("Tm °C") , 60);
+        _list.append_header(STR("Deg")   , 50);
+        _list.append_header(STR("Description")   , 220);
+        _list.append_header(STR("Seq")   , 420);
+        _list.resolver(ListSeqMaker());
+
+        _menuProgram.append_splitter();
+        _menuProgram.append(STR("Add a new, empty, group for sequences")          /*, [&](nana::gui::menu::item_proxy& ip) {EditMyLayout(); }*/);
+        _menuProgram.append(STR("Add a group of sequences from a file")             , [&](nana::gui::menu::item_proxy& ip) 
+        {
+            _list.auto_draw(false);
+            nana::gui::filebox  fb{ *this, true };
+            fb.title(STR("Add a group of sequences from a file"));
+            if (fb())
+            {
+               _list.clear();
+                AddSeq(nana::charset(fb.file()), false);
+            }
+            _list.auto_draw(true);
+        });
+        _menuProgram.append(STR("Add a tree of groups of sequences from a directory"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            _list.auto_draw(false);
+            _tree.auto_draw(false);
+            nana::gui::filebox  fb{ *this, true };
+            fb.title(STR("Add a tree of groups of sequences from a directory"));
+            if (fb())
+            {
+               _list.clear();
+                AddSeq(nana::charset(fb.file()), true);
+            }
+            _tree.auto_draw(true);
+            _list.auto_draw(true);
+        });
+        _menuProgram.append_splitter();
+        _menuProgram.append(STR("Show Only local sequences)"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            _list.auto_draw(false);
+            _showAllseq = ! _showAllseq; // = _menuProgram.checked(ip.index());
+            _list.clear();
+             populate_list_recur(_tree.selected());
+            _list.auto_draw(true);
+        });
+        _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_option);
+        _menuProgram.append(STR("Show filtered"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            _list.auto_draw(false);
+            _list.clear();
+             populate_list_recur(_tree.selected());
+            _list.auto_draw(true);
+        });
+        _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_option);
+
+        _tree.ext_event().selected = [&](nana::gui::window w, Tree::item_proxy node, bool selected)
+        {
+            if (!selected) return;
+
+            _list.auto_draw(false);
+            _tree.auto_draw(false);
+            _list.clear();
+            populate_list_recur(node);
+            _tree.auto_draw(true);
+            _list.auto_draw(true);
+        };
+        _tree.ext_event().checked = [&](nana::gui::window w, Tree::item_proxy node, bool checked)
+        {                                               //cerr << std::endl << "seq gr checked: ";  //wcerr<< node.text()<< std::endl ;
+            if (node != _tree.selected()) return;
+
+            _list.auto_draw(false);
+            _list.clear();
+            node.value<CMultSec*>()->Selected(checked);
+            populate_list_recur(node);
+            _list.auto_draw(true);
+
+        };
+
+        _list.auto_draw(false);
+        _tree.auto_draw(false);
+        populate( insert(_Pr._cp._pSeqTree.get()));
+        populate_list_recur(_Pr._cp._pSeqTree.get());
+        _tree.auto_draw(true);
+        _list.auto_draw(true);
+    }
+
+
+//using MIndex = unsigned char;
+//
+//const MIndex  Invalid_Menu_idx = std::numeric_limits<MIndex>::max();     // global ?? Could be another "logical" value, for example, just 100.
+// 
+//
+////struct SmartMIndex
+////{
+//// MIndex  i {Invalid_Menu_idx};       
+//// operator size_t(size_t idx)
+////  {
+////   if ( idx >= Invalid_Menu_idx )                                  // or if ( idx == npos)     ?????
+////           return SmartMIndex{} ;                                    // not found
+////   else
+////          return SmartMIndex{  MIndex (t_idx)}  ;                          
+////  }
+////
+////};
+////SmartMIndex Invalid_SMenu_idx;        // global ??
+
+
 
 int main(int argc, char *argv[]) try
 {
-	IParBind::SetDef(PriorizeDefault::Parametr );
 
+    //MIndex  idx{Invalid_Menu_idx};
+    //{ auto t_idx=std::string::npos;
+    //  if (t_idx == std::string::npos )
+    //           t_idx = Invalid_Menu_idx ;
+    //  idx = t_idx;                    // use a cast to avoid false warning??
+    //}                                       // this could be a "graped" for some standard function
+    //if (idx == Invalid_Menu_idx)
+    //        ;      // not found
+    //else
+    //       ;      // found
+    //  auto t_idx = std::string::npos;
+    //  if ( t_idx >= Invalid_Menu_idx )
+    //          idx = Invalid_Menu_idx ;    // not found
+    //  else
+    //          idx = t_idx;                           // found, use a cast to avoid false warning??
+   ////if (SmartMIndex idx= std::find(some_menu_item....)!= Invalid_SMenu_idx )
+   ////  { ;}                                                 // found, use idx.i
+   ////else
+   ////  { ;}                                                 // not found, still use idx.i if you want to return a non_value.
+
+	IParBind::SetDef(PriorizeDefault::Parametr );
     ThDyNanaForm tdForm(  argc,  argv);
 	tdForm.show();
 	nana::gui::exec();
