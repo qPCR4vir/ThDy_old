@@ -432,55 +432,83 @@ class TmCalcPage : public CompoWidget
 class SetupPage : public CompoWidget
 {public: 
     ThDyProject        &_Pr;
-    BindGroup          _setup;
+    FilePickBox        /*  targets_    { *this, STR("Targets:") }, */
+                        results_    { *this, STR("Results:") }/*, 
+                        PCRfiltre_  { *this, STR("PCR-filtre:")}*/;
+    OpenSaveBox                     proj_       { *this, STR("Project:") };
+    nana::gui::combox               comBoxSalMeth   {*this}, 
+                                    comBoxTAMeth    {*this};
+    nana::gui::NumUnitUpDown        numUpDowTgConc  {*this, STR("Target Conctr:"      ), 50, 0.1 , 1000,  "然"}, 
+                                    numUpDowSalConc {*this, STR("Salt Conc [Cations]:"), 50, 0.1 , 10000000,"然"} , 
+                                    numUpDowTa      {*this, STR("Temp. Anneling:"     ), 55,  40 , 75,    "蚓"},  
+                                    numUpDowSdConc  {*this, STR("Sonde Conctr:"       ), 50, 0.1 , 1000,  "然"}  ;
     nana::gui::button  set_def_proj_    {*this,STR("Set as Def. project") };
     FilePickBox        _NNParamFile     {*this, STR("NN param:")};
+    BindGroup          _setup;
 
     SetupPage (ThDyNanaForm& tdForm);
 
     void SetDefLayout   () override
     {
-        _DefLayout= "vertical      gap=2             \n\t"
-            "  <wieght=300 <vertical min=50 max=200 buttons> <> <weight=80 checks>>   \n\t"
-	        "  <NN_param weight=23>       \n\t "
-
+        _DefLayout= 
+    "vertical      gap=2             	\n\t"
+	"	       <<Project         max=800>     weight=23 >      	\n\t"
+	"	        <<Results        max=800>     weight=23 >      	\n\t"
+	"	        <<NN_param max=800>     weight=23 >      	\n\t"
+	"	\n\t"
+	"	   <weight=100 <weight=2><vertical min=50 max=200 gap=2 buttons> <> <weight=80 checks>>   	\n\t"
+	"	\n\t"
+	"	        < weight=46  gap=2 <><vertical ConcST   weight=200  gap=2>  <>               	\n\t"
+	"	                              <vertical ConcSaltTa   weight=230  gap=2>   <>       	\n\t"
+	"	                                   <vertical   weight=250 <SMeth gap=2>          	\n\t"
+	"	                                             <AMeth gap=2> > <>  >      	\n\t"
+	"	 	\n\t"
+	"	\n\t"
             ;
+        //PCRfiltre_    .ResetLayout (60 );
+        numUpDowSdConc.ResetLayout (80 );  
+        numUpDowTa.    ResetLayout (90 );  
+        numUpDowTgConc.ResetLayout (80 );
+        numUpDowSalConc.ResetLayout (110 );
+
     }
     void AsignWidgetToFields() override
     {
+	    _place.field("Project" )        << proj_   ;
 	    _place.field("buttons"  )<<set_def_proj_;
 	    _place.field("NN_param" )<<_NNParamFile;
 	    _place.field("checks"   )<<"save result";
+	    //_place.field("PCRfiltre" )      << PCRfiltre_   ;
+	    _place.field("Results" )        << results_   ;
+	    _place.field("ConcST"  )        << numUpDowSdConc   
+                                        << numUpDowTgConc ;
+	    _place.field("ConcSaltTa"  )    << numUpDowSalConc 
+                                        << numUpDowTa ;
+	    _place.field("SMeth"  )         << " Salt Correct. Method:"	   <<  comBoxSalMeth;
+	    _place.field("AMeth"  )         << " ThDy Align. Method"       <<  comBoxTAMeth ;
     }
 };
 
 class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyProject
 {public: 
     nana::gui::tabbar<nana::string> tabbar_     {*this};
-    OpenSaveBox                     proj_       { *this, STR("Project:") };
-    FilePickBox                     targets_    { *this, STR("Targets:") }, 
-                                    results_    { *this, STR("Results:") }, 
-                                    PCRfiltre_  { *this, STR("PCR-filtre:")};
-    nana::gui::checkbox             chkBx_RecDir{ *this, STR("RecurDir") };
+    //FilePickBox                   /*  targets_    { *this, STR("Targets:") }, */
+    //                                results_    { *this, STR("Results:") }/*, 
+    //                                PCRfiltre_  { *this, STR("PCR-filtre:")}*/;
+    //nana::gui::checkbox             chkBx_RecDir{ *this, STR("RecurDir") };
     FindSondenPage                  findSond_   {*this};
     TmCalcPage                      tmCalc_     {*this}; 
     SetupPage                       setup_      {*this};
     MplexPCR                        mPCR_       {*this};
     SeqExpl                         mExpl_      {*this};
     BindGroup                       _commPP     ;
-    nana::gui::combox               comBoxSalMeth   {*this}, 
-                                    comBoxTAMeth    {*this};
     nana::gui::NumUnitUpDown        numUpDwMaxTgId  {*this, STR("Max. ident.:"        ), 99,  50 , 100,   "%"}, 
-                                    numUpDowTgConc  {*this, STR("Target Conctr:"      ), 50, 0.1 , 1000,  "然"}, 
-                                    numUpDowSalConc {*this, STR("Salt Conc [Cations]:"), 50, 0.1 , 10000000,"然"} , 
                                     numUpDw_TgBeg   {*this, STR("Beg.:"               ),  0,   0 , 100000,"nt"},    /// rev !!
                                     numUpDw_TgEnd   {*this, STR("End.:"               ),  0,   0 , 100000,"nt"},    /// rev !!	
-                                    numUpDw_MinLen  {*this, STR("Min.Len.:"           ),  0,   0 , 100000,"nt"},    /// rev !!
-                                    numUpDowTa      {*this, STR("Temp. Anneling:"     ), 55,  40 , 75,    "蚓"},  
-                                    numUpDowSdConc  {*this, STR("Sonde Conctr:"       ), 50, 0.1 , 1000,  "然"}  ;
+                                    numUpDw_MinLen  {*this, STR("Min.Len.:"           ),  0,   0 , 100000,"nt"};
 
    ThDyNanaForm (int argc, char *argv[])
-                  :nana::gui::form (nana::rectangle( nana::point(200,100), nana::size(700,600) )),
+                  :nana::gui::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
                    EditableForm    (nullptr, *this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")) 
    {
         //nana::pixel_rgb_t bk;
@@ -489,15 +517,15 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         //background (0xEEEEEE);
         //foreground(1);
        
+        add_page( setup_    );
         add_page( mExpl_    );
         add_page( findSond_ );
         add_page( mPCR_     );
         add_page( tmCalc_   );
-        add_page( setup_    );
 
         tabbar_.active (0);
 
-        proj_.FileName(nana::charset ( ProjetFile()  ));
+        setup_.proj_.FileName(nana::charset ( ProjetFile()  ));
         try{ 
 			    if ( argc > 1 )
 				    LoadProject( argv[1] )   ;
@@ -516,19 +544,13 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 		//_seqExpl = gcnew SeqExpl(this->_Pr);
 
 
-        _commPP  << link( _cp._InputTargetFile ,       targets_  )
-                 << link( _cp._RecurDir      ,       chkBx_RecDir)
+        _commPP  /*<< link( _cp._InputTargetFile ,       targets_  )*/
+                 /*<< link( _cp._RecurDir      ,       chkBx_RecDir)*/
                  //<< link( _cp._OutputFile      ,       results_  )
-                 << link( _cp._PCRfiltrPrFile  ,       PCRfiltre_)
+                 /*<< link( _cp._PCRfiltrPrFile  ,       PCRfiltre_)*/
                  << link( _cp.MaxTgId    ,       numUpDwMaxTgId  )
                  << link( _cp.SecLim , numUpDw_TgBeg,numUpDw_TgEnd  )
                  << link( _cp.MinSecLen  ,       numUpDw_MinLen  )
-                 << link( _cp.ConcSd	 ,       numUpDowSdConc  )
-                 << link( _cp.ConcSalt	      , numUpDowSalConc  )
-                 << link( _cp.ConcTg	 ,       numUpDowTgConc  )
-                 << link( _cp.Ta	         ,       numUpDowTa  )        
-                 << link( _cp.SaltCorr	  ,       comBoxSalMeth  )        
-                 << link( _cp.TAMeth       ,       comBoxTAMeth  )        
             ;
  
 
@@ -537,9 +559,9 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         AddMenuProgram();
         SelectClickableWidget( _menuBar);
 
-        proj_.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
-        proj_.Open.make_event	<nana::gui::events::click> ([&](){ OpenProj() ;} );
-		proj_.Save.make_event	<nana::gui::events::click> ([&](){ SaveProj() ;} );
+        setup_.proj_.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
+        setup_.proj_.Open.make_event	<nana::gui::events::click> ([&](){ OpenProj() ;} );
+		setup_.proj_.Save.make_event	<nana::gui::events::click> ([&](){ SaveProj() ;} );
 
                 //targets_.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
                 //{  
@@ -562,7 +584,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 			try
 			{
 				load(   file );
-				proj_.FileName(nana::charset ( file  ));
+				setup_.proj_.FileName(nana::charset ( file  ));
  			}
 			catch (std::exception& e)
 			{
@@ -580,13 +602,13 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 				{
 				    case  nana::gui::msgbox::pick_yes :  
 					        load_defPr();
-                            proj_.FileName(nana::charset ( ProjetFile ()  ));
+                            setup_.proj_.FileName(nana::charset ( ProjetFile ()  ));
 					    return;
 
 				    case  nana::gui::msgbox::pick_no:    
-                            proj_.open (nana::charset (file));
-                            if ( ! proj_.Canceled() )
-                                  LoadProject(nana::charset ( proj_.FileName()));
+                            setup_.proj_.open (nana::charset (file));
+                            if ( ! setup_.proj_.Canceled() )
+                                  LoadProject(nana::charset ( setup_.proj_.FileName()));
                          return;
 				}
 			}
@@ -597,40 +619,25 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     {
         _DefLayout= "vertical      gap=2                   \n\t "
 	                 "       <weight=25>                   \n\t "
-	                 "       <Project     weight=23 >      \n\t "
 	                 "       <PagesTag    weight=23 >      \n\t "
 	                 "       <Pages       min=255   >      \n\t "
-	                 "       <Targets     weight=23 >      \n\t "
+	                 //"       <Targets     weight=23 >      \n\t "
 	                 "       < <weight=30><TargetsOptions><weight=10> weight=23>      \n\t "
-	                 "       <weight=5 >                   \n\t "
-	                 "       <PCRfiltre   weight=23 >      \n\t "
-	                 "       <Results     weight=23 >      \n\t "
-                     "       <ComPar grid[3,4]  weight=120 gap=2>       \n\t "
-	                 "       <weight=23>                   \n\t "
+	                 "       <weight=1 >                   \n\t "
+	                 "       < weight=23 <><Firma><> >                   \n\t "
             ;
 
         numUpDwMaxTgId.ResetLayout (60,40,30 );  
         numUpDw_TgBeg .ResetLayout (35,40,30 );  
         numUpDw_TgEnd .ResetLayout (35,40,30 );  
         numUpDw_MinLen.ResetLayout (60,40,30 );  
-        PCRfiltre_    .ResetLayout (60 );
-        numUpDowSdConc.ResetLayout (80 );  
-        numUpDowTa.    ResetLayout (90 );  
-        numUpDowTgConc.ResetLayout (80 );
-        numUpDowSalConc.ResetLayout (110 );
     }
     void AsignWidgetToFields() override
     {
-	    _place.field("Project" )        << proj_   ;
 	    _place.field("PagesTag")        << tabbar_  ;
-	    _place.field("Targets" )        << targets_  << _place.fixed(chkBx_RecDir,90)  ;
+	    //_place.field("Targets" )        << targets_  << _place.fixed(chkBx_RecDir,90)  ;
 	    _place.field("TargetsOptions" ) << numUpDwMaxTgId<<   numUpDw_TgBeg << numUpDw_TgEnd  << numUpDw_MinLen;
-	    _place.field("PCRfiltre" )      << PCRfiltre_   ;
-	    _place.field("Results" )        << results_   ;
-	    _place.field("ComPar"  )        << numUpDowSdConc  << _place.room   (numUpDowSalConc, 2, 1) 
-                                        << numUpDowTgConc  << "              Salt Correct. Method:"	   <<  comBoxSalMeth
-                                        << numUpDowTa	   << "              ThDy Align. Method"       <<  comBoxTAMeth
-                                        << ""              << "  INNT - FLI \n ArielVina.Rodriguez@fli.bund.de"
+	    _place.field("Firma"  )         << "                        INNT - FLI :       ArielVina.Rodriguez@fli.bund.de"
 
                                 ;
 
@@ -648,8 +655,8 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
     void  OpenProj()
 	{	 
-         if(  proj_.Canceled () )  return;
-         LoadProject ( nana::charset ( proj_.FileName() )) ;  
+         if(  setup_.proj_.Canceled () )  return;
+         LoadProject ( nana::charset ( setup_.proj_.FileName() )) ;  
 
       //try {
       //          load (); 
@@ -666,8 +673,8 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 	}
     void  SaveProj()
 	{	 
-        if(  proj_.Canceled () )  return;
-        save (nana::charset ( proj_.FileName())); 
+        if(  setup_.proj_.Canceled () )  return;
+        save (nana::charset ( setup_.proj_.FileName())); 
 	}
 };
 
@@ -766,7 +773,13 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
           set_def_proj_(*this,STR("Set as Def. project") ),
           _NNParamFile (*this, STR("NN param:") )*/
     {
-        _setup<< link(   _Pr._cp._InputNNFile , _NNParamFile)
+      _setup<< link( _Pr._cp._InputNNFile       , _NNParamFile  )
+            << link( _Pr._cp.ConcSd	    ,       numUpDowSdConc  )
+            << link( _Pr._cp.ConcSalt	     , numUpDowSalConc  )
+            << link( _Pr._cp.ConcTg	    ,       numUpDowTgConc  )
+            << link( _Pr._cp.Ta	            ,       numUpDowTa  )        
+            << link( _Pr._cp.SaltCorr	  ,      comBoxSalMeth  )        
+            << link( _Pr._cp.TAMeth       ,       comBoxTAMeth  )        
             ;
 
         InitMyLayout();
@@ -779,7 +792,8 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
           _do_mPCR        (*this, STR(" PCR ! ") ),
           _PrimersFilePCR (*this, STR("Primers seq. file:") )
     {
-        _mPCR<< link(   _Pr._mPCR._InputSondeFile , _PrimersFilePCR)
+       _mPCR<< link(   _Pr._mPCR._InputSondeFile , _PrimersFilePCR)
+
             ;
 
         _do_mPCR      .make_event <nana::gui::events::click>([&](){buttPCR_Click ();});
@@ -842,7 +856,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
              populate_list_recur(_tree.selected());
             _list.auto_draw(true);
         });
-        _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_option);
+        _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_t::check_highlight );
         _menuProgram.append(STR("Show filtered"),[&](nana::gui::menu::item_proxy& ip) 
         {
             _list.auto_draw(false);
@@ -850,7 +864,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
              populate_list_recur(_tree.selected());
             _list.auto_draw(true);
         });
-        _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_option);
+        _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_highlight); // check_option
 
         _tree.ext_event().selected = [&](nana::gui::window w, Tree::item_proxy node, bool selected)
         {
