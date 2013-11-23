@@ -222,17 +222,17 @@ class SeqExpl : public CompoWidget
         //_place.field("Tree" ) << _place.percent( _tree, 20, nana::gui::vplace::minmax(100,300)) << _list;
 
     }
-    Node insert(CMultSec*ms)  /// Que pasa si la uso dos veces??? Iserta un nuevo node? donde? en root?Cual es el efecto de tener el mismo nombre?
+    Node insert(CMultSec*ms)  /// Add and return one new node/sec to the child of root? Que pasa si la uso dos veces??? Iserta un nuevo node? donde? en root?Cual es el efecto de tener el mismo nombre?
     {
         nana::string name = nana::charset(ms->_name);
         return _tree.insert(name, name).check(ms->Selected()).value(ms);
     }
-    Node append(Node &node, CMultSec*ms)
+    static Node append(Node &node, CMultSec*ms) /// Add a new node to the child of node.
     {
         nana::string name = nana::charset(ms->_name);
         return node->append(name, name).check(ms->Selected()).value(ms);
     }
-    void populate(Node &node)
+    static void populate(Node &node)  /// crea y add to the child of node un nodo nuevo por cada seq in ms. Asume el nodo estaba vacio
     {
         //while(!node.empty()) 
         //    _tree.erase(node.child());
@@ -241,31 +241,24 @@ class SeqExpl : public CompoWidget
 		for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
 			populate( append(node, ms->CurMSec())) ;
     }
-////private: System::Void toolStripButAddSeqGr_Click			(System::Object^  sender, System::EventArgs^  e) 
-////		{	try{    
-////					System::Windows::Forms::TreeNode^ tn= treeV_Seq->SelectedNode;
-////                    if (!tn)
-////                        return;
-////					CMultSec     *ms= safe_cast<CMSref^> (tn->Tag)->ms;
-////
-////					ms=_Pr._cp.AddSeqGroup(ms,"New group");
-////					tn=tn->Nodes->Add(gcnew String( ms->_name.c_str())  );
-////					tn->Tag= gcnew CMSref(ms);
-////					tn->EnsureVisible ();
-////					tn->BeginEdit() ;
-////		        }
-////                catch(InvalidCastException^ e) 
-////			    {   
-////				    MessageBox::Show (  gcnew String( "Caught expected exception. \n Add seq gr: Tag is not CMref. \n") + e->Message ) ;
-////                }
-////				catch ( std::exception& e)
-////		        { 
-////					MessageBox::Show ( gcnew String(e.what())  ) ;
-////		        }		
-////		}
+ void  AddNewSeqGr	(Tree::item_proxy& node) 
+		{	try{    
+					append(node, _Pr._cp.AddSeqGroup(node.value<CMultSec*>(),"New group"));
+                    node.expend(true);
+		        }
+       //         catch(InvalidCastException^ e) 
+			    //{   
+				   // MessageBox::Show (  gcnew String( "Caught expected exception. \n Add seq gr: Tag is not CMref. \n") + e->Message ) ;
+       //         }
+				catch ( std::exception& e)
+		        { 
+					nana::gui::msgbox ( nana::string(nana::charset(e.what()) ) ) ;
+		        }		
+		}
     List::item_proxy& AddToList(CSec* s)
     {
-        return _list.at(0).append(s).check(s->Selected()).fgcolor( nana::gui::color ::gray_border );
+        if (s->Selected())
+            return _list.at(0).append(s).check(true).fgcolor(0xFF44FFFF);//nana::gui::color::gray_border );
     }
     void populate_list(CMultSec*ms)
     {
@@ -820,8 +813,11 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         _list.resolver(ListSeqMaker());
 
         _menuProgram.append_splitter();
-        _menuProgram.append(STR("Add a new, empty, group for sequences")          /*, [&](nana::gui::menu::item_proxy& ip) {EditMyLayout(); }*/);
-        _menuProgram.append(STR("Add a group of sequences from a file")             , [&](nana::gui::menu::item_proxy& ip) 
+        _menuProgram.append(STR("Add a new, empty, group for sequences")  , [&](nana::gui::menu::item_proxy& ip) 
+        { 
+            AddNewSeqGr(_tree.selected());
+        } );
+        _menuProgram.append(STR("Add a group of sequences from a file" )  , [&](nana::gui::menu::item_proxy& ip) 
         {
             _list.auto_draw(false);
             nana::gui::filebox  fb{ *this, true };
@@ -886,6 +882,22 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
             node.value<CMultSec*>()->Selected(checked);
             populate_list_recur(node);
             _list.auto_draw(true);
+
+        };
+        _list.ext_event().checked  = [&](  List::item_proxy sec_item, bool checked)
+        {                                               
+            // Otras consecuencias ???!!!!!!
+            nana::string st;
+            st=sec_item.text(4);
+            wcerr << STR("st: ")<<st;
+            //CSec *s =  sec_item.value<CSec*>();
+            //bool c = s ->Selected(checked);
+            //if (  c || _showAllseq ) return;
+ 
+            //_list.auto_draw(false);
+            ////_list.clear();
+            // populate_list_recur(_tree.selected());
+            //_list.auto_draw(true);
 
         };
 
