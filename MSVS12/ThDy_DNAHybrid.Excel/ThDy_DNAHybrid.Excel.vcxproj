@@ -1,6 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="MDdebNov13|Win32">
+      <Configuration>MDdebNov13</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MDdebNov13|x64">
+      <Configuration>MDdebNov13</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="MDdebug|Win32">
       <Configuration>MDdebug</Configuration>
       <Platform>Win32</Platform>
@@ -17,6 +25,22 @@
       <Configuration>MDrelease</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="MDrelNov13|Win32">
+      <Configuration>MDrelNov13</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MDrelNov13|x64">
+      <Configuration>MDrelNov13</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MTdebNov13|Win32">
+      <Configuration>MTdebNov13</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MTdebNov13|x64">
+      <Configuration>MTdebNov13</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="MTdebug|Win32">
       <Configuration>MTdebug</Configuration>
       <Platform>Win32</Platform>
@@ -31,6 +55,14 @@
     </ProjectConfiguration>
     <ProjectConfiguration Include="MTrelease|x64">
       <Configuration>MTrelease</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MTrelNov13|Win32">
+      <Configuration>MTrelNov13</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MTrelNov13|x64">
+      <Configuration>MTrelNov13</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="MT_rel_XP|Win32">
@@ -56,10 +88,22 @@
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTdebNov13|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>CTP_Nov2013</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTdebug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTdebNov13|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>CTP_Nov2013</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|Win32'" Label="Configuration">
@@ -68,16 +112,35 @@
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDdebNov13|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>CTP_Nov2013</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDdebNov13|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>CTP_Nov2013</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTrelease|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTrelNov13|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>CTP_Nov2013</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -95,6 +158,13 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTrelNov13|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>CTP_Nov2013</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MT_rel_XP|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -109,10 +179,24 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDrelNov13|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>CTP_Nov2013</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDrelease|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDrelNov13|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>CTP_Nov2013</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -122,16 +206,31 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MTdebug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MTdebNov13|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MTdebug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MTdebNov13|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MDdebNov13|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MDdebNov13|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MTrelease|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MTrelNov13|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MT_rel_XP|Win32'" Label="PropertySheets">
@@ -140,17 +239,34 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MTrelease|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MTrelNov13|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MT_rel_XP|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MDrelease|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MDrelNov13|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MDrelease|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='MDrelNov13|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTrelease|Win32'">
+    <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\bin\</OutDir>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
+    <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
+    <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTrelNov13|Win32'">
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
     <OutDir>..\..\bin\</OutDir>
@@ -174,6 +290,14 @@
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTrelNov13|x64'">
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
+    <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
+    <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\bin\</OutDir>
+    <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MT_rel_XP|x64'">
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -190,7 +314,23 @@
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDrelNov13|Win32'">
+    <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;..\..\lib\VC$(PlatformToolset)_$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\bin\</OutDir>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
+    <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
+    <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDrelease|x64'">
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
+    <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
+    <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;..\..\lib\VC$(PlatformToolset)_$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\bin\</OutDir>
+    <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDrelNov13|x64'">
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
@@ -206,7 +346,23 @@
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTdebNov13|Win32'">
+    <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\bin\</OutDir>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
+    <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
+    <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTdebug|x64'">
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
+    <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
+    <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\bin\</OutDir>
+    <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTdebNov13|x64'">
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
@@ -222,6 +378,14 @@
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDdebNov13|Win32'">
+    <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\bin\</OutDir>
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
+    <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
+    <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|x64'">
     <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
     <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
@@ -230,7 +394,26 @@
     <OutDir>..\..\bin\</OutDir>
     <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDdebNov13|x64'">
+    <TargetName>$(ProjectName)_VC$(PlatformToolset)_$(Configuration)_$(Platform)</TargetName>
+    <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
+    <IncludePath>..\..\include;..\..\..\ExtLib\Nana\nana.win32\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\lib\VC$(PlatformToolset)_$(Configuration)\;..\..\..\ExtLib\Nana\nana.win32\build\bin\vc11;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\bin\</OutDir>
+    <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MTdebug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>nana_$(Configuration).lib;FileChosserWin32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MTdebNov13|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
@@ -252,7 +435,29 @@
       <AdditionalDependencies>nana_$(Configuration).lib;FileChosserWin32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MTdebNov13|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>nana_$(Configuration).lib;FileChosserWin32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MDdebug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MDdebNov13|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
@@ -274,7 +479,33 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MDdebNov13|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MTrelease|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>nana_$(Configuration).lib;FileChosserWin32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MTrelNov13|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
@@ -319,6 +550,21 @@
       <AdditionalDependencies>nana_$(Configuration).lib;FileChosserWin32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MTrelNov13|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>nana_$(Configuration).lib;FileChosserWin32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MT_rel_XP|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -349,7 +595,37 @@
       <AdditionalDependencies>nana_$(Configuration).lib;FileChosserWin32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MDrelNov13|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>nana_$(Configuration).lib;FileChosserWin32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MDrelease|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>nana_$(Configuration).lib;FileChosserWin32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MDrelNov13|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
