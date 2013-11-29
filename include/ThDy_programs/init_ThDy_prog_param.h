@@ -5,7 +5,7 @@
 #include <memory>
 #include "ThDySec/sec.h"
 
-
+const SecPos MAX_SEQ_LEN_ALIGN{ 2001 };
 
 class CParamSondeLimits: public IBParam  /// \todo Use delegating constructor to limit code duplication
 {   SondeLimits sL;
@@ -70,73 +70,64 @@ class CSaltCorrNN;
 /// concreta los parametros comunes. Mantiene lista de los prog Espec que los usan
 class ThDyCommProgParam : public CCommProgParam 
 {public:	
-	CParamC_str     _InputTargetFile ;  
-    CParamC_str     _PCRfiltrPrFile;
-    CParamString    _OutputFile{ this, "Results output file", "OutputFile", "" };
+    CParamC_str     _InputTargetFile {this, "Imput file for Targets",				 "TargetFile", "" } ;
+    CParamC_str     _PCRfiltrPrFile  {this, "Imput file with primers for filtering", "PCRftrFile", "" } ;
+    CParamString    _OutputFile      {this, "Results output file",                   "OutputFile", "" } ;
    
-    CParamC_str     _InputNNFile;
-    CParamBool      _RecurDir{this, "Recursively add all seq-files from all dir",			"RecursiDir", false};
+    CParamC_str     _InputNNFile {this, "Imput file with NN parametrs",			      "iNNParFile", ""	 } ;
+    CParamBool      _RecurDir    {this, "Recursively add all seq-files from all dir", "RecursiDir", false} ;
 
-	SaltCorrection                 _SaltCorr ;			
-    CParamEnumRange<SaltCorrection>	SaltCorr ;	 				//  SaltCorrection
+	SaltCorrection                 _SaltCorr {StLucia }  ;			
+    CParamEnumRange<SaltCorrection>	SaltCorr {this, "Salt correction methode",		  "SaltCorrMt", _SaltCorr, StLucia, StLucia, StLucia }  ;
 
 	float					_ConcSd,	_ConcTg,	_ConcSalt ;
-	CParamNumRange<float>	 ConcSd,	 ConcTg,	 ConcSalt;
+	CParamNumRange<float>	 ConcSd  {this,    "Conc of the sondes" ,				"ConcSonden", _ConcSd,  0.0f,50e-3f,  50e-9f ,"M" } ,	 
+                             ConcTg  {this,    "Conc of the targets",				"ConcTarget", _ConcTg,  0.0f,50e-3f,  50e-9f ,"M" } ,	 
+                             ConcSalt{this,    "Conc of salt",						"ConcenSalt", _ConcSalt,0.0f,1.0f,    50e-3f ,"M" } ;
 
-	Temperature		_Ta ;				CParamNumRange <Temperature>	Ta ;	
-	AlignMeth		_TAMeth ;			CParamEnumRange<AlignMeth>	TAMeth ;	 
-	float			_MaxTgId ;			CParamNumRange <float>	    MaxTgId ;	
-	LonSecPosRang	_SecLim;			CParamNumMinMax<LonSecPos>  SecLim;	//	long _SecBeg, _SecEnd;  // convertir en NumRang<long> _SecLim;  ?????
-	SecPos			_MinSecLen;			CParamNumRange <SecPos>	    MinSecLen;		
-	
-	bool			_loadNNPar,		_saveNNPar ;	
-    CParamBool       loadNNPar,	     saveNNPar ; 
+	Temperature		               _Ta {55.0f }  ;				
+    CParamNumRange <Temperature>	Ta {this, "Temp anneling expected in exp",		"TempAnnelg", _Ta,  20.0f, 90.0f, 55.0f, "°C"  }  ;	
+	AlignMeth		           _TAMeth  {TAMeth_Tm }  ;			
+    CParamEnumRange<AlignMeth>	TAMeth  {this, "Optimized parametr during DynProg",	"AlignMethd", _TAMeth, TAMeth_Tm, TAMeth_Fract, TAMeth_Tm }  ;	
+
+    ///  Sequence import filtres
+	float			           _MaxTgId {99.0f }  ;			
+    CParamNumRange <float>	    MaxTgId {this, "Filtre Seq Target with more %id"  ,	"MaxTgIdent",  _MaxTgId,  0.0f,100.0f,  99.0f  ,"%" }  ;	
+	LonSecPosRang	           _SecLim {1, 0 } ;			
+    CParamNumMinMax<LonSecPos>  SecLim {this, "Fragments of seq. to use",	_SecLim, 
+													"Beginng",						"SecBeginng", 1, std::numeric_limits<LonSecPos>::max(), 1 ,
+													"End",							"SecuencEnd", 0, std::numeric_limits<LonSecPos>::max(), 0 ,		"nt" } ;	
+	SecPosRang			       _SecLenLim {1,0 } ;			
+    CParamNumMinMax<SecPos>     SecLenLim {this, "Limits of the length of the seq. to be useful",_SecLenLim ,
+													"Minimal length",				"MinSecuLen", 20, MAX_SEQ_LEN_ALIGN, 20 ,
+													"Maximal length",				"MaxSecuLen", 20, MAX_SEQ_LEN_ALIGN, MAX_SEQ_LEN_ALIGN ,		"nt" } ;	
+	///  Programm setup bool parametrs
+	bool			_loadNNPar {false } ,		_saveNNPar {false }  ;	
+    CParamBool       loadNNPar {this, "Programm option- Load NN parametr",		"LoadNNPara", _loadNNPar,  false } ,	     
+                     saveNNPar {this, "Programm option- save NN parametr",		"SaveNNPara", _saveNNPar,  false }  ; 
 	bool			_st_savTm, _st_savPos, _st_savG, _st_savAlign, _st_savProj, _st_savG_Plasm, _st_savTm_Plasm, _st_savLog, _st_Exp_sond, _st_ExpTarg ;
 	CParamBool		 st_savTm,  st_savPos,  st_savG,  st_savAlign,  st_savProj,  st_savG_Plasm,  st_savTm_Plasm,  st_savLog,  st_Exp_sond,  st_ExpTarg ;
 
+	///  The roots of the sequences tree
 	std::shared_ptr<CSaltCorrNN>  _pSaltCorrNNp;
-	std::shared_ptr<CMultSec>     _pSeqTree;
-	std::shared_ptr<CMultSec>     _pSeqNoUsed;
-	std::shared_ptr<CMultSec>     _pSeqTargets;
-	std::shared_ptr<CMultSec>     _pSeqNonTargets;
-	std::shared_ptr<CMultSec>     _pPCRfiltrePrimers;
+	std::shared_ptr<CMultSec>     _pSeqTree         {CreateRoot() } ;
+	std::shared_ptr<CMultSec>     _pSeqNoUsed       {AddSeqGroup(_pSeqTree.get(), "Dont use"  ) } ;
+	std::shared_ptr<CMultSec>     _pSeqTargets      {AddSeqGroup(_pSeqTree.get(), "Target seq") } ; 
+	std::shared_ptr<CMultSec>     _pSeqNonTargets   {AddSeqGroup(_pSeqTree.get(), "Non Target seq")  } ; 
+	std::shared_ptr<CMultSec>     _pPCRfiltrePrimers{AddSeqGroup(_pSeqTree.get(), "PCR Primers to <filtre> sequences")  } ; 
 
     ThDyCommProgParam(const std::string& titel,   CProject *proj)
 		:	CCommProgParam(titel,proj), 
-			_loadNNPar(false),    loadNNPar (this, "Programm option- Load NN parametr",		"LoadNNPara", _loadNNPar,  false),
-			_saveNNPar(false),    saveNNPar (this, "Programm option- save NN parametr",		"SaveNNPara", _saveNNPar,  false),
-			_SaltCorr(StLucia), SaltCorr(this, "Salt correction methode",					"SaltCorrMt", _SaltCorr, StLucia, StLucia, StLucia), /*StLucia), */
-			_TAMeth(TAMeth_Tm),	  TAMeth  (this, "Optimized parametr during DynProg",		"AlignMethd", _TAMeth, TAMeth_Tm, TAMeth_Fract, TAMeth_Tm),
-			_MaxTgId(99.0f),	  MaxTgId (this, "Filtre Seq Target with more %id"   ,		"MaxTgIdent",  _MaxTgId,  0.0f,100.0f,  99.0f  ,"%"),
-								  ConcSd  (this,    "Conc of the sondes" ,					"ConcSonden",   _ConcSd,  0.0f,50e-3f,  50e-9f ,"M"), 
-								  ConcTg  (this,    "Conc of the targets",					"ConcTarget",   _ConcTg,  0.0f,50e-3f,   50e-9f  ,"M"), 
-								  ConcSalt(this,    "Conc of salt",							"ConcenSalt", _ConcSalt,  0.0f,1.0f,    50e-3f  ,"M"), 
-			_Ta(55.0f),			  Ta      (this, "Temp anneling expected in exp",			"TempAnnelg",       _Ta,  20.0f, 90.0f, 55.0f, "°C" ),
-			_SecLim( long(1), long(2001) ) ,//_SecBeg(long(1)), _SecEnd(long(1)+MAXSEC_LENGHT) ,
-								  SecLim (this, "Fragments of seq. to use",	_SecLim, 
-													"Beginng",								"SecBeginng", long(1), long(2001), long(1),
-													"End",									"SecuencEnd", long(0), long(2001), long(2001),
-											"nt"),
-			_MinSecLen(0),		  MinSecLen(this, "Min length of the seq. to be useful",	"MinSeqLeng", _MinSecLen,  0, 2001, 0, "nt" ),
 			_st_savTm(true) ,     st_savTm (this, "Programm option- Save Tm Table",			"SavTmTable", _st_savTm,   true), 
 			_st_savPos(true),     st_savPos(this, "Programm option- Save Posicion Table",	"SavPosTabl", _st_savPos,  true),  
 			_st_savG(true),       st_savG  (this, "Programm option- Save free Enrgie Table","SaveGTable", _st_savG,    true),  
 			_st_savAlign(true),   st_savAlign(this,"Programm option- Save Table of aligns", "SavAlignTb", _st_savAlign,true),  
 			_st_savProj(true),    st_savProj(this,"Programm option- Save Project file",     "SavProject", _st_savProj, true), 
 			_st_savG_Plasm(false),st_savG_Plasm(this, "Programm option- Gtable for Plasmid","SavG_Plasm", _st_savG_Plasm,  false), 
-			_st_savTm_Plasm(false),st_savTm_Plasm(this, "Programm option- Tm table for Plasmid","SavTmPlasm", _st_savTm_Plasm,  false),  
+			_st_savTm_Plasm(false),st_savTm_Plasm(this,"Programm option- Tm table for Plasmid","SavTmPlasm", _st_savTm_Plasm,  false),  
 			_st_savLog(false),    st_savLog(this, "Programm option- save a log",			"Save_Logfi", _st_savLog,  false), 
 			_st_Exp_sond(false),  st_Exp_sond(this, "Programm option- re-export probes",	"Exp_probes", _st_Exp_sond,false),  
-			_st_ExpTarg(false),   st_ExpTarg(this, "Programm option- re-export targets",	"Exp_target", _st_ExpTarg, false),
-							_InputTargetFile(this, "Imput file for Targets",				"TargetFile", ""			) ,
-							_InputNNFile    (this, "Imput file with NN parametrs",			"iNNParFile", ""			) , 
-							_PCRfiltrPrFile (this, "Imput file with primers for filtering",	"PCRftrFile", ""			),
-			//_pSaltCorrNNp(nullptr),
-			_pSeqTree			(CreateRoot()), 
-			_pSeqNoUsed			(AddSeqGroup(_pSeqTree.get(), "Dont use")), 
-            _pSeqTargets		(AddSeqGroup(_pSeqTree.get(), "Target seq")),
-            _pSeqNonTargets		(AddSeqGroup(_pSeqTree.get(), "Non Target seq")),
-            _pPCRfiltrePrimers	(AddSeqGroup(_pSeqTree.get(), "PCR Primers to <filtre> sequences"))
+			_st_ExpTarg(false),   st_ExpTarg(this, "Programm option- re-export targets",	"Exp_target", _st_ExpTarg, false)
 	{	TAMeth.AddStrValues("TAMeth_Tm",	TAMeth_Tm);
 		TAMeth.AddStrValues("TAMeth_G",		TAMeth_G);
 		TAMeth.AddStrValues("TAMeth_Fract",	TAMeth_Fract);
@@ -201,7 +192,9 @@ void Check_NNp_Targets (/*ThDyCommProgParam& cp*/)
 	CMultSec *AddSeqGroup	(CMultSec *parentGr, const std::string&     Name);
 
 	CMultSec *AddSeqFromFile(CMultSec *parentGr, const std::string& FileName, bool all_in_dir=false);
-	CMultSec *AddTargetFromFile(const std::string& FileName)
+	CMultSec *CopyStructFromDir	(CMultSec *parentGr, const std::string& FileName); 
+
+    CMultSec *AddTargetFromFile(const std::string& FileName)
 	{
 		return AddSeqFromFile(_pSeqTargets.get(),FileName);
 	}
@@ -443,18 +436,13 @@ class CProgParam_TmCalc : public CProgParam_MultiplexPCR
 
 class ThDyProject : public CProject // Permite manejar todo el projecto: con un miembro para los parametros comunes y otro para los de cada programa
 {public:
-		ThDyCommProgParam		_cp;
-		CProgParam_microArray   _uArr  ;
-		CProgParam_MultiplexPCR _mPCR  ;
-		CProgParam_SondeDesign	_SdDes ;
-		CProgParam_TmCalc		_TmCal ;
+		ThDyCommProgParam		_cp   {"Common parametrs for all functions",this}  ;
+		CProgParam_microArray   _uArr {"Virtual microarray experiment"     ,_cp }  ;
+		CProgParam_MultiplexPCR _mPCR {"Check multiplex PCR"               ,_cp }  ;
+		CProgParam_SondeDesign	_SdDes{"Find sondes"                       ,_cp }  ;
+		CProgParam_TmCalc		_TmCal{"Tm calculator"                     ,_cp }  ;
 
- explicit	ThDyProject():	CProject("ThDy DNA Hybrid Project.","Def.ThDy.txt","Def.ThDy.txt"),
-                            _cp("Common parametrs for all functions",this),
-                            _uArr("Virtual microarray experiment"   ,_cp), 
-							_mPCR("Check multiplex PCR"             ,_cp), 
-							_SdDes("Find sondes"                    ,_cp), 
-							_TmCal("Tm calculator"                  ,_cp)
+ explicit	ThDyProject():	CProject("ThDy DNA Hybrid Project.","Def.ThDy.txt","Def.ThDy.txt")
 					{}
  	virtual std::ofstream &saveTMP() const     override       // Se me habia olvidado redefinir esta funcion para usar _cp.OutF
 	{	return saveToFile(   ( _cp._OutputFile.get() + ".ThDy.txt" ).c_str()   );	}

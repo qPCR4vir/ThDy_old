@@ -405,18 +405,46 @@ class CSecAl : public CLink // destinado a formar parte de una lista en un aline
   // CUIDADO :  se aduena de las sec y las borra en su destructor:Usar Remove() or Free() para evitarlo
 class CMultSec	 : public CLink	// --------------------------------------------------------------------- 	CMultSec    -------------------
 {	public:
-		std::string			_name ;							// nombre unico?  
- 		int					_ID ;							// num original?? en total??, num unico?
-		NumRang<LonSecPos>  _SecLim;					// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
-        LonSecPos           _MinSecLen;  // TODO: NumRang<LonSecPos> _SecRange{1,0};// def-unlimited: the range used, not the limits
-		float				_MaxTgId ;					// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
+		std::string			_name ;						// nombre unico?  
+        int					_ID       {NewMS_ID()};		// num original?? en total??, num unico?
+        LonSecPosRang       _SecLim   {1,0};			// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
+        SecPosRang          _SecLenLim{0,0};            // TODO: NumRang<LonSecPos> _SecRange{1,0};// def-unlimited: the range used, not the limits
+		float				_MaxTgId  {100};			// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
 		std::shared_ptr<CSaltCorrNN>	_NNPar ;		// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
-		CMultSec			*_parentMS	;								//std::weak_ptr<CMultSec> _parentMS	;
-        CSec				*_Consenso;
-        bool                 _selected{ true };
+		CMultSec			*_parentMS {nullptr};								//std::weak_ptr<CMultSec> _parentMS	;
+        CSec				*_Consenso {nullptr};
+        bool                 _selected { true };
+
+explicit CMultSec (const std::string &Name  )                 : _name		(trim_string(Name))  {	}
+explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar)        : _NNPar      (NNpar)              {  }
+         CMultSec(CMultSec	*ms, const std::string &Name = ""): _name       (trim_string(Name)),
+                                                                _SecLim     (ms->_SecLim),
+                                                                _SecLenLim  (ms->_SecLenLim),
+                                                                _MaxTgId    (ms->_MaxTgId), 
+                                                                _NNPar      (ms->_NNPar)         {  }
+		 CMultSec (	ifstream &	 file	,	 
+					std::shared_ptr<CSaltCorrNN>  NNpar	, 
+					float		  MaxTgId	= 100, 
+					LonSecPosRang  SecLim	= LonSecPosRang {1,0}, 
+                    SecPosRang     SecLenLim= SecPosRang{0,0})  : /*_name(trim_string(file)),	*/
+	                                                            _SecLim     (SecLim),
+                                                                _SecLenLim  (SecLenLim),
+	                                                            _MaxTgId    (MaxTgId), 
+	                                                            _NNPar      (NNpar)              { AddFromFile(file); }
+		 CMultSec (	const char	  *file	,                   //< The name of the file or directory to be loaded 
+					std::shared_ptr<CSaltCorrNN>  NNpar	, 
+					bool           all_dir  = false,        //< Load all files and directories recursiverly? 
+					float		   MaxTgId	= 100,          //< Sec. with more % of idem are marked as "filtered" and not selected
+					LonSecPosRang  SecLim	= LonSecPosRang {1,0},	//< Filtre, using only this region. Will take into account alignment coordenates.
+                    SecPosRang     SecLenLim= SecPosRang    {0,0},  //< Limit the length. tiny sec: not created, large: get trunkated
+					bool           loadSec  = true     //< Get the sec? False: get only the dir/file structure
+				 ) ;
+
+
+
+
 	bool		Selected(bool select)	{return _selected=select;} 			//< make protected: ??
 	bool		Selected(		) const {return _selected ;}					 //< User-editable
-
 		//std::string Path(const std::string& path_sep="/")
 		//{
 		//	std::string path /*= _name*/;			// anadir o no un sep al final del path?????
@@ -436,27 +464,6 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 			static int ID(0);
 			return ++ID;
 		}
-
-explicit CMultSec (const std::string &Name  ) ;
-
-		 CMultSec (	const char	  *file	, 
-					std::shared_ptr<CSaltCorrNN>  NNpar	, 
-					bool           all_dir=false,
-					float		   MaxTgId	=100, 
-					NumRang<long>  SecLim	= NumRang<long> (1,0),	/* long SecBeg=1, long SecEnd=0*/ 
-                    LonSecPos     MinSecLen =0
-				 ) ;
-		 CMultSec (	ifstream &	 file	,		// TODO: Unificar estos dos constr.
-					std::shared_ptr<CSaltCorrNN>  NNpar	, 
-					float		  MaxTgId	=100, 
-					NumRang<long> SecLim	= NumRang<long> (1,0),	/* long SecBeg=1, long SecEnd=0*/  
-                    LonSecPos     MinSecLen =0
-				 ) ;
-explicit CMultSec(std::shared_ptr<CSaltCorrNN> NNpar);
-
-         CMultSec(CMultSec	*ms, const std::string &Name = "");
-
-
 
 		struct CExtremes
 		{
@@ -552,7 +559,7 @@ explicit CMultSec(std::shared_ptr<CSaltCorrNN> NNpar);
 		//bool isLocExtreme (const CMultSec *ms){return _Tm.isExtrem (ms->_TTm) || _Len.isExtrem (ms->_TLen );}
 		//void setGloExtreme(const CMultSec *ms){return _Tm.isExtrem (ms->_TTm) || _Len.isExtrem (ms->_TLen );}
 
-		int			AddFromDir		(const std::string& dir );
+		//int			AddFromDir		(const std::string& dir , bool  recurs  /*= false*/)
 		int			AddFromFile		(const std::string& file);
 		int			AddFromFile     (ifstream& ifile);	
 		int			CMultSec::AddFromFileFASTA	(ifstream &ifileFASTA);
@@ -631,7 +638,9 @@ explicit CMultSec(std::shared_ptr<CSaltCorrNN> NNpar);
 		virtual ~CMultSec ()  ;	
 
 	private:
-		CList			_LSec, _LMSec ;
+        CList			_LSec, _LMSec;    
+        //std::list<std::shared_ptr<CSec    >> _LSec;
+        //std::list<std::shared_ptr<CMultSec>> _LMSec;
 		void			UpdateTotals		( CSec		*sec ) ;
 		void			UpdateTotalsAdding	( CSec		*sec ) ;
 		void			UpdateTotalsAdding	( CMultSec	*sec ) ;

@@ -154,14 +154,12 @@ class SeqExpl : public CompoWidget
     Tree                _tree{ *this };
     List                _list{ *this };
     bool				_showAllseq{true}, _showFiltered{true};
-
+    std::vector<CSec*>      _dragSec;
+    std::vector<CMultSec*>  _dragMSec;
 
     using pSec = CSec*;
     class ListSeqMaker : public List::resolver_interface <pSec>
     {
-        //    		virtual nana::string decode(std::size_t, const target&) const = 0;
-        //virtual void encode(target&, std::size_t, const nana::string&) const = 0;
-
         nana::string decode(size_t col, const pSec &sec) const override
         {
             static const int    blen{ 50 }, slen{ 1000 };
@@ -209,56 +207,109 @@ class SeqExpl : public CompoWidget
     //    return (item.value<CSec*>());
     //}
 
+    
     void SetDefLayout() override
     {
         _DefLayout = "    horizontal  gap=2   <Tree 20% > <List >         \n\t"
 
             ;
     }
+    
     void AsignWidgetToFields() override
     {
         _place.field("Tree") << _tree;
         _place.field("List") << _list;
-        //_place.field("Tree" ) << _place.percent( _tree, 20, nana::gui::vplace::minmax(100,300)) << _list;
+    }
+    void MakeResponive()
+    {
+
+        _tree.ext_event().selected = [&](nana::gui::window w, Tree::item_proxy node, bool selected)
+        {
+            if (!selected) return;
+
+            _list.auto_draw(false);
+            _tree.auto_draw(false);
+            _list.clear();
+            populate_list_recur(node);
+            _tree.auto_draw(true);
+            _list.auto_draw(true);
+        };
+        _tree.ext_event().checked = [&](nana::gui::window w, Tree::item_proxy node, bool checked)
+        {                                               //cerr << std::endl << "seq gr checked: ";  
+            //wcerr<< std::endl<< checked << node.checked()<< node.key() <<L": " << node.text() ;
+            
+            //if (node.key().empty()) return;
+            CMultSec* ms = node.value<CMultSec*>();
+            if (!ms) return;
+
+            ms->Selected(checked);
+
+            if (node != _tree.selected()) return;
+            _list.auto_draw(false);
+            _list.clear();
+            populate_list_recur(node);
+            _list.auto_draw(true);
+
+        };
+
+        _list.ext_event().checked  = [&](  List::item_proxy sec_item, bool checked)
+        {                                               
+            // Otras consecuencias ???!!!!!!
+            //nana::string st;
+            //st=sec_item.text(4);
+            //wcerr << STR("st: ")<<st;
+            CSec *s =  sec_item.value<CSec*>();
+            bool c = s ->Selected(checked);
+            if (  c || _showAllseq ) return;
+ 
+            _list.auto_draw(false);
+            _list.clear();
+             populate_list_recur(_tree.selected());
+            _list.auto_draw(true);
+
+        };
 
     }
+    //void InitMenu()
+    //{
+    //    CompoWidget::InitMenu();
+    //    this->MakeResponive();
+    //}
     Node insert(CMultSec*ms)  /// Add and return one new node/sec to the child of root? Que pasa si la uso dos veces??? Iserta un nuevo node? donde? en root?Cual es el efecto de tener el mismo nombre?
     {
         nana::string name = nana::charset(ms->_name);
-        return _tree.insert(name, name).check(ms->Selected()).value(ms);
+        return _tree.insert(name, name).value(ms).check(ms->Selected());
     }
     static Node append(Node &node, CMultSec*ms) /// Add a new node to the child of node.
     {
         nana::string name = nana::charset(ms->_name);
-        return node->append(name, name).check(ms->Selected()).value(ms);
+        return node->append(name, name).value(ms).check(ms->Selected());
     }
-    static void populate(Node &node)  /// crea y add to the child of node un nodo nuevo por cada seq in ms. Asume el nodo estaba vacio
+      void populate(Node &node)  /// crea y add to the child of node un nodo nuevo por cada seq in ms. Asume el nodo estaba vacio
     {
-        //while(!node.empty()) 
-        //    _tree.erase(node.child());
+        while(node.size()) 
+            _tree.erase(node.child());
 
         CMultSec *ms = node.value<CMultSec*>(); //  msec(node);
 		for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
 			populate( append(node, ms->CurMSec())) ;
     }
- void  AddNewSeqGr	(Tree::item_proxy& node) 
+    void  AddNewSeqGr	(Tree::item_proxy& node) 
 		{	try{    
 					append(node, _Pr._cp.AddSeqGroup(node.value<CMultSec*>(),"New group"));
                     node.expend(true);
 		        }
-       //         catch(InvalidCastException^ e) 
-			    //{   
-				   // MessageBox::Show (  gcnew String( "Caught expected exception. \n Add seq gr: Tag is not CMref. \n") + e->Message ) ;
-       //         }
 				catch ( std::exception& e)
 		        { 
-					nana::gui::msgbox ( nana::string(nana::charset(e.what()) ) ) ;
+					nana::gui::msgbox ( nana::string(nana::charset(e.what()) ) ).show() ;
 		        }		
 		}
-    List::item_proxy& AddToList(CSec* s)
+    void AddToList(CSec* s)
     {
-        if (s->Selected())
-            return _list.at(0).append(s).check(true).fgcolor(0xFF44FFFF);//nana::gui::color::gray_border );
+           _list.at(0).append(s).value  ( s             )
+                                .check  ( s->Selected() )
+                                .fgcolor( s->Filtered()     ?   0xFF00FF 
+                                                            :   0          );      //nana::gui::color::gray_border );
     }
     void populate_list(CMultSec*ms)
     {
@@ -280,12 +331,12 @@ class SeqExpl : public CompoWidget
     void AddSeq 	(const std::string &file, bool  all_in_dir) 
 		{	 
         //try{ 
-				auto tn= _tree.selected();
-                //if (tn.empty())
-                //        return;
-				_Pr._cp.AddSeqFromFile	( tn.value<CMultSec*>(), file, all_in_dir	);
-                populate(tn);
-                populate_list_recur(tn.value<CMultSec*>());
+				auto      tn    = _tree.selected();
+                CMultSec* ms    = tn.value<CMultSec*>();
+                CMultSec* newms = _Pr._cp.AddSeqFromFile	(ms , file, all_in_dir	);
+			    populate(  append  (tn, newms) );
+                tn.expend(true);
+                populate_list_recur(ms);
 					//tn->EnsureVisible ();
 			//}
    //         catch(InvalidCastException^ ex) 
@@ -298,6 +349,237 @@ class SeqExpl : public CompoWidget
 		}
 
 public:
+    void AddMenuItems(nana::gui::menu& menu)
+    {
+        menu.append_splitter();
+        menu.append(STR("Add a new, empty, group for sequences")  , [&](nana::gui::menu::item_proxy& ip) {  AddNewSeqGr(_tree.selected());    } );
+        menu.append(STR("Add a group of sequences from a file..." )  , [&](nana::gui::menu::item_proxy& ip) 
+        {
+            _list.auto_draw(false);
+            nana::gui::filebox  fb{ *this, true };
+            fb.title(STR("Add a group of sequences from a file"));
+            if (fb())
+            {
+               _list.clear();
+                AddSeq(nana::charset(fb.file()), false);
+            }
+            _list.auto_draw(true);
+        });
+        menu.append(STR("Add a tree of groups of sequences from a directory..."),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            _list.auto_draw(false);
+            _tree.auto_draw(false);
+            nana::gui::filebox  fb{ *this, true };
+            fb.title(STR("Add a tree of groups of sequences from a directory"));
+            if (fb())
+            {
+               _list.clear();
+                AddSeq(nana::charset(fb.file()), true);
+            }
+            _tree.auto_draw(true);
+            _list.auto_draw(true);
+        });
+        menu.append(STR("Reproduce only the structure of directory..."),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            nana::gui::filebox  fb{ *this, true };
+            fb.title(STR("Reproduce the structure of directory..."));
+            if (!fb()) return;
+
+            _tree.auto_draw(false);
+
+            auto      tn    = _tree.selected();
+            CMultSec* ms    = tn.value<CMultSec*>();
+            CMultSec* newms = _Pr._cp.CopyStructFromDir	( ms, nana::charset(fb.file())	);
+			populate(  append  (tn, newms) );
+            tn.expend(true);
+
+            _tree.auto_draw(true);
+        });
+        menu.append(STR("Replace/reload from a file..." )  , [&](nana::gui::menu::item_proxy& ip) 
+        {
+			auto tn= _tree.selected();
+            if (tn->owner()->owner().empty())
+            {
+                nana::gui::msgbox ( STR("Sorry, you can´t replace group " + tn->text()) ).show() ;
+                return;
+            }
+            nana::gui::filebox  fb{ *this, true };
+            fb.title(STR("Replace/reload a group of sequences from a file"));
+            if (!fb()) return;
+
+            CMultSec *ms = tn.value<CMultSec*>();
+            CMultSec *pms = ms->_parentMS; // tn->owner.value<CMultSec*>();
+            ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
+            auto own = tn->owner();
+
+            _tree.auto_draw(false);
+            _list.auto_draw(false);
+
+			CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(fb.file()), false	);
+            _tree.erase(tn);
+            populate(append  (own, newms) );
+            own.expend(true);
+
+            _list.clear();
+            populate_list_recur(pms);
+
+            _tree.auto_draw(true);
+            _list.auto_draw(true);
+        });
+        menu.append(STR("Replace/reload from directory..."), [&](nana::gui::menu::item_proxy& ip) 
+        {
+			auto tn= _tree.selected();
+            if (tn->owner()->owner().empty())
+            {
+                nana::gui::msgbox ( STR("Sorry, you can´t replace group " + tn->text()) ) ;
+                return;
+            }
+            nana::gui::filebox  fb{ *this, true };
+            fb.title(STR("Replace/reload a group of sequences from a directory"));
+            if (!fb()) return;
+
+            CMultSec *ms = tn.value<CMultSec*>();
+            CMultSec *pms = ms->_parentMS; // tn->owner.value<CMultSec*>();
+            ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
+            auto own = tn->owner();
+
+            _tree.auto_draw(false);
+            _list.auto_draw(false);
+
+			CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(fb.file()), true	);
+            _tree.erase(tn);
+            populate(append  (own, newms) );
+            own.expend(true);
+
+            _list.clear();
+            populate_list_recur(pms);
+
+            _tree.auto_draw(true);
+            _list.auto_draw(true);
+        });
+
+        menu.append_splitter();
+
+        menu.append(   STR("Show Only local sequences")  ,   [&](nana::gui::menu::item_proxy& ip) 
+        {
+            _list.auto_draw(false);
+            _showAllseq = ! menu.checked(ip.index());// =! _showAllseq; 
+            _list.clear();
+             populate_list_recur(_tree.selected());
+            _list.auto_draw(true);
+        });
+        menu.check_style(menu.size()-1, nana::gui::menu::check_t::check_highlight );
+        menu.checked (menu.size()-1, false );
+
+        menu.append(STR("Show filtered sequences"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            _showFiltered = menu.checked(ip.index());// !_showFiltered;
+            _list.auto_draw(false);
+            _list.clear();
+             populate_list_recur(_tree.selected());
+            _list.auto_draw(true);
+        });
+        menu.check_style(menu.size()-1, nana::gui::menu::check_highlight); // check_option
+        menu.checked (menu.size()-1, true );
+
+        menu.append_splitter();
+        menu.append(STR("Cut selected sequences from list"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
+            //_list.auto_draw(false);
+            //_list.clear();
+            // populate_list_recur(_tree.selected());
+            //_list.auto_draw(true);
+        });
+        menu.append(STR("Cut selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+			auto tn= _tree.selected();
+            if (tn->owner()->owner().empty())
+            {
+                (nana::gui::msgbox ( _tree , STR("Cut a group of sequences " + tn->text()) )
+                          << STR("Sorry, you can´t cut the group: ") + tn->text() )
+                          .icon(nana::gui::msgbox::icon_error )
+                          .show() ;
+                return;
+            }
+            CMultSec *ms = tn.value<CMultSec*>();
+            CMultSec *pms = ms->_parentMS;  
+            _Pr._cp._pSeqNoUsed->AddMultiSec(ms);
+            _dragMSec.push_back(ms);
+            //ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
+            auto own = tn->owner();
+
+            _tree.auto_draw(false);
+            _list.auto_draw(false);
+
+            _tree.erase(tn);
+            populate(append (_tree.find(STR("Dont use") ), ms ));
+            own.select(true).expend(true);
+        });
+        menu.append(STR("Paste the sequences"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+			auto       tn = _tree.selected();
+            CMultSec *pms = tn.value<CMultSec*>();
+
+            for (auto ms : _dragMSec)
+                pms->AddMultiSec(ms);
+
+            _dragMSec.clear();
+
+            _tree.auto_draw(false);
+            _list.auto_draw(false);
+
+            populate(tn);
+            populate(_tree.find(STR("Dont use") ));
+            _list.clear();
+            populate_list_recur(tn);
+            tn.select(true).expend(true);
+        });
+
+        menu.append_splitter();
+        menu.append(STR("Del selected sequences from list"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
+            //_list.auto_draw(false);
+            //_list.clear();
+            // populate_list_recur(_tree.selected());
+            //_list.auto_draw(true);
+        });
+        menu.append(STR("Del selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+			auto tn= _tree.selected();
+            if (tn->owner()->owner().empty())
+            {
+                (nana::gui::msgbox ( _tree , STR("Deleting a group of sequences " + tn->text()) )
+                          << STR("Sorry, you can´t delete the group: ") + tn->text() )
+                          .icon(nana::gui::msgbox::icon_error )
+                          .show() ;
+                return;
+            }
+            CMultSec *ms = tn.value<CMultSec*>();
+            CMultSec *pms = ms->_parentMS;           
+            _Pr._cp._pSeqNoUsed->AddMultiSec(ms); //ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
+            auto own = tn->owner();
+
+            _tree.auto_draw(false);
+            _list.auto_draw(false);
+
+            _tree.erase(tn);
+            populate(append (_tree.find(STR("Dont use") ), ms ));
+
+            own.select(true).expend(true);
+
+        });
+        menu.append(STR("Rename the selected group of sequences"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
+            //_list.auto_draw(false);
+            //_list.clear();
+            // populate_list_recur(_tree.selected());
+            //_list.auto_draw(true);
+        });
+
+    }
     SeqExpl(ThDyNanaForm& tdForm);
 
 };
@@ -480,6 +762,77 @@ class SetupPage : public CompoWidget
 	    _place.field("SMeth"  )         << " Salt Correct. Method:"	   <<  comBoxSalMeth;
 	    _place.field("AMeth"  )         << " ThDy Align. Method"       <<  comBoxTAMeth ;
     }
+    void AddMenuItems(nana::gui::menu& menu)
+    {
+        menu.append(STR("New"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
+        menu.append(STR("Open...")  , [&](nana::gui::menu::item_proxy& ip)  { proj_.open(proj_.FileName()); OpenProj() ;  } );
+        menu.append(STR("Save...")  , [&](nana::gui::menu::item_proxy& ip)  { proj_.save(proj_.FileName()); SaveProj() ;  } );
+        menu.append_splitter();
+        menu.append(STR("Set as deffault") , [&](nana::gui::menu::item_proxy& ip)  {;  });
+        menu.append(STR("Restore deffault"), [&](nana::gui::menu::item_proxy& ip)  {;  });
+        menu.append_splitter();
+        menu.append(STR("Exit"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
+
+    }
+
+    void LoadProject(std::string file)
+	{
+		try
+		{
+			_Pr.load(   file );
+			 proj_.FileName(nana::charset ( file  ));
+ 		}
+		catch (std::exception& e)
+		{
+			string caption = "Error trying to load the project file:";
+			string message = file         + "\n\n"
+							+  e.what()   + "\n\n"
+							+  "Use the Default project?"   + "\n\n"
+							+ "\tYes:  The default project file will be loaded. " + "\n"
+							+ "\tNo:  Select a project file to be loaded. " + "\n"
+							+ "\tCancel: Use the values correctly loaded mixed with the\t\t\t previus existing. "
+							;
+			switch ( (nana::gui::msgbox(  *this, nana::charset (caption) , nana::gui::msgbox::yes_no_cancel )
+                            <<  message
+                        ).icon(nana::gui::msgbox::icon_error) .show (  ))
+			{
+				case  nana::gui::msgbox::pick_yes :  
+					    _Pr.load_defPr();
+                        proj_.FileName(nana::charset ( _Pr.ProjetFile ()  ));
+					return;
+
+				case  nana::gui::msgbox::pick_no:    
+                        proj_.open (nana::charset (file));
+                        if ( !  proj_.Canceled() )
+                                LoadProject(nana::charset (  proj_.FileName()));
+                        return;
+			}
+		}
+	}
+
+    void  OpenProj()
+	{	 
+         if(  proj_.Canceled () )  return;
+         LoadProject ( nana::charset ( proj_.FileName() )) ;  
+
+      //try {
+      //          load (); 
+      //}
+      //  catch(std::exception& e)
+      //  {
+      //       (nana::gui::msgbox(*this, STR("Error during project loading: ")) /*.icon(msgbox::icon_information)*/
+      //                           <<STR("\nIn windows:\n\t ") << Titel()
+      //                           <<STR("\nIn project:\n\t ") << proj_.FileName()
+      //                           <<STR("\nException :\n\t ") << e.what() 
+      //       ).show();
+      //  }
+      ////tmCalc_._TmCalc.UpDateForm();
+	}
+    void  SaveProj()
+	{	 
+        if(  proj_.Canceled () )  return;
+        _Pr.save (nana::charset ( proj_.FileName())); 
+	}
 };
 
 class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyProject
@@ -495,10 +848,11 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     MplexPCR                        mPCR_       {*this};
     SeqExpl                         mExpl_      {*this};
     BindGroup                       _commPP     ;
-    nana::gui::NumUnitUpDown        numUpDwMaxTgId  {*this, STR("Max. ident.:"        ), 99,  50 , 100,   "%"}, 
+    nana::gui::NumUnitUpDown        numUpDwMaxTgId  {*this, STR("Max. ident.:"        ), 99,  50 , 100 ,   "%"}, 
                                     numUpDw_TgBeg   {*this, STR("Beg.:"               ),  0,   0 , 100000,"nt"},    /// rev !!
                                     numUpDw_TgEnd   {*this, STR("End.:"               ),  0,   0 , 100000,"nt"},    /// rev !!	
-                                    numUpDw_MinLen  {*this, STR("Min.Len.:"           ),  0,   0 , 100000,"nt"};
+                                    numUpDw_SLenMin {*this, STR("Min.Len.:"           ),  0,   0 , 100000,"nt"},
+                                    numUpDw_SLenMax {*this, STR("Max.Len.:"           ),  0,   0 , 100000,"nt"};
 
    ThDyNanaForm (int argc, char *argv[])
                   :nana::gui::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
@@ -521,7 +875,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         setup_.proj_.FileName(nana::charset ( ProjetFile()  ));
         try{ 
 			    if ( argc > 1 )
-				    LoadProject( argv[1] )   ;
+				    setup_.LoadProject( argv[1] )   ;
 			    else
 				    load() ;						// cuando no existe Def Project: 1ra vez que se usa el prog??
 		    }
@@ -541,71 +895,21 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
                  /*<< link( _cp._RecurDir      ,       chkBx_RecDir)*/
                  //<< link( _cp._OutputFile      ,       results_  )
                  /*<< link( _cp._PCRfiltrPrFile  ,       PCRfiltre_)*/
-                 << link( _cp.MaxTgId    ,       numUpDwMaxTgId  )
-                 << link( _cp.SecLim , numUpDw_TgBeg,numUpDw_TgEnd  )
-                 << link( _cp.MinSecLen  ,       numUpDw_MinLen  )
+                 << link( _cp.MaxTgId                 ,       numUpDwMaxTgId  )
+                 << link( _cp.SecLim         , numUpDw_TgBeg,  numUpDw_TgEnd  )
+                 << link( _cp.SecLenLim   ,  numUpDw_SLenMin, numUpDw_SLenMax )
             ;
  
 
         InitMyLayout();
 
+        setup_.AddMenuItems (_menuBar.push_back(STR("P&roject")));
+        mExpl_.AddMenuItems (_menuBar.push_back(STR("&Sequences")));
         AddMenuProgram();
+        
         SelectClickableWidget( _menuBar);
 
-        setup_.proj_.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
-        setup_.proj_.Open.make_event	<nana::gui::events::click> ([&](){ OpenProj() ;} );
-		setup_.proj_.Save.make_event	<nana::gui::events::click> ([&](){ SaveProj() ;} );
-
-                //targets_.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
-                //{  
-                //    std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: (set in ThDyNanaForm Constr), FilePickBox: ";
-                //    std::wcerr<< targets_._Titel << std::endl;
-                //    //if (!ei.focus.getting) 
-                //    //    validate_edit( );
-                //}); 
-                //targets_._fileName.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
-                //{  
-                //    std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: (set in ThDyNanaForm Constr), FilePickBox:_fileName ";
-                //    std::wcerr<< targets_._Titel << std::endl;
-                //    //if (!ei.focus.getting) 
-                //    //    validate_edit( );
-                //}); 
-
    }
-   		void LoadProject(std::string file)
-		{
-			try
-			{
-				load(   file );
-				setup_.proj_.FileName(nana::charset ( file  ));
- 			}
-			catch (std::exception& e)
-			{
-				string caption = "Error trying to load the project file:";
-				string message = file         + "\n\n"
-								+  e.what()   + "\n\n"
-								+  "Use the Default project?"   + "\n\n"
-								+ "\tYes:  The default project file will be loaded. " + "\n"
-								+ "\tNo:  Select a project file to be loaded. " + "\n"
-								+ "\tCancel: Use the values correctly loaded mixed with the\t\t\t previus existing. "
-								;
-				switch ( (nana::gui::msgbox(  *this, nana::charset (caption) , nana::gui::msgbox::yes_no_cancel )
-                              <<  message
-                            ).icon(nana::gui::msgbox::icon_error) .show (  ))
-				{
-				    case  nana::gui::msgbox::pick_yes :  
-					        load_defPr();
-                            setup_.proj_.FileName(nana::charset ( ProjetFile ()  ));
-					    return;
-
-				    case  nana::gui::msgbox::pick_no:    
-                            setup_.proj_.open (nana::charset (file));
-                            if ( ! setup_.proj_.Canceled() )
-                                  LoadProject(nana::charset ( setup_.proj_.FileName()));
-                         return;
-				}
-			}
-		}
 
     //~ThDyNanaForm();
     void SetDefLayout   () override
@@ -614,26 +918,24 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 	                 "       <weight=25>                   \n\t "
 	                 "       <PagesTag    weight=23 >      \n\t "
 	                 "       <Pages       min=255   >      \n\t "
-	                 //"       <Targets     weight=23 >      \n\t "
 	                 "       < <weight=30><TargetsOptions><weight=10> weight=23>      \n\t "
 	                 "       <weight=1 >                   \n\t "
 	                 "       < weight=23 <><Firma><> >                   \n\t "
             ;
 
-        numUpDwMaxTgId.ResetLayout (60,40,30 );  
-        numUpDw_TgBeg .ResetLayout (35,40,30 );  
-        numUpDw_TgEnd .ResetLayout (35,40,30 );  
-        numUpDw_MinLen.ResetLayout (60,40,30 );  
+        numUpDwMaxTgId .ResetLayout (60,40,30 );  
+        numUpDw_TgBeg  .ResetLayout (35,40,30 );  
+        numUpDw_TgEnd  .ResetLayout (35,40,30 );  
+        numUpDw_SLenMin.ResetLayout (60,40,30 );   
+        numUpDw_SLenMax.ResetLayout (60,40,30 );  
     }
     void AsignWidgetToFields() override
     {
 	    _place.field("PagesTag")        << tabbar_  ;
-	    //_place.field("Targets" )        << targets_  << _place.fixed(chkBx_RecDir,90)  ;
-	    _place.field("TargetsOptions" ) << numUpDwMaxTgId<<   numUpDw_TgBeg << numUpDw_TgEnd  << numUpDw_MinLen;
-	    _place.field("Firma"  )         << "                        INNT - FLI :       ArielVina.Rodriguez@fli.bund.de"
+	    _place.field("TargetsOptions" ) << numUpDwMaxTgId<<   numUpDw_TgBeg << numUpDw_TgEnd << numUpDw_SLenMin << numUpDw_SLenMax;
+	    _place.field("Firma"  )         <<  "INNT - FLI :       ArielVina.Rodriguez@fli.bund.de"
 
                                 ;
-
     }                                        
     void add_page(widget& w)
     {   
@@ -645,30 +947,6 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         tabbar_.relate    (tabbar_.length()-1, w          );
 	    _place.field("Pages"   ).fasten( w)  ;
     }         
-
-    void  OpenProj()
-	{	 
-         if(  setup_.proj_.Canceled () )  return;
-         LoadProject ( nana::charset ( setup_.proj_.FileName() )) ;  
-
-      //try {
-      //          load (); 
-      //}
-      //  catch(std::exception& e)
-      //  {
-      //       (nana::gui::msgbox(*this, STR("Error during project loading: ")) /*.icon(msgbox::icon_information)*/
-      //                           <<STR("\nIn windows:\n\t ") << Titel()
-      //                           <<STR("\nIn project:\n\t ") << proj_.FileName()
-      //                           <<STR("\nException :\n\t ") << e.what() 
-      //       ).show();
-      //  }
-      ////tmCalc_._TmCalc.UpDateForm();
-	}
-    void  SaveProj()
-	{	 
-        if(  setup_.proj_.Canceled () )  return;
-        save (nana::charset ( setup_.proj_.FileName())); 
-	}
 };
 
    FindSondenPage::FindSondenPage(ThDyNanaForm& tdForm)
@@ -778,8 +1056,14 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         InitMyLayout();
         SelectClickableWidget( set_def_proj_);
         SelectClickableWidget( *this);
+
+        proj_.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
+        proj_.Open.make_event	<nana::gui::events::click> ([&](){ OpenProj() ;} );
+		proj_.Save.make_event	<nana::gui::events::click> ([&](){ SaveProj() ;} );
+
+
     }
-   MplexPCR::MplexPCR          (ThDyNanaForm& tdForm)
+   MplexPCR::MplexPCR            (ThDyNanaForm& tdForm)
         : _Pr             (tdForm), 
           CompoWidget     (tdForm, STR("MplexPCR"), STR("MplexPCR.lay.txt")),
           _do_mPCR        (*this, STR(" PCR ! ") ),
@@ -795,7 +1079,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         SelectClickableWidget( _PrimersFilePCR);
         SelectClickableWidget( *this);
     }
-   SeqExpl::SeqExpl          (ThDyNanaForm& tdForm)
+   SeqExpl::SeqExpl              (ThDyNanaForm& tdForm)
         : _Pr             (tdForm), 
           CompoWidget     (tdForm, STR("Seq Explorer"), STR("SeqExpl.lay.txt"))
     {
@@ -812,99 +1096,18 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         _list.append_header(STR("Seq")   , 420);
         _list.resolver(ListSeqMaker());
 
-        _menuProgram.append_splitter();
-        _menuProgram.append(STR("Add a new, empty, group for sequences")  , [&](nana::gui::menu::item_proxy& ip) 
-        { 
-            AddNewSeqGr(_tree.selected());
-        } );
-        _menuProgram.append(STR("Add a group of sequences from a file" )  , [&](nana::gui::menu::item_proxy& ip) 
-        {
-            _list.auto_draw(false);
-            nana::gui::filebox  fb{ *this, true };
-            fb.title(STR("Add a group of sequences from a file"));
-            if (fb())
-            {
-               _list.clear();
-                AddSeq(nana::charset(fb.file()), false);
-            }
-            _list.auto_draw(true);
-        });
-        _menuProgram.append(STR("Add a tree of groups of sequences from a directory"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            _list.auto_draw(false);
-            _tree.auto_draw(false);
-            nana::gui::filebox  fb{ *this, true };
-            fb.title(STR("Add a tree of groups of sequences from a directory"));
-            if (fb())
-            {
-               _list.clear();
-                AddSeq(nana::charset(fb.file()), true);
-            }
-            _tree.auto_draw(true);
-            _list.auto_draw(true);
-        });
-        _menuProgram.append_splitter();
-        _menuProgram.append(STR("Show Only local sequences)"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            _list.auto_draw(false);
-            _showAllseq = ! _showAllseq; // = _menuProgram.checked(ip.index());
-            _list.clear();
-             populate_list_recur(_tree.selected());
-            _list.auto_draw(true);
-        });
-        _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_t::check_highlight );
-        _menuProgram.append(STR("Show filtered"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            _list.auto_draw(false);
-            _list.clear();
-             populate_list_recur(_tree.selected());
-            _list.auto_draw(true);
-        });
-        _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_highlight); // check_option
-
-        _tree.ext_event().selected = [&](nana::gui::window w, Tree::item_proxy node, bool selected)
-        {
-            if (!selected) return;
-
-            _list.auto_draw(false);
-            _tree.auto_draw(false);
-            _list.clear();
-            populate_list_recur(node);
-            _tree.auto_draw(true);
-            _list.auto_draw(true);
-        };
-        _tree.ext_event().checked = [&](nana::gui::window w, Tree::item_proxy node, bool checked)
-        {                                               //cerr << std::endl << "seq gr checked: ";  //wcerr<< node.text()<< std::endl ;
-            if (node != _tree.selected()) return;
-
-            _list.auto_draw(false);
-            _list.clear();
-            node.value<CMultSec*>()->Selected(checked);
-            populate_list_recur(node);
-            _list.auto_draw(true);
-
-        };
-        _list.ext_event().checked  = [&](  List::item_proxy sec_item, bool checked)
-        {                                               
-            // Otras consecuencias ???!!!!!!
-            nana::string st;
-            st=sec_item.text(4);
-            wcerr << STR("st: ")<<st;
-            //CSec *s =  sec_item.value<CSec*>();
-            //bool c = s ->Selected(checked);
-            //if (  c || _showAllseq ) return;
- 
-            //_list.auto_draw(false);
-            ////_list.clear();
-            // populate_list_recur(_tree.selected());
-            //_list.auto_draw(true);
-
-        };
-
         _list.auto_draw(false);
         _tree.auto_draw(false);
-        populate( insert(_Pr._cp._pSeqTree.get()));
+
+        CMultSec *ms=_Pr._cp._pSeqTree.get();
+        for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
+			populate( insert( ms->CurMSec())) ;
+
         populate_list_recur(_Pr._cp._pSeqTree.get());
+
+        AddMenuItems(_menuProgram);
+        MakeResponive();
+
         _tree.auto_draw(true);
         _list.auto_draw(true);
     }

@@ -77,9 +77,9 @@ CSec::CSec (    const std::string&  sec,
 		if (secBeg<1) secBeg=1;
         _len  = 0 ;
 
-        LonSecPos sb,        se,  sp,      /// s - string seq. Original string text of the seq.  (index in sec[])
+        LonSecPos sb,       /* se,*/  sp,      /// s - string seq. Original string text of the seq.  (index in sec[])
                   ob=secBeg, oe,  op,      /// o - original "abstract" seq for with s intent to be the representation
-                  fb,        fe,  fp;      /// f - filtred seq, or what will be the resulting seq   (index in _c[], _b, etc.)
+                 /* fb,*/        /*fe,*/  fp;      /// f - filtred seq, or what will be the resulting seq   (index in _c[], _b, etc.)
                //  beg ,      end, position  
 
         const LonSecPos sLen=sec.length();
@@ -503,39 +503,26 @@ char *	CSecAl::GetAlignedSecChar(long Al_pBeg, long Al_pEnd)  // "regala" esta m
 	return CopyAlignedSecChar(Al_pBeg,  Al_pEnd, Al_sec);
 }
 
-CMultSec::CMultSec(const std::string &Name)
-	:	_name		(trim_string(Name)),
-	    _SecLim		(1, 0), 
-		_MaxTgId	(100),
-		_MinSecLen	(0),				//_SecBeg(1), _SecEnd(0), /*_Len(0),_TLen(0),*/
-		_Consenso	(nullptr),
-		_parentMS	(nullptr),
-		_NNPar      (nullptr),          // ???
-		_ID			(NewMS_ID())
-	{	}
-
-CMultSec::CMultSec(	const char	  *file,
-					std::shared_ptr<CSaltCorrNN>  NNpar,
-					bool           all_dir,     /*= false,*/
-					float		   MaxTgId,     /*= 100,*/
-					NumRang<long>  SecLim,      /* = NumRang<long>(1, 0),*/	/* long SecBeg=1, long SecEnd=0*/
-					LonSecPos     MinSecLen     /*= 0*/
-				  ) 
+CMultSec::CMultSec (	const char	  *file	, 
+					std::shared_ptr<CSaltCorrNN>  NNpar	, 
+					bool           all_dir  /*= false*/,
+					float		   MaxTgId	/*= 100*/, 
+					LonSecPosRang  SecLim	/*= LonSecPosRang {1,0}*/,	 
+                    SecPosRang     SecLenLim/*= SecPosRang    {0,0}*/,
+					bool           loadSec  /*= true*/
+				 )  
     :	/*_name(trim_string(file)),	*/
 	    _SecLim     (SecLim),
 	    _MaxTgId    (MaxTgId), 
-        _MinSecLen  (MinSecLen),
-	    _Consenso   (nullptr),
-	    _parentMS   (nullptr),
-	    _NNPar      (NNpar),
-	    _ID         (NewMS_ID())
+        _SecLenLim  (SecLenLim),
+	    _NNPar      (NNpar)
 {
 	filesys::path  itf(file);
 
 	if (all_dir)
     {
         filesys::directory_iterator rdi{filesys::is_directory(itf) ? itf : itf.remove_filename() }, end;
-	    _name = itf.filename ();
+	    _name = itf.filename ();     /// The new MSec take the name of the dir.
 
         for (; rdi != end; ++ rdi)
             AddMultiSec(  new CMultSec(  rdi->path().string().c_str() , 
@@ -543,7 +530,8 @@ CMultSec::CMultSec(	const char	  *file,
                                          filesys::is_directory(rdi->status()), 
                                          MaxTgId, 
                                          SecLim,   
-                                         MinSecLen  ) );
+                                         SecLenLim,
+                                         loadSec) );
   //      else 
   //          itf.remove_filename();
   //      _name = itf.   .basename();
@@ -552,60 +540,41 @@ CMultSec::CMultSec(	const char	  *file,
 	else
 	    if (itf.has_filename())
 	    {
-		    _name = itf.filename ();
-		    AddFromFile(file);
+		    _name = itf.filename ();     /// The new MSec take the name of the file.
+            if (loadSec)
+		       AddFromFile(file);
 	    }
 }
-CMultSec::CMultSec( ifstream &	 file,		// TODO: Unificar estos dos constr.
-	                std::shared_ptr<CSaltCorrNN>  NNpar,
-	                float		  MaxTgId,      /* = 100,*/
-	                NumRang<long> SecLim,       /* = NumRang<long>(1, 0),*/	/* long SecBeg=1, long SecEnd=0*/
-	                LonSecPos     MinSecLen     /*= 0*/
-	               ) 
-    : /*_name(trim_string(file)),	*/
-	    _SecLim     (SecLim),
-	    _MaxTgId    (MaxTgId), 
-        _MinSecLen  (MinSecLen),
-	    _Consenso   (nullptr),
-	    _parentMS   (nullptr),
-	    _NNPar      (NNpar),
-	    _ID         (NewMS_ID())
-{
-	AddFromFile(file);
-}
-CMultSec::CMultSec(std::shared_ptr<CSaltCorrNN> NNpar)
-      :
-        _SecLim     (1, 0), 
-        _MaxTgId    (100),
-        _MinSecLen  (0),
-        _Consenso   (nullptr),
-        _parentMS   (nullptr),
-        _NNPar      (NNpar),
-        _ID         (NewMS_ID())
-{}
-
-CMultSec::CMultSec(CMultSec	*ms, const std::string &Name /*= ""*/)
-  : _name       (trim_string(Name)),
-    _MaxTgId    (ms->_MaxTgId), 
-    _MinSecLen  (ms->_MinSecLen),
-    _SecLim     (ms->_SecLim),
-    _Consenso   (nullptr),
-    _parentMS   (nullptr),
-    _NNPar      (ms->_NNPar),
-    _ID         (NewMS_ID())
-{}
-
-int		CMultSec::AddFromDir(const std::string& _dir)		// return la cantidad de sec add --------------------  AddFromDir   -------------------
-{	
-    	std::tr2::sys::path  dir(_dir);
-        if (! std::tr2::sys::is_directory (dir) )
-            if (dir.has_filename())
-                dir.remove_filename();
-            if (!std::tr2::sys::is_directory(dir))
-                ;    return 1;
 
 
-}
+//int		CMultSec::AddFromDir(const std::string& dir, bool  recurs  /*= false*/)		// return la cantidad de sec add --------------------  AddFromDir   -------------------
+//{	
+//	filesys::path  itf(dir);
+//
+//	if (recurs)
+//    {
+//        filesys::directory_iterator rdi{filesys::is_directory(itf) ? itf : itf.remove_filename() }, end;
+//	    _name = itf.filename ();
+//
+//        for (; rdi != end; ++ rdi)
+//            AddMultiSec(  new CMultSec(  rdi->path().string().c_str() , 
+//                                         _NNpar,
+//                                         filesys::is_directory(rdi->status()), 
+//                                         _MaxTgId, 
+//                                         _SecLim,   
+//                                         _SecLenLim  ) );
+//  //      else 
+//  //          itf.remove_filename();
+//  //      _name = itf.   .basename();
+//		//AddFromDir(file);
+//	}
+//	else
+//	    if (itf.has_filename())
+//	    {
+//		    _name = itf.filename ();
+//		    AddFromFile(file);
+//	    }
+//}
 int		CMultSec::AddFromFile (const std::string& file)		// return la cantidad de sec add --------------------  AddFromFile   -------------------
 {	ifstream ifile( file ); 
 	if ( ! ifile ) 
@@ -665,17 +634,17 @@ int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // -------------------    Add
   		string Fasta_SEC ;					
 		if (!getline (ifile, Fasta_SEC,'>')) 		break ;		
 
-		if ( Fasta_SEC.length() < _SecLim.Min() )	continue;
+		if ( Fasta_SEC.length() < _SecLim.Min() ||  Fasta_SEC.length() < _SecLenLim.Min() )	continue;
 
 		unique_ptr<CSec> sec (  new CSec(   Fasta_SEC , 
                                             _Local._NSec, 
                                             Fasta_NAME , 
                                             _NNPar,
                                             _SecLim.Max() ? _SecLim.Max()-_SecLim.Min()+1 : 0 ,
-                                            _SecLim.Min()
+                                            _SecLim.Min()                                       /// TODO: cambiar constr de CSec ????
                                          )) ;                  assert(sec);
 						
-		if ( sec->Len() >= _MinSecLen   )		
+		if ( sec->Len() >= _SecLenLim.Min()   )		
 		{	
 			CSec *idem=Idem(*sec);
 			if (idem) 
@@ -828,7 +797,7 @@ if ( ! fi.good() ) return id;
 														id,			                    //Hit_num   ???		//	char	*	nam,	Hit_def
 														_NNPar               /*,  //long l=0,(Hit_len ---> NO ) !!!  -->_Hsp_align_len -OK clas,	conc*/
 														);
-				if ( secH->Len() >= _MinSecLen  )		
+				if ( secH->Len() >= _SecLenLim.Min()  )		
 				{	
 					CSec *idem=Idem(*secH);
 					InsertSecAfter (secH  , idem) ;	
@@ -894,7 +863,7 @@ int		CMultSec::AddFromFileGBtxt (ifstream &ifile) // ----------------  CMultSec:
 												sec	,	
 												id,								//	char		*	nam,	DEFINITION	,	
 												_NNPar);
-				if ( secGBtxt->Len() >= _MinSecLen   )		
+				if ( secGBtxt->Len() >= _SecLenLim.Min()   )		
 				{	
 					CSec *idem=Idem(*secGBtxt);
 					InsertSecAfter (secGBtxt  , idem) ;	
@@ -977,7 +946,7 @@ int		CMultSec::AddFromFileGB (ifstream &ifile)  // ----------------  CMultSec:: 
 										);
 			delete []sec ;
 
-				if ( secGB->Len() >= _MinSecLen  )		
+				if ( secGB->Len() >= _SecLenLim.Min()  )		
 				{	
 					CSec *idem=Idem(*secGB);
 					InsertSecAfter (secGB  , idem) ;	
@@ -1001,12 +970,12 @@ int		CMultSec::AddFromFileODS (ifstream &ifileODS){return 0;}
 CSec	*CMultSec::Idem ( CSec &sec )   // ----------------  CMultSec::            NotIdem  --- busqueda trivial de sec identicas -------------
 {	if ( 100 < _MaxTgId ) return nullptr ;
 	long Lcs=sec.Len() ;											// len of candidate sec (to be in the list, with MaxId)
-	long MaxErCS= ceil(float(Lcs*(100.0f-_MaxTgId) ) / 100.0f);					// min of not Id base to be in the list
+	long MaxErCS= long(ceil(float(Lcs*(100.0f-_MaxTgId) ) / 100.0f));					// min of not Id base to be in the list
 	for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec de esta misma ms
 	{	CSec &s = *CurSec() ; 
 		if (s.Filtered()) continue;
 		long l, MaxEr ;
-		if (s.Len() < Lcs) 		{	l=s.Len() ;			MaxEr= ceil(l*(100-_MaxTgId)  / 100);		} 
+		if (s.Len() < Lcs) 		{	l=s.Len() ;			MaxEr= long(ceil(l*(100-_MaxTgId)  / 100));		} 
 		else 					{	l=Lcs ;				MaxEr= MaxErCS;						}
 		long i=0 , Er=0 ;
 		while ( ++i <=l ) 	if ( MaxEr   <   ( Er += ( s[i] != sec[i] )) )  break;

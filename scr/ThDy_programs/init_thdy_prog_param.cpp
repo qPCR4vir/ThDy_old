@@ -39,11 +39,24 @@ CMultSec* ThDyCommProgParam::AddSeqFromFile(CMultSec   *parentGr, const std::str
 	CMultSec *sG=new CMultSec (FileName.c_str(), _pSaltCorrNNp, all_in_dir,
 								    _MaxTgId,
 								    _SecLim ,
-                                    _MinSecLen);
+                                    _SecLenLim);
 	if(parentGr)
 		parentGr->AddMultiSec(sG);
 	return sG;
 }
+CMultSec* ThDyCommProgParam::CopyStructFromDir	(CMultSec *parentGr, const std::string& FileName)
+{
+    if (! _pSaltCorrNNp )     Actualice_NNp ();
+
+	CMultSec *sG=new CMultSec (FileName.c_str(), _pSaltCorrNNp, true,
+								    _MaxTgId,
+								    _SecLim ,
+                                    _SecLenLim,false);
+	if(parentGr)
+		parentGr->AddMultiSec(sG);
+	return sG;
+}
+
 void CProgParam_microArray::RenameSondesMS(const std::string& name)
 {
     _probesMS->_name=name;
