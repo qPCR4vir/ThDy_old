@@ -313,6 +313,7 @@ class SeqExpl : public CompoWidget
 				catch ( std::exception& e)
 		        { 
 				  (nana::gui::msgbox ( STR("Error adding new group" ) )<< e.what()).show() ;
+                  return node;
 		        }		
 		}
     Node AddMSeqFiles (const std::string &file, bool  all_in_dir) 
@@ -326,6 +327,7 @@ class SeqExpl : public CompoWidget
 		catch ( std::exception& e)
 		{ 
 			(nana::gui::msgbox ( STR("Error adding sequences" ) )<< e.what()).show() ;
+            return _tree.selected();
  		}		 
 	}
     Node Replace      (Tree::item_proxy& tn, CMultSec *ms, const std::string& Path, bool all_in_dir)
@@ -343,6 +345,7 @@ class SeqExpl : public CompoWidget
 		catch ( std::exception& e)
 		{ 
 			(nana::gui::msgbox ( STR("Error replacing sequences" ) )<< e.what()).show() ;
+                  return tn;
  		}		 
     }
     Node ReloadDir    (Tree::item_proxy& tn)
