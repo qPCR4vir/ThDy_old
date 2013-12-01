@@ -414,6 +414,8 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 		CMultSec			*_parentMS {nullptr};								//std::weak_ptr<CMultSec> _parentMS	;
         CSec				*_Consenso {nullptr};
         bool                 _selected { true };
+		std::string			 _Path ;						// nombre unico?  
+
 
 explicit CMultSec (const std::string &Name  )                 : _name		(trim_string(Name))  {	}
 explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar)        : _NNPar      (NNpar)              {  }

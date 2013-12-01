@@ -515,7 +515,8 @@ CMultSec::CMultSec (	const char	  *file	,
 	    _SecLim     (SecLim),
 	    _MaxTgId    (MaxTgId), 
         _SecLenLim  (SecLenLim),
-	    _NNPar      (NNpar)
+	    _NNPar      (NNpar)/*,
+        _Path       (file)*/
 {
 	filesys::path  itf(file);
 
@@ -541,6 +542,7 @@ CMultSec::CMultSec (	const char	  *file	,
 	    if (itf.has_filename())
 	    {
 		    _name = itf.filename ();     /// The new MSec take the name of the file.
+            _Path = itf;
             if (loadSec)
 		       AddFromFile(file);
 	    }

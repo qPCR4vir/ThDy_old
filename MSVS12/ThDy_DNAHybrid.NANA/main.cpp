@@ -210,11 +210,10 @@ class SeqExpl : public CompoWidget
     
     void SetDefLayout() override
     {
-        _DefLayout = "    horizontal  gap=2   <Tree 20% > <List >         \n\t"
+        _DefLayout = "    horizontal  gap=2   <Tree weight=25% > <List >         \n\t"
 
             ;
     }
-    
     void AsignWidgetToFields() override
     {
         _place.field("Tree") << _tree;
@@ -222,100 +221,49 @@ class SeqExpl : public CompoWidget
     }
     void MakeResponive()
     {
-
-        _tree.ext_event().selected = [&](nana::gui::window w, Tree::item_proxy node, bool selected)
-        {
-            if (!selected) return;
-
-            _list.auto_draw(false);
-            _tree.auto_draw(false);
-            _list.clear();
-            populate_list_recur(node);
-            _tree.auto_draw(true);
-            _list.auto_draw(true);
-        };
-        _tree.ext_event().checked = [&](nana::gui::window w, Tree::item_proxy node, bool checked)
-        {                                               //cerr << std::endl << "seq gr checked: ";  
-            //wcerr<< std::endl<< checked << node.checked()<< node.key() <<L": " << node.text() ;
-            
-            //if (node.key().empty()) return;
-            CMultSec* ms = node.value<CMultSec*>();
-            if (!ms) return;
-
-            ms->Selected(checked);
-
-            if (node != _tree.selected()) return;
-            _list.auto_draw(false);
-            _list.clear();
-            populate_list_recur(node);
-            _list.auto_draw(true);
-
+        _tree.ext_event().selected = [&](nana::gui::window w, Tree::item_proxy node, bool selected) { if (selected) RefreshList(node); };
+        _tree.ext_event().checked  = [&](nana::gui::window w, Tree::item_proxy node, bool checked)
+        {                                              
+            node.value<CMultSec*>()->Selected(checked);
+            if (node== _tree.selected())  
+                RefreshList(node);                //  ??????? Only RefreschList
         };
 
-        _list.ext_event().checked  = [&](  List::item_proxy sec_item, bool checked)
+        _list.ext_event().checked  = [&](  List::item_proxy item, bool checked)
         {                                               
-            // Otras consecuencias ???!!!!!!
-            //nana::string st;
-            //st=sec_item.text(4);
-            //wcerr << STR("st: ")<<st;
-            CSec *s =  sec_item.value<CSec*>();
-            bool c = s ->Selected(checked);
-            if (  c || _showAllseq ) return;
- 
-            _list.auto_draw(false);
-            _list.clear();
-             populate_list_recur(_tree.selected());
-            _list.auto_draw(true);
-
+            item.value<CSec*>()->Selected(checked);
+            if ( ! _showAllseq && !checked) 
+                _list.erase(item) ;
         };
+    }
 
-    }
-    //void InitMenu()
-    //{
-    //    CompoWidget::InitMenu();
-    //    this->MakeResponive();
-    //}
-    Node insert(CMultSec*ms)  /// Add and return one new node/sec to the child of root? Que pasa si la uso dos veces??? Iserta un nuevo node? donde? en root?Cual es el efecto de tener el mismo nombre?
+    Node &Refresh(Tree::item_proxy& node)
     {
-        nana::string name = nana::charset(ms->_name);
-        return _tree.insert(name, name).value(ms).check(ms->Selected());
-    }
-    static Node append(Node &node, CMultSec*ms) /// Add a new node to the child of node.
-    {
-        nana::string name = nana::charset(ms->_name);
-        return node->append(name, name).value(ms).check(ms->Selected());
-    }
-      void populate(Node &node)  /// crea y add to the child of node un nodo nuevo por cada seq in ms. Asume el nodo estaba vacio
-    {
-        while(node.size()) 
-            _tree.erase(node.child());
+            _tree.auto_draw(false);
 
-        CMultSec *ms = node.value<CMultSec*>(); //  msec(node);
-		for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
-			populate( append(node, ms->CurMSec())) ;
+            populate(node);
+            node.expend(true);
+            RefreshList(node);
+
+            _tree.auto_draw(true);
+            return node;
     }
-    void  AddNewSeqGr	(Tree::item_proxy& node) 
-		{	try{    
-					append(node, _Pr._cp.AddSeqGroup(node.value<CMultSec*>(),"New group"));
-                    node.expend(true);
-		        }
-				catch ( std::exception& e)
-		        { 
-					nana::gui::msgbox ( nana::string(nana::charset(e.what()) ) ).show() ;
-		        }		
-		}
-    void AddToList(CSec* s)
+    void RefreshList(                      ) { RefreshList(_tree.selected());         }
+    void RefreshList(Tree::item_proxy& node) { RefreshList( node.value<CMultSec*>()); }
+    void RefreshList(CMultSec*ms)
     {
-           _list.at(0).append(s).value  ( s             )
-                                .check  ( s->Selected() )
-                                .fgcolor( s->Filtered()     ?   0xFF00FF 
-                                                            :   0          );      //nana::gui::color::gray_border );
+            _list.auto_draw(false);
+
+            _list.clear();
+            populate_list_recur(ms);
+
+            _list.auto_draw(true);
     }
     void populate_list(CMultSec*ms)
     {
         for ( ms->goFirstSec() ;  ms->NotEndSec() ; ms->goNextSec() )
 		  if ( _showFiltered || !ms->CurSec()->Filtered() ) 
-              AddToList(ms->CurSec());
+              AddSecToList(ms->CurSec());
     }
     void populate_list_recur(Tree::item_proxy& node)
     {
@@ -328,79 +276,138 @@ class SeqExpl : public CompoWidget
 	            for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
                     populate_list_recur(ms->CurMSec());
 		}
-    void AddSeq 	(const std::string &file, bool  all_in_dir) 
-		{	 
-        //try{ 
-				auto      tn    = _tree.selected();
-                CMultSec* ms    = tn.value<CMultSec*>();
-                CMultSec* newms = _Pr._cp.AddSeqFromFile	(ms , file, all_in_dir	);
-			    populate(  append  (tn, newms) );
-                tn.expend(true);
-                populate_list_recur(ms);
-					//tn->EnsureVisible ();
-			//}
-   //         catch(InvalidCastException^ ex) 
-			//{   
-			//	MessageBox::Show (  gcnew String( "Caught expected exception. \n After Add Seq from file bott click: Tag is not CMref. \n") + ex->Message ) ;
-   //         }
-			//catch ( std::exception& ex)
-			//{ MessageBox::Show ( gcnew String(ex.what())  ) ;
-			//}		 
+
+    List::item_proxy AddSecToList     (CSec* s)
+    {
+        return _list.at(0).append(s).value  ( s             )
+                                    .check  ( s->Selected() )
+                                    .fgcolor( s->Filtered()     ?   0xFF00FF 
+                                                                :   0x0     );//nana::gui::color::gray_border );
+    }
+
+    Node AddRoot          (CMultSec*ms)  
+    {
+        nana::string name = nana::charset(ms->_name);
+        return _tree.insert(name, name).value(ms).check(ms->Selected());
+    }
+ static Node appendNewNode(Node &node, CMultSec*ms) /// Add a new node to the child of node.
+    {
+        nana::string name = nana::charset(ms->_name);
+        return node->append(name, name).value(ms).check(ms->Selected());
+    }
+    Node &populate     (Node &node)  /// crea y add to the child of node un nodo nuevo por cada seq in ms. Asume el nodo estaba vacio
+    {
+        while(node.size()) 
+            _tree.erase(node.child());
+
+        CMultSec *ms = node.value<CMultSec*>(); //  msec(node);
+		for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
+			populate( appendNewNode(node, ms->CurMSec())) ;
+        return node;
+    }
+
+    Node AddNewSeqGr  (Tree::item_proxy& node) 
+		{	try{    
+					return appendNewNode(node, _Pr._cp.AddSeqGroup(node.value<CMultSec*>(),"New group")).expend(true);
+		        }
+				catch ( std::exception& e)
+		        { 
+				  (nana::gui::msgbox ( STR("Error adding new group" ) )<< e.what()).show() ;
+		        }		
 		}
+    Node AddMSeqFiles (const std::string &file, bool  all_in_dir) 
+	{	 
+    try{ 
+			auto      tn    = _tree.selected();
+            CMultSec* ms    = tn.value<CMultSec*>();
+            CMultSec* newms = _Pr._cp.AddSeqFromFile	(ms , file, all_in_dir	);
+			return Refresh(   tn);
+		}
+		catch ( std::exception& e)
+		{ 
+			(nana::gui::msgbox ( STR("Error adding sequences" ) )<< e.what()).show() ;
+ 		}		 
+	}
+    Node Replace      (Tree::item_proxy& tn, CMultSec *ms, const std::string& Path, bool all_in_dir)
+    {        
+    try{ 
+         auto      own = tn->owner();
+         CMultSec *pms = ms->_parentMS;  
+
+         _Pr._cp._pSeqNoUsed->AddMultiSec(ms); 
+         _tree.erase(tn);
+
+		 CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(Path), all_in_dir	);
+         return appendNewNode(own, newms).expend(true).select(true) ;
+		}
+		catch ( std::exception& e)
+		{ 
+			(nana::gui::msgbox ( STR("Error replacing sequences" ) )<< e.what()).show() ;
+ 		}		 
+    }
+    Node ReloadDir    (Tree::item_proxy& tn)
+    {            
+        CMultSec *ms = tn.value<CMultSec*>();
+        if (! ms->_Path.empty()) 
+           return Replace(tn, ms, ms->_Path,false);
+        for (Tree::item_proxy& ntn : tn)
+            ReloadDir(ntn);
+        return tn;
+}
+    Node ReloadFile   (Tree::item_proxy& tn)
+    {            
+        CMultSec *ms = tn.value<CMultSec*>();
+        if (ms->_Path.empty())  
+           return tn;
+        else
+           return Replace(tn, ms, ms->_Path,false);
+    }
 
 public:
     void AddMenuItems(nana::gui::menu& menu)
     {
         menu.append_splitter();
+
         menu.append(STR("Add a new, empty, group for sequences")  , [&](nana::gui::menu::item_proxy& ip) {  AddNewSeqGr(_tree.selected());    } );
-        menu.append(STR("Add a group of sequences from a file..." )  , [&](nana::gui::menu::item_proxy& ip) 
+        menu.append(STR("Add a group of sequences from a file..."), [&](nana::gui::menu::item_proxy& ip) 
         {
-            _list.auto_draw(false);
             nana::gui::filebox  fb{ *this, true };
             fb.title(STR("Add a group of sequences from a file"));
-            if (fb())
-            {
-               _list.clear();
-                AddSeq(nana::charset(fb.file()), false);
-            }
-            _list.auto_draw(true);
+            if (fb()) 
+               AddMSeqFiles(nana::charset(fb.file()), false);
         });
         menu.append(STR("Add a tree of groups of sequences from a directory..."),[&](nana::gui::menu::item_proxy& ip) 
         {
-            _list.auto_draw(false);
-            _tree.auto_draw(false);
             nana::gui::filebox  fb{ *this, true };
             fb.title(STR("Add a tree of groups of sequences from a directory"));
-            if (fb())
-            {
-               _list.clear();
-                AddSeq(nana::charset(fb.file()), true);
-            }
-            _tree.auto_draw(true);
-            _list.auto_draw(true);
+            if (fb()) 
+                AddMSeqFiles(nana::charset(fb.file()), true);
         });
+
+        menu.append_splitter();
+
         menu.append(STR("Reproduce only the structure of directory..."),[&](nana::gui::menu::item_proxy& ip) 
         {
             nana::gui::filebox  fb{ *this, true };
             fb.title(STR("Reproduce the structure of directory..."));
             if (!fb()) return;
 
-            _tree.auto_draw(false);
-
             auto      tn    = _tree.selected();
             CMultSec* ms    = tn.value<CMultSec*>();
             CMultSec* newms = _Pr._cp.CopyStructFromDir	( ms, nana::charset(fb.file())	);
-			populate(  append  (tn, newms) );
+            _tree.auto_draw(false);
+			populate(  appendNewNode  (tn, newms) );
             tn.expend(true);
-
             _tree.auto_draw(true);
         });
-        menu.append(STR("Replace/reload from a file..." )  , [&](nana::gui::menu::item_proxy& ip) 
+        menu.append(STR("Reload from the original file" )  , [&](nana::gui::menu::item_proxy& ip)   {  ReloadFile(_tree.selected());    });
+        menu.append(STR("Reload from the original directory"), [&](nana::gui::menu::item_proxy& ip) {  ReloadDir(_tree.selected());     });
+        menu.append(STR("Replace from a file..." )  , [&](nana::gui::menu::item_proxy& ip) 
         {
 			auto tn= _tree.selected();
-            if (tn->owner()->owner().empty())
+            if (tn.isRoot())
             {
-                nana::gui::msgbox ( STR("Sorry, you can´t replace group " + tn->text()) ).show() ;
+                nana::gui::msgbox ( STR("Sorry, you can´t replace group " + tn.text()) ).show() ;
                 return;
             }
             nana::gui::filebox  fb{ *this, true };
@@ -409,24 +416,15 @@ public:
 
             CMultSec *ms = tn.value<CMultSec*>();
             CMultSec *pms = ms->_parentMS; // tn->owner.value<CMultSec*>();
-            ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
-            auto own = tn->owner();
-
-            _tree.auto_draw(false);
-            _list.auto_draw(false);
-
-			CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(fb.file()), false	);
-            _tree.erase(tn);
-            populate(append  (own, newms) );
-            own.expend(true);
-
-            _list.clear();
-            populate_list_recur(pms);
-
-            _tree.auto_draw(true);
-            _list.auto_draw(true);
+            _Pr._cp._pSeqNoUsed->AddMultiSec(ms);
+			_Pr._cp.AddSeqFromFile	( pms, nana::charset(fb.file()), false	);
+            Refresh(tn->owner());
+            //_tree.auto_draw(false);
+            //_tree.erase(tn);
+            //Refresh(appendNewNode  (own, newms) );
+            //_tree.auto_draw(true);
         });
-        menu.append(STR("Replace/reload from directory..."), [&](nana::gui::menu::item_proxy& ip) 
+        menu.append(STR("Replace from directory..."), [&](nana::gui::menu::item_proxy& ip) 
         {
 			auto tn= _tree.selected();
             if (tn->owner()->owner().empty())
@@ -448,7 +446,7 @@ public:
 
 			CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(fb.file()), true	);
             _tree.erase(tn);
-            populate(append  (own, newms) );
+            populate(appendNewNode  (own, newms) );
             own.expend(true);
 
             _list.clear();
@@ -513,7 +511,7 @@ public:
             _list.auto_draw(false);
 
             _tree.erase(tn);
-            populate(append (_tree.find(STR("Dont use") ), ms ));
+            populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
             own.select(true).expend(true);
         });
         menu.append(STR("Paste the sequences"),[&](nana::gui::menu::item_proxy& ip) 
@@ -534,6 +532,9 @@ public:
             _list.clear();
             populate_list_recur(tn);
             tn.select(true).expend(true);
+
+            _tree.auto_draw(false);
+            _list.auto_draw(false);
         });
 
         menu.append_splitter();
@@ -565,7 +566,7 @@ public:
             _list.auto_draw(false);
 
             _tree.erase(tn);
-            populate(append (_tree.find(STR("Dont use") ), ms ));
+            populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
 
             own.select(true).expend(true);
 
@@ -1101,7 +1102,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
         CMultSec *ms=_Pr._cp._pSeqTree.get();
         for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
-			populate( insert( ms->CurMSec())) ;
+			populate( AddRoot( ms->CurMSec())) ;
 
         populate_list_recur(_Pr._cp._pSeqTree.get());
 
