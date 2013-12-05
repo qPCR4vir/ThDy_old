@@ -970,7 +970,7 @@ int		CMultSec::AddFromFileODT (ifstream &ifileODT){return 0;}
 int		CMultSec::AddFromFileODS (ifstream &ifileODS){return 0;}
 
 CSec	*CMultSec::Idem ( CSec &sec )   // ----------------  CMultSec::            NotIdem  --- busqueda trivial de sec identicas -------------
-{	if ( 100 < _MaxTgId ) return nullptr ;
+{	if ( _MaxTgId >= 100  ) return nullptr ;
 	long Lcs=sec.Len() ;											// len of candidate sec (to be in the list, with MaxId)
 	long MaxErCS= long(ceil(float(Lcs*(100.0f-_MaxTgId) ) / 100.0f));					// min of not Id base to be in the list
 	for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec de esta misma ms
