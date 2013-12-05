@@ -18,130 +18,163 @@ using namespace ParamGUIBind;
 
 class ThDyNanaForm ;
 
-class FindSondenPage : public CompoWidget
-{public: 
-    FindSondenPage(ThDyNanaForm& tdForm);
-    ThDyProject &_Pr;
-    FilePickBox nTsec_;
-    BindGroup   _findSond;
-    nana::gui::NumUnitUpDown _Gmin, _Gmax, _Tmmin, _Tmmax, _Lengthmin, _Lengthmax,
-                             _MaxG, _MinTm, _MinG, _MaxTm, _MinSelfG, _MaxSelfTm, 	
-                             numUpDw_MinTargCov, numUpDw_MaxTargCov ;	
-    nana::gui::button        _design, _compare;
-    nana::gui::checkbox      chkBx_unique, chkBx_common;
-    void SetDefLayout   () override
-    {
-      _DefLayout=  
-        "vertical      gap=2                 \n\t"
-	    "    <weight=10     >       \n\t "
-        "    <weight=195 gap=8 <weight=5><weight=350 vertical <weight=100 <weight=320 Sonde  grid[3,4]>>     \n\t "
-        "                                           <TargCov    grid[2,2]                            >     \n\t "
-        "                                           <weight=40 <   <><weight=300   gap=20 Run>       > >    \n\t "
-        "                                           <weight=10>                                 \n\t "
-        "                      >   <><weight=230 gap=1 vertical  options>    >   \n\t "
-	    "    <weight=23   NonTargSeq >       \n\t "
-        ;
-
-       nTsec_.ResetLayout(100);
-
-         _Gmin.ResetLayout     (60,45,55 );   _Gmax.ResetLayout     (1,40,50 );
-        _Tmmin.ResetLayout     (60,45,55 );  _Tmmax.ResetLayout     (1,40,50 );
-        _Lengthmin.ResetLayout (60,45,55 );  _Lengthmax.ResetLayout (1,40,50 );
- 
-        _MaxG.ResetLayout     (110,45,50 );   
-        _MinTm.ResetLayout    (110,45,50 );   
-        _MinG.ResetLayout     (110,45,50 );   
-
-        _MaxTm.ResetLayout     (110,45,50 );   
-        _MinSelfG.ResetLayout  (110,45,50);   
-        _MaxSelfTm.ResetLayout (110,45,50 );  
-
-        numUpDw_MinTargCov.ResetLayout (115,45,20 );  
-        numUpDw_MaxTargCov.ResetLayout (115,45,20 );  
-
-
-    }
-    void AsignWidgetToFields() override
-    {
-	     /// Use room (wd,w,h) in combination with a <Table grid[W,H]>
-        _place.field("NonTargSeq" )<<nTsec_;
-	    _place.field("Sonde" )     << "Probes"     << "Min."    << "   Max."   
-                                   <<  _place.room(_Gmin ,2,1) << _Gmax
-                                   <<  _place.room(_Tmmin,2,1) << _Tmmax
-                                   <<  _place.room(_Lengthmin,2,1) << _Lengthmax  ;
-        _place.field("TargCov" )   << chkBx_unique << numUpDw_MinTargCov       
-                                   << chkBx_common << numUpDw_MaxTargCov     	;
-        _place.field("Run"     )   << _design	<< _compare	;
-                 
-	    _place.field("options" )   << "Probe-target"    <<  _MaxG     << _MinTm
-                                   << "Probe-non-target"<<  _MinG     << _MaxTm
-                                   << "Probe-self"      <<  _MinSelfG << _MaxSelfTm  
-                                    ;    
-
-    }
-
-    void Run_Design(bool design)
-    {
-        _Pr._SdDes._design	 = design ;		
-		 
-		try{                                   
-		    _Pr._SdDes._cp.Actualice_NNp();  
-            _Pr.Run(_Pr._SdDes);	 //     _Pr._SdDes.Run ();	
-		}
-		catch ( std::exception& e)
-		{ 
-            (nana::gui::msgbox(*this,STR("Error during Sonde Design !"), nana::gui::msgbox::button_t::ok)<<e.what()) (  ) ;
-		    return;
-		}	 	        		 
-    }   
-};
-
-class MplexPCR : public CompoWidget
-{public: 
+class SetupPage : public CompoWidget
+{
     ThDyProject        &_Pr;
-    BindGroup          _mPCR;
-    nana::gui::button  _do_mPCR;
-    FilePickBox        _PrimersFilePCR;
+    FilePickBox         results_    { *this, STR("Results:") } ,
+                        targets_    { *this, STR("Targets:") }  ;
+    nana::gui::checkbox chkBx_RecDir{ *this, STR("RecurDir") };
+    FilePickBox         nTsec_      {*this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt")};
+    FilePickBox         PCRfiltre_  { *this, STR("PCR-filtre:")};
+    FilePickBox        _PrimersFilePCR{*this, STR("Primers seq. file:") };
+    FilePickBox        _NNParamFile {*this, STR("NN param:")};
 
-    MplexPCR (ThDyNanaForm& tdForm);
+    nana::gui::combox               comBoxSalMeth   {*this}, 
+                                    comBoxTAMeth    {*this};
+    nana::gui::NumUnitUpDown        numUpDowTgConc  {*this, STR("Target Conctr:"      ), 50, 0.1 , 1000,  "µM"}, 
+                                    numUpDowSalConc {*this, STR("Salt Conc [Cations]:"), 50, 0.1 , 10000000,"µM"} , 
+                                    numUpDowTa      {*this, STR("Temp. Anneling:"     ), 55,  40 , 75,    "°C"},  
+                                    numUpDowSdConc  {*this, STR("Sonde Conctr:"       ), 50, 0.1 , 1000,  "µM"}  ;
+    nana::gui::button  set_def_proj_    {*this,STR("Set as Def. project") };
+    BindGroup          _setup;
+
+public:     
+    OpenSaveBox         proj_       { *this, STR("Project:") };
+    SetupPage (ThDyNanaForm& tdForm);
 
     void SetDefLayout   () override
     {
-        _DefLayout= "vertical      gap=2             \n\t"
-	        "  <_PrimersFilePCR weight=23>       \n\t "
-            "  <<><_do_mPCR  vertical min=50 max=200><> weight=50>       \n\t "
-            //"  <wieght=300 <vertical min=50 max=200 buttons> <> <weight=80 checks>>   \n\t"
-
+        _DefLayout =
+	"vertical      gap=2         	\n\t"
+	"   <weight=300 <weight=2><vertical min=50    max=800 gap=2 	\n\t"
+	"                              		                    <<Project     >      weight=23 >      		\n\t"
+	"		                                                  <<Results     >      weight=23 >      		\n\t"
+	"	                                                      <    Seq                  weight=125     gap=2   vertical  >       	\n\t"
+	"	 	                                                 <<NN_param  >     weight=23 >      		\n\t"
+	"		                                                  <weight=100  <weight=2>  <vertical min=50 max=200 gap=2 buttons>  <>  >	\n\t"
+	"                                                                                                                                                                                                     >      <weight=120 checks>   	>	\n\t"
+	"			\n\t"
+	"   < weight=46  gap=2  <>  <vertical ConcST   weight=200  gap=2>  	\n\t"
+	"                                         <>  <vertical ConcSaltTa   weight=230  gap=2>   	\n\t"
+	"                                         <>  <vertical   weight=250 <SMeth gap=2>          		\n\t"
+	"		                                                                                <AMeth gap=2>   > 	\n\t"
+	"                                         <>  >      		\n\t"
+	"	\n\t"
+    
             ;
+        nTsec_        .ResetLayout(100);
+        PCRfiltre_    .ResetLayout (60 );
+
+        numUpDowSdConc.ResetLayout (80 );  
+        numUpDowTa.    ResetLayout (90 );  
+        numUpDowTgConc.ResetLayout (80 );
+        numUpDowSalConc.ResetLayout (110 );
+
     }
     void AsignWidgetToFields() override
     {
-	    _place.field("_PrimersFilePCR" )<<_PrimersFilePCR;
-	    _place.field("_do_mPCR"         )<<_do_mPCR;
-	    //_place.field("checks"          )<<"save result";
+      _setup<< link( _Pr._cp._OutputFile      ,       results_  )
+            << link( _Pr._cp._InputTargetFile ,       targets_  )
+            << link( _Pr._cp._RecurDir      ,       chkBx_RecDir)
+            //<< link( _Pr._cp._NonTargets ,       targets_  )
+            << link( _Pr._cp._PCRfiltrPrFile  ,       PCRfiltre_)
+            << link( _Pr._mPCR._InputSondeFile , _PrimersFilePCR)            
+            << link( _Pr._cp._InputNNFile       , _NNParamFile  )
+            << link( _Pr._cp.ConcSd	    ,       numUpDowSdConc  )
+            << link( _Pr._cp.ConcSalt	     , numUpDowSalConc  )
+            << link( _Pr._cp.ConcTg	    ,       numUpDowTgConc  )
+            << link( _Pr._cp.Ta	            ,       numUpDowTa  )        
+            << link( _Pr._cp.SaltCorr	  ,      comBoxSalMeth  )        
+            << link( _Pr._cp.TAMeth       ,       comBoxTAMeth  )        
+          ;
+            
+        _place.field("Project"  )    <<  proj_        ;
+	    _place.field("Results" )     <<  results_   ;
+        _place.field("Seq"      )    <<  targets_ << chkBx_RecDir <<  nTsec_  << PCRfiltre_<<_PrimersFilePCR        ;
+	    _place.field("NN_param" )    << _NNParamFile  ;
+	    _place.field("buttons"  )    <<  set_def_proj_;
+	    _place.field("checks"   )    << "save result" ;
+
+
+	    //_place.field("PCRfiltre" )      << PCRfiltre_   ;
+	    _place.field("ConcST"  )        << numUpDowSdConc   
+                                        << numUpDowTgConc ;
+	    _place.field("ConcSaltTa"  )    << numUpDowSalConc 
+                                        << numUpDowTa ;
+	    _place.field("SMeth"  )         << " Salt Correct. Method:"	   <<  comBoxSalMeth;
+	    _place.field("AMeth"  )         << " ThDy Align. Method"       <<  comBoxTAMeth ;
+    }
+    void AddMenuItems(nana::gui::menu& menu)
+    {
+        menu.append(STR("New"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
+        menu.append(STR("Open...")  , [&](nana::gui::menu::item_proxy& ip)  { proj_.open(proj_.FileName()); OpenProj() ;  } );
+        menu.append(STR("Save...")  , [&](nana::gui::menu::item_proxy& ip)  { proj_.save(proj_.FileName()); SaveProj() ;  } );
+        menu.append_splitter();
+        menu.append(STR("Set as deffault") , [&](nana::gui::menu::item_proxy& ip)  {;  });
+        menu.append(STR("Restore deffault"), [&](nana::gui::menu::item_proxy& ip)  {;  });
+        menu.append_splitter();
+        menu.append(STR("Exit"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
+
     }
 
-    private: void buttPCR_Click				( ) //	  Run      _IPrgPar_mPCR
-			 {	 			
-		           try{                                   
-		                    _Pr._mPCR._cp.Actualice_NNp();  
- 		                    _Pr.Run(_Pr._mPCR);	
-		           }
-		           catch ( std::exception& e)
-		           { cerr<< e.what()    ;
-                    (nana::gui::msgbox(*this,STR("Error during multiplex PCR analis !"), 
-                                                         nana::gui::msgbox::button_t::ok)   <<e.what()) (  ) ;
-		            return;
-		           }
-		//ShowResTbl(_Pr._mPCR._rtbl );
-		//_Pr._uArr._rtbl = nullptr;
+    void LoadProject(std::string file)
+	{
+		try
+		{
+			_Pr.load(   file );
+			 proj_.FileName(nana::charset ( file  ));
+ 		}
+		catch (std::exception& e)
+		{
+			string caption = "Error trying to load the project file:";
+			string message = file         + "\n\n"
+							+  e.what()   + "\n\n"
+							+  "Use the Default project?"   + "\n\n"
+							+ "\tYes:  The default project file will be loaded. " + "\n"
+							+ "\tNo:  Select a project file to be loaded. " + "\n"
+							+ "\tCancel: Use the values correctly loaded mixed with the\t\t\t previus existing. "
+							;
+			switch ( (nana::gui::msgbox(  *this, nana::charset (caption) , nana::gui::msgbox::yes_no_cancel )
+                            <<  message
+                        ).icon(nana::gui::msgbox::icon_error) .show (  ))
+			{
+				case  nana::gui::msgbox::pick_yes :  
+					    _Pr.load_defPr();
+                        proj_.FileName(nana::charset ( _Pr.ProjetFile ()  ));
+					return;
 
-		//ShowResTbl(_Pr._mPCR._rtbl_self );
-		//_Pr._mPCR._rtbl_self = nullptr;
+				case  nana::gui::msgbox::pick_no:    
+                        proj_.open (nana::charset (file));
+                        if ( !  proj_.Canceled() )
+                                LoadProject(nana::charset (  proj_.FileName()));
+                        return;
+			}
+		}
+	}
 
-		    }
+    void  OpenProj()
+	{	 
+         if(  proj_.Canceled () )  return;
+         LoadProject ( nana::charset ( proj_.FileName() )) ;  
 
-
+      //try {
+      //          load (); 
+      //}
+      //  catch(std::exception& e)
+      //  {
+      //       (nana::gui::msgbox(*this, STR("Error during project loading: ")) /*.icon(msgbox::icon_information)*/
+      //                           <<STR("\nIn windows:\n\t ") << Titel()
+      //                           <<STR("\nIn project:\n\t ") << proj_.FileName()
+      //                           <<STR("\nException :\n\t ") << e.what() 
+      //       ).show();
+      //  }
+      ////tmCalc_._TmCalc.UpDateForm();
+	}
+    void  SaveProj()
+	{	 
+        if(  proj_.Canceled () )  return;
+        _Pr.save (nana::charset ( proj_.FileName())); 
+	}
 };
 
 class SeqExpl : public CompoWidget
@@ -367,6 +400,18 @@ class SeqExpl : public CompoWidget
     }
 
 public:
+    SeqExpl(ThDyNanaForm& tdForm);
+    void ShowProbes_mPCR()
+    {
+        auto idp = _Pr._cp.MaxTgId.get();
+        _Pr._cp.MaxTgId.set(100);
+        CMultSec *ms= _Pr._cp.AddSeqFromFile	(_Pr._mPCR._probesMS.get() , _Pr._cp._OutputFile.get() + ".sonden.fasta", false	);
+        _Pr._cp.MaxTgId.set(idp);
+
+        auto probNode = _tree.find(nana::charset(_Pr._mPCR._probesMS->_name));
+        Refresh(probNode).expend(true).select(true);
+        show();
+    }
     void AddMenuItems(nana::gui::menu& menu)
     {
         menu.append_splitter();
@@ -584,14 +629,157 @@ public:
         });
 
     }
-    SeqExpl(ThDyNanaForm& tdForm);
+    void InitTree()
+    {
+        _list.auto_draw(false);
+        _tree.auto_draw(false);
 
+        CMultSec *ms=_Pr._cp._pSeqTree.get();
+        for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
+			populate( AddRoot( ms->CurMSec())) ;
+
+        populate_list_recur(_Pr._cp._pSeqTree.get());
+
+    }
+};
+
+class FindSondenPage : public CompoWidget
+{    
+    ThDyProject &_Pr;
+    BindGroup   _findSond;
+    nana::gui::NumUnitUpDown _Gmin     {*this, STR("G :"    ), -5, -10 , 10,"kcal/mol"},   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
+                             _Tmmin    {*this, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {*this, STR(""), 63,  45, 75, "°C"      }, 
+                             _Lengthmin{*this, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{*this, STR(""), 35,  15, 40, "nt"      },
+                             _MaxG     {*this, STR("Max G" ), 10, -10, 30, "kcal/mol" },  _MinTm   {*this, STR("Tm :"  ), 30,  10 , 60,"°C"}, 
+                             _MinG     {*this, STR("Min G" ), 15, -10 , 30,"kcal/mol" }, _MaxTm    {*this, STR("Max Tm"), 10, -10, 75, "°C"}, 
+                             _MinSelfG {*this, STR("Min G" ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{*this, STR("Max Tm"), 10, -10, 75, "°C"}, 	
+                             numUpDw_MinTargCov{ *this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%" }, 
+                             numUpDw_MaxTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" } ;
+
+    nana::gui::button        _design{*this, STR("Design !" )}, 
+                            _compare{*this, STR("Compare !")};
+    nana::gui::checkbox      chkBx_unique{*this, STR("Report unique probes, ")}, 
+                             chkBx_common{*this, STR("Report common probes, ")}, 
+                             chkBx_showFindedProbes{*this, STR("Show Finded Probes")};
+public: 
+    FindSondenPage(ThDyNanaForm& tdForm);
+    void SetDefLayout   () override
+    {
+      _DefLayout=  
+        "vertical      gap=2                 \n\t"
+	    "    <weight=10     >       \n\t "
+        "    <weight=195 gap=8 <weight=5><weight=350 vertical <weight=100 <weight=320 Sonde  grid[3,4]>>     \n\t "
+        "                                           <TargCov    grid[2,2]                            >     \n\t "
+        "                                           <weight=40 <   <><weight=300   gap=20 Run>       > >    \n\t "
+        "                                           <weight=10>                                 \n\t "
+        "                      >   <><weight=230 gap=1 vertical  options>    >   \n\t "
+        "    <weight=23   <weight=140><Output>   <> >       \n\t "
+        ;
+
+
+         _Gmin.ResetLayout     (60,45,55 );   _Gmax.ResetLayout     (1,40,50 );
+        _Tmmin.ResetLayout     (60,45,55 );  _Tmmax.ResetLayout     (1,40,50 );
+        _Lengthmin.ResetLayout (60,45,55 );  _Lengthmax.ResetLayout (1,40,50 );
+ 
+        _MaxG.ResetLayout     (110,45,50 );   
+        _MinTm.ResetLayout    (110,45,50 );   
+        _MinG.ResetLayout     (110,45,50 );   
+
+        _MaxTm.ResetLayout     (110,45,50 );   
+        _MinSelfG.ResetLayout  (110,45,50);   
+        _MaxSelfTm.ResetLayout (110,45,50 );  
+
+        numUpDw_MinTargCov.ResetLayout (115,45,20 );  
+        numUpDw_MaxTargCov.ResetLayout (115,45,20 );  
+    }
+    void AsignWidgetToFields() override
+    {
+        _findSond << link (   _Pr._SdDes.G_sig ,            _MaxG     )    
+                  << link (   _Pr._SdDes.Tm_sig ,           _MinTm    )
+                  << link (   _Pr._SdDes.MinSd_nTgG,        _MinG     )
+                  << link (   _Pr._SdDes.MaxSd_nTgTm,       _MaxTm    )
+                  << link (   _Pr._SdDes.MinSelfG,          _MinSelfG )
+                  << link (   _Pr._SdDes.MaxSelfTm,         _MaxSelfTm)
+                  << link (   _Pr._SdDes.sL.G,        _Gmin,_Gmax     )
+                  << link (   _Pr._SdDes.sL.T,       _Tmmin,_Tmmax    )
+                  << link (  _Pr._SdDes.sL.L,    _Lengthmin,_Lengthmax)
+                  << link (  _Pr._SdDes.common,           chkBx_common)
+                  << link (  _Pr._SdDes.unique,           chkBx_unique)
+                  << link ( _Pr._SdDes.Coverage,  numUpDw_MinTargCov,  numUpDw_MaxTargCov)	
+
+            ;
+        
+        /// Use room (wd,w,h) in combination with a <Table grid[W,H]>
+	    _place.field("Sonde" )     << "Probes" << "Min."         << "   Max."   
+                                   <<    _place.room(_Gmin ,2,1) <<   _Gmax
+                                   <<    _place.room(_Tmmin,2,1) <<   _Tmmax
+                                   << _place.room(_Lengthmin,2,1)<<   _Lengthmax  ;
+        _place.field("TargCov" )   << chkBx_unique << numUpDw_MinTargCov       
+                                   << chkBx_common << numUpDw_MaxTargCov     	;
+        _place.field("Run"     )   << _design	<< _compare	;
+                 
+	    _place.field("options" )   << "Probe-target"    <<  _MaxG     << _MinTm
+                                   << "Probe-non-target"<<  _MinG     << _MaxTm
+                                   << "Probe-self"      <<  _MinSelfG << _MaxSelfTm  
+                                    ;    
+        _place.field("Output"  )   << chkBx_showFindedProbes;
+
+    }
+
+    void Run_Design(bool design);
+};
+
+class MplexPCR : public CompoWidget
+{public: 
+    ThDyProject        &_Pr;
+    nana::gui::button  _do_mPCR{*this, STR(" PCR ! ")};
+    BindGroup          _mPCR;
+
+    MplexPCR (ThDyNanaForm& tdForm);
+
+    void SetDefLayout   () override
+    {
+        _DefLayout= "vertical      gap=2             \n\t"
+	        "  <_PrimersFilePCR weight=23>       \n\t "
+            "  <<><_do_mPCR  vertical min=50 max=200><> weight=50>       \n\t "
+            //"  <wieght=300 <vertical min=50 max=200 buttons> <> <weight=80 checks>>   \n\t"
+
+            ;
+    }
+    void AsignWidgetToFields() override
+    {
+       //_mPCR<< /*link(   _Pr._mPCR._InputSondeFile , _PrimersFilePCR)*/
+
+       //     ;
+
+	    _place.field("_do_mPCR"         )<<_do_mPCR;
+	    //_place.field("checks"          )<<"save result";
+    }
+
+    private: void buttPCR_Click				( ) //	  Run      _IPrgPar_mPCR
+			 {	 			
+		           try{                                   
+		                    _Pr._mPCR._cp.Actualice_NNp();  
+ 		                    _Pr.Run(_Pr._mPCR);	
+		           }
+		           catch ( std::exception& e)
+		           { cerr<< e.what()    ;
+                    (nana::gui::msgbox(*this,STR("Error during multiplex PCR analis !"), 
+                                                         nana::gui::msgbox::button_t::ok)   <<e.what()) (  ) ;
+		            return;
+		           }
+		//ShowResTbl(_Pr._mPCR._rtbl );
+		//_Pr._uArr._rtbl = nullptr;
+
+		//ShowResTbl(_Pr._mPCR._rtbl_self );
+		//_Pr._mPCR._rtbl_self = nullptr;
+
+		    }
 };
 
 class TmCalcPage : public CompoWidget
-{public: 
+{
     ThDyProject             &_Pr;
-    BindGroup              _TmCalc;
     nana::gui::textbox          sec_                {*this},  
                                 sec2align_          {*this},  
                                 txtBx_ResultSec     {*this},  
@@ -612,6 +800,8 @@ class TmCalcPage : public CompoWidget
                                 G_min_Dw{*this},   G_Dw{*this},  G_max_Dw{*this} ,
                                 G_min_In{*this},   G_In{*this},  G_max_In{*this} ;
 
+    BindGroup              _TmCalc;
+public:     
     TmCalcPage (ThDyNanaForm& tdForm);
 
     void SetDefLayout   () override
@@ -708,157 +898,23 @@ class TmCalcPage : public CompoWidget
 
 };
 
-class SetupPage : public CompoWidget
-{public: 
-    ThDyProject        &_Pr;
-    FilePickBox        /*  targets_    { *this, STR("Targets:") }, */
-                        results_    { *this, STR("Results:") }/*, 
-                        PCRfiltre_  { *this, STR("PCR-filtre:")}*/;
-    OpenSaveBox                     proj_       { *this, STR("Project:") };
-    nana::gui::combox               comBoxSalMeth   {*this}, 
-                                    comBoxTAMeth    {*this};
-    nana::gui::NumUnitUpDown        numUpDowTgConc  {*this, STR("Target Conctr:"      ), 50, 0.1 , 1000,  "µM"}, 
-                                    numUpDowSalConc {*this, STR("Salt Conc [Cations]:"), 50, 0.1 , 10000000,"µM"} , 
-                                    numUpDowTa      {*this, STR("Temp. Anneling:"     ), 55,  40 , 75,    "°C"},  
-                                    numUpDowSdConc  {*this, STR("Sonde Conctr:"       ), 50, 0.1 , 1000,  "µM"}  ;
-    nana::gui::button  set_def_proj_    {*this,STR("Set as Def. project") };
-    FilePickBox        _NNParamFile     {*this, STR("NN param:")};
-    BindGroup          _setup;
-
-    SetupPage (ThDyNanaForm& tdForm);
-
-    void SetDefLayout   () override
-    {
-        _DefLayout= 
-    "vertical      gap=2             	\n\t"
-	"	       <<Project         max=800>     weight=23 >      	\n\t"
-	"	        <<Results        max=800>     weight=23 >      	\n\t"
-	"	        <<NN_param max=800>     weight=23 >      	\n\t"
-	"	\n\t"
-	"	   <weight=100 <weight=2><vertical min=50 max=200 gap=2 buttons> <> <weight=80 checks>>   	\n\t"
-	"	\n\t"
-	"	        < weight=46  gap=2 <><vertical ConcST   weight=200  gap=2>  <>               	\n\t"
-	"	                              <vertical ConcSaltTa   weight=230  gap=2>   <>       	\n\t"
-	"	                                   <vertical   weight=250 <SMeth gap=2>          	\n\t"
-	"	                                             <AMeth gap=2> > <>  >      	\n\t"
-	"	 	\n\t"
-	"	\n\t"
-            ;
-        //PCRfiltre_    .ResetLayout (60 );
-        numUpDowSdConc.ResetLayout (80 );  
-        numUpDowTa.    ResetLayout (90 );  
-        numUpDowTgConc.ResetLayout (80 );
-        numUpDowSalConc.ResetLayout (110 );
-
-    }
-    void AsignWidgetToFields() override
-    {
-	    _place.field("Project" )        << proj_   ;
-	    _place.field("buttons"  )<<set_def_proj_;
-	    _place.field("NN_param" )<<_NNParamFile;
-	    _place.field("checks"   )<<"save result";
-	    //_place.field("PCRfiltre" )      << PCRfiltre_   ;
-	    _place.field("Results" )        << results_   ;
-	    _place.field("ConcST"  )        << numUpDowSdConc   
-                                        << numUpDowTgConc ;
-	    _place.field("ConcSaltTa"  )    << numUpDowSalConc 
-                                        << numUpDowTa ;
-	    _place.field("SMeth"  )         << " Salt Correct. Method:"	   <<  comBoxSalMeth;
-	    _place.field("AMeth"  )         << " ThDy Align. Method"       <<  comBoxTAMeth ;
-    }
-    void AddMenuItems(nana::gui::menu& menu)
-    {
-        menu.append(STR("New"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
-        menu.append(STR("Open...")  , [&](nana::gui::menu::item_proxy& ip)  { proj_.open(proj_.FileName()); OpenProj() ;  } );
-        menu.append(STR("Save...")  , [&](nana::gui::menu::item_proxy& ip)  { proj_.save(proj_.FileName()); SaveProj() ;  } );
-        menu.append_splitter();
-        menu.append(STR("Set as deffault") , [&](nana::gui::menu::item_proxy& ip)  {;  });
-        menu.append(STR("Restore deffault"), [&](nana::gui::menu::item_proxy& ip)  {;  });
-        menu.append_splitter();
-        menu.append(STR("Exit"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
-
-    }
-
-    void LoadProject(std::string file)
-	{
-		try
-		{
-			_Pr.load(   file );
-			 proj_.FileName(nana::charset ( file  ));
- 		}
-		catch (std::exception& e)
-		{
-			string caption = "Error trying to load the project file:";
-			string message = file         + "\n\n"
-							+  e.what()   + "\n\n"
-							+  "Use the Default project?"   + "\n\n"
-							+ "\tYes:  The default project file will be loaded. " + "\n"
-							+ "\tNo:  Select a project file to be loaded. " + "\n"
-							+ "\tCancel: Use the values correctly loaded mixed with the\t\t\t previus existing. "
-							;
-			switch ( (nana::gui::msgbox(  *this, nana::charset (caption) , nana::gui::msgbox::yes_no_cancel )
-                            <<  message
-                        ).icon(nana::gui::msgbox::icon_error) .show (  ))
-			{
-				case  nana::gui::msgbox::pick_yes :  
-					    _Pr.load_defPr();
-                        proj_.FileName(nana::charset ( _Pr.ProjetFile ()  ));
-					return;
-
-				case  nana::gui::msgbox::pick_no:    
-                        proj_.open (nana::charset (file));
-                        if ( !  proj_.Canceled() )
-                                LoadProject(nana::charset (  proj_.FileName()));
-                        return;
-			}
-		}
-	}
-
-    void  OpenProj()
-	{	 
-         if(  proj_.Canceled () )  return;
-         LoadProject ( nana::charset ( proj_.FileName() )) ;  
-
-      //try {
-      //          load (); 
-      //}
-      //  catch(std::exception& e)
-      //  {
-      //       (nana::gui::msgbox(*this, STR("Error during project loading: ")) /*.icon(msgbox::icon_information)*/
-      //                           <<STR("\nIn windows:\n\t ") << Titel()
-      //                           <<STR("\nIn project:\n\t ") << proj_.FileName()
-      //                           <<STR("\nException :\n\t ") << e.what() 
-      //       ).show();
-      //  }
-      ////tmCalc_._TmCalc.UpDateForm();
-	}
-    void  SaveProj()
-	{	 
-        if(  proj_.Canceled () )  return;
-        _Pr.save (nana::charset ( proj_.FileName())); 
-	}
-};
-
 class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyProject
-{public: 
+{
     nana::gui::tabbar<nana::string> tabbar_     {*this};
-    //FilePickBox                   /*  targets_    { *this, STR("Targets:") }, */
-    //                                results_    { *this, STR("Results:") }/*, 
-    //                                PCRfiltre_  { *this, STR("PCR-filtre:")}*/;
-    //nana::gui::checkbox             chkBx_RecDir{ *this, STR("RecurDir") };
-    FindSondenPage                  findSond_   {*this};
-    TmCalcPage                      tmCalc_     {*this}; 
     SetupPage                       setup_      {*this};
+    FindSondenPage                  findSond_   {*this};
     MplexPCR                        mPCR_       {*this};
-    SeqExpl                         mExpl_      {*this};
-    BindGroup                       _commPP     ;
+    TmCalcPage                      tmCalc_     {*this}; 
     nana::gui::NumUnitUpDown        numUpDwMaxTgId  {*this, STR("Max. ident.:"        ), 99,  50 , 100 ,   "%"}, 
                                     numUpDw_TgBeg   {*this, STR("Beg.:"               ),  0,   0 , 100000,"nt"},    /// rev !!
                                     numUpDw_TgEnd   {*this, STR("End.:"               ),  0,   0 , 100000,"nt"},    /// rev !!	
                                     numUpDw_SLenMin {*this, STR("Min.Len.:"           ),  0,   0 , 100000,"nt"},
                                     numUpDw_SLenMax {*this, STR("Max.Len.:"           ),  0,   0 , 100000,"nt"};
+    BindGroup                       _commPP     ;
 
-   ThDyNanaForm (int argc, char *argv[])
+public:    
+    SeqExpl                         mExpl_      {*this};
+    ThDyNanaForm (int argc, char *argv[])
                   :nana::gui::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
                    EditableForm    (nullptr, *this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")) 
    {
@@ -885,25 +941,17 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 		    }
     	catch ( std::exception& e )      // Por ejemplo cuando no existe Def Project: 1ra vez que se usa el prog.
 		{   
-            (nana::gui::msgbox(*this,STR("Error during initial project load !\n\t"), nana::gui::msgbox::button_t::ok)
-                               << e.what()    << "\n\n A new Default Project will be created. "
+            (nana::gui::msgbox(*this, STR("Error during initial project load !\n\t"), nana::gui::msgbox::button_t::ok)
+                             .icon(nana::gui::msgbox::icon_information )
+                            << e.what()    << "\n\n A new Default Project will be created. "
                           ).show (  ) ;
 		    save_defPr() ; 					                
         }
 
-		//this->comBoxTAMeth->SelectedIndex  = SMStLucia;     
-		//_seqExpl = gcnew SeqExpl(this->_Pr);
+		//this->comBoxTAMeth->SelectedIndex  = SMStLucia;    
 
-
-        _commPP  /*<< link( _cp._InputTargetFile ,       targets_  )*/
-                 /*<< link( _cp._RecurDir      ,       chkBx_RecDir)*/
-                 //<< link( _cp._OutputFile      ,       results_  )
-                 /*<< link( _cp._PCRfiltrPrFile  ,       PCRfiltre_)*/
-                 << link( _cp.MaxTgId                 ,       numUpDwMaxTgId  )
-                 << link( _cp.SecLim         , numUpDw_TgBeg,  numUpDw_TgEnd  )
-                 << link( _cp.SecLenLim   ,  numUpDw_SLenMin, numUpDw_SLenMax )
-            ;
- 
+        CopyStructFromDir();
+        mExpl_.InitTree();
 
         InitMyLayout();
 
@@ -935,10 +983,14 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     }
     void AsignWidgetToFields() override
     {
+        _commPP  << link( _cp.MaxTgId                 ,       numUpDwMaxTgId  )
+                 << link( _cp.SecLim         , numUpDw_TgBeg,  numUpDw_TgEnd  )
+                 << link( _cp.SecLenLim   ,  numUpDw_SLenMin, numUpDw_SLenMax )
+            ;
+ 
 	    _place.field("PagesTag")        << tabbar_  ;
 	    _place.field("TargetsOptions" ) << numUpDwMaxTgId<<   numUpDw_TgBeg << numUpDw_TgEnd << numUpDw_SLenMin << numUpDw_SLenMax;
 	    _place.field("Firma"  )         <<  "INNT - FLI :       ArielVina.Rodriguez@fli.bund.de"
-
                                 ;
     }                                        
     void add_page(widget& w)
@@ -953,51 +1005,55 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     }         
 };
 
+   SetupPage::SetupPage          (ThDyNanaForm& tdForm)
+        : _Pr           (tdForm), 
+          CompoWidget  (tdForm, STR("Setup"), STR("Setup.lay.txt"))
+          /*,
+          set_def_proj_(*this,STR("Set as Def. project") ),
+          _NNParamFile (*this, STR("NN param:") )*/
+    {
+        InitMyLayout();
+        SelectClickableWidget( set_def_proj_);
+        SelectClickableWidget( *this);
+
+        proj_.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
+        proj_.Open.make_event	<nana::gui::events::click> ([&](){ OpenProj() ;} );
+		proj_.Save.make_event	<nana::gui::events::click> ([&](){ SaveProj() ;} );
+
+
+    }
+   SeqExpl::SeqExpl              (ThDyNanaForm& tdForm)
+        : _Pr             (tdForm), 
+          CompoWidget     (tdForm, STR("Seq Explorer"), STR("SeqExpl.lay.txt"))
+    {
+        InitMyLayout();
+        SelectClickableWidget( _tree);
+        SelectClickableWidget( *this);
+        _tree.checkable(true);
+        _list.checkable(true);
+        _list.append_header(STR("Name")  , 120);
+        _list.append_header(STR("Lenght"), 50);
+        _list.append_header(STR("Tm °C") , 60);
+        _list.append_header(STR("Deg")   , 50);
+        _list.append_header(STR("Description")   , 220);
+        _list.append_header(STR("Seq")   , 420);
+        _list.resolver(ListSeqMaker());
+
+
+        AddMenuItems(_menuProgram);
+        MakeResponive();
+
+        _tree.auto_draw(true);
+        _list.auto_draw(true);
+    }
    FindSondenPage::FindSondenPage(ThDyNanaForm& tdForm)
         : _Pr        (tdForm), 
-          CompoWidget(tdForm, STR("Find probes"), STR("FindSonden.lay.txt")),
-          nTsec_  (*this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt") ),
-          _Gmin   (*this, STR("G :"    ), -5, -10 , 10,"kcal/mol"),      _Gmax  (*this, STR(""), -1, -10, 10, "kcal/mol" ),
-          _Tmmin  (*this, STR("Tm :"   ), 57,  40 , 60,"°C"      ),     _Tmmax  (*this, STR(""), 63,  45, 75, "°C"       ),
-      _Lengthmin  (*this, STR("Length:"), 20,  15 , 35,"nt"      ), _Lengthmax  (*this, STR(""), 35,  15, 40, "nt"       ),
-      chkBx_unique(*this, STR("Report unique probes, ")),          chkBx_common (*this, STR("Report common probes, ")),
-          _MinG   (*this, STR("Min G" ), 15, -10 , 30,"kcal/mol"),    _MaxG  (*this, STR("Max G" ), 10, -10, 30, "kcal/mol" ),
-          _MinTm  (*this, STR("Tm :"  ), 30,  10 , 60,"°C"      ),   _MaxTm  (*this, STR("Max Tm"), 10, -10, 75, "°C"       ),
-         _MinSelfG(*this, STR("Min G" ), 10, -10 , 30,"kcal/mol"), _MaxSelfTm(*this, STR("Max Tm"), 10, -10, 75, "°C"       ),
-
-      numUpDw_MaxTargCov(*this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%"),
-      numUpDw_MinTargCov(*this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%"),
-          _design (*this, STR("Design !" )),  
-          _compare(*this, STR("Compare !"))
+          CompoWidget(tdForm, STR("Find probes"), STR("FindSonden.lay.txt"))
     {
                 background (0xAAAAAA);
 
-        //nTsec_._DefLayout=("vertical   <weight=1>    "
-        //         "  <weight=20 <weight=3><   vertical weight=100 <><label weight=15><>     ><weight=1>     "
-		      //   "			   <cbFL >       "
-		      //   "			   <pick weight=30>  "
-		      //   "			   <weight=3> 	>            <weight=2>    ");
-
-        _findSond << link (   _Pr._SdDes.G_sig ,            _MaxG     )    
-                  << link (   _Pr._SdDes.Tm_sig ,           _MinTm    )
-                  << link (   _Pr._SdDes.MinSd_nTgG,        _MinG     )
-                  << link (   _Pr._SdDes.MaxSd_nTgTm,       _MaxTm    )
-                  << link (   _Pr._SdDes.MinSelfG,          _MinSelfG )
-                  << link (   _Pr._SdDes.MaxSelfTm,         _MaxSelfTm)
-                  << link (   _Pr._SdDes.sL.G,        _Gmin,_Gmax     )
-                  << link (   _Pr._SdDes.sL.T,       _Tmmin,_Tmmax    )
-                  << link (  _Pr._SdDes.sL.L,    _Lengthmin,_Lengthmax)
-                  << link (  _Pr._SdDes.common,           chkBx_common)
-                  << link (  _Pr._SdDes.unique,           chkBx_unique)
-                  << link ( _Pr._SdDes.Coverage,  numUpDw_MinTargCov,  numUpDw_MaxTargCov)	
-
-
-
-                  //<< link (  _Pr._cp.  ,               nTsec_)
-            ;
-
+        chkBx_showFindedProbes.check(true);
         InitMyLayout();
-        SelectClickableWidget( nTsec_);
         SelectClickableWidget( *this);
 
         _design .make_event<nana::gui::events::click>([&]() 
@@ -1007,6 +1063,16 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         {
             Run_Design(false);  });  
      }
+   MplexPCR::MplexPCR            (ThDyNanaForm& tdForm)
+        : _Pr             (tdForm), 
+          CompoWidget     (tdForm, STR("MplexPCR"), STR("MplexPCR.lay.txt"))
+    {
+
+        _do_mPCR      .make_event <nana::gui::events::click>([&](){buttPCR_Click ();});
+
+        InitMyLayout();
+        SelectClickableWidget( *this);
+    }
    TmCalcPage::TmCalcPage        (ThDyNanaForm& tdForm)
         : _Pr           (tdForm), 
           CompoWidget  (tdForm, STR("Tm Calc"), STR("Tm Calc.lay.txt"))
@@ -1041,101 +1107,23 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         SelectClickableWidget( *this);
         SelectClickableWidget( error_);
     }
-   SetupPage::SetupPage          (ThDyNanaForm& tdForm)
-        : _Pr           (tdForm), 
-          CompoWidget  (tdForm, STR("Setup"), STR("Setup.lay.txt"))
-          /*,
-          set_def_proj_(*this,STR("Set as Def. project") ),
-          _NNParamFile (*this, STR("NN param:") )*/
+
+    void FindSondenPage::Run_Design(bool design)
     {
-      _setup<< link( _Pr._cp._InputNNFile       , _NNParamFile  )
-            << link( _Pr._cp.ConcSd	    ,       numUpDowSdConc  )
-            << link( _Pr._cp.ConcSalt	     , numUpDowSalConc  )
-            << link( _Pr._cp.ConcTg	    ,       numUpDowTgConc  )
-            << link( _Pr._cp.Ta	            ,       numUpDowTa  )        
-            << link( _Pr._cp.SaltCorr	  ,      comBoxSalMeth  )        
-            << link( _Pr._cp.TAMeth       ,       comBoxTAMeth  )        
-            ;
-
-        InitMyLayout();
-        SelectClickableWidget( set_def_proj_);
-        SelectClickableWidget( *this);
-
-        proj_.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
-        proj_.Open.make_event	<nana::gui::events::click> ([&](){ OpenProj() ;} );
-		proj_.Save.make_event	<nana::gui::events::click> ([&](){ SaveProj() ;} );
-
-
-    }
-   MplexPCR::MplexPCR            (ThDyNanaForm& tdForm)
-        : _Pr             (tdForm), 
-          CompoWidget     (tdForm, STR("MplexPCR"), STR("MplexPCR.lay.txt")),
-          _do_mPCR        (*this, STR(" PCR ! ") ),
-          _PrimersFilePCR (*this, STR("Primers seq. file:") )
-    {
-       _mPCR<< link(   _Pr._mPCR._InputSondeFile , _PrimersFilePCR)
-
-            ;
-
-        _do_mPCR      .make_event <nana::gui::events::click>([&](){buttPCR_Click ();});
-
-        InitMyLayout();
-        SelectClickableWidget( _PrimersFilePCR);
-        SelectClickableWidget( *this);
-    }
-   SeqExpl::SeqExpl              (ThDyNanaForm& tdForm)
-        : _Pr             (tdForm), 
-          CompoWidget     (tdForm, STR("Seq Explorer"), STR("SeqExpl.lay.txt"))
-    {
-        InitMyLayout();
-        SelectClickableWidget( _tree);
-        SelectClickableWidget( *this);
-        _tree.checkable(true);
-        _list.checkable(true);
-        _list.append_header(STR("Name")  , 120);
-        _list.append_header(STR("Lenght"), 50);
-        _list.append_header(STR("Tm °C") , 60);
-        _list.append_header(STR("Deg")   , 50);
-        _list.append_header(STR("Description")   , 220);
-        _list.append_header(STR("Seq")   , 420);
-        _list.resolver(ListSeqMaker());
-
-        _list.auto_draw(false);
-        _tree.auto_draw(false);
-
-        CMultSec *ms=_Pr._cp._pSeqTree.get();
-        for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
-			populate( AddRoot( ms->CurMSec())) ;
-
-        populate_list_recur(_Pr._cp._pSeqTree.get());
-
-        AddMenuItems(_menuProgram);
-        MakeResponive();
-
-        _tree.auto_draw(true);
-        _list.auto_draw(true);
-    }
-
-
-//using MIndex = unsigned char;
-//
-//const MIndex  Invalid_Menu_idx = std::numeric_limits<MIndex>::max();     // global ?? Could be another "logical" value, for example, just 100.
-// 
-//
-////struct SmartMIndex
-////{
-//// MIndex  i {Invalid_Menu_idx};       
-//// operator size_t(size_t idx)
-////  {
-////   if ( idx >= Invalid_Menu_idx )                                  // or if ( idx == npos)     ?????
-////           return SmartMIndex{} ;                                    // not found
-////   else
-////          return SmartMIndex{  MIndex (t_idx)}  ;                          
-////  }
-////
-////};
-////SmartMIndex Invalid_SMenu_idx;        // global ??
-
+        _Pr._SdDes._design	 = design ;		
+		 
+		try{                                   
+		    _Pr._SdDes._cp.Actualice_NNp();  
+            _Pr.Run(_Pr._SdDes);	 //     _Pr._SdDes.Run ();	
+            if (chkBx_showFindedProbes.checked()) 
+                ( dynamic_cast<ThDyNanaForm&>(_Pr)).mExpl_.ShowProbes_mPCR();
+ 		}
+		catch ( std::exception& e)
+		{ 
+            (nana::gui::msgbox(*this,STR("Error during Sonde Design !"), nana::gui::msgbox::button_t::ok)<<e.what()) (  ) ;
+		    return;
+		}	 	        		 
+    }   
 
 
 int main(int argc, char *argv[]) try
