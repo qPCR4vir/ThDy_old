@@ -93,7 +93,8 @@ class CParamString: public IParam
 
 	bool        loadValue (std::istream   &isPr) override   /// Descarta el Titel que queda detras del ultimo tab
 	                    {   std::string t; getline(isPr,t); 
-	                        _value=trim_string( t.substr(0, t.rfind("\t"))   );
+                            t=trim_string(t);
+	                        set(trim_string( t.substr(0, t.rfind("\t"))   ));
 							return true;
 	                    } 
 };
