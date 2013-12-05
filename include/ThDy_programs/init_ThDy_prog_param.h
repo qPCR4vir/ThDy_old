@@ -70,12 +70,13 @@ class CSaltCorrNN;
 /// concreta los parametros comunes. Mantiene lista de los prog Espec que los usan
 class ThDyCommProgParam : public CCommProgParam 
 {public:	
-    CParamC_str     _InputTargetFile {this, "Imput file for Targets",				 "TargetFile", "" } ;
-    CParamC_str     _PCRfiltrPrFile  {this, "Imput file with primers for filtering", "PCRftrFile", "" } ;
-    CParamString    _OutputFile      {this, "Results output file",                   "OutputFile", "" } ;
+    CParamString     _OutputFile      {this, "Results output file",                   "OutputFile", "" } ;
+    CParamString     _InputTargetFile {this, "Imput file for Targets",				  "TargetFile", "" } ;
+    CParamString     _NonTargetFile   {this, "Imput file for non-Targets",			  "NonTargetF", "" } ;
+    CParamString     _PCRfiltrPrFile  {this, "Imput file with primers for filtering", "PCRftrFile", "" } ;
    
-    CParamC_str     _InputNNFile {this, "Imput file with NN parametrs",			      "iNNParFile", ""	 } ;
-    CParamBool      _RecurDir    {this, "Recursively add all seq-files from all dir", "RecursiDir", false} ;
+    CParamString     _InputNNFile {this, "Imput file with NN parametrs",		      "iNNParFile", ""	 } ;
+    CParamBool       _RecurDir    {this, "Recursively add all seq-files from all dir", "RecursiDir", false} ;
 
 	SaltCorrection                 _SaltCorr {StLucia }  ;			
     CParamEnumRange<SaltCorrection>	SaltCorr {this, "Salt correction methode",		  "SaltCorrMt", _SaltCorr, StLucia, StLucia, StLucia }  ;
@@ -128,10 +129,12 @@ class ThDyCommProgParam : public CCommProgParam
 			_st_savLog(false),    st_savLog(this, "Programm option- save a log",			"Save_Logfi", _st_savLog,  false), 
 			_st_Exp_sond(false),  st_Exp_sond(this, "Programm option- re-export probes",	"Exp_probes", _st_Exp_sond,false),  
 			_st_ExpTarg(false),   st_ExpTarg(this, "Programm option- re-export targets",	"Exp_target", _st_ExpTarg, false)
-	{	TAMeth.AddStrValues("TAMeth_Tm",	TAMeth_Tm);
+	{	
+        TAMeth.AddStrValues("TAMeth_Tm",	TAMeth_Tm);
 		TAMeth.AddStrValues("TAMeth_G",		TAMeth_G);
 		TAMeth.AddStrValues("TAMeth_Fract",	TAMeth_Fract);
-		SaltCorr.AddStrValues("NoSelect",	NoSelect);
+		
+        SaltCorr.AddStrValues("NoSelect",	NoSelect);
 		SaltCorr.AddStrValues("StLucia",	StLucia);
 		SaltCorr.AddStrValues("Owczarzy",	Owczarzy);
 	} 
@@ -147,7 +150,7 @@ unique_ptr<CSaltCorrNN> Init_NNpar          ()   //< Initialize the set of NeirN
     unique_ptr<CSaltCorrNN> NNpar=Create_NNpar();
 	if (_loadNNPar) 
     {
-        ifstream isTDP(_InputNNFile.Get());	assert(isTDP);	
+        ifstream isTDP(_InputNNFile.get());	assert(isTDP);	
         NNpar->LoadNNParam(isTDP) ;	
     }
 	if ( _saveNNPar)
@@ -186,13 +189,19 @@ void Check_NNp_Targets (/*ThDyCommProgParam& cp*/)
     assert( _pSeqTargets );
     if ( !  _pSeqTargets->_Global._NSec)
 		    AddSeqFromFile (    _pSeqTargets.get (), 
-                                _InputTargetFile.Get()  );
+                                _InputTargetFile.get()  );
 }
     CMultSec* CreateRoot	();
 	CMultSec *AddSeqGroup	(CMultSec *parentGr, const std::string&     Name);
 
-	CMultSec *AddSeqFromFile(CMultSec *parentGr, const std::string& FileName, bool all_in_dir=false);
+	CMultSec *AddSeqFromFile    (CMultSec *parentGr, const std::string& FileName, bool all_in_dir=false);
 	CMultSec *CopyStructFromDir	(CMultSec *parentGr, const std::string& FileName); 
+    void      CopyStructFromDir ()
+    {
+        if (!_InputTargetFile.get().empty())   CopyStructFromDir(_pSeqTargets      .get(), _InputTargetFile.get());
+        if (!_NonTargetFile  .get().empty())   CopyStructFromDir(_pSeqNonTargets   .get(), _NonTargetFile  .get());
+        if (!_PCRfiltrPrFile .get().empty())   CopyStructFromDir(_pPCRfiltrePrimers.get(), _PCRfiltrPrFile .get());
+    }
 
     CMultSec *AddTargetFromFile(const std::string& FileName)
 	{
@@ -208,16 +217,11 @@ void Check_NNp_Targets (/*ThDyCommProgParam& cp*/)
 	}
 
 
-	// convertirlas en funciones "previas a la paralelizacion", que hacen copias propias de los parametros en serie, no en paralelo
-	void    TargetFile(const char *InputTargetFile)	 {	_InputTargetFile.CopyTrim(InputTargetFile);	}
-	void    OutputFile(const std::string &OutputFile){	_OutputFile.set( trim_string(OutputFile  ) )   ;	}
-	void    NNParaFile(const char *InputNNFile)		 {	_InputNNFile.CopyTrim(InputNNFile)	;	}
+	// convertirlas en funciones "previas a la paralelizacion", que hacen copias propias de los parametros en serie, no en paralelo ??
+	void    OutputFile(const std::string &OutputFile)     {	_OutputFile     .set( trim_string(OutputFile     ))   ;	}
+	void    TargetFile(const std::string &InputTargetFile){	_InputTargetFile.set( trim_string(InputTargetFile));	}
+	void    NNParaFile(const std::string &InputNNFile)	  {	_InputNNFile    .set( trim_string(InputNNFile    ))	;	}
 	
-	// OJO !!!!!!!!!   las sig funciones se aduenan del pointer, y luego lo deletean    !!!!!!!!
-	void SetTargetFile(      char *InputTargetFile)	{	TargetFile(InputTargetFile)	;	delete []InputTargetFile;	}
-	void SetOutputFile(      char *Output_File    )	{	OutputFile(Output_File )	;	delete []Output_File		;	}
-	void SetNNParaFile(      char *InputNNFile    )	{	NNParaFile(InputNNFile )	;	delete []InputNNFile		;	}
-
 	virtual	~ThDyCommProgParam(void) override//;	
     {	/*delete []_ProgList;*/
        _pSeqTree->Free();
@@ -240,41 +244,43 @@ class CEspThDyProgParam : public CEspProg
 	~CEspThDyProgParam()override{}
 };
 
+
 class CProgParam_microArray : public CEspThDyProgParam
 {public:	
-	std::shared_ptr<CMultSec>   _probesMS;
-    CParamC_str		            _InputSondeFile{ this, "Imput file for Sondes", "iSonde_uAr", "" };
+    std::shared_ptr<CMultSec>   _probesMS{_cp.AddSeqGroup(_cp._pSeqTree.get(), "Probes of Virtual uArr")};
+    CParamString	            _InputSondeFile{ this, "Imput file for Sondes", "iSonde_uAr", "" };
     CTable<TmGPos>             *_rtbl{nullptr};		                //uArr_RT *_rtbl;
 
 	//bool			    _I, _G;			// Outpu table of I, G. 
 	//CParamBool		 I,  G;			// Outpu table of I, G. 
 
     CProgParam_microArray(const std::string& titel, ThDyCommProgParam &commThDyParam) 
-		    :	CEspThDyProgParam(titel, commThDyParam), 
-                _probesMS        (_cp.AddSeqGroup(_cp._pSeqTree.get(), "Probes of Virtual uArr"))
+		    :	CEspThDyProgParam(titel, commThDyParam)
 	        {		
 			} 
 
+	void      SondeFile(const std::string &InputSondeFile)	  {	_InputSondeFile .set( trim_string(InputSondeFile    ))	;	}
+    void RenameSondesMS(const std::string& name);
+    void CopyStructFromDir ()
+    {
+        if (!_InputSondeFile.get().empty())   _cp.CopyStructFromDir(_probesMS      .get(), _InputSondeFile.get());
+    }
     CMultSec *AdduArrFromFile(const std::string& FileName)
 	{
 		return _cp.AddSeqFromFile(_probesMS.get(),FileName);
     }
-    void RenameSondesMS(const std::string& name);
+
     void Check_NNp_Targets_probes      (CMultSec *probes) 
 {
 	_cp.Check_NNp_Targets ();
     assert(("Traing to load sonden seq into inexisten MultiSec", probes));
-	if(_InputSondeFile.Get()[0] )
-		probes->AddFromFile ( _InputSondeFile.Get() );	
+	if (!_InputSondeFile.get().empty())
+		probes->AddFromFile ( _InputSondeFile.get() );	
 
 }
     
 
 	virtual int Run (){	return microArrayProg ( this )  ;}
-
-	void    SondeFile (const char *InputSondeFile )	{	_InputSondeFile.CopyTrim(InputSondeFile) ;	}
-	// OJO !!!!!!!!!   la sig funcion se aduena del pointer, y luego lo deletea   !!!!!!!!
-	void SetSondeFile (      char *InputSondeFile )	{	SondeFile( InputSondeFile) ;	delete []InputSondeFile   ;	}
 
 	// cuando se corre un proceso paralelo ver donde es mejor hacer estos delete.
 	virtual ~CProgParam_microArray()	override	;
@@ -441,6 +447,13 @@ class ThDyProject : public CProject // Permite manejar todo el projecto: con un 
 		CProgParam_MultiplexPCR _mPCR {"Check multiplex PCR"               ,_cp }  ;
 		CProgParam_SondeDesign	_SdDes{"Find sondes"                       ,_cp }  ;
 		CProgParam_TmCalc		_TmCal{"Tm calculator"                     ,_cp }  ;
+
+        void   CopyStructFromDir()
+        {
+            _cp  .CopyStructFromDir();
+            _uArr.CopyStructFromDir();
+            _mPCR.CopyStructFromDir();
+        }
 
  explicit	ThDyProject():	CProject("ThDy DNA Hybrid Project.","Def.ThDy.txt","Def.ThDy.txt")
 					{}

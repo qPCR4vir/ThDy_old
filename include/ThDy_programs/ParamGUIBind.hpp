@@ -72,17 +72,21 @@ class Bind_CParamString : public ProgPBind
  public:				
     Bind_CParamString (CParamString &p ):ProgPBind(p){} 
 
-    void        updateProg(const std::string&  val){ static_cast <CParamString& >(_p).set (val); }
-    std::string getProgVal(               ){ return  static_cast <CParamString& >(_p).get (  ) ; }
+    void        updateProg(const std::string&  val){ 
+        static_cast <CParamString& >(_p).set (val); }
+    std::string getProgVal(               ){ 
+        return  static_cast <CParamString& >(_p).get (  ) ; }
 };
 class Bind_CParamC_str : public ProgPBind  
 { 	
  public:				
     Bind_CParamC_str (CParamC_str &p ):ProgPBind(p){} 
 
-    void        updateProg(const char*  val){ static_cast <CParamC_str& >(_p).Copy     (val); 
+    void        updateProg(const char*  val){ 
+        static_cast <CParamC_str& >(_p).Copy     (val); 
     }
-    const char* getProgVal(        ){ return  static_cast <CParamC_str& >(_p).Get      (  ) ; 
+    const char* getProgVal(        ){ 
+        return  static_cast <CParamC_str& >(_p).Get      (  ) ; 
     }
 };
 class Bind_CParamC_str_TRIM : public Bind_CParamC_str  

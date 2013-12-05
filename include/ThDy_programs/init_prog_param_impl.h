@@ -198,10 +198,10 @@ class CProject : public IProg
 		std::string		    _ProjetFileName ;
 	    std::vector<IProg*> _ProgList;
 public:
-	CProject(const std::string& titel, std::string	&&prFname="", std::string	&&defProFN="Def.Proj.txt")
-		:   IProg(titel), 
-            _defPr(std::move(defProFN))  ,
-		    _ProjetFileName(prFname.empty () ? _defPr :  std::move(prFname) )  
+	CProject(std::string titel, std::string	prFname="", std::string	defProFN="Def.Proj.txt")
+		:   IProg           (std::move(titel)), 
+            _defPr          (std::move(defProFN))  ,
+		    _ProjetFileName (prFname.empty () ? _defPr :  std::move(prFname) )  
 	{  
 	} 
 
