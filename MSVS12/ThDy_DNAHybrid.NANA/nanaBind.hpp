@@ -161,6 +161,14 @@ class Bind_UnitUpDw : public nanaWidgetBind
                                                               }
 };
 
+class Bind_CParamStr_widget : public nanaWidgetBind, public Bind_CParamString  
+{ 	
+ public:				
+    Bind_CParamStr_widget (CParamString &p, nana::gui::widget& c):Bind_CParamString(p),nanaWidgetBind(c){SetDef();} 
+
+    void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
+	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )).c_str());}
+};
 class Bind_CParamC_str_widget : public nanaWidgetBind, public Bind_CParamC_str  
 { 	
  public:				
@@ -224,6 +232,15 @@ class Bind_EnumRange_combox   : public nanaWidgetBind, public Bind_CParamEnumRan
 };
 
 
+upPbind link(CParamString &p,            nana::gui::widget&      w)
+{
+    return  upPbind(new Bind_CParamStr_widget (p, w));
+}
+upPbind link(CParamString &p,            FilePickBox&            w)
+{
+    return  link(p, w._fileName);
+}
+
 upPbind link(CParamC_str &p,            nana::gui::widget&      w)
 {
     return  upPbind(new Bind_CParamC_str_widget (p, w));
@@ -232,21 +249,26 @@ upPbind link(CParamC_str &p,            FilePickBox&            w)
 {
     return  link(p, w._fileName);
 }
+
+
 upPbind link(CParamBool &p,             nana::gui::checkbox&    c)
 {
     return  upPbind(new BindBool (p, c));
 }
+
              template <class Num> 
 upPbind link(CParamNumRange<Num>  &p, nana::gui::NumUnitUpDown& c)
 {
     return  upPbind(new  Bind_NumR_UnitUpDw<Num> (p,  c) );
 }
+             
              template <class Num> 
 upPbind link(CParamNumMinMax<Num> &p, nana::gui::NumUnitUpDown& min, 
                                       nana::gui::NumUnitUpDown& max)
 {
     return  upPbind(new  Bind_MinMaxUnitUpDw<Num> (p,min,max) );
 }
+             
              template <typename enumType>
 upPbind link(CParamEnumRange<enumType>& p, nana::gui::combox& c, bool initialize=true)
 {
