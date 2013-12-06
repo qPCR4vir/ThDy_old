@@ -35,23 +35,20 @@ class SetupPage : public CompoWidget
                                     numUpDowSalConc {*this, STR("Salt Conc [Cations]:"), 50, 0.1 , 10000000,"µM"} , 
                                     numUpDowTa      {*this, STR("Temp. Anneling:"     ), 55,  40 , 75,    "°C"},  
                                     numUpDowSdConc  {*this, STR("Sonde Conctr:"       ), 50, 0.1 , 1000,  "µM"}  ;
-    nana::gui::button  set_def_proj_    {*this,STR("Set as Def. project") };
+    nana::gui::button  set_def_proj_    {*this,STR("Set as Def. project") },
+                       load_def_proj_   {*this,STR("ReLoad Def. project") };
     BindGroup          _setup;
-
-public:     
-    OpenSaveBox         proj_       { *this, STR("Project:") };
-    SetupPage (ThDyNanaForm& tdForm);
 
     void SetDefLayout   () override
     {
         _DefLayout =
 	"vertical      gap=2         	\n\t"
-	"   <weight=300 <weight=2><vertical min=50    max=800 gap=2 	\n\t"
+	"   < weight=300   <weight=2><vertical min=50    max=800 gap=2 	\n\t"
 	"                              		                    <<Project     >      weight=23 >      		\n\t"
 	"		                                                  <<Results     >      weight=23 >      		\n\t"
 	"	                                                      <    Seq                  weight=125     gap=2   vertical  >       	\n\t"
 	"	 	                                                 <<NN_param  >     weight=23 >      		\n\t"
-	"		                                                  <weight=100  <weight=2>  <vertical min=50 max=200 gap=2 buttons>  <>  >	\n\t"
+	"		                                                  <min=50 <weight=2>  <vertical min=50 max=200 gap=2 buttons>  <>  >	\n\t"
 	"                                                                                                                                                                                                     >      <weight=120 checks>   	>	\n\t"
 	"			\n\t"
 	"   < weight=46  gap=2  <>  <vertical ConcST   weight=200  gap=2>  	\n\t"
@@ -92,7 +89,7 @@ public:
 	    _place.field("Results" )     <<  results_   ;
         _place.field("Seq"      )    <<  targets_ << chkBx_RecDir <<  nTsec_  << PCRfiltre_<<_PrimersFilePCR        ;
 	    _place.field("NN_param" )    << _NNParamFile  ;
-	    _place.field("buttons"  )    <<  set_def_proj_;
+	    _place.field("buttons"  )    <<  set_def_proj_ << load_def_proj_;
 	    _place.field("checks"   )    << "save result" ;
 
 
@@ -104,6 +101,61 @@ public:
 	    _place.field("SMeth"  )         << " Salt Correct. Method:"	   <<  comBoxSalMeth;
 	    _place.field("AMeth"  )         << " ThDy Align. Method"       <<  comBoxTAMeth ;
     }
+    void MakeResponive()
+    {
+        proj_.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
+        proj_.Open.make_event	<nana::gui::events::click> ([&](){ OpenProj() ;} );
+		proj_.Save.make_event	<nana::gui::events::click> ([&](){ SaveProj() ;} );
+
+        set_def_proj_ .make_event	<nana::gui::events::click> ([&](){ setAsDefProject() ;} );
+        load_def_proj_.make_event	<nana::gui::events::click> ([&](){ RestDefPr      () ;} );
+    }
+    void  OpenProj()
+	{	 
+         if( ! proj_.Canceled () )   
+            return LoadProject ( nana::charset ( proj_.FileName() )) ;  
+	}
+    void  SaveProj()
+	{	 
+        if(  proj_.Canceled () )  return;
+        _Pr.save (nana::charset ( proj_.FileName())); 
+	}
+    void  setAsDefProject()
+    {
+		string caption = "Set current setting as Default project";
+		string message = std::string("This will overwrite the current Default Project." )        + "\n\n"
+						+  "Are you sure?"   + "\n\n"
+						+ "\tYes:  The default project will be overwrited. " + "\n"
+						+ "\tNo:  No action will be taken. " + "\n"
+						;
+		switch ( (nana::gui::msgbox(  *this, nana::charset (caption) , nana::gui::msgbox::yes_no )
+                        <<  message
+                    ).icon(nana::gui::msgbox::icon_question ) .show (  ))
+		{
+			case  nana::gui::msgbox::pick_yes :  
+                                    _Pr.save_asDefPr() ; 					 // crea el Def Project.
+				return;
+
+			case  nana::gui::msgbox::pick_no:    
+            default:;
+        }
+    }
+    void  RestDefPr	 ( )		// Restore (USE) Deff  Proj File
+	{		 
+        try{
+		       _Pr.load_defPr() ;			// cuando no existe Def Project: 1ra vez que se usa el prog??
+		    }
+		catch ( std::exception& e)
+		{ 
+			(nana::gui::msgbox ( STR("Error loading Def Project" ) )<< e.what()).show() ;
+ 		}		 
+	}
+
+public:     
+    OpenSaveBox         proj_       { *this, STR("Project:") };
+
+    SetupPage (ThDyNanaForm& tdForm);
+
     void AddMenuItems(nana::gui::menu& menu)
     {
         menu.append(STR("New"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
@@ -116,7 +168,6 @@ public:
         menu.append(STR("Exit"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
 
     }
-
     void LoadProject(std::string file)
 	{
 		try
@@ -150,30 +201,6 @@ public:
                         return;
 			}
 		}
-	}
-
-    void  OpenProj()
-	{	 
-         if(  proj_.Canceled () )  return;
-         LoadProject ( nana::charset ( proj_.FileName() )) ;  
-
-      //try {
-      //          load (); 
-      //}
-      //  catch(std::exception& e)
-      //  {
-      //       (nana::gui::msgbox(*this, STR("Error during project loading: ")) /*.icon(msgbox::icon_information)*/
-      //                           <<STR("\nIn windows:\n\t ") << Titel()
-      //                           <<STR("\nIn project:\n\t ") << proj_.FileName()
-      //                           <<STR("\nException :\n\t ") << e.what() 
-      //       ).show();
-      //  }
-      ////tmCalc_._TmCalc.UpDateForm();
-	}
-    void  SaveProj()
-	{	 
-        if(  proj_.Canceled () )  return;
-        _Pr.save (nana::charset ( proj_.FileName())); 
 	}
 };
 
@@ -659,21 +686,24 @@ class FindSondenPage : public CompoWidget
     nana::gui::button        _design{*this, STR("Design !" )}, 
                             _compare{*this, STR("Compare !")};
     nana::gui::checkbox      chkBx_unique{*this, STR("Report unique probes, ")}, 
-                             chkBx_common{*this, STR("Report common probes, ")}, 
+                             chkBx_common{*this, STR("Report cariel.rodriguezommon probes, ")}, 
                              chkBx_showFindedProbes{*this, STR("Show Finded Probes")};
 public: 
     FindSondenPage(ThDyNanaForm& tdForm);
     void SetDefLayout   () override
     {
       _DefLayout=  
-        "vertical      gap=2                 \n\t"
-	    "    <weight=10     >       \n\t "
-        "    <weight=195 gap=8 <weight=5><weight=350 vertical <weight=100 <weight=320 Sonde  grid[3,4]>>     \n\t "
-        "                                           <TargCov    grid[2,2]                            >     \n\t "
-        "                                           <weight=40 <   <><weight=300   gap=20 Run>       > >    \n\t "
-        "                                           <weight=10>                                 \n\t "
-        "                      >   <><weight=230 gap=1 vertical  options>    >   \n\t "
-        "    <weight=23   <weight=140><Output>   <> >       \n\t "
+	"vertical      gap=2                 	\n\t"
+	"	    <weight=10     >       	\n\t"
+	"	     <weight=235 gap=8 <weight=5><weight=350 vertical <weight=100 <weight=320 Sonde  grid[3,4]>> 	\n\t"
+	"                                                                                                         <weight=10>	\n\t"
+	"	                                                                                                     <TargCov    grid[2,2]     weight=45                     >    	\n\t"
+	"                                                                                                        <weight=10> 	\n\t"
+	"	                                                                                                     <weight=40 <   <><weight=300   gap=20 Run>       > >    	\n\t"
+	"	                                                                                                     <weight=10>                                 	\n\t"
+	"	                                                              >   <><weight=230 gap=1 vertical  options>    >   	\n\t"
+	"	     <weight=23   <weight=140><Output>   <> >       	\n\t"
+	"	 	\n\t"
         ;
 
 
@@ -966,13 +996,16 @@ public:
     //~ThDyNanaForm();
     void SetDefLayout   () override
     {
-        _DefLayout= "vertical      gap=2                   \n\t "
-	                 "       <weight=25>                   \n\t "
-	                 "       <PagesTag    weight=23 >      \n\t "
-	                 "       <Pages       min=255   >      \n\t "
-	                 "       < <weight=30><TargetsOptions><weight=10> weight=23>      \n\t "
-	                 "       <weight=1 >                   \n\t "
-	                 "       < weight=23 <><Firma><> >                   \n\t "
+        _DefLayout=
+                "vertical      gap=2                   \n\t "
+	            "vertical      gap=2                   	\n\t"
+	            "	        <weight=25>                   	\n\t"
+	            "	        <PagesTag    weight=23 >      	\n\t"
+	            "	        <Pages       min=255   >      	\n\t"
+	            "	        < <weight=30><TargetsOptions><weight=10> weight=23>      	\n\t"
+	            "	        <weight=1 >                   	\n\t"
+	            "	        < weight=23 <><Firma weight=280><> >                   	\n\t"
+	            "	 	\n\t"
             ;
 
         numUpDwMaxTgId .ResetLayout (60,40,30 );  
@@ -1016,10 +1049,7 @@ public:
         SelectClickableWidget( set_def_proj_);
         SelectClickableWidget( *this);
 
-        proj_.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
-        proj_.Open.make_event	<nana::gui::events::click> ([&](){ OpenProj() ;} );
-		proj_.Save.make_event	<nana::gui::events::click> ([&](){ SaveProj() ;} );
-
+        MakeResponive();
 
     }
    SeqExpl::SeqExpl              (ThDyNanaForm& tdForm)
