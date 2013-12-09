@@ -21,13 +21,13 @@ class ThDyNanaForm ;
 class SetupPage : public CompoWidget
 {
     ThDyProject        &_Pr;
-    FilePickBox         results_    { *this, STR("Results:") } ,
-                        targets_    { *this, STR("Targets:") }  ;
-    nana::gui::checkbox chkBx_RecDir{ *this, STR("RecurDir") };
-    FilePickBox         nTsec_      {*this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt")};
-    FilePickBox         PCRfiltre_  { *this, STR("PCR-filtre:")};
-    FilePickBox        _PrimersFilePCR{*this, STR("Primers seq. file:") };
-    FilePickBox        _NNParamFile {*this, STR("NN param:")};
+    FilePickBox         _results    { *this, STR("Results:") } ;
+    FilePickBox         _targets    { *this, STR("Targets:") }  ;
+    nana::gui::checkbox _chkBx_RecDir{ *this, STR("RecurDir") };
+    FilePickBox         _nTsec      {*this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt")};
+    FilePickBox         _PCRfiltre  { *this, STR("PCR-filtre:")};
+    FilePickBox         _PrimersFilePCR{*this, STR("Primers seq. file:") };
+    OpenSaveBox         _NNParamFile {*this, STR("NN param:")};
 
     nana::gui::combox               comBoxSalMeth   {*this}, 
                                     comBoxTAMeth    {*this};
@@ -35,11 +35,11 @@ class SetupPage : public CompoWidget
                                     numUpDowSalConc {*this, STR("Salt Conc [Cations]:"), 50, 0.1 , 10000000,"µM"} , 
                                     numUpDowTa      {*this, STR("Temp. Anneling:"     ), 55,  40 , 75,    "°C"},  
                                     numUpDowSdConc  {*this, STR("Sonde Conctr:"       ), 50, 0.1 , 1000,  "µM"}  ;
-    nana::gui::button  set_def_proj_    {*this,STR("Set as Def. project") },
-                       load_def_proj_   {*this,STR("ReLoad Def. project") };
+    nana::gui::button  _set_def_proj    {*this,STR("Set as Def. project") },
+                       _load_def_proj   {*this,STR("ReLoad Def. project") };
     BindGroup          _setup;
 
-    void SetDefLayout   () override
+    void  SetDefLayout   () override
     {
         _DefLayout =
 	"vertical      gap=2         	\n\t"
@@ -59,8 +59,8 @@ class SetupPage : public CompoWidget
 	"	\n\t"
     
             ;
-        nTsec_        .ResetLayout(100);
-        PCRfiltre_    .ResetLayout (60 );
+        _nTsec        .ResetLayout(100);
+        _PCRfiltre    .ResetLayout (60 );
 
         numUpDowSdConc.ResetLayout (80 );  
         numUpDowTa.    ResetLayout (90 );  
@@ -68,13 +68,13 @@ class SetupPage : public CompoWidget
         numUpDowSalConc.ResetLayout (110 );
 
     }
-    void AsignWidgetToFields() override
+    void  AsignWidgetToFields() override
     {
-      _setup<< link( _Pr._cp._OutputFile      ,       results_  )
-            << link( _Pr._cp._InputTargetFile ,       targets_  )
-            << link( _Pr._cp._RecurDir      ,       chkBx_RecDir)
-            //<< link( _Pr._cp._NonTargets ,       targets_  )
-            << link( _Pr._cp._PCRfiltrPrFile  ,       PCRfiltre_)
+      _setup<< link( _Pr._cp._OutputFile      ,       _results  )
+            << link( _Pr._cp._InputTargetFile ,       _targets  )
+            << link( _Pr._cp._RecurDir      ,      _chkBx_RecDir)
+            << link( _Pr._cp._NonTargetFile     ,       _nTsec  )
+            << link( _Pr._cp._PCRfiltrPrFile  ,       _PCRfiltre)
             << link( _Pr._mPCR._InputSondeFile , _PrimersFilePCR)            
             << link( _Pr._cp._InputNNFile       , _NNParamFile  )
             << link( _Pr._cp.ConcSd	    ,       numUpDowSdConc  )
@@ -85,11 +85,11 @@ class SetupPage : public CompoWidget
             << link( _Pr._cp.TAMeth       ,       comBoxTAMeth  )        
           ;
             
-        _place.field("Project"  )    <<  proj_        ;
-	    _place.field("Results" )     <<  results_   ;
-        _place.field("Seq"      )    <<  targets_ << chkBx_RecDir <<  nTsec_  << PCRfiltre_<<_PrimersFilePCR        ;
+        _place.field("Project"  )    <<  _proj        ;
+	    _place.field("Results" )     <<  _results   ;
+        _place.field("Seq"      )    <<  _targets << _chkBx_RecDir <<  _nTsec  << _PCRfiltre<<_PrimersFilePCR        ;
 	    _place.field("NN_param" )    << _NNParamFile  ;
-	    _place.field("buttons"  )    <<  set_def_proj_ << load_def_proj_;
+	    _place.field("buttons"  )    <<  _set_def_proj << _load_def_proj;
 	    _place.field("checks"   )    << "save result" ;
 
 
@@ -101,25 +101,70 @@ class SetupPage : public CompoWidget
 	    _place.field("SMeth"  )         << " Salt Correct. Method:"	   <<  comBoxSalMeth;
 	    _place.field("AMeth"  )         << " ThDy Align. Method"       <<  comBoxTAMeth ;
     }
-    void MakeResponive()
+    static FilePickBox& AddFastaFiltre(FilePickBox &fpb)
     {
-        proj_.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
-        proj_.Open.make_event	<nana::gui::events::click> ([&](){ OpenProj() ;} );
-		proj_.Save.make_event	<nana::gui::events::click> ([&](){ SaveProj() ;} );
-
-        set_def_proj_ .make_event	<nana::gui::events::click> ([&](){ setAsDefProject() ;} );
-        load_def_proj_.make_event	<nana::gui::events::click> ([&](){ RestDefPr      () ;} );
+        return fpb.add_filter({ {STR("fasta")       , STR("*.fas;*.fasta"     ) },
+                                {STR("NCBI BLAST")  , STR("*-Alignment.xml"   ) },
+                                {STR("GB"        )  , STR("*.gb;*-sequence.xml")},
+                                {STR("Text"      )  , STR("*.txt"             ) },
+                                {STR("All sequences"), STR("*.fas;*.fasta;*.txt;*-Alignment.xml;*.gb;*-sequence.xml")}});
+        //return fpb.add_filter(STR("fasta"     ),STR("*.fas;*.fasta"    )) 
+        //          .add_filter(STR("NCBI BLAST"),STR("*-Alignment.xml"  )) 
+        //          .add_filter(STR("GB"        ),STR("*.gb;*-sequence.xml")) 
+        //          .add_filter(STR("Text"      ),STR("*.txt"            )) 
+        //          .add_filter(STR("All sequences"), STR("*.fas;*.fasta;*.txt;*-Alignment.xml;*.gb;*-sequence.xml"));
     }
-    void  OpenProj()
-	{	 
-         if( ! proj_.Canceled () )   
-            return LoadProject ( nana::charset ( proj_.FileName() )) ;  
-	}
+    void  MakeResponive()
+    {
+        _proj.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
+        _proj.onOpenFile ([this](std::string file){ this->LoadProject (  file  );} );
+		_proj.onSave ([this](){ SaveProj() ;} );
+
+        AddFastaFiltre(_targets );
+        AddFastaFiltre(_nTsec );
+        AddFastaFiltre(_PCRfiltre );
+        AddFastaFiltre(_PrimersFilePCR );
+
+        _NNParamFile.add_filter(STR("Nearest Neibrhud Parametr"),STR("*.ThDy.txt"));
+        _NNParamFile.onOpenFile /*.make_event	<nana::gui::events::click>*/ (
+                [this](std::string file)
+            { 
+                 std::ifstream nn(file);
+                _Pr._cp._pSaltCorrNNp->LoadNNParam(nn ) ;
+            } );
+        _NNParamFile.onSaveFile ([this](std::string file)
+        { 
+            //this->LoadProject (  file  );} ); /*.make_event	<nana::gui::events::click>*/ (
+            //    [&](/*const std::string&file*/)
+            //{ 
+                 std::ofstream nn( file /*_Pr._cp._InputNNFile.get()*/);
+                 nn << *_Pr._cp._pSaltCorrNNp/*.get()*/; // ->LoadNNParam(nn);
+            } );
+		//_NNParamFile.Save.make_event	<nana::gui::events::click> ([&](){ SaveNN() ;} );
+
+        _set_def_proj .make_event	<nana::gui::events::click> ([&](){ setAsDefProject() ;} );
+        _load_def_proj.make_event	<nana::gui::events::click> ([&](){ RestDefPr      () ;} );
+    }
+ //   void  OpenProj()
+	//{	 
+ //        if( ! proj_.Canceled () )   
+ //           return LoadProject ( nana::charset ( proj_.FileName() )) ;  
+	//}
     void  SaveProj()
 	{	 
-        if(  proj_.Canceled () )  return;
-        _Pr.save (nana::charset ( proj_.FileName())); 
+        if(  _proj.Canceled () )  return;
+        _Pr.save (nana::charset ( _proj.FileName())); 
 	}
+ //   void  OpenNN()
+	//{	 
+ //        if( ! _NNParamFile.Canceled () )   
+ //           return LoadProject ( nana::charset ( _NNParamFile.FileName() )) ;  
+	//}
+ //   void  SaveNN()
+	//{	 
+ //       if(  _NNParamFile.Canceled () )  return;
+ //       _Pr.save (nana::charset ( _NNParamFile.FileName())); 
+	//}
     void  setAsDefProject()
     {
 		string caption = "Set current setting as Default project";
@@ -152,15 +197,33 @@ class SetupPage : public CompoWidget
 	}
 
 public:     
-    OpenSaveBox         proj_       { *this, STR("Project:") };
+    OpenSaveBox         _proj       { *this, STR("Project:") };
 
     SetupPage (ThDyNanaForm& tdForm);
 
     void AddMenuItems(nana::gui::menu& menu)
     {
+  //      		_menuFile.append  (STR("&Open..."   ),[this](nana::gui::menu::item_proxy& ip){ this->_OSbx.open(nana::string(nana::charset(this->_textBox.filename())));this->OpenFile()  ;}                );
+  //      _menuFile.append  (STR("&Save"      ),[&](nana::gui::menu::item_proxy& ip){  ForceSave(nana::string(nana::charset(_textBox.filename())) ) ;}   );
+		//_menuFile.append  (STR("Save &As..."),[&](nana::gui::menu::item_proxy& ip){ _OSbx.save(nana::string(nana::charset(_textBox.filename())));SaveFile() ;} );
+
         menu.append(STR("New"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
-        menu.append(STR("Open...")  , [&](nana::gui::menu::item_proxy& ip)  { proj_.open(proj_.FileName()); OpenProj() ;  } );
-        menu.append(STR("Save...")  , [&](nana::gui::menu::item_proxy& ip)  { proj_.save(proj_.FileName()); SaveProj() ;  } );
+        menu.append(STR("Open...")  , [&](nana::gui::menu::item_proxy& ip)  
+        { 
+            _proj.open(_proj.FileName()); /*OpenProj() ;*/  
+            if (!_proj.Canceled())
+                LoadProject( nana::charset(_proj.FileName()));
+            //this->_OSbx.open(nana::string(nana::charset(this->_textBox.filename())));this->OpenFile()  ;}                );
+
+        } );
+        menu.append(STR("Save...")  , [&](nana::gui::menu::item_proxy& ip)  
+        { 
+            _proj.save(_proj.FileName()); 
+            if( ! _proj.Canceled () )   
+               _Pr.save (nana::charset ( _proj.FileName())); 
+
+            //SaveProj() ;  
+        } );
         menu.append_splitter();
         menu.append(STR("Set as deffault") , [&](nana::gui::menu::item_proxy& ip)  {;  });
         menu.append(STR("Restore deffault"), [&](nana::gui::menu::item_proxy& ip)  {;  });
@@ -173,7 +236,7 @@ public:
 		try
 		{
 			_Pr.load(   file );
-			 proj_.FileName(nana::charset ( file  ));
+			_proj.FileName(nana::charset ( file  ));
  		}
 		catch (std::exception& e)
 		{
@@ -191,13 +254,13 @@ public:
 			{
 				case  nana::gui::msgbox::pick_yes :  
 					    _Pr.load_defPr();
-                        proj_.FileName(nana::charset ( _Pr.ProjetFile ()  ));
+                        _proj.FileName(nana::charset ( _Pr.ProjetFile ()  ));
 					return;
 
 				case  nana::gui::msgbox::pick_no:    
-                        proj_.open (nana::charset (file));
-                        if ( !  proj_.Canceled() )
-                                LoadProject(nana::charset (  proj_.FileName()));
+                        _proj.open (nana::charset (file));
+                        if ( !  _proj.Canceled() )
+                                LoadProject(nana::charset (  _proj.FileName()));
                         return;
 			}
 		}
@@ -948,6 +1011,7 @@ public:
                   :nana::gui::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
                    EditableForm    (nullptr, *this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")) 
    {
+        nana::gui::API::zoom_window(*this, true);
         //nana::pixel_rgb_t bk;
         //bk.u.color = background ();
         //bk.u.element.blue =0; 
@@ -962,7 +1026,7 @@ public:
 
         tabbar_.active (0);
 
-        setup_.proj_.FileName(nana::charset ( ProjetFile()  ));
+        setup_._proj.FileName(nana::charset ( ProjetFile()  ));
         try{ 
 			    if ( argc > 1 )
 				    setup_.LoadProject( argv[1] )   ;
@@ -1041,16 +1105,12 @@ public:
    SetupPage::SetupPage          (ThDyNanaForm& tdForm)
         : _Pr           (tdForm), 
           CompoWidget  (tdForm, STR("Setup"), STR("Setup.lay.txt"))
-          /*,
-          set_def_proj_(*this,STR("Set as Def. project") ),
-          _NNParamFile (*this, STR("NN param:") )*/
     {
         InitMyLayout();
-        SelectClickableWidget( set_def_proj_);
+        SelectClickableWidget( _set_def_proj);
         SelectClickableWidget( *this);
 
         MakeResponive();
-
     }
    SeqExpl::SeqExpl              (ThDyNanaForm& tdForm)
         : _Pr             (tdForm), 
@@ -1143,10 +1203,10 @@ public:
         _Pr._SdDes._design	 = design ;		
 		 
 		try{                                   
-		    _Pr._SdDes._cp.Actualice_NNp();  
-            _Pr.Run(_Pr._SdDes);	 //     _Pr._SdDes.Run ();	
-            if (chkBx_showFindedProbes.checked()) 
-                ( dynamic_cast<ThDyNanaForm&>(_Pr)).mExpl_.ShowProbes_mPCR();
+		        _Pr._SdDes._cp.Actualice_NNp();  
+                _Pr.Run(_Pr._SdDes);	 //     _Pr._SdDes.Run ();	
+                if (chkBx_showFindedProbes.checked()) 
+                    ( dynamic_cast<ThDyNanaForm&>(_Pr)).mExpl_.ShowProbes_mPCR();
  		}
 		catch ( std::exception& e)
 		{ 

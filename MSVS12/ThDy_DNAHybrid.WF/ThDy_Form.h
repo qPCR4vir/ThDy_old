@@ -934,7 +934,7 @@ private: System::ComponentModel::IContainer^  components;
             // 
             this->openFileDialog_targets->Filter = L"fasta|*.fas;*.fasta|NCBI BLAST|*-Alignment.xml|GB|*.gb;*-sequence.xml|Text|*.txt|"
                 L"All file|*.*";
-            this->openFileDialog_targets->InitialDirectory = L"C:\\Users\\Rodriguez\\Documents\\ThDySec\\targets";
+            this->openFileDialog_targets->InitialDirectory = L"Virus";
             this->openFileDialog_targets->Title = L"Open Targets File";
             // 
             // Design
@@ -950,7 +950,7 @@ private: System::ComponentModel::IContainer^  components;
             // openFileDialog_exe
             // 
             this->openFileDialog_exe->DefaultExt = L"exe";
-            this->openFileDialog_exe->InitialDirectory = L"C:\\Users\\Rodriguez\\Documents\\";
+            this->openFileDialog_exe->InitialDirectory = L"";
             this->openFileDialog_exe->ShowReadOnly = true;
             this->openFileDialog_exe->SupportMultiDottedExtensions = true;
             this->openFileDialog_exe->Title = L"Select exe file";
