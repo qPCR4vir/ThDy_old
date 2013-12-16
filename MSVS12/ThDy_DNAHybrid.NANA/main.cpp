@@ -92,8 +92,6 @@ class SetupPage : public CompoWidget
 	    _place.field("buttons"  )    <<  _set_def_proj << _load_def_proj;
 	    _place.field("checks"   )    << "save result" ;
 
-
-	    //_place.field("PCRfiltre" )      << PCRfiltre_   ;
 	    _place.field("ConcST"  )        << numUpDowSdConc   
                                         << numUpDowTgConc ;
 	    _place.field("ConcSaltTa"  )    << numUpDowSalConc 
@@ -117,39 +115,50 @@ class SetupPage : public CompoWidget
     void  MakeResponive()
     {
         _proj.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
-        _proj.onOpenFile ([this](std::string file){ this->LoadProject (  file  );} );
-		_proj.onSave ([this](){ SaveProj() ;} );
+        _proj.onOpenAndSelectFile ([this](const nana::string &file)
+        { 
+            this->LoadProject (  file  );
+                std::wcerr << L"onOpenAndSelectFile: Loaded Project file: " << file << std::endl;
+        } );
+        _proj.onSaveFile          ([this](const nana::string &file)
+        { 
+            this->_Pr.save (nana::charset ( (  file  ))); 
+                std::wcerr << L"onSaveFile: Saved Project file: " << file << std::endl;
+        } );
 
         AddFastaFiltre(_targets );
         AddFastaFiltre(_nTsec );
         AddFastaFiltre(_PCRfiltre );
         AddFastaFiltre(_PrimersFilePCR );
 
-        _NNParamFile.add_filter(STR("Nearest Neibrhud Parametr"),STR("*.ThDy.txt"));
-        _NNParamFile.onOpenFile /*.make_event	<nana::gui::events::click>*/ (
-                [this](std::string file)
+        _NNParamFile.add_filter      (STR("Nearest Neibrhud Parametr"),STR("*.NN.csv"));
+        _NNParamFile.onOpenAndSelect ([this]()
             { 
-                 std::ifstream nn(file);
+
+            //assert((  std::cerr<< "\nBefore loading NNfile, SetupPage: " , true  ));;
+            //assert((  std::wcerr<< caption() << std::endl , true  ));;
+            
+            std::ifstream nn(_Pr._cp._InputNNFile.get());
                 _Pr._cp._pSaltCorrNNp->LoadNNParam(nn ) ;
+
+            //assert((  std::cerr << "onOpenAndSelect: Opened NNp file: " << _Pr._cp._InputNNFile.get() << std::endl, true  ));;
+                return true;
+
             } );
-        _NNParamFile.onSaveFile ([this](std::string file)
-        { 
-            //this->LoadProject (  file  );} ); /*.make_event	<nana::gui::events::click>*/ (
-            //    [&](/*const std::string&file*/)
-            //{ 
-                 std::ofstream nn( file /*_Pr._cp._InputNNFile.get()*/);
-                 nn << *_Pr._cp._pSaltCorrNNp/*.get()*/; // ->LoadNNParam(nn);
-            } );
-		//_NNParamFile.Save.make_event	<nana::gui::events::click> ([&](){ SaveNN() ;} );
+        _NNParamFile.onSave          ([this]()
+        {
+
+            //assert((  std::cerr<< "\nBefore saving NNfile, SetupPage: " , true  ));;
+            //assert((  std::wcerr<< caption() << std::endl , true  ));;
+            
+            std::ofstream{ _Pr._cp._InputNNFile.get() /* + STR(".NN.csv") */} << *_Pr._cp._pSaltCorrNNp;        
+
+            //assert((  std::cerr << "onSave: Saved NNp file: " << _Pr._cp._InputNNFile.get() << std::endl, true  ));;
+         } );
 
         _set_def_proj .make_event	<nana::gui::events::click> ([&](){ setAsDefProject() ;} );
         _load_def_proj.make_event	<nana::gui::events::click> ([&](){ RestDefPr      () ;} );
     }
- //   void  OpenProj()
-	//{	 
- //        if( ! proj_.Canceled () )   
- //           return LoadProject ( nana::charset ( proj_.FileName() )) ;  
-	//}
     void  SaveProj()
 	{	 
         if(  _proj.Canceled () )  return;
@@ -210,7 +219,7 @@ public:
         menu.append(STR("New"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
         menu.append(STR("Open...")  , [&](nana::gui::menu::item_proxy& ip)  
         { 
-            _proj.open(_proj.FileName()); /*OpenProj() ;*/  
+            _proj.open(_proj.FileName()); /*OpenProj() ;*/   
             if (!_proj.Canceled())
                 LoadProject( nana::charset(_proj.FileName()));
             //this->_OSbx.open(nana::string(nana::charset(this->_textBox.filename())));this->OpenFile()  ;}                );
@@ -231,17 +240,21 @@ public:
         menu.append(STR("Exit"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
 
     }
-    void LoadProject(std::string file)
+    void LoadProjectAndReg(nana::string file)
+    {
+        LoadProject(file);
+ 		_proj.FileName(file  );
+   }
+    void LoadProject(nana::string file)
 	{
 		try
 		{
-			_Pr.load(   file );
-			_proj.FileName(nana::charset ( file  ));
+			_Pr.load(  nana::charset (  file ));
  		}
 		catch (std::exception& e)
 		{
 			string caption = "Error trying to load the project file:";
-			string message = file         + "\n\n"
+			string message = string (nana::charset (  file ))         + "\n\n"
 							+  e.what()   + "\n\n"
 							+  "Use the Default project?"   + "\n\n"
 							+ "\tYes:  The default project file will be loaded. " + "\n"
@@ -358,6 +371,7 @@ class SeqExpl : public CompoWidget
             if ( ! _showAllseq && !checked) 
                 _list.erase(item) ;
         };
+        
     }
 
     Node &Refresh(Tree::item_proxy& node)
@@ -412,6 +426,10 @@ class SeqExpl : public CompoWidget
     {
         nana::string name = nana::charset(ms->_name);
         return _tree.insert(name, name).value(ms).check(ms->Selected());
+    }
+    bool isRoot(Node &node)
+    {
+        return node.level() == 1;
     }
  static Node appendNewNode(Node &node, CMultSec*ms) /// Add a new node to the child of node.
     {
@@ -543,7 +561,7 @@ public:
         menu.append(STR("Replace from a file..." )  , [&](nana::gui::menu::item_proxy& ip) 
         {
 			auto tn= _tree.selected();
-            if (tn.isRoot())
+            if (isRoot(tn))
             {
                 nana::gui::msgbox ( STR("Sorry, you can´t replace group " + tn.text()) ).show() ;
                 return;
@@ -1026,10 +1044,10 @@ public:
 
         tabbar_.active (0);
 
-        setup_._proj.FileName(nana::charset ( ProjetFile()  ));
+        setup_._proj.FileNameOnly(nana::charset ( ProjetFile()  ));
         try{ 
 			    if ( argc > 1 )
-				    setup_.LoadProject( argv[1] )   ;
+				    setup_._proj.FileNameOpen(nana::charset( argv[1]) )   ;
 			    else
 				    load() ;						// cuando no existe Def Project: 1ra vez que se usa el prog??
 		    }
