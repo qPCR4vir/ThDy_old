@@ -32,7 +32,10 @@ template <typename Param_t>  /// Param_t have to be copiable, comparable and str
 	                        } 
 
 	bool        loadValue (std::istream   &isPr) override    
-	                    {   isPr >> _value;
+	                    {   
+                            Param_t value;
+                            isPr >> value;
+                            set(value);
 							return true;
 	                    } 
 };
@@ -62,8 +65,11 @@ class CParamBool: public IParam
 	                        } 
 
 	bool        loadValue (std::istream   &isPr) override   // Descarta el Titel que queda detras del ultimo tab
-	                    {   isPr>>std::boolalpha>>_value;
-							return true;
+	                    {   
+                            bool value; 
+                            isPr>>std::boolalpha>>value;
+							set( value);
+                            return true;
 	                    } 
 };
 
@@ -113,10 +119,10 @@ class CParamC_str: public IParam, public C_str
 		            const C_str& defValue
 					) : IParam (pp, titel, etiq), C_str(defValue)                {            }
 
-	void set (const C_str& value){ if (! strcmp (Get(),value.Get())) return; Copy(value) ;  changed(); }
-	void set (const char * value){ if (! strcmp (Get(),value))       return; Copy(value) ;  changed(); }
-	void trim(const char * value){ if (! strcmp (Get(),value))       return; CopyTrim(value) ;  changed(); }
-    void take(char * value){ if (! strcmp (Get(),value)){delete[]value;return;} Take(value);changed(); }
+	void set (const C_str& value){ if (! strcmp (Get(),value.Get())) return; Copy(value) ;  changed(); }  // contiene inconsistencias: mas razon para no usarlo.
+	void set (const char * value){ if (! strcmp (Get(),value))       return; Copy(value) ;  changed(); }  // contiene inconsistencias: mas razon para no usarlo.
+	void trim(const char * value){ if (! strcmp (Get(),value))       return; CopyTrim(value) ;  changed(); }  // contiene inconsistencias: mas razon para no usarlo.
+    void take(char * value){ if (! strcmp (Get(),value)){delete[]value;return;} Take(value);changed(); }  // contiene inconsistencias: mas razon para no usarlo.
 
 	std::ostream &saveValue	(std::ostream	&osPr) const override   
 	                        {   osPr << Get() << std::endl <<"\t\t\t\t" ;     // Por que no se puede poner el return directo????
