@@ -100,8 +100,8 @@ class CSaltCorrNN : public COriNN
 	
 public:
 	CSaltCorrNN	(float  ConcSd	 =50e-9     ,  float		  ConcTg= 50e-9, 
-				 float CationConc=50e-3, SaltCorrection sc = StLucia) 
-			: 	COriNN			( ConcSd, ConcTg) ,
+				 float CationConc=50e-3, SaltCorrection sc = StLucia, const std::string &NNfileName="" ) 
+			: 	COriNN			( ConcSd, ConcTg, NNfileName) ,
 				_ConcSd	( ConcSd ),
 				_ConcTg	( ConcTg ),
 				_ConcSalt		( CationConc),
