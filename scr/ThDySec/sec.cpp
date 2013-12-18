@@ -503,7 +503,7 @@ char *	CSecAl::GetAlignedSecChar(long Al_pBeg, long Al_pEnd)  // "regala" esta m
 	return CopyAlignedSecChar(Al_pBeg,  Al_pEnd, Al_sec);
 }
 
-CMultSec::CMultSec (	const char	  *file	, 
+CMultSec::CMultSec (	const std::string &file	, 
 					std::shared_ptr<CSaltCorrNN>  NNpar	, 
 					bool           all_dir  /*= false*/,
 					float		   MaxTgId	/*= 100*/, 

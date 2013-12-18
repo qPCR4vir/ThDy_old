@@ -433,7 +433,7 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar)        : _NNPar      (NNp
                                                                 _SecLenLim  (SecLenLim),
 	                                                            _MaxTgId    (MaxTgId), 
 	                                                            _NNPar      (NNpar)              { AddFromFile(file); }
-		 CMultSec (	const char	  *file	,                   //< The name of the file or directory to be loaded 
+		 CMultSec (	const std::string &file	,                   //< The name of the file or directory to be loaded 
 					std::shared_ptr<CSaltCorrNN>  NNpar	, 
 					bool           all_dir  = false,        //< Load all files and directories recursiverly? 
 					float		   MaxTgId	= 100,          //< Sec. with more % of idem are marked as "filtered" and not selected
@@ -576,14 +576,14 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar)        : _NNPar      (NNp
 		CSec		*InsertSecAfter	( CSec *sec , CSec *preSec ) ;
 		int			CountSelectedSeq		()
 		{
-			int count(0);
+            int count{0};
 			for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec de esta misma ms
-				 count += (CurSec()->Filtered()) ;
+				 count += (CurSec()->Selected()) ;
 			return count;
 		}
 		int			CountSelectedSeqRec		()
 		{
-			int count(0);
+            int count{0};
 				 count += CountSelectedSeq() ;
 			for (  goFirstMSec()   ; NotEndMSec()   ;   goNextMSec() )		// recorre todos las primeras sec
 				 count += (CurMSec()->CountSelectedSeqRec());
