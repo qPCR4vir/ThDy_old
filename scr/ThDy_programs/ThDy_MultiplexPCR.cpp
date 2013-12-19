@@ -12,7 +12,7 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr,
 
 void CreateComplProbes(	CMultSec		&pr	)
 {
-	for (  pr.goFirstMSec(); pr.NotEndMSec()   ;   pr.goNextMSec())  
+	for (  pr.goFirstMSec(); pr.NotEndMSec()   ;   pr.goNextMSec())    // usar solo selected   !!!
         CreateComplProbes( *pr.CurMSec() );
 	CMultSec *cms=pr.AddMultiSec("compl");
 	for (  pr.goFirstSec()   ; pr.NotEndSec()   ;   pr.goNextSec() )				// recorre todos las sondas
