@@ -71,12 +71,20 @@ class CSaltCorrNN;
 class ThDyCommProgParam : public CCommProgParam 
 {public:	
     CParamString     _OutputFile      {this, "Results output file",                   "OutputFile", "" } ;
+
     CParamString     _InputTargetFile {this, "Imput file for Targets",				  "TargetFile", "" } ;
+    CParamBool       _TRecurDir    {this, "Recursively add all Target seq-files from all dir", "TRecursDir", false} ;
+    CParamBool       _TDirStrOnly  {this, "Reproduce only the dir struct in targets"         , "TOlyDirStr", true } ;
+
     CParamString     _NonTargetFile   {this, "Imput file for non-Targets",			  "NonTargetF", "" } ;
+    CParamBool       _nTRecurDir    {this, "Recursively add all non-Target seq-files from all dir", "nTRecurDir", false} ;
+    CParamBool       _nTDirStrOnly  {this, "Reproduce only the dir struct in non-targets"         , "nTlyDirStr", true } ;
+
     CParamString     _PCRfiltrPrFile  {this, "Imput file with primers for filtering", "PCRftrFile", "" } ;
+    CParamBool       _FiltrRecuDir    {this, "Recursively add all filtre PCR primer seq-files from all dir", "FltrRecDir", false} ;
+    CParamBool       _FiltrStrOnly  {this, "Reproduce only the dir struct in filtre PCR primer"     ,        "FltrStrOly", true } ;
    
     CParamString     _InputNNFile {this, "Imput file with NN parametrs",		      "iNNParFile", ""	 } ;
-    CParamBool       _RecurDir    {this, "Recursively add all seq-files from all dir", "RecursiDir", false} ;
 
 	SaltCorrection                 _SaltCorr {StLucia }  ;			
     CParamEnumRange<SaltCorrection>	SaltCorr {this, "Salt correction methode",		  "SaltCorrMt", _SaltCorr, StLucia, StLucia, StLucia }  ;
@@ -249,6 +257,9 @@ class CProgParam_microArray : public CEspThDyProgParam
 {public:	
     std::shared_ptr<CMultSec>   _probesMS{_cp.AddSeqGroup(_cp._pSeqTree.get(), "Probes of Virtual uArr")};
     CParamString	            _InputSondeFile{ this, "Imput file for Sondes", "iSonde_uAr", "" };
+    CParamBool       _PrRecurDir    {this, "Recursively add all probe seq-files from all dir", "ProbRecDir", false} ;
+    CParamBool       _PrDirStrOnly  {this, "Reproduce only the dir struct in probe"          , "ProbDirStr", true } ;
+      
     std::shared_ptr<CTable<TmGPos>> _rtbl ;		                //uArr_RT *_rtbl;
 
 	//bool			    _I, _G;			// Outpu table of I, G. 
@@ -410,7 +421,18 @@ class CProgParam_TmCalc : public CProgParam_MultiplexPCR
 						_Sec		(this, "Primer",						"TmCalc_Sec", ""			) ,
 						_Sec2Align	(this, "Primer to align",				"TmC_Sec2Al", ""			) 
 					{
+                        _InputSondeFile.SetTitel("Imput oligos for TmCalc"); 
+		                _InputSondeFile.SetEtiq("iOligo_TmC", this); 
 						RenameSondesMS("Tm calulator sondes??");
+
+                        _PrRecurDir.SetTitel("Recursively add all oligos seq-files from all dir"); 
+		                _PrRecurDir.SetEtiq("OligRecDir", this); 
+
+                        _PrDirStrOnly.SetTitel("Reproduce only the dir struct in Oligos"); 
+		                _PrDirStrOnly.SetEtiq("OligDirStr", this); 
+
+                        //_probesMS->_name="Primers of Multiplex PCR";
+
 	                }
 
 	bool	Set_Sec				 (char *Sec){_Sec.take(Sec)		;		 return true ;}
