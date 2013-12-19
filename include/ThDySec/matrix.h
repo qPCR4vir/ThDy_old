@@ -78,7 +78,7 @@ public:
 	CTable(std::string TitTable,index capRow, index capCol): CMatrix_RA<Num>(capRow, capCol),		_titTable(TitTable), 
 														_titRows(capRow),						_titColumns(capCol)
 														{	_titRows.reserve (capRow ); _titColumns.reserve(capCol);}
-	index AddColummnTit	(const std::string &newColTit)	{ _titColumns.push_back (newColTit); return _titColumns.size(); }
+	index AddColummnTit	(const std::string &newColTit)	{ _titColumns.push_back (newColTit); return index(_titColumns.size()); }
 	index AddRowTit		(const std::string &newRowTit)	{ _titRows.push_back	 (newRowTit); return _titRows.size	 ();}
 	void CreateMatrix	(index capRow, index capCol){/* assert (!_mtx); */forceResize(capRow		 , capCol);	
 														expand(_titRows.size() -1, _titColumns.size() -1);	}// si predices las posibles dimenciones
