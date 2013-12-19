@@ -22,11 +22,25 @@ class SetupPage : public CompoWidget
 {
     ThDyProject        &_Pr;
     FilePickBox         _results    { *this, STR("Results:") } ;
+
     FilePickBox         _targets    { *this, STR("Targets:") }  ;
-    nana::gui::checkbox _chkBx_RecDir{ *this, STR("RecurDir") };
+    nana::gui::checkbox _chkTargRecDir    { *this, STR("Targets - Recur Dir") },
+                        _chkTargOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
+
     FilePickBox         _nTsec      {*this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt")};
+    nana::gui::checkbox _chk_nTgRecDir    { *this, STR("Non Targets - Recur Dir") },
+                        _chk_nTgOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
+
     FilePickBox         _PCRfiltre  { *this, STR("PCR-filtre:")};
+
     FilePickBox         _PrimersFilePCR{*this, STR("Primers seq. file:") };
+    nana::gui::checkbox _chkPrimRecDir    { *this, STR("Primers - Recur Dir") },
+                        _chkPrOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
+
+    FilePickBox         _Prob_uArr{*this, STR("Probes seq. file:") };
+    nana::gui::checkbox _chkProbRecDir    { *this, STR("Probes - Recur Dir") },
+                        _chkProbOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
+
     OpenSaveBox         _NNParamFile {*this, STR("NN param:")};
 
     nana::gui::combox               comBoxSalMeth   {*this}, 
@@ -43,10 +57,14 @@ class SetupPage : public CompoWidget
     {
         _DefLayout =
 	"vertical      gap=2         	\n\t"
-	"   < weight=300   <weight=2><vertical min=50    max=800 gap=2 	\n\t"
+	"	   < weight=400   <weight=2><vertical min=50    max=800 gap=2 		\n\t"
 	"                              		                    <<Project     >      weight=23 >      		\n\t"
 	"		                                                  <<Results     >      weight=23 >      		\n\t"
-	"	                                                      <    Seq                  weight=125     gap=2   vertical  >       	\n\t"
+	"		                                       <    _targets         weight=50      gap=2   vertical <gap=10 <weight=10%><TargOpt ><weight=10%> >  >       		\n\t"
+	"		                                       <    _nTsec        weight=50     gap=2   vertical <gap=10 <weight=10%><nTargOpt><weight=10%> >  >       		\n\t"
+	"		                                       <    _PCRfiltre      weight=50     gap=2   vertical <gap=10 <weight=10%><_PCRfiltreOpt><weight=10%> >  >       		\n\t"
+	"		                                       <    _PrimersFilePCR weight=50     gap=2   vertical <gap=10 <weight=10%><_PrimersFilePCROpt><weight=10%> >  >       		\n\t"
+	"		                                       <    _Prob_uArr      weight=50     gap=2   vertical <gap=10 <weight=10%><_Prob_uArrOpt><weight=10%> >  >       		\n\t"
 	"	 	                                                 <<NN_param  >     weight=23 >      		\n\t"
 	"		                                                  <min=50 <weight=2>  <vertical min=50 max=200 gap=2 buttons>  <>  >	\n\t"
 	"                                                                                                                                                                                                     >      <weight=120 checks>   	>	\n\t"
@@ -57,10 +75,14 @@ class SetupPage : public CompoWidget
 	"		                                                                                <AMeth gap=2>   > 	\n\t"
 	"                                         <>  >      		\n\t"
 	"	\n\t"
+	"		\n\t"
     
             ;
-        _nTsec        .ResetLayout(100);
+        _nTsec        .ResetLayout(105);
         _PCRfiltre    .ResetLayout (60 );
+        _PrimersFilePCR.ResetLayout (90 );
+        _Prob_uArr    .ResetLayout (90 );
+        _NNParamFile  .ResetLayout (90 );
 
         numUpDowSdConc.ResetLayout (80 );  
         numUpDowTa.    ResetLayout (90 );  
@@ -72,10 +94,18 @@ class SetupPage : public CompoWidget
     {
       _setup<< link( _Pr._cp._OutputFile      ,       _results  )
             << link( _Pr._cp._InputTargetFile ,       _targets  )
-            << link( _Pr._cp._RecurDir      ,      _chkBx_RecDir)
+            << link( _Pr._cp._TRecurDir         ,     _chkTargRecDir)
+            << link( _Pr._cp._TDirStrOnly      ,     _chkTargOnlyStruct)
             << link( _Pr._cp._NonTargetFile     ,       _nTsec  )
+            << link( _Pr._cp._nTRecurDir      ,     _chk_nTgRecDir)
+            << link( _Pr._cp._nTDirStrOnly      ,     _chk_nTgOnlyStruct)
             << link( _Pr._cp._PCRfiltrPrFile  ,       _PCRfiltre)
             << link( _Pr._mPCR._InputSondeFile , _PrimersFilePCR)            
+            << link( _Pr._mPCR._PrRecurDir      ,     _chkPrimRecDir)
+            << link( _Pr._mPCR._PrDirStrOnly      ,     _chkPrOnlyStruct)
+            << link( _Pr._uArr._InputSondeFile , _Prob_uArr)            
+            << link( _Pr._uArr._PrRecurDir      ,     _chkProbRecDir)
+            << link( _Pr._uArr._PrDirStrOnly      ,     _chkProbOnlyStruct)
             << link( _Pr._cp._InputNNFile       , _NNParamFile  )
             << link( _Pr._cp.ConcSd	    ,       numUpDowSdConc  )
             << link( _Pr._cp.ConcSalt	     , numUpDowSalConc  )
@@ -87,7 +117,15 @@ class SetupPage : public CompoWidget
             
         _place.field("Project"  )    <<  _proj        ;
 	    _place.field("Results" )     <<  _results   ;
-        _place.field("Seq"      )    <<  _targets << _chkBx_RecDir <<  _nTsec  << _PCRfiltre<<_PrimersFilePCR        ;
+        _place.field("_targets" )    <<  _targets ;
+        _place.field("TargOpt"  )    << _chkTargRecDir  << _chkTargOnlyStruct ;
+        _place.field("_nTsec"   )    <<  _nTsec   ;
+        _place.field("nTargOpt" )    << _chk_nTgRecDir <<  _chk_nTgOnlyStruct          ;
+        _place.field("_PCRfiltre")    <<  _PCRfiltre   ;
+        _place.field("_PrimersFilePCR" )    <<  _PrimersFilePCR ;
+        _place.field("_PrimersFilePCROpt"  )    << _chkPrimRecDir  << _chkPrOnlyStruct ;
+        _place.field("_Prob_uArr" )    <<  _Prob_uArr ;
+        _place.field("_Prob_uArrOpt"  )    << _chkProbRecDir  << _chkProbOnlyStruct ;
 	    _place.field("NN_param" )    << _NNParamFile  ;
 	    _place.field("buttons"  )    <<  _set_def_proj << _load_def_proj;
 	    _place.field("checks"   )    << "save result" ;
@@ -1062,7 +1100,7 @@ public:
 
 		//this->comBoxTAMeth->SelectedIndex  = SMStLucia;    
 
-        CopyStructFromDir();
+        LoadSequences();
         mExpl_.InitTree();
 
         InitMyLayout();
