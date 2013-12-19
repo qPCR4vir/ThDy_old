@@ -1,22 +1,107 @@
-#include <../temp/EditableForm.hpp>
-#include <../temp/Numer.hpp>
-#include <nana/gui/tooltip.hpp>
-#include <nana/gui/widgets/progress.hpp>
-#include <nana/gui/widgets/tabbar.hpp>
-#include <nana/gui/widgets/checkbox.hpp>
 #include <iostream>    // temp, for debugging
 #include <fstream>     // temp, for debugging
-#include<filesystem>
+#include <filesystem>
+
 #include <nana/gui/wvl.hpp>
+#include <nana/gui/widgets/tabbar.hpp>
+#include <nana/gui/widgets/checkbox.hpp>
 #include <nana/gui/widgets/treebox.hpp>
 #include <nana/gui/widgets/listbox.hpp>
 
+#include <nana/gui/tooltip.hpp>
+#include <nana/gui/widgets/progress.hpp>
+
+#include <../temp/EditableForm.hpp>
+#include <../temp/Numer.hpp>
+
 #include "thdy_programs\init_thdy_prog_param.h"
+#include "ThDySec\matrix.h" 
+#include "ThDySec\common_basics.h" 
+
 
 #include "nanaBind.hpp"
 using namespace ParamGUIBind;
 
 class ThDyNanaForm ;
+ 
+class TableTm : public nana::gui::form, public EditableForm
+{   
+    using List  = nana::gui::listbox;
+    using Table = CTable<TmGPos> ;
+    using index = Table::index;
+
+    std::shared_ptr<Table> _table;
+    List                   _list { *this };
+    int                    n_dec{ 1 },   n_len{ 6 };
+ 
+    class ListTableTmMaker : public List::resolver_interface <index>
+    {
+
+        Table  &table;
+        int    &n_dec,   &n_len;
+
+
+        nana::string print(Temperature n) const
+        {
+            static const int    blen{ 50 } ;
+            static nana::char_t val[blen]  ;
+
+            swprintf(val, blen, STR("% *.*f"), n_len, n_dec, n );
+            return val;
+        }
+
+       nana::string decode(size_t col, const index &row) const override
+        {
+           if (col)        return print ( /*KtoC*/(   table(row,index(col)-1)._Tm   ));
+
+           return nana::charset(table.TitRow(row));
+        }
+ 
+        void encode(index&, std::size_t col, const nana::string& txt) const override
+        {
+           //if (col)
+           //    (*table)(row,col-1)._Tm= CtoK(wstr_f(txt   ));
+           //table->TitRow(row)=nana::charset(txt );
+        }
+        
+     public:
+        ListTableTmMaker( CTable<TmGPos> &table, int &dec , int &len) : table(table),  n_len{len}, n_dec{dec}{}
+        void SetFormat(int dec=1 , int len=6){ n_len=len; n_dec=dec;}
+    };
+    void SetDefLayout   () override
+    {
+        _DefLayout= 
+            "vertical      gap=2             \n\t"
+	        "  <_list  >       \n\t "
+ 
+            ;
+    }
+    void AsignWidgetToFields() override
+    {
+ 	    _place.field("_list"         )<<_list;
+     }
+ public:
+    TableTm    (std::shared_ptr<CTable<TmGPos>> table)  : _table(table),
+                nana::gui::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
+                EditableForm    (nullptr, *this, nana::charset( std::string("Table Tm: ") +  table->TitTable() ), STR("TableTm.lay.txt")) 
+   {
+        nana::gui::API::zoom_window(*this, true);
+        InitMyLayout();
+        SelectClickableWidget( _list);
+        SelectClickableWidget( *this);
+                
+        _list.resolver(ListTableTmMaker(*table.get(),n_dec,n_len));
+
+        _list.append_header(STR("Seq")  , 120);
+        for (index col = 0; col < table->totalCol(); ++col)
+            _list.append_header(nana::charset(  table->TitColumn(col) ) , 100);
+        for (index row = 0; row < table->totalRow(); ++row)
+            _list.at(0).append(row).value  ( row );
+
+        //MakeResponive();
+    }
+        void SetFormat(int dec=1 , int len=6){  n_len=len; n_dec=dec; }
+};
 
 class SetupPage : public CompoWidget
 {
@@ -56,25 +141,25 @@ class SetupPage : public CompoWidget
     void  SetDefLayout   () override
     {
         _DefLayout =
-	"vertical      gap=2         	\n\t"
+	"vertical      gap=2         		\n\t"
 	"	   < weight=400   <weight=2><vertical min=50    max=800 gap=2 		\n\t"
-	"                              		                    <<Project     >      weight=23 >      		\n\t"
-	"		                                                  <<Results     >      weight=23 >      		\n\t"
+	"	               		                   <<Project     >      weight=23 >      			\n\t"
+	"			                                   <<Results     >      weight=23 >      			\n\t"
 	"		                                       <    _targets         weight=50      gap=2   vertical <gap=10 <weight=10%><TargOpt ><weight=10%> >  >       		\n\t"
 	"		                                       <    _nTsec        weight=50     gap=2   vertical <gap=10 <weight=10%><nTargOpt><weight=10%> >  >       		\n\t"
 	"		                                       <    _PCRfiltre      weight=50     gap=2   vertical <gap=10 <weight=10%><_PCRfiltreOpt><weight=10%> >  >       		\n\t"
 	"		                                       <    _PrimersFilePCR weight=50     gap=2   vertical <gap=10 <weight=10%><_PrimersFilePCROpt><weight=10%> >  >       		\n\t"
 	"		                                       <    _Prob_uArr      weight=50     gap=2   vertical <gap=10 <weight=10%><_Prob_uArrOpt><weight=10%> >  >       		\n\t"
-	"	 	                                                 <<NN_param  >     weight=23 >      		\n\t"
-	"		                                                  <min=50 <weight=2>  <vertical min=50 max=200 gap=2 buttons>  <>  >	\n\t"
-	"                                                                                                                                                                                                     >      <weight=120 checks>   	>	\n\t"
+	"		                                       <<NN_param  >     weight=23 >      			\n\t"
+	"			                                     <min=50 <weight=2>  <vertical min=50 max=200 gap=2 buttons>  <>  >		\n\t"
+	"	                                                                                                                                                                                                     >      <weight=120 checks>   	>		\n\t"
+	"					\n\t"
+	"	   < weight=46  gap=2  <>  <vertical ConcST   weight=200  gap=2>  		\n\t"
+	"	                                         <>  <vertical ConcSaltTa   weight=230  gap=2>   		\n\t"
+	"	                                         <>  <vertical   weight=250 <SMeth gap=2>          			\n\t"
+	"			                                                                                <AMeth gap=2>   > 		\n\t"
+	"	                                         <>  >      			\n\t"
 	"			\n\t"
-	"   < weight=46  gap=2  <>  <vertical ConcST   weight=200  gap=2>  	\n\t"
-	"                                         <>  <vertical ConcSaltTa   weight=230  gap=2>   	\n\t"
-	"                                         <>  <vertical   weight=250 <SMeth gap=2>          		\n\t"
-	"		                                                                                <AMeth gap=2>   > 	\n\t"
-	"                                         <>  >      		\n\t"
-	"	\n\t"
 	"		\n\t"
     
             ;
@@ -334,7 +419,7 @@ class SeqExpl : public CompoWidget
     using Node = Tree::item_proxy;
     using List = nana::gui::listbox;
 
-    ThDyProject        &_Pr;
+    ThDyProject       &_Pr;
     Tree                _tree{ *this };
     List                _list{ *this };
     bool				_showAllseq{true}, _showFiltered{true};
@@ -894,8 +979,8 @@ public:
 };
 
 class MplexPCR : public CompoWidget
-{public: 
-    ThDyProject        &_Pr;
+{ public: 
+    ThDyNanaForm      &_Pr;
     nana::gui::button  _do_mPCR{*this, STR(" PCR ! ")};
     BindGroup          _mPCR;
 
@@ -920,25 +1005,7 @@ class MplexPCR : public CompoWidget
 	    //_place.field("checks"          )<<"save result";
     }
 
-    private: void buttPCR_Click				( ) //	  Run      _IPrgPar_mPCR
-			 {	 			
-		           try{                                   
-		                    _Pr._mPCR._cp.Actualice_NNp();  
- 		                    _Pr.Run(_Pr._mPCR);	
-		           }
-		           catch ( std::exception& e)
-		           { cerr<< e.what()    ;
-                    (nana::gui::msgbox(*this,STR("Error during multiplex PCR analis !"), 
-                                                         nana::gui::msgbox::button_t::ok)   <<e.what()) (  ) ;
-		            return;
-		           }
-		//ShowResTbl(_Pr._mPCR._rtbl );
-		//_Pr._uArr._rtbl = nullptr;
-
-		//ShowResTbl(_Pr._mPCR._rtbl_self );
-		//_Pr._mPCR._rtbl_self = nullptr;
-
-		    }
+  private: void buttPCR_Click(); //	  Run      _IPrgPar_mPCR
 };
 
 class TmCalcPage : public CompoWidget
@@ -1076,8 +1143,10 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
                                     numUpDw_SLenMax {*this, STR("Max.Len.:"           ),  0,   0 , 100000,"nt"};
     BindGroup                       _commPP     ;
 
-public:    
+  public:    
+    std::vector<std::unique_ptr<nana::gui::form>> _results;
     SeqExpl                         mExpl_      {*this};
+
     ThDyNanaForm (int argc, char *argv[])
                   :nana::gui::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
                    EditableForm    (nullptr, *this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")) 
@@ -1285,6 +1354,28 @@ public:
 		    return;
 		}	 	        		 
     }   
+    void MplexPCR::buttPCR_Click()  //	  Run      _IPrgPar_mPCR
+	{	 			
+	 try{                                   
+		  _Pr._mPCR._cp.Actualice_NNp();  
+ 		  _Pr.Run(_Pr._mPCR);	
+          _Pr._results.emplace_back(new TableTm(_Pr._mPCR._rtbl));
+          _Pr._results.back()->show();
+		}
+	catch ( std::exception& e)
+		{ 
+          cerr<< e.what()    ;
+          (nana::gui::msgbox(*this,STR("Error during multiplex PCR analis !"), 
+                                                nana::gui::msgbox::button_t::ok)   <<e.what()) (  ) ;
+		  return;
+		}
+        //ShowResTbl(_Pr._mPCR._rtbl );
+        //_Pr._uArr._rtbl = nullptr;
+
+        //ShowResTbl(_Pr._mPCR._rtbl_self );
+        //_Pr._mPCR._rtbl_self = nullptr;
+
+	}
 
 
 int main(int argc, char *argv[]) try
