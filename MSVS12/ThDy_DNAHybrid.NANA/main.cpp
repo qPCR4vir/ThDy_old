@@ -137,19 +137,6 @@ class SetupPage : public CompoWidget
 	    _place.field("SMeth"  )         << " Salt Correct. Method:"	   <<  comBoxSalMeth;
 	    _place.field("AMeth"  )         << " ThDy Align. Method"       <<  comBoxTAMeth ;
     }
-    static FilePickBox& AddFastaFiltre(FilePickBox &fpb)
-    {
-        return fpb.add_filter({ {STR("fasta")       , STR("*.fas;*.fasta"     ) },
-                                {STR("NCBI BLAST")  , STR("*-Alignment.xml"   ) },
-                                {STR("GB"        )  , STR("*.gb;*-sequence.xml")},
-                                {STR("Text"      )  , STR("*.txt"             ) },
-                                {STR("All sequences"), STR("*.fas;*.fasta;*.txt;*-Alignment.xml;*.gb;*-sequence.xml")}});
-        //return fpb.add_filter(STR("fasta"     ),STR("*.fas;*.fasta"    )) 
-        //          .add_filter(STR("NCBI BLAST"),STR("*-Alignment.xml"  )) 
-        //          .add_filter(STR("GB"        ),STR("*.gb;*-sequence.xml")) 
-        //          .add_filter(STR("Text"      ),STR("*.txt"            )) 
-        //          .add_filter(STR("All sequences"), STR("*.fas;*.fasta;*.txt;*-Alignment.xml;*.gb;*-sequence.xml"));
-    }
     void  MakeResponive()
     {
         _proj.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
@@ -247,6 +234,29 @@ public:
     OpenSaveBox         _proj       { *this, STR("Project:") };
 
     SetupPage (ThDyNanaForm& tdForm);
+
+    static FilePickBox& AddFastaFiltre(FilePickBox &fpb)
+    {
+        return fpb.add_filter(FastaFiltre( ));
+        //return fpb.add_filter({ {STR("fasta")       , STR("*.fas;*.fasta"     ) },
+        //                        {STR("NCBI BLAST")  , STR("*-Alignment.xml"   ) },
+        //                        {STR("GB"        )  , STR("*.gb;*-sequence.xml")},
+        //                        {STR("Text"      )  , STR("*.txt"             ) },
+        //                        {STR("All sequences"), STR("*.fas;*.fasta;*.txt;*-Alignment.xml;*.gb;*-sequence.xml")},
+        //                        {STR("All files" )  , STR("*.*"               ) }
+        //                     });
+    }
+    static nana::gui::filebox::filtres FastaFiltre( )
+    {
+        return nana::gui::filebox::filtres{ {STR("fasta")       , STR("*.fas;*.fasta"     ) },
+                                            {STR("NCBI BLAST")  , STR("*-Alignment.xml"   ) },
+                                            {STR("GB"        )  , STR("*.gb;*-sequence.xml")},
+                                            {STR("Text"      )  , STR("*.txt"             ) },
+                                            {STR("All sequences"), STR("*.fas;*.fasta;*.txt;*-Alignment.xml;*.gb;*-sequence.xml")},
+                                            {STR("All files" )  , STR("*.*"               ) }
+                                          } ;
+    }
+
 
     void AddMenuItems(nana::gui::menu& menu)
     {
@@ -566,14 +576,17 @@ public:
         menu.append(STR("Add a group of sequences from a file..."), [&](nana::gui::menu::item_proxy& ip) 
         {
             nana::gui::filebox  fb{ *this, true };
-            fb.title(STR("Add a group of sequences from a file"));
+            fb .add_filter ( SetupPage::FastaFiltre( )                   )
+               .title      ( STR("Add a group of sequences from a file") );
+
             if (fb()) 
                AddMSeqFiles(nana::charset(fb.file()), false);
         });
         menu.append(STR("Add a tree of groups of sequences from a directory..."),[&](nana::gui::menu::item_proxy& ip) 
         {
             nana::gui::filebox  fb{ *this, true };
-            fb.title(STR("Add a tree of groups of sequences from a directory"));
+            fb .add_filter ( SetupPage::FastaFiltre( )                   )
+               .title(STR("Add a tree of groups of sequences from a directory"));
             if (fb()) 
                 AddMSeqFiles(nana::charset(fb.file()), true);
         });
@@ -583,7 +596,8 @@ public:
         menu.append(STR("Reproduce only the structure of directory..."),[&](nana::gui::menu::item_proxy& ip) 
         {
             nana::gui::filebox  fb{ *this, true };
-            fb.title(STR("Reproduce the structure of directory..."));
+            fb .add_filter ( SetupPage::FastaFiltre( )                   )
+               .title(STR("Reproduce the structure of directory..."));
             if (!fb()) return;
 
             auto      tn    = _tree.selected();
@@ -605,7 +619,8 @@ public:
                 return;
             }
             nana::gui::filebox  fb{ *this, true };
-            fb.title(STR("Replace/reload a group of sequences from a file"));
+            fb .add_filter ( SetupPage::FastaFiltre( )                   )
+               .title(STR("Replace/reload a group of sequences from a file"));
             if (!fb()) return;
 
             CMultSec *ms = tn.value<CMultSec*>();
