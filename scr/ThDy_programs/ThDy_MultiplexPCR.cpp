@@ -32,8 +32,7 @@ void CreateComplProbes(	CMultSec		&pr	)
 	CreateComplProbes(	pr	);
 
 	microArrayProg   ( IPrgPar_uArr, pr	, pr, t_0, 300    , "_self"	)  ;
-	delete IPrgPar_uArr->_rtbl_self ;
-	       IPrgPar_uArr->_rtbl_self=	IPrgPar_uArr->_rtbl;
+   IPrgPar_uArr->_rtbl_self = IPrgPar_uArr->_rtbl;
 
 	//std::shared_ptr<CMultSec>  tg(		IPrgPar_uArr->_cp._pSeqTargets );
 	//		if (!tg)

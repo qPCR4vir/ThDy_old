@@ -25,14 +25,14 @@ void	CreateColumns(CTable<TmGPos> &rtbl, CMultSec &pr, int MaxGrDeg, OutStr &os 
 				const std::string name (path + s.Name() );
 				os.Tm	 <<sep << name		;	os.G		<<sep << name		;	os.Pos	<<sep <<name		;	
 				os.Pl_Tm <<"  "<< name		;	os.Pl_G		<<"  "<< name		;
-				rtbl.AddColummnTit(s.Name()	);																						//s.x;
+				rtbl.AddColummnTit(/*name*/  s.Name()	);																						//s.x;
 			}
 		} else 
 			{	
 				const std::string name (path + s.Name() );
 				os.Tm	 <<sep << name		;	os.G		 <<sep << name		;	os.Pos	<<sep <<name		;	
 				os.Pl_Tm <<"  "<< name		;	os.Pl_G		 <<"  "<< name	;
-				rtbl.AddColummnTit(s.Name()	);
+				rtbl.AddColummnTit(/*name*/  s.Name()	);
 			}
 	}
 	for (  pr.goFirstMSec(); pr.NotEndMSec()   ;   pr.goNextMSec())  
@@ -87,12 +87,12 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr,
 	f=of+".Plasm_G.csv";	ofstream osPl_G;	if (IPrgPar_uArr->_cp._st_savG_Plasm)	{ osPl_G.open	(f.c_str()	);	assert(osPl_G	);}
 	f=of+".uArr.Al.csv";	ofstream osAl;		if (IPrgPar_uArr->_cp._st_savAlign	)	{ osAl.open		(f.c_str()	);	assert(osAl		);}
 
-	std::shared_ptr<CSaltCorrNN>  NNpar =  pr._NNPar;
+    std::shared_ptr<CSaltCorrNN>  NNpar {  pr._NNPar };
 
 	time_t t_sec = time(nullptr);
 
-	auto_ptr<ThDyAlign> apAl; 	
-	apAl= Create_ThDyAlign(		IPrgPar_uArr->_cp, pr._Global._Len.Max() , tg._Global._Len.Max(), NNpar);	ThDyAlign	&Al=*apAl.get();
+	std::unique_ptr<ThDyAlign> apAl; 	
+	apAl= Create_ThDyAlign(		IPrgPar_uArr->_cp, pr._Global._Len.Max() , tg._Global._Len.Max(), NNpar);	ThDyAlign	&Al=*apAl ;
 
 	string TableName = "Target / Probe (" + string(Al.AlignMeth()) +  " ). Virtual microArray." ; 
 	if (osTm)	osTm	<<TableName 	;		// No hace falta el if ?????   Se ignora I/O cuando no esta open??
@@ -101,10 +101,9 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr,
 				osPl_Tm <<"Row_ID"	;	
 				osPl_G  <<"Row_ID"	;		
 
-	delete IPrgPar_uArr->_rtbl ;
-
-	CTable<TmGPos> &rtbl = *(  IPrgPar_uArr->_rtbl = new	CTable<TmGPos> ( TableName/*,	tg->CountSelectedSeqRec(),
-																						pr->CountSelectedNDegSeqRec(MaxGrDeg)  */)  );
+	IPrgPar_uArr->_rtbl.reset( new	CTable<TmGPos> ( TableName/*,	tg->CountSelectedSeqRec(),
+																	pr->CountSelectedNDegSeqRec(MaxGrDeg)  */)  ); ;
+	CTable<TmGPos> &rtbl = *(  IPrgPar_uArr->_rtbl  );
 
 	// Primero creamos non deg set y el primer renglon de las tablas con el nombre de las sondas
 
