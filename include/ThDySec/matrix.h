@@ -22,8 +22,8 @@
 		template <typename Num>
 class CMatrix_RA
 {public:
-
-	typedef Num *RowType;
+    using index   = ::index;
+	using RowType =   Num* ;
 private:
 	RowType	*_mtx ;
 	index	_capRow, _numRow, _capCol, _numCol, _cr, _cc;  // _cap: reserved memory , _num:used memory
@@ -32,33 +32,78 @@ private:
 	void	Delete		();	//  --- kill old data
 	void	CopyRef		(const CMatrix_RA& mtx);		//  ????
 public:
-			CMatrix_RA	(index CapRow, index CapColumns){			Create ( CapRow, CapColumns);	}	// 		Reserva "suficiente" memoria
+			CMatrix_RA	(index CapRow, index CapColumns){			
+                                                            Create ( CapRow, CapColumns);	
+                                                        }	// 		Reserva "suficiente" memoria
 			CMatrix_RA	(							   ) : _capRow(0), _numRow(0), _capCol(0), _numCol(0),	_mtx(nullptr),_cr(0), _cc(0) {	}		// 
+	void	Create      (index CapRow, index CapColumns);	//			Reserva "suficiente" memoria
 	bool	Reset		(index NumRow, index NumColumns);		//  --- kill old data?
-	void	forceResize (index CapRow, index CapColumns){ Delete(); Create (CapRow, CapColumns);	}	// kill old data. Destruye y re-crea.	Reserva "suficiente" memoria
-		    ~CMatrix_RA	(						)		{ Delete()				;}					
-	Num		&operator() (index row, index col	)		{ return _mtx[row][col]	;}
-	Num		 operator() (index row, index col	)const	{ return _mtx[row][col]	;}
-	Num		&at			(index row, index col	)		{ assert(row<totalRow() && col<totalCol()); return _mtx[row][col]	;}
-	Num		 at			(index row, index col	)const	{ assert(row<totalRow() && col<totalCol()); return _mtx[row][col]	;}
-	Num		&expand		(index row, index col	) ;	//			Variante de acceso a elemento (row,col) que amplia zona en uso e incluso capacidad si necesario
+	void	forceResize (index CapRow, index CapColumns){ 
+                                                            Delete(); 
+                                                            Create (CapRow, CapColumns);	
+                                                        }	// kill old data. Destruye y re-crea.	Reserva "suficiente" memoria
+		    ~CMatrix_RA	(						)		{ 
+                                                            Delete()				;
+                                                        }					
+	Num		&operator() (index row, index col	)		{ 
+                                                            return _mtx[row][col]	;
+                                                        }
+	Num		 operator() (index row, index col	)const	{ 
+                                                            return _mtx[row][col]	;
+                                                        }
+	Num		&at			(index row, index col	)		{ 
+                                                           assert(row<totalRow() && col<totalCol()); 
+                                                           return _mtx[row][col];	
+                                                         }
+	Num		 at			(index row, index col	)const	{ 
+                                                           assert(row<totalRow() && col<totalCol()); 
+                                                           return _mtx[row][col]	;
+                                                        }
+	Num		&expand		(index row, index col	) ;	///			Variante de acceso a elemento (row,col) que amplia zona en uso e incluso capacidad si necesario
 
-	void	Expand2RowsCap(index newRowCap		)		{	AddRowsCap	(newRowCap-_capRow ) ;  }	// aumenta la capacidad de rows a NumRows rows
+	void	Expand2RowsCap(index newRowCap		)		{	/// aumenta la capacidad de rows a NumRows rows
+                                                            AddRowsCap	(newRowCap-_capRow ) ;  
+                                                        }	
 	void	AddRowsCap	(index NumRow=1			);	// aumenta la capacidad de rows en: NumRows rows
-	RowType	AddRows		(index NumRow=1			)		{ _cr=_numRow; _cc=0; Expand2RowsCap ( _numRow= _numRow + NumRow ); return _mtx[_cr]; }// aumenta la cant de rows en: NumRows rows
+	RowType	AddRows		(index NumRow=1			)		{                       /// aumenta la cant de rows en: NumRows rows
+                                                            _cr=_numRow; 
+                                                            _cc=0; 
+                                                            Expand2RowsCap ( _numRow= _numRow + NumRow ); 
+                                                            return _mtx[_cr]; 
+                                                        }                                   
 	index	totalRow	(					)const	{ return _numRow		;}
 	index	totalCol	(					)const	{ return _numCol		;}
-	void	swap		(CMatrix_RA& mtx		);//		swap - muy economico
-	void	compact		() ;							//		dismunuye cap a zona en uso
-	void	Copy		(const CMatrix_RA& mtx	);		//			copia contenido, aumentando zona en uso y cap si necesario. Conserva datos propios no reescritos
-			CMatrix_RA	(const CMatrix_RA& mtx	){	Create (mtx.totalRow(), mtx.totalCol() ); Copy(mtx);}	// crea copia con cap restringida a zona en uso	
-	void	Create (index CapRow, index CapColumns);	//			Reserva "suficiente" memoria
-	void	SetNext		(index row, index col	)		{ assert(row<totalRow() && col<totalCol()); _cr=row ; _cc=col;}
-	RowType	NextRow		()								{	_cc=0; return _mtx[++_cr];}
-	Num		&Next		()								{	return at(_cr,_cc++);}
-	CMatrix_RA& operator >> (Num &num)		const		{	num    = Next(); return *this ;}
-	CMatrix_RA& operator << (const Num &num)			{	Next() = num   ; return *this ;}
-	void	InitializeRow(index row, const Num& num){ for (index c=0; c<totalCol();c++) operator()(row,c)=num;}
+	void	swap		(CMatrix_RA& mtx		);                 ///   swap - muy economico
+	void	compact		() ;							           ///   dismunuye cap a zona en uso
+	void	Copy		(const CMatrix_RA& mtx	);		           ///	 copia contenido, aumentando zona en uso y cap si necesario. Conserva datos propios no reescritos
+			CMatrix_RA	(const CMatrix_RA& mtx	){	               ///   crea copia con cap restringida a zona en uso	
+                                                    Create (mtx.totalRow(), mtx.totalCol() ); 
+                                                    Copy(mtx);
+                                                }	
+	void	SetNext		(index row, index col	)		{ 
+                                                            assert(row<totalRow() && col<totalCol()); 
+                                                            _cr=row ; 
+                                                            _cc=col;
+                                                        }
+	RowType	NextRow		()								{	
+                                                            _cc=0; return _mtx[++_cr];
+                                                        }
+	Num		&Next		()								{	
+                                                            return expand(_cr,_cc++);    // at (_cr,_cc++);  ??????????????
+                                                        }
+	CMatrix_RA& operator >> (Num &num)		const		{	
+                                                            num    = Next(); 
+                                                            return *this ;
+                                                        }
+	CMatrix_RA& operator << (const Num &num)			{	
+                                                            Next() = num   ; 
+                                                            return *this ;
+                                                        }
+	void	InitializeRow(index row, const Num& num) 
+                                                        { 
+                                                            for (index c=0; c<totalCol();c++) 
+                                                               operator()(row,c)=num;
+                                                        }
 	void	InitializeCol(index col, const Num& num){ for (index r=0; r<totalRow();r++) operator()(r,col)=num;}
 	void	Initialize   (			 const Num& num){ for (index r=0; r<totalRow();r++)
 														for (index c=0, RowType row=Row(r); c<totalCol();c++) row[c]=num;}
