@@ -32,26 +32,17 @@ CMultSec* ThDyCommProgParam::AddSeqGroup		(CMultSec   *parentGr, const std::stri
     return sG;
 }
 
-CMultSec* ThDyCommProgParam::AddSeqFromFile(CMultSec   *parentGr, const std::string& FileName, bool all_in_dir)
+CMultSec* ThDyCommProgParam::AddSeqFromFile(CMultSec *parentGr, const std::string& FileName, bool recursive/*=false*/, bool onlyStructure/*=false*/)
 {
     if (! _pSaltCorrNNp )     Actualice_NNp ();
 
-	CMultSec *sG=new CMultSec (FileName.c_str(), _pSaltCorrNNp, all_in_dir,
-								    _MaxTgId,
-								    _SecLim ,
-                                    _SecLenLim);
-	if(parentGr)
-		parentGr->AddMultiSec(sG);
-	return sG;
-}
-CMultSec* ThDyCommProgParam::CopyStructFromDir	(CMultSec *parentGr, const std::string& FileName)
-{
-    if (! _pSaltCorrNNp )     Actualice_NNp ();
-
-	CMultSec *sG=new CMultSec (FileName.c_str(), _pSaltCorrNNp, true,
-								    _MaxTgId,
-								    _SecLim ,
-                                    _SecLenLim,false);
+	CMultSec *sG=new CMultSec ( FileName , 
+                               _pSaltCorrNNp, 
+                                recursive,
+							   _MaxTgId,
+							   _SecLim ,
+                               _SecLenLim, 
+                               !onlyStructure);
 	if(parentGr)
 		parentGr->AddMultiSec(sG);
 	return sG;

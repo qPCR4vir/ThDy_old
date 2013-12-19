@@ -80,7 +80,7 @@ class ThDyCommProgParam : public CCommProgParam
     CParamBool       _nTRecurDir    {this, "Recursively add all non-Target seq-files from all dir", "nTRecurDir", false} ;
     CParamBool       _nTDirStrOnly  {this, "Reproduce only the dir struct in non-targets"         , "nTlyDirStr", true } ;
 
-    CParamString     _PCRfiltrPrFile  {this, "Imput file with primers for filtering", "PCRftrFile", "" } ;
+   CParamString     _PCRfiltrPrFile  {this, "Imput file with primers for filtering", "PCRftrFile", "" } ;
     CParamBool       _FiltrRecuDir    {this, "Recursively add all filtre PCR primer seq-files from all dir", "FltrRecDir", false} ;
     CParamBool       _FiltrStrOnly  {this, "Reproduce only the dir struct in filtre PCR primer"     ,        "FltrStrOly", true } ;
    
@@ -115,9 +115,9 @@ class ThDyCommProgParam : public CCommProgParam
     CParamBool       loadNNPar {this, "Programm option- Load NN parametr",		"LoadNNPara", _loadNNPar,  false } ,	     
                      saveNNPar {this, "Programm option- save NN parametr",		"SaveNNPara", _saveNNPar,  false }  ; 
 	bool			_st_savTm, _st_savPos, _st_savG, _st_savAlign, _st_savProj, _st_savG_Plasm, _st_savTm_Plasm, _st_savLog, _st_Exp_sond, _st_ExpTarg ;
-	CParamBool		 st_savTm,  st_savPos,  st_savG,  st_savAlign,  st_savProj,  st_savG_Plasm,  st_savTm_Plasm,  st_savLog,  st_Exp_sond,  st_ExpTarg ;
+    CParamBool		 st_savTm, st_savPos, st_savG, st_savAlign, st_savProj, st_savG_Plasm, st_savTm_Plasm, st_savLog, st_Exp_sond, st_ExpTarg;
 
-	///  The roots of the sequences tree
+    ///  The roots of the sequences tree
     std::shared_ptr<CSaltCorrNN>  _pSaltCorrNNp{Create_NNpar( )};
 	std::shared_ptr<CMultSec>     _pSeqTree         {CreateRoot() } ;
 	std::shared_ptr<CMultSec>     _pSeqNoUsed       {AddSeqGroup(_pSeqTree.get(), "Dont use"  ) } ;
@@ -202,8 +202,17 @@ void Check_NNp_Targets (/*ThDyCommProgParam& cp*/)
     CMultSec* CreateRoot	();
 	CMultSec *AddSeqGroup	(CMultSec *parentGr, const std::string&     Name);
 
-	CMultSec *AddSeqFromFile    (CMultSec *parentGr, const std::string& FileName, bool all_in_dir=false);
-	CMultSec *CopyStructFromDir	(CMultSec *parentGr, const std::string& FileName); 
+	CMultSec *AddSeqFromFile    (CMultSec *parentGr, const std::string& FileName, bool recursive=false, bool onlyStructure=false); 
+	CMultSec *CopyStructFromDir	(CMultSec *parentGr, const std::string& FileName )
+    {
+        return AddSeqFromFile    ( parentGr, FileName, true,  true);;
+    }
+    void      LoadSequences ()
+    {
+        if (!_InputTargetFile.get().empty())   AddSeqFromFile(_pSeqTargets      .get(), _InputTargetFile.get(), _TRecurDir   .get() , _TDirStrOnly .get() );
+        if (!_NonTargetFile  .get().empty())   AddSeqFromFile(_pSeqNonTargets   .get(), _NonTargetFile  .get(), _nTRecurDir  .get() , _nTDirStrOnly.get() );
+        if (!_PCRfiltrPrFile .get().empty())   AddSeqFromFile(_pPCRfiltrePrimers.get(), _PCRfiltrPrFile .get(), _FiltrRecuDir.get() , _FiltrStrOnly.get() );
+    }
     void      CopyStructFromDir ()
     {
         if (!_InputTargetFile.get().empty())   CopyStructFromDir(_pSeqTargets      .get(), _InputTargetFile.get());
@@ -272,6 +281,10 @@ class CProgParam_microArray : public CEspThDyProgParam
 
 	void      SondeFile(const std::string &InputSondeFile)	  {	_InputSondeFile .set( trim_string(InputSondeFile    ))	;	}
     void RenameSondesMS(const std::string& name);
+    void      LoadSequences ()
+    {
+        if (!_InputSondeFile.get().empty())   _cp.AddSeqFromFile(_probesMS .get(), _InputSondeFile.get(), _PrRecurDir   .get() , _PrDirStrOnly .get() );
+    }
     void CopyStructFromDir ()
     {
         if (!_InputSondeFile.get().empty())   _cp.CopyStructFromDir(_probesMS      .get(), _InputSondeFile.get());
@@ -285,9 +298,10 @@ class CProgParam_microArray : public CEspThDyProgParam
 {
 	_cp.Check_NNp_Targets ();
     assert(("Traing to load sonden seq into inexisten MultiSec", probes));
-	if (!_InputSondeFile.get().empty())
+    if (! probes->_Global._NSec)
+	 if (!_InputSondeFile.get().empty())
 		probes->AddFromFile ( _InputSondeFile.get() );	
-
+     else assert((std::cerr<<"No seq. in the probes MS in uArr routine.", true));
 }
     
 
@@ -296,11 +310,10 @@ class CProgParam_microArray : public CEspThDyProgParam
 	// cuando se corre un proceso paralelo ver donde es mejor hacer estos delete.
 	virtual ~CProgParam_microArray()	override	;
 };
- /*,_tlG(nullptr),_tlPos(nullptr), UpDate(nullptr)*/ 
-				/*_I(false),   I				(this, "Programm option- Save Tm Table",			"SavTmTable", _I,   false), 
-				  _G(true),    G				(this, "Programm option- Save Tm Table",			"SavTmTable", _G,   true), */
-
-
+ 
+//,_tlG(nullptr),_tlPos(nullptr), UpDate(nullptr)
+//				_I(false),   I				(this, "Programm option- Save Tm Table",			"SavTmTable", _I,   false), 
+//				  _G(true),    G				(this, "Programm option- Save Tm Table",			"SavTmTable", _G,   true),  
 //class	CProgParam_uArrExp;
 //int		microArrayProgTest ( CProgParam_uArrExp *IPrgPar_uArr)  ;
 //class CProgParam_uArrExp  : public CProgParam_microArray
@@ -470,11 +483,18 @@ class ThDyProject : public CProject // Permite manejar todo el projecto: con un 
 		CProgParam_SondeDesign	_SdDes{"Find sondes"                       ,_cp }  ;
 		CProgParam_TmCalc		_TmCal{"Tm calculator"                     ,_cp }  ;
 
-        void   CopyStructFromDir()
+        //void   CopyStructFromDir()
+        //{
+        //    _cp  .CopyStructFromDir();
+        //    _uArr.CopyStructFromDir();
+        //    _mPCR.CopyStructFromDir();
+        //}
+        void LoadSequences()
         {
-            _cp  .CopyStructFromDir();
-            _uArr.CopyStructFromDir();
-            _mPCR.CopyStructFromDir();
+            _cp  .LoadSequences();
+            _uArr.LoadSequences();
+            _mPCR.LoadSequences();
+            _TmCal.LoadSequences();
         }
 
  explicit	ThDyProject():	CProject("ThDy DNA Hybrid Project.","Def.ThDy.txt","Def.ThDy.txt")
