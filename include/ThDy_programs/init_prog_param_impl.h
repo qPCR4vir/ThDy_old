@@ -67,21 +67,25 @@ class IParam : public IBParam
                const std::string& titel, 
                const std::string& etiq, 
                const std::string& unit="" ) ;
+
 	 std::string Etiq(           )const{return _etiq;}      ///< semiHuman readable and unique. Best with length 10
-	 void     SetEtiq(std::string etiq){ _etiq=etiq;}       ///< Human readable
+	 void     SetEtiq(std::string etiq, IProg *prog);
 	
 	 std::string Unit()const{return _unit;}      ///< Human redeable and optional
 
 	 std::ostream	&save	(std::ostream	&osPr) const override
-			            {   osPr<< _etiq << ":\t"; 
+			            {    
+                            osPr<< _etiq << ":\t"; 
 			                saveValue(osPr)<<"\t"<<_unit<<"\t";
 							IBParam::save(osPr)	; 
 							return osPr;
 			            } 
      bool       load	(std::istream   &isPr)  /* throw( std::out_of_range) */      override   /**< Asume etiquete allready tested OK !!!!  */
-			            {   return loadValue(isPr);}   
+			            {   
+                            return loadValue(isPr);}   
 	 bool       load	(std::string		&etiq, std::istream &isPr) /*throw( std::out_of_range)   */  override
-			            {   if (etiq!=_etiq) 
+			            {   
+                            if (etiq!=_etiq) 
 						        return false;
 			                return load(isPr);
 			            }  
@@ -152,20 +156,23 @@ class IProg : public IBParam // -------	  Clase base "interfase" para param de p
 
 	IProg (const std::string& titel, CProject *proj=nullptr); /*:_Titel(titel){ if (proj) proj->_ProgList.push_back(this);}*/
 	std::ofstream	&save		(std::ofstream	&osPr				 )  const
-	                            {   osPr << std::endl <<"\t------\t"<<Titel()<<" "<<std::endl ;
+	                            {   
+                                    osPr << std::endl <<"\t------\t"<<Titel()<<" "<<std::endl ;
 									for (auto &par : _parametrs) 
 								        par.second->save(osPr); 
 	                                return osPr;
 	                            }
 	         bool	load		(std::string		&etiq, std::ifstream &isPr) 
-	                            {   auto p=_parametrs.find(etiq); 
+	                            {   
+                                    auto p=_parametrs.find(etiq); 
 	                                if (p==_parametrs.end()) 
 										return false;
 	                                return p->second->load(isPr); //throw execption if false ????
 	                            }
 	virtual	int		Run			(IProg &prog				){return prog.Run();}       //  ???????
 	virtual int		Run			(		void					)
-	                            {   for(int WorkToDo=Initialize(); WorkToDo>0 ; WorkToDo=Continue()) 
+	                            {   
+                                    for(int WorkToDo=Initialize(); WorkToDo>0 ; WorkToDo=Continue()) 
 										CallBack(WorkToDo); 
 									return Finalize();			 
 	                            } 
@@ -218,17 +225,20 @@ public:
 	std::ofstream	&saveToFile	(const char *ProjetFileName) const{	std::ofstream osPr(ProjetFileName);			return save_all(osPr);}
 
 	std::ofstream	&save		()		const		            {	return saveToFile(_ProjetFileName.c_str())	;   }
-	std::ofstream	&save_defPr	()                              {   ProjetFile(_defPr);         return save();	    }
+	std::ofstream	&save_defPr	()                              {   ProjetFile(_defPr);         
+                                                                    return save();	    }
 	std::ofstream	&save_asDefPr()		const		            {	return saveToFile(_defPr.c_str())	        ;   }
-	std::ofstream   &save	 (const std::string &ProjetFileName){	ProjetFile(ProjetFileName); return save();	    }
+	std::ofstream   &save	 (const std::string &ProjetFileName){	ProjetFile(ProjetFileName); 
+                                                                    return save();	    }
 
 	virtual std::ofstream &saveTMP() const            /// Reescribe el projecto actual. Pensar algo mejor? Preguntar al user? usar # conscuti?
 	                            {	return save();	}
 
 	   std::ofstream&	save_all(std::ofstream &osPr)	const 			
-	                        {   for(auto p : _ProgList) 
-						            p->save(osPr) ;		
-	                             IProg::save(osPr) ;   
+	{   
+        for(auto p : _ProgList) 
+			p->save(osPr) ;		
+	        IProg::save(osPr) ;   
 	   
 	   osPr<< std::endl<<std::endl<<
 			 "How to use? \n Each program´s parameter have an unique identificator or etiquette. \n "
@@ -248,16 +258,18 @@ public:
 	   
 	   }   // por que solo funciona con el IProg:: ???
 	bool	            load_all(std::string &etiq, std::ifstream &isPr)	//override
-	                    {   for(auto p : _ProgList)	
-					            if ( p->load(etiq, isPr)) 
-								    return true ;
-						    return IProg::load(etiq, isPr);					 }
+	{   
+        for(auto p : _ProgList)	
+			if ( p->load(etiq, isPr)) 
+				return true ;
+		return IProg::load(etiq, isPr);					 
+    }
 
     int		Run (IProg &prog)	override                    //   ??????
-	                 {	
-                        saveTMP( ) ; 
-	                    return prog.Run();
-	                 }
+	{	
+    saveTMP( ) ; 
+	return prog.Run();
+	}
 
 	void AddProg (IProg* par) {_ProgList.push_back(par);}
 

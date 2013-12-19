@@ -73,9 +73,18 @@ void CProgParam_microArray::RenameSondesMS(const std::string& name)
 //					} 
 CProgParam_MultiplexPCR::CProgParam_MultiplexPCR(const string& titel, ThDyCommProgParam &commThDyParam) 
 	: CProgParam_microArray(titel,commThDyParam), _rtbl_self(nullptr)
-	{	_InputSondeFile.SetTitel("Imput file for primers"); 
-		_InputSondeFile.SetEtiq("iSonde_PCR"); 
+	{	
+        _InputSondeFile.SetTitel("Imput file for primers"); 
+		_InputSondeFile.SetEtiq("iSonde_PCR", this); 
         _probesMS->_name="Primers of Multiplex PCR";
+
+        _PrRecurDir.SetTitel("Recursively add all primers seq-files from all dir"); 
+		_PrRecurDir.SetEtiq("PrimRecDir", this); 
+
+        _PrDirStrOnly.SetTitel("Reproduce only the dir struct in primers"); 
+		_PrDirStrOnly.SetEtiq("PrimDirStr", this); 
+
+ 
 	}
 
 

@@ -28,6 +28,14 @@ IParam::IParam (  IProg *pp,
 				pp->insertParam(this); 
 	        }    
 
+void     IParam::SetEtiq(std::string etiq, IProg *prog)
+{ 
+    auto param = prog->_parametrs[_etiq];     // revisar posibles inconsistencias   !!!!!!!!!!!!!!!!
+    prog->_parametrs.erase(_etiq);
+    _etiq=etiq;
+    prog->_parametrs[_etiq]=param;
+}       ///< Human readable
+
 
 //void IParam::insertParam(IProg *pp)  
 //{   pp->_parametrs[_etiq]= this;

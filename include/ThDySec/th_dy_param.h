@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <string.h>
+#include <fstream>
 #include <iostream>
 //#include <iosfwd>
 
@@ -35,50 +36,41 @@ class COriNN
 	Energy	CalcG (Entropy S,Energy H		 )		 const{return CalcG(S,H,_Ta);}// Usa la Ta almacenada aqui con el ultimo SetTa
 	bool LoadNNParam(istream &isTDP)  ;
 		COriNN						(float C1 = 50e-9,  
-			                         float C2 = 50e-9 ) 
-		:		R					( 1.987f),	
-				_RlogC				( R * (float)log( (C1>C2)?C1-C2/2:C2-C1/2  )	),
-				_Ta					( 0		),		// ineficiente si se deja asi
-				forbidden_entropy	(_RlogC	),		// OJO !! dependencia de parte de la matriz dS de las conc ADN
-				forbidden_enthalpy	( 1e18f	),		// initialize parameter table!
-				forbidden_freeEnerg	( -999999999.0f	),	// ( -999999999.0f	),
-				kein_Tm				( 0		),
-				iloop_entropy		(-0.97f	),
-				iloop_enthalpy		( 0.00f	),
-				bloop_entropy		(-1.30f	),		// xy/-- and --/xy (Bulge Loops of size > 1)
-				bloop_enthalpy		( 0.00f	),
-				obulge_match_H		(-2.66f * 1000),// bulge opening
-				obulge_match_S		(-14.22f),
-				cbulge_match_H		(-2.66f * 1000),// bulge closing
-				cbulge_match_S		(-14.22f),
-				obulge_mism_H		( 0.00f * 1000),
-				obulge_mism_S		(-6.45f	),
-				cbulge_mism_H		( 0.00f	),
-				cbulge_mism_S		(-6.45f	)   		         {	InitOriNNMatriz();}
+			                         float C2 = 50e-9, const std::string &NNfileName="" ) 
+		:		_RlogC				( R * (float)log( (C1>C2)?C1-C2/2:C2-C1/2  )	),
+				forbidden_entropy	(_RlogC	)		// OJO !! dependencia de parte de la matriz dS de las conc ADN
+	{	
+        InitOriNNMatriz(); 
+        if (NNfileName.empty())
+        {
+            std::ifstream nnf{NNfileName};
+            LoadNNParam(nnf);
+        }
+    }
 
-	const float R ;
-	const float forbidden_enthalpy,
-				forbidden_freeEnerg,
-				kein_Tm, 
-				iloop_entropy,
-				iloop_enthalpy,
-				bloop_entropy,
-				bloop_enthalpy,
-				obulge_match_H,
-				obulge_match_S,
-				cbulge_match_H,
-				cbulge_match_S,
-				obulge_mism_H,
-				obulge_mism_S,
-				cbulge_mism_H,
-				cbulge_mism_S; 
+	const float R                   { 1.987f } ;
+	const float forbidden_enthalpy  { 1e18f  },
+				forbidden_freeEnerg {-999999999.0f} ,
+				kein_Tm             { 0     }, 
+				iloop_entropy       {-0.97f },
+				iloop_enthalpy      { 0.00f },	// xy/-- and --/xy (Bulge Loops of size > 1)
+				bloop_entropy       {-1.30f	},
+				bloop_enthalpy      { 0.00f	},
+				obulge_match_H      {-2.66f * 1000},// bulge opening
+				obulge_match_S      {-14.22f},
+				cbulge_match_H      {-2.66f * 1000},// bulge closing
+				cbulge_match_S      {-14.22f},
+				obulge_mism_H       { 0.00f * 1000},
+				obulge_mism_S       {-6.45f	},
+				cbulge_mism_H       { 0.00f	},
+				cbulge_mism_S       {-6.45f	}; 
  protected:
 		Entropy	_RlogC;				// rlogc = R * log( (C1>C2)?C1-C2/2:C2-C1/2  ) ;
  public:
 		Entropy forbidden_entropy;	// forbidden entropy=-rlogc
-	Temperature	_Ta;				// ineficiente? si se deja asi, ponerla lo mas parecido, ?pero menor que lo esperado?
+	Temperature	_Ta{ 0     };		// ineficiente? si se deja asi, ponerla lo mas parecido, ?pero menor que lo esperado?
 									// se usa para calcular G -free energia
-		  virtual ~COriNN(){}	// Hace falta ????
+		  virtual ~COriNN(){}	    // Hace falta ????
 private:		  COriNN& operator=(const COriNN& ){} /*= delete*/ ;
 };
 
