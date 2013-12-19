@@ -249,7 +249,7 @@ class CProgParam_microArray : public CEspThDyProgParam
 {public:	
     std::shared_ptr<CMultSec>   _probesMS{_cp.AddSeqGroup(_cp._pSeqTree.get(), "Probes of Virtual uArr")};
     CParamString	            _InputSondeFile{ this, "Imput file for Sondes", "iSonde_uAr", "" };
-    CTable<TmGPos>             *_rtbl{nullptr};		                //uArr_RT *_rtbl;
+    std::shared_ptr<CTable<TmGPos>> _rtbl ;		                //uArr_RT *_rtbl;
 
 	//bool			    _I, _G;			// Outpu table of I, G. 
 	//CParamBool		 I,  G;			// Outpu table of I, G. 
@@ -325,7 +325,7 @@ class CProgParam_MultiplexPCR : public CProgParam_microArray
 	int		Run		()   {	
                             return MultiplexPCRProg ( this )  ;
                          }
-	CTable<TmGPos> *_rtbl_self;		                                    //uArr_RT *_rtbl;
+    std::shared_ptr<CTable<TmGPos>> _rtbl_self ;		                //uArr_RT *_rtbl;
 };
 
 class CProgParam_SondeDesign ;
