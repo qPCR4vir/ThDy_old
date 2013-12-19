@@ -110,7 +110,7 @@ class ThDyCommProgParam : public CCommProgParam
 	CParamBool		 st_savTm,  st_savPos,  st_savG,  st_savAlign,  st_savProj,  st_savG_Plasm,  st_savTm_Plasm,  st_savLog,  st_Exp_sond,  st_ExpTarg ;
 
 	///  The roots of the sequences tree
-	std::shared_ptr<CSaltCorrNN>  _pSaltCorrNNp;
+    std::shared_ptr<CSaltCorrNN>  _pSaltCorrNNp{Create_NNpar( )};
 	std::shared_ptr<CMultSec>     _pSeqTree         {CreateRoot() } ;
 	std::shared_ptr<CMultSec>     _pSeqNoUsed       {AddSeqGroup(_pSeqTree.get(), "Dont use"  ) } ;
 	std::shared_ptr<CMultSec>     _pSeqTargets      {AddSeqGroup(_pSeqTree.get(), "Target seq") } ; 
@@ -141,7 +141,7 @@ class ThDyCommProgParam : public CCommProgParam
 	
 unique_ptr<CSaltCorrNN> Create_NNpar        ( )   //< Create a new set of NeirN parametrs based on current concentr. and Ta set in com-par.
 {
-	unique_ptr<CSaltCorrNN> NNpar ( new  	CSaltCorrNN	(	 _ConcSd,  _ConcTg,  _ConcSalt   )); 		
+	unique_ptr<CSaltCorrNN> NNpar ( new  	CSaltCorrNN	(	 _ConcSd,  _ConcTg,  _ConcSalt, _SaltCorr, _loadNNPar?_InputNNFile.get():"")); 		
 	NNpar->SetTa(	CtoK(	 _Ta));			 
 	return NNpar ;
 }

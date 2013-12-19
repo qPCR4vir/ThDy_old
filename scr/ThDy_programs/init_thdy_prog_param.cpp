@@ -11,8 +11,8 @@ CProgParam_microArray::~CProgParam_microArray()		{ /*delete _tlTm;*/}
 
 CMultSec* ThDyCommProgParam::CreateRoot	() 
 {
-	//if (! _pSaltCorrNNp)
-	//	_pSaltCorrNNp=Create_NNpar(*this);			//Comprobar que no ha cambiado????????
+	if (! _pSaltCorrNNp)
+		_pSaltCorrNNp=Create_NNpar( );			//Comprobar que no ha cambiado????????  revisar     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	return new CMultSec("All seq");
 }
 CMultSec* ThDyCommProgParam::AddSeqGroup		(CMultSec   *parentGr, const std::string&     Name)
@@ -23,7 +23,7 @@ CMultSec* ThDyCommProgParam::AddSeqGroup		(CMultSec   *parentGr, const std::stri
         parentGr->AddMultiSec(sG);
 	    if (  parentGr->_NNPar ) 
 	    {
-            sG->_NNPar= parentGr->_NNPar ;
+            sG->_NNPar= parentGr->_NNPar ;     //  revisar     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             return sG;
         }
     }
