@@ -80,12 +80,15 @@ public:
 														{	_titRows.reserve (capRow ); _titColumns.reserve(capCol);}
 	index AddColummnTit	(const std::string &newColTit)	{ _titColumns.push_back (newColTit); return index(_titColumns.size()); }
 	index AddRowTit		(const std::string &newRowTit)	{ _titRows.push_back	 (newRowTit); return _titRows.size	 ();}
-	void CreateMatrix	(index capRow, index capCol){/* assert (!_mtx); */forceResize(capRow		 , capCol);	
-														expand(_titRows.size() -1, _titColumns.size() -1);	}// si predices las posibles dimenciones
-	void CreateMatrix	(index capRow)				{ /*assert (!_mtx);*/ forceResize(capRow		 , _titColumns.size() );	
-														expand(_titRows.size() -1, _titColumns.size() -1);	}// si predices las posibles col
-	void CreateMatrix	(			 )				{ /*assert (!_mtx);*/ forceResize(_titRows.size(), _titColumns.size() );	
-														expand(_titRows.size() -1, _titColumns.size() -1);		}// deduciendo las dimenc a partir de los tit
+	void CreateMatrix	(index capRow, index capCol)
+    {                                                                                         /* assert (!_mtx); */
+        forceResize( capRow > _titRows   .size() ? capRow : _titRows   .size() , 
+                     capCol > _titColumns.size() ? capCol : _titColumns.size()   );                                  }// si predices las posibles dimenciones
+	void CreateMatrix	(index capRow)				
+    {                                                                                            /* assert (!_mtx); */
+        forceResize( capRow > _titRows   .size() ? capRow : _titRows   .size() , 
+                     _titColumns.size()                                          );                                  }// si predices las posibles dimenciones
+	void CreateMatrix	(			 )				{ /*assert (!_mtx);*/ forceResize(_titRows.size(), _titColumns.size() );    }// deduciendo las dimenc a partir de los tit
 	index	AddRow		(const std::string &newRowTit)	{ AddRowTit(newRowTit); AddRows(); return totalRow()-1;}
 	std::string	TitColumn	(index Col) const{	return _titColumns.at(Col);	}
 	std::string	TitRow		(index Row) const{	return    _titRows.at(Row);	}
