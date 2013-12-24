@@ -265,7 +265,6 @@ private: System::Void command_uArray			(System::Object^  sender, System::EventAr
 		    return;
 		   }	 
 		ShowResTbl(_Pr._uArr._rtbl );
-		_Pr._uArr._rtbl = nullptr;
 //using namespace Microsoft::Office::Tools;//::Excel;
 //using namespace Microsoft::Office::Interop::Excel; 
 //using namespace Microsoft::Office::Interop; 
@@ -300,7 +299,7 @@ private: System::Void command_uArray			(System::Object^  sender, System::EventAr
    //eac->Visible=true;
    //Excel::Range^ r=    eac->Range("names") ;
 	}
-void ShowResTbl(	CTable<TmGPos> *rtbl)
+void ShowResTbl(std::shared_ptr<CTable<TmGPos>> rtbl)
 {
 	if (!rtbl) return;
 		Results^ rsTm	=gcnew Results	(	/**_Pr._uArr._tlTm*/	);
@@ -365,7 +364,7 @@ void ShowResTbl(	CTable<TmGPos> *rtbl)
 			rsG->Show(this);
 			rsPos->Show(this);
 
-			delete rtbl  ; //_Pr._uArr._rtbl  =nullptr ;		// seguro ????? quien y donde hacerlo??????
+			//delete rtbl  ; //_Pr._uArr._rtbl  =nullptr ;		// seguro ????? quien y donde hacerlo??????
 			//delete _Pr._uArr._tlTm  ; _Pr._uArr._tlTm  =nullptr ;		// seguro ????? quien y donde hacerlo??????
 			//delete _Pr._uArr._tlG   ; _Pr._uArr._tlG   =nullptr  ;		// seguro ????? quien y donde hacerlo??????
 			//delete _Pr._uArr._tlPos ; _Pr._uArr._tlPos =nullptr ;		// seguro ????? quien y donde hacerlo??????
@@ -394,10 +393,8 @@ private: System::Void buttPCR_Click				(System::Object^  sender, System::EventAr
 		            return;
 		           }
 		ShowResTbl(_Pr._mPCR._rtbl );
-		_Pr._uArr._rtbl = nullptr;
 
 		ShowResTbl(_Pr._mPCR._rtbl_self );
-		_Pr._mPCR._rtbl_self = nullptr;
 
 		    }
 private: System::Void butSdSecFilePCR_Click		(System::Object^  sender, System::EventArgs^  e) 
