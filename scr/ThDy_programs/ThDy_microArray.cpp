@@ -43,7 +43,8 @@ void	Hybrid(CTable<TmGPos> &rtbl, CMultSec &tg, CMultSec &pr, ThDyAlign	&Al, Out
 {
 	const std::string path =CMultSec::Path(&tg) 	 ;
 	for (  tg.goFirstSec()   ; tg.NotEndSec()   ;   tg.goNextSec() )  // recorre todos los targets
-	{	CSec &t = *tg.CurSec() ;
+	{	
+        CSec &t = *tg.CurSec() ;
 		if(! t.Selected())
 			continue;		
 		if(	t.Degeneracy() > MAxGrDegTg ) 									// No analiza las target deg...por ahora.Facil de ampliar
@@ -56,9 +57,15 @@ void	Hybrid(CTable<TmGPos> &rtbl, CMultSec &tg, CMultSec &pr, ThDyAlign	&Al, Out
 		os.Pl_Tm <<endl<< name<<" \t"	;		os.Pl_G		<<endl<< name<<" \t"	 ;		
 		rtbl.AddRow(t.Name());	
 		HybridPr (pr, t, 	Al, os.Tm, os.G,os.Pos,os.Pl_Tm,os.Pl_G,os.Al, &rtbl);
+        tg.RestoreCur(&t);
 	}
 	for (  tg.goFirstMSec(); tg.NotEndMSec()   ;   tg.goNextMSec())  
-		Hybrid(rtbl, *tg.CurMSec(),  pr, Al,os, MAxGrDegTg);
+    {	
+        CMultSec *ct=tg.CurMSec();
+        Hybrid(rtbl, *ct,  pr, Al,os, MAxGrDegTg);
+        ct->RestoreMCur(ct);
+    }
+
 }
 
 //int microArrayProg ( CProgParam_microArray *IPrgPar_uArr, 

@@ -55,19 +55,29 @@ void HybridPr(CMultSec &pr, CSec &t, 	ThDyAlign &Al,	ofstream &osTm,
 														CTable<Energy>	*tlG,
 														CTable<SecPos> *tlPos*/)
 {	for (  pr.goFirstSec()   ; pr.NotEndSec()   ;   pr.goNextSec() )  // recorre todos los primers de nuevo
-	{	CSec &s = *pr.CurSec() ; 
+	{	
+        CSec &s = *pr.CurSec() ; 
 		if(!s.Selected()) continue;
 		if ( ! s.NonDegSet()  ) 
 			{	
 				Hybrid (s, t, 	Al, osTm, osG,osPos,osPl_Tm,osPl_G,osAl, rtbl);
 			} else 
-				{	CMultSec *nds=s.NonDegSet() ;
+				{	
+                    CMultSec *nds=s.NonDegSet() ;
 					for (  nds->goFirstSec()  ; nds->NotEndSec() ; nds->goNextSec() )// recorre todos las var no deg
-					{	CSec &s = *nds->CurSec() ;
+					{	
+                        CSec &s = *nds->CurSec() ;
 						Hybrid (s, t, 	Al, osTm, osG,osPos,osPl_Tm,osPl_G,osAl, rtbl);
+                        nds->RestoreCur(&s);
 					}// recorre todos las var no deg
 				} 
+        pr.RestoreCur(&s);
 	}
 	for (  pr.goFirstMSec(); pr.NotEndMSec()   ;   pr.goNextMSec())  
-		HybridPr (*pr.CurMSec(), t, 	Al, osTm, osG,osPos,osPl_Tm,osPl_G,osAl, rtbl);
+    {
+		CMultSec *cpr=pr.CurMSec();
+        HybridPr (*cpr, t, 	Al, osTm, osG,osPos,osPl_Tm,osPl_G,osAl, rtbl);
+        pr.RestoreMCur(cpr);
+
+    }
 }			
