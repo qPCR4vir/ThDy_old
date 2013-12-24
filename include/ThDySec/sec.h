@@ -622,6 +622,7 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar)        : _NNPar      (NNp
 
 		CSec		CalculateConsenso	(double) ;
 		void		Free			()	{_LSec.free(); _LMSec.free();}
+		void		Destroy			()	{_LSec.Destroy(); _LMSec.Destroy();}
 
 		CSec *goFirstSec() {return (CSec *)_LSec.goBeging(); }
 		CSec *goNextSec () {return (CSec *)_LSec.goNext  (); }
