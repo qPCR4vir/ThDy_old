@@ -642,16 +642,20 @@ class SeqExpl : public CompoWidget
 
 public:
     SeqExpl(ThDyNanaForm& tdForm);
-    void ShowProbes_mPCR()
+    void ShowFindedProbes_in_mPCR(bool show_=true)
     {
         auto idp = _Pr._cp.MaxTgId.get();
         _Pr._cp.MaxTgId.set(100);
         CMultSec *ms= _Pr._cp.AddSeqFromFile	(_Pr._mPCR._probesMS.get() , _Pr._cp._OutputFile.get() + ".sonden.fasta", false	);
         _Pr._cp.MaxTgId.set(idp);
 
+        RefreshProbes_mPCR( show_ );
+    }
+    void RefreshProbes_mPCR(bool show_=true)
+    {
         auto probNode = _tree.find(nana::charset(_Pr._mPCR._probesMS->_name));
         Refresh(probNode).expend(true).select(true);
-        show();
+        if (show_) show();
     }
     void AddMenuItems(nana::gui::menu& menu)
     {
@@ -1345,8 +1349,9 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 		try{                                   
 		        _Pr._SdDes._cp.Actualice_NNp();  
                 _Pr.Run(_Pr._SdDes);	 //     _Pr._SdDes.Run ();	
+
                 if (chkBx_showFindedProbes.checked()) 
-                    ( dynamic_cast<ThDyNanaForm&>(_Pr)).mExpl_.ShowProbes_mPCR();
+                    ( dynamic_cast<ThDyNanaForm&>(_Pr)).mExpl_.ShowFindedProbes_in_mPCR();
  		}
 		catch ( std::exception& e)
 		{ 
@@ -1359,7 +1364,12 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 	 try{                                   
 		  _Pr._mPCR._cp.Actualice_NNp();  
  		  _Pr.Run(_Pr._mPCR);	
-          _Pr._results.emplace_back(new TableTm(_Pr._mPCR._rtbl));
+
+          _Pr.mExpl_.RefreshProbes_mPCR(/*false*/); 
+
+          _Pr._results.emplace_back(new TableRes(_Pr._mPCR._rtbl));
+          _Pr._results.back()->show();
+          _Pr._results.emplace_back(new TableRes(_Pr._mPCR._rtbl_self));
           _Pr._results.back()->show();
 		}
 	catch ( std::exception& e)
