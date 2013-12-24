@@ -24,50 +24,117 @@ using namespace ParamGUIBind;
 
 class ThDyNanaForm ;
  
-class TableTm : public nana::gui::form, public EditableForm
+class TableRes  : public nana::gui::form, public EditableForm
 {   
     using List  = nana::gui::listbox;
     using Table = CTable<TmGPos> ;
     using index = Table::index;
+    struct value
+    {
+        Table  *table;
+        value (Table &t) :table {&t}{};
+        virtual float _value(index row,  index col)const =0 ;
+        float operator()(index row,  index col){return _value(row,col);}
+    }   ;
+    struct Tm : value
+    {
+        float _value(index row,  index col) const override
+        {
+            return table->at(row,col )._Tm;
+        }
+        Tm(Table &t) :value {t}{};
+    };
+    struct G : value
+    {
+        float _value(index row,  index col) const override
+        {
+            return table->at(row,col )._G;
+        }
+        G(Table &t) :value {t}{};
+    };
+    struct Pos : value
+    {
+        float _value(index row,  index col)const override
+        {
+            return table->at(row,col )._Pos;
+        }
+         Pos(Table &t) :value {t}{};
+   };
 
     std::shared_ptr<Table> _table;
     List                   _list { *this };
     int                    n_dec{ 1 },   n_len{ 6 };
+    Tm  _Tm;
+    G   _G;
+    Pos _Pos;
+    value                  *val { &_Tm} ;
  
-    class ListTableTmMaker : public List::resolver_interface <index>
+    void SetValType(value &val_)
+    { 
+        val = &val_;
+        _list.auto_draw(true);
+    }
+
+    class ListTableMaker : public List::resolver_interface <index>
     {
-
-        Table  &table;
-        int    &n_dec,   &n_len;
-
-
-        nana::string print(Temperature n) const
-        {
-            static const int    blen{ 50 } ;
-            static nana::char_t val[blen]  ;
-
-            swprintf(val, blen, STR("% *.*f"), n_len, n_dec, n );
-            return val;
-        }
+        int     &n_dec,   &n_len;
+        value   **val  ;
 
        nana::string decode(size_t col, const index &row) const override
         {
-           if (col)        return print ( /*KtoC*/(   table(row,index(col)-1)._Tm   ));
+           if (col)        return print ( (**val)  (row,index(col-1) ));
 
-           return nana::charset(table.TitRow(row));
+           return nana::charset(  (**val) .table->TitRow(row)  );
         }
- 
         void encode(index&, std::size_t col, const nana::string& txt) const override
         {
            //if (col)
            //    (*table)(row,col-1)._Tm= CtoK(wstr_f(txt   ));
            //table->TitRow(row)=nana::charset(txt );
         }
-        
+  
+        nana::string print(float n) const
+        {
+            static const int    blen{ 50 } ;
+            static nana::char_t val_[blen]  ;
+
+            swprintf(val_, blen, STR("% *.*f"), n_len, n_dec, n );
+            return val_;
+        }
      public:
-        ListTableTmMaker( CTable<TmGPos> &table, int &dec , int &len) : table(table),  n_len{len}, n_dec{dec}{}
-        void SetFormat(int dec=1 , int len=6){ n_len=len; n_dec=dec;}
+        ListTableMaker( value *&val_, int &dec , int &len) : val{&val_},  n_len{len}, n_dec{dec}{}
+        //void SetValType(value *&val_){ val = &val_;};
+        //void SetFormat(int dec=1 , int len=6){ n_len=len; n_dec=dec;}
     };
+    //class ListTableTmMaker : public ListTableMaker
+    //{
+    //   float value(index col,  index row)const override
+    //   {
+    //       return table(row,index(col)-1)._Tm;
+    //   }
+    //    
+    // public:
+    //    //using ListTableMaker::ListTableMaker;
+    //    ListTableTmMaker( CTable<TmGPos> &table, int &dec , int &len) : ListTableMaker( table, dec , len){}
+    //};
+    //class ListTableGMaker : public ListTableMaker
+    //{
+    //   float value(index col,  index row)const override
+    //   {
+    //       return table(row,index(col)-1)._G;
+    //   }
+    //    
+    // public:
+    //    //using ListTableMaker::ListTableMaker;
+    //    ListTableGMaker( CTable<TmGPos> &table, int &dec , int &len) : ListTableMaker( table, dec , len){}
+    //};
+
+    bool comp(index col, nana::any* row1_, nana::any*row2_, bool reverse)
+    {
+                float  v1{ (*val)(*row1_->get<index> (),col-1) }, 
+                       v2{ (*val)(*row2_->get<index> (),col-1) };
+                return reverse?  v2<v1 : v1<v2 ;
+    }
     void SetDefLayout   () override
     {
         _DefLayout= 
@@ -81,7 +148,7 @@ class TableTm : public nana::gui::form, public EditableForm
  	    _place.field("_list"         )<<_list;
      }
  public:
-    TableTm    (std::shared_ptr<CTable<TmGPos>> table)  : _table(table),
+     TableRes    (std::shared_ptr<CTable<TmGPos>> table)  : _table(table), _Tm{*table.get()}, _G{*table.get()}, _Pos{*table.get()},  
                 nana::gui::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
                 EditableForm    (nullptr, *this, nana::charset( std::string("Table Tm: ") +  table->TitTable() ), STR("TableTm.lay.txt")) 
    {
@@ -89,14 +156,25 @@ class TableTm : public nana::gui::form, public EditableForm
         InitMyLayout();
         SelectClickableWidget( _list);
         SelectClickableWidget( *this);
+
+        _list.auto_draw(false);
                 
-        _list.resolver(ListTableTmMaker(*table.get(),n_dec,n_len));
+        _list.resolver(ListTableMaker (val,n_dec,n_len));
 
         _list.append_header(STR("Seq")  , 120);
-        for (index col = 0; col < table->totalCol(); ++col)
-            _list.append_header(nana::charset(  table->TitColumn(col) ) , 100);
+        for (index col = 1; col <= table->totalCol(); ++col)
+        {    
+            _list.append_header(nana::charset(  table->TitColumn(col-1) ) , 100);
+            _list.set_sort_compare(col,[col,this](const nana::string&, nana::any* row1_, const nana::string&, nana::any*row2_, bool reverse)
+            {
+                 return comp(col,row1_,row2_,reverse);
+            });
+        }
+
         for (index row = 0; row < table->totalRow(); ++row)
             _list.at(0).append(row).value  ( row );
+
+        _list.auto_draw(true);
 
         //MakeResponive();
     }
