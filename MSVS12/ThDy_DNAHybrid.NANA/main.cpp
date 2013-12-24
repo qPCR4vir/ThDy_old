@@ -497,7 +497,7 @@ class SeqExpl : public CompoWidget
     using Node = Tree::item_proxy;
     using List = nana::gui::listbox;
 
-    ThDyProject       &_Pr;
+    ThDyNanaForm       &_Pr;
     Tree                _tree{ *this };
     List                _list{ *this };
     bool				_showAllseq{true}, _showFiltered{true};
@@ -658,48 +658,9 @@ class SeqExpl : public CompoWidget
         return node;
     }
 
-    Node AddNewSeqGr  (Tree::item_proxy& node) 
-		{	try{    
-					return appendNewNode(node, _Pr._cp.AddSeqGroup(node.value<CMultSec*>(),"New group")).expend(true);
-		        }
-				catch ( std::exception& e)
-		        { 
-				  (nana::gui::msgbox ( STR("Error adding new group" ) )<< e.what()).show() ;
-                  return node;
-		        }		
-		}
-    Node AddMSeqFiles (const std::string &file, bool  all_in_dir) 
-	{	 
-    try{ 
-			auto      tn    = _tree.selected();
-            CMultSec* ms    = tn.value<CMultSec*>();
-            CMultSec* newms = _Pr._cp.AddSeqFromFile	(ms , file, all_in_dir	);
-			return Refresh(   tn);
-		}
-		catch ( std::exception& e)
-		{ 
-			(nana::gui::msgbox ( STR("Error adding sequences" ) )<< e.what()).show() ;
-            return _tree.selected();
- 		}		 
-	}
-    Node Replace      (Tree::item_proxy& tn, CMultSec *ms, const std::string& Path, bool all_in_dir)
-    {        
-    try{ 
-         auto      own = tn->owner();
-         CMultSec *pms = ms->_parentMS;  
-
-         _Pr._cp._pSeqNoUsed->AddMultiSec(ms); 
-         _tree.erase(tn);
-
-		 CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(Path), all_in_dir	);
-         return appendNewNode(own, newms).expend(true).select(true) ;
-		}
-		catch ( std::exception& e)
-		{ 
-			(nana::gui::msgbox ( STR("Error replacing sequences" ) )<< e.what()).show() ;
-                  return tn;
- 		}		 
-    }
+    Node AddNewSeqGr  (Tree::item_proxy& node) ;
+    Node AddMSeqFiles (const std::string &file, bool  all_in_dir) ;
+    Node Replace      (Tree::item_proxy& tn, CMultSec *ms, const std::string& Path, bool all_in_dir);
     Node ReloadDir    (Tree::item_proxy& tn)
     {            
         CMultSec *ms = tn.value<CMultSec*>();
@@ -720,255 +681,10 @@ class SeqExpl : public CompoWidget
 
 public:
     SeqExpl(ThDyNanaForm& tdForm);
-    void ShowFindedProbes_in_mPCR(bool show_=true)
-    {
-        auto idp = _Pr._cp.MaxTgId.get();
-        _Pr._cp.MaxTgId.set(100);
-        CMultSec *ms= _Pr._cp.AddSeqFromFile	(_Pr._mPCR._probesMS.get() , _Pr._cp._OutputFile.get() + ".sonden.fasta", false	);
-        _Pr._cp.MaxTgId.set(idp);
-
-        RefreshProbes_mPCR( show_ );
-    }
-    void RefreshProbes_mPCR(bool show_=true)
-    {
-        auto probNode = _tree.find(nana::charset(_Pr._mPCR._probesMS->_name));
-        Refresh(probNode).expend(true).select(true);
-        if (show_) show();
-    }
-    void AddMenuItems(nana::gui::menu& menu)
-    {
-        menu.append_splitter();
-
-        menu.append(STR("Add a new, empty, group for sequences")  , [&](nana::gui::menu::item_proxy& ip) {  AddNewSeqGr(_tree.selected());    } );
-        menu.append(STR("Add a group of sequences from a file..."), [&](nana::gui::menu::item_proxy& ip) 
-        {
-            nana::gui::filebox  fb{ *this, true };
-            fb .add_filter ( SetupPage::FastaFiltre( )                   )
-               .title      ( STR("Add a group of sequences from a file") );
-
-            if (fb()) 
-               AddMSeqFiles(nana::charset(fb.file()), false);
-        });
-        menu.append(STR("Add a tree of groups of sequences from a directory..."),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            nana::gui::filebox  fb{ *this, true };
-            fb .add_filter ( SetupPage::FastaFiltre( )                   )
-               .title(STR("Add a tree of groups of sequences from a directory"));
-            if (fb()) 
-                AddMSeqFiles(nana::charset(fb.file()), true);
-        });
-
-        menu.append_splitter();
-
-        menu.append(STR("Reproduce only the structure of directory..."),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            nana::gui::filebox  fb{ *this, true };
-            fb .add_filter ( SetupPage::FastaFiltre( )                   )
-               .title(STR("Reproduce the structure of directory..."));
-            if (!fb()) return;
-
-            auto      tn    = _tree.selected();
-            CMultSec* ms    = tn.value<CMultSec*>();
-            CMultSec* newms = _Pr._cp.CopyStructFromDir	( ms, nana::charset(fb.file())	);
-            _tree.auto_draw(false);
-			populate(  appendNewNode  (tn, newms) );
-            tn.expend(true);
-            _tree.auto_draw(true);
-        });
-        menu.append(STR("Reload from the original file" )  , [&](nana::gui::menu::item_proxy& ip)   {  ReloadFile(_tree.selected());    });
-        menu.append(STR("Reload from the original directory"), [&](nana::gui::menu::item_proxy& ip) {  ReloadDir(_tree.selected());     });
-        menu.append(STR("Replace from a file..." )  , [&](nana::gui::menu::item_proxy& ip) 
-        {
-			auto tn= _tree.selected();
-            if (isRoot(tn))
-            {
-                nana::gui::msgbox ( STR("Sorry, you can´t replace group " + tn.text()) ).show() ;
-                return;
-            }
-            nana::gui::filebox  fb{ *this, true };
-            fb .add_filter ( SetupPage::FastaFiltre( )                   )
-               .title(STR("Replace/reload a group of sequences from a file"));
-            if (!fb()) return;
-
-            CMultSec *ms = tn.value<CMultSec*>();
-            CMultSec *pms = ms->_parentMS; // tn->owner.value<CMultSec*>();
-            _Pr._cp._pSeqNoUsed->AddMultiSec(ms);
-			_Pr._cp.AddSeqFromFile	( pms, nana::charset(fb.file()), false	);
-            Refresh(tn->owner());
-            //_tree.auto_draw(false);
-            //_tree.erase(tn);
-            //Refresh(appendNewNode  (own, newms) );
-            //_tree.auto_draw(true);
-        });
-        menu.append(STR("Replace from directory..."), [&](nana::gui::menu::item_proxy& ip) 
-        {
-			auto tn= _tree.selected();
-            if (tn->owner()->owner().empty())
-            {
-                nana::gui::msgbox ( STR("Sorry, you can´t replace group " + tn->text()) ) ;
-                return;
-            }
-            nana::gui::filebox  fb{ *this, true };
-            fb.title(STR("Replace/reload a group of sequences from a directory"));
-            if (!fb()) return;
-
-            CMultSec *ms = tn.value<CMultSec*>();
-            CMultSec *pms = ms->_parentMS; // tn->owner.value<CMultSec*>();
-            ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
-            auto own = tn->owner();
-
-            _tree.auto_draw(false);
-            _list.auto_draw(false);
-
-			CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(fb.file()), true	);
-            _tree.erase(tn);
-            populate(appendNewNode  (own, newms) );
-            own.expend(true);
-
-            _list.clear();
-            populate_list_recur(pms);
-
-            _tree.auto_draw(true);
-            _list.auto_draw(true);
-        });
-
-        menu.append_splitter();
-
-        menu.append(   STR("Show Only local sequences")  ,   [&](nana::gui::menu::item_proxy& ip) 
-        {
-            _list.auto_draw(false);
-            _showAllseq = ! menu.checked(ip.index());// =! _showAllseq; 
-            _list.clear();
-             populate_list_recur(_tree.selected());
-            _list.auto_draw(true);
-        });
-        menu.check_style(menu.size()-1, nana::gui::menu::check_t::check_highlight );
-        menu.checked (menu.size()-1, false );
-
-        menu.append(STR("Show filtered sequences"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            _showFiltered = menu.checked(ip.index());// !_showFiltered;
-            _list.auto_draw(false);
-            _list.clear();
-             populate_list_recur(_tree.selected());
-            _list.auto_draw(true);
-        });
-        menu.check_style(menu.size()-1, nana::gui::menu::check_highlight); // check_option
-        menu.checked (menu.size()-1, true );
-
-        menu.append_splitter();
-        menu.append(STR("Cut selected sequences from list"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
-            //_list.auto_draw(false);
-            //_list.clear();
-            // populate_list_recur(_tree.selected());
-            //_list.auto_draw(true);
-        });
-        menu.append(STR("Cut selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-			auto tn= _tree.selected();
-            if (tn->owner()->owner().empty())
-            {
-                (nana::gui::msgbox ( _tree , STR("Cut a group of sequences " + tn->text()) )
-                          << STR("Sorry, you can´t cut the group: ") + tn->text() )
-                          .icon(nana::gui::msgbox::icon_error )
-                          .show() ;
-                return;
-            }
-            CMultSec *ms = tn.value<CMultSec*>();
-            CMultSec *pms = ms->_parentMS;  
-            _Pr._cp._pSeqNoUsed->AddMultiSec(ms);
-            _dragMSec.push_back(ms);
-            //ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
-            auto own = tn->owner();
-
-            _tree.auto_draw(false);
-            _list.auto_draw(false);
-
-            _tree.erase(tn);
-            populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
-            own.select(true).expend(true);
-        });
-        menu.append(STR("Paste the sequences"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-			auto       tn = _tree.selected();
-            CMultSec *pms = tn.value<CMultSec*>();
-
-            for (auto ms : _dragMSec)
-                pms->AddMultiSec(ms);
-
-            _dragMSec.clear();
-
-            _tree.auto_draw(false);
-            _list.auto_draw(false);
-
-            populate(tn);
-            populate(_tree.find(STR("Dont use") ));
-            _list.clear();
-            populate_list_recur(tn);
-            tn.select(true).expend(true);
-
-            _tree.auto_draw(false);
-            _list.auto_draw(false);
-        });
-
-        menu.append_splitter();
-        menu.append(STR("Del selected sequences from list"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
-            //_list.auto_draw(false);
-            //_list.clear();
-            // populate_list_recur(_tree.selected());
-            //_list.auto_draw(true);
-        });
-        menu.append(STR("Del selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-			auto tn= _tree.selected();
-            if (tn->owner()->owner().empty())
-            {
-                (nana::gui::msgbox ( _tree , STR("Deleting a group of sequences " + tn->text()) )
-                          << STR("Sorry, you can´t delete the group: ") + tn->text() )
-                          .icon(nana::gui::msgbox::icon_error )
-                          .show() ;
-                return;
-            }
-            CMultSec *ms = tn.value<CMultSec*>();
-            CMultSec *pms = ms->_parentMS;           
-            _Pr._cp._pSeqNoUsed->AddMultiSec(ms); //ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
-            auto own = tn->owner();
-
-            _tree.auto_draw(false);
-            _list.auto_draw(false);
-
-            _tree.erase(tn);
-            populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
-
-            own.select(true).expend(true);
-
-        });
-        menu.append(STR("Rename the selected group of sequences"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
-            //_list.auto_draw(false);
-            //_list.clear();
-            // populate_list_recur(_tree.selected());
-            //_list.auto_draw(true);
-        });
-
-    }
-    void InitTree()
-    {
-        _list.auto_draw(false);
-        _tree.auto_draw(false);
-
-        CMultSec *ms=_Pr._cp._pSeqTree.get();
-        for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
-			populate( AddRoot( ms->CurMSec())) ;
-
-        populate_list_recur(_Pr._cp._pSeqTree.get());
-
-    }
+    void ShowFindedProbes_in_mPCR(bool show_=true);
+    void RefreshProbes_mPCR(bool show_=true);
+    void AddMenuItems(nana::gui::menu& menu);
+    void InitTree();
 };
 
 class FindSondenPage : public CompoWidget
@@ -1322,6 +1038,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         tabbar_.relate    (tabbar_.length()-1, w          );
 	    _place.field("Pages"   ).fasten( w)  ;
     }         
+    void ShowExpl(){tabbar_.active(1);}
 };
 
    SetupPage::SetupPage          (ThDyNanaForm& tdForm)
@@ -1418,6 +1135,298 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         InitMyLayout();
         SelectClickableWidget( *this);
         SelectClickableWidget( error_);
+    }
+   SeqExpl::Node SeqExpl::AddNewSeqGr  (Tree::item_proxy& node) 
+		{	try{    
+					return appendNewNode(node, _Pr._cp.AddSeqGroup(node.value<CMultSec*>(),"New group")).expend(true);
+		        }
+				catch ( std::exception& e)
+		        { 
+				  (nana::gui::msgbox ( STR("Error adding new group" ) )<< e.what()).show() ;
+                  return node;
+		        }		
+		}
+   SeqExpl::Node SeqExpl::AddMSeqFiles (const std::string &file, bool  all_in_dir) 
+	{	 
+    try{ 
+			auto      tn    = _tree.selected();
+            CMultSec* ms    = tn.value<CMultSec*>();
+            CMultSec* newms = _Pr._cp.AddSeqFromFile	(ms , file, all_in_dir	);
+			return Refresh(   tn);
+		}
+		catch ( std::exception& e)
+		{ 
+			(nana::gui::msgbox ( STR("Error adding sequences" ) )<< e.what()).show() ;
+            return _tree.selected();
+ 		}		 
+	}
+   SeqExpl::Node SeqExpl::Replace      (Tree::item_proxy& tn, CMultSec *ms, const std::string& Path, bool all_in_dir)
+    {        
+    try{ 
+         auto      own = tn->owner();
+         CMultSec *pms = ms->_parentMS;  
+
+         _Pr._cp._pSeqNoUsed->AddMultiSec(ms); 
+         _tree.erase(tn);
+
+		 CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(Path), all_in_dir	);
+         return appendNewNode(own, newms).expend(true).select(true) ;
+		}
+		catch ( std::exception& e)
+		{ 
+			(nana::gui::msgbox ( STR("Error replacing sequences" ) )<< e.what()).show() ;
+                  return tn;
+ 		}		 
+    }
+    void SeqExpl::ShowFindedProbes_in_mPCR(bool show_/*=true*/)
+    {
+        auto idp = _Pr._cp.MaxTgId.get();
+        _Pr._cp.MaxTgId.set(100);
+        CMultSec *ms= _Pr._cp.AddSeqFromFile	(_Pr._mPCR._probesMS.get() , _Pr._cp._OutputFile.get() + ".sonden.fasta", false	);
+        _Pr._cp.MaxTgId.set(idp);
+
+        RefreshProbes_mPCR( show_ );
+    }
+    void SeqExpl::RefreshProbes_mPCR(bool show_/*=true*/)
+    {
+        auto probNode = _tree.find(nana::charset(_Pr._mPCR._probesMS->_name));
+        Refresh(probNode).expend(true).select(true);
+        if (show_) 
+            _Pr.ShowExpl();
+    }
+    void SeqExpl::AddMenuItems(nana::gui::menu& menu)
+    {
+        menu.append_splitter();
+
+        menu.append(STR("Add a new, empty, group for sequences")  , [&](nana::gui::menu::item_proxy& ip) {  AddNewSeqGr(_tree.selected());    } );
+        menu.append(STR("Add a group of sequences from a file..."), [&](nana::gui::menu::item_proxy& ip) 
+        {
+            nana::gui::filebox  fb{ *this, true };
+            fb .add_filter ( SetupPage::FastaFiltre( )                   )
+               .title      ( STR("Add a group of sequences from a file") );
+
+            if (fb()) 
+               AddMSeqFiles(nana::charset(fb.file()), false);
+        });
+        menu.append(STR("Add a tree of groups of sequences from a directory..."),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            nana::gui::filebox  fb{ *this, true };
+            fb .add_filter ( SetupPage::FastaFiltre( )                   )
+               .title(STR("Add a tree of groups of sequences from a directory"));
+            if (fb()) 
+                AddMSeqFiles(nana::charset(fb.file()), true);
+        });
+
+        menu.append_splitter();
+
+        menu.append(STR("Reproduce only the structure of directory..."),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            nana::gui::filebox  fb{ *this, true };
+            fb .add_filter ( SetupPage::FastaFiltre( )                   )
+               .title(STR("Reproduce the structure of directory..."));
+            if (!fb()) return;
+
+            auto      tn    = _tree.selected();
+            CMultSec* ms    = tn.value<CMultSec*>();
+            CMultSec* newms = _Pr._cp.CopyStructFromDir	( ms, nana::charset(fb.file())	);
+            _tree.auto_draw(false);
+			populate(  appendNewNode  (tn, newms) );
+            tn.expend(true);
+            _tree.auto_draw(true);
+        });
+        menu.append(STR("Reload from the original file" )  , [&](nana::gui::menu::item_proxy& ip)   {  ReloadFile(_tree.selected());    });
+        menu.append(STR("Reload from the original directory"), [&](nana::gui::menu::item_proxy& ip) {  ReloadDir(_tree.selected());     });
+        menu.append(STR("Replace from a file..." )  , [&](nana::gui::menu::item_proxy& ip) 
+        {
+			auto tn= _tree.selected();
+            if (isRoot(tn))
+            {
+                nana::gui::msgbox ( STR("Sorry, you can´t replace group " + tn.text()) ).show() ;
+                return;
+            }
+            nana::gui::filebox  fb{ *this, true };
+            fb .add_filter ( SetupPage::FastaFiltre( )                   )
+               .title(STR("Replace/reload a group of sequences from a file"));
+            if (!fb()) return;
+
+            CMultSec *ms = tn.value<CMultSec*>();
+            CMultSec *pms = ms->_parentMS; // tn->owner.value<CMultSec*>();
+            _Pr._cp._pSeqNoUsed->AddMultiSec(ms);
+			_Pr._cp.AddSeqFromFile	( pms, nana::charset(fb.file()), false	);
+            Refresh(tn->owner());
+            //_tree.auto_draw(false);
+            //_tree.erase(tn);
+            //Refresh(appendNewNode  (own, newms) );
+            //_tree.auto_draw(true);
+        });
+        menu.append(STR("Replace from directory..."), [&](nana::gui::menu::item_proxy& ip) 
+        {
+			auto tn= _tree.selected();
+            if (tn->owner()->owner().empty())
+            {
+                nana::gui::msgbox ( STR("Sorry, you can´t replace group " + tn->text()) ) ;
+                return;
+            }
+            nana::gui::filebox  fb{ *this, true };
+            fb.title(STR("Replace/reload a group of sequences from a directory"));
+            if (!fb()) return;
+
+            CMultSec *ms = tn.value<CMultSec*>();
+            CMultSec *pms = ms->_parentMS; // tn->owner.value<CMultSec*>();
+            ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
+            auto own = tn->owner();
+
+            _tree.auto_draw(false);
+            _list.auto_draw(false);
+
+			CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(fb.file()), true	);
+            _tree.erase(tn);
+            populate(appendNewNode  (own, newms) );
+            own.expend(true);
+
+            _list.clear();
+            populate_list_recur(pms);
+
+            _tree.auto_draw(true);
+            _list.auto_draw(true);
+        });
+
+        menu.append_splitter();
+
+        menu.append(   STR("Show Only local sequences")  ,   [&](nana::gui::menu::item_proxy& ip) 
+        {
+            _list.auto_draw(false);
+            _showAllseq = ! menu.checked(ip.index());// =! _showAllseq; 
+            _list.clear();
+             populate_list_recur(_tree.selected());
+            _list.auto_draw(true);
+        });
+        menu.check_style(menu.size()-1, nana::gui::menu::check_t::check_highlight );
+        menu.checked (menu.size()-1, false );
+
+        menu.append(STR("Show filtered sequences"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            _showFiltered = menu.checked(ip.index());// !_showFiltered;
+            _list.auto_draw(false);
+            _list.clear();
+             populate_list_recur(_tree.selected());
+            _list.auto_draw(true);
+        });
+        menu.check_style(menu.size()-1, nana::gui::menu::check_highlight); // check_option
+        menu.checked (menu.size()-1, true );
+
+        menu.append_splitter();
+        menu.append(STR("Cut selected sequences from list"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
+            //_list.auto_draw(false);
+            //_list.clear();
+            // populate_list_recur(_tree.selected());
+            //_list.auto_draw(true);
+        });
+        menu.append(STR("Cut selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+			auto tn= _tree.selected();
+            if (tn->owner()->owner().empty())
+            {
+                (nana::gui::msgbox ( _tree , STR("Cut a group of sequences " + tn->text()) )
+                          << STR("Sorry, you can´t cut the group: ") + tn->text() )
+                          .icon(nana::gui::msgbox::icon_error )
+                          .show() ;
+                return;
+            }
+            CMultSec *ms = tn.value<CMultSec*>();
+            CMultSec *pms = ms->_parentMS;  
+            _Pr._cp._pSeqNoUsed->AddMultiSec(ms);
+            _dragMSec.push_back(ms);
+            //ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
+            auto own = tn->owner();
+
+            _tree.auto_draw(false);
+            _list.auto_draw(false);
+
+            _tree.erase(tn);
+            populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
+            own.select(true).expend(true);
+        });
+        menu.append(STR("Paste the sequences"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+			auto       tn = _tree.selected();
+            CMultSec *pms = tn.value<CMultSec*>();
+
+            for (auto ms : _dragMSec)
+                pms->AddMultiSec(ms);
+
+            _dragMSec.clear();
+
+            _tree.auto_draw(false);
+            _list.auto_draw(false);
+
+            populate(tn);
+            populate(_tree.find(STR("Dont use") ));
+            _list.clear();
+            populate_list_recur(tn);
+            tn.select(true).expend(true);
+
+            _tree.auto_draw(false);
+            _list.auto_draw(false);
+        });
+
+        menu.append_splitter();
+        menu.append(STR("Del selected sequences from list"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
+            //_list.auto_draw(false);
+            //_list.clear();
+            // populate_list_recur(_tree.selected());
+            //_list.auto_draw(true);
+        });
+        menu.append(STR("Del selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+			auto tn= _tree.selected();
+            if (tn->owner()->owner().empty())
+            {
+                (nana::gui::msgbox ( _tree , STR("Deleting a group of sequences " + tn->text()) )
+                          << STR("Sorry, you can´t delete the group: ") + tn->text() )
+                          .icon(nana::gui::msgbox::icon_error )
+                          .show() ;
+                return;
+            }
+            CMultSec *ms = tn.value<CMultSec*>();
+            CMultSec *pms = ms->_parentMS;           
+            _Pr._cp._pSeqNoUsed->AddMultiSec(ms); //ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
+            auto own = tn->owner();
+
+            _tree.auto_draw(false);
+            _list.auto_draw(false);
+
+            _tree.erase(tn);
+            populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
+
+            own.select(true).expend(true);
+
+        });
+        menu.append(STR("Rename the selected group of sequences"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
+            //_list.auto_draw(false);
+            //_list.clear();
+            // populate_list_recur(_tree.selected());
+            //_list.auto_draw(true);
+        });
+
+    }
+    void SeqExpl::InitTree()
+    {
+        _list.auto_draw(false);
+        _tree.auto_draw(false);
+
+        CMultSec *ms=_Pr._cp._pSeqTree.get();
+        for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
+			populate( AddRoot( ms->CurMSec())) ;
+
+        populate_list_recur(_Pr._cp._pSeqTree.get());
+
     }
 
     void FindSondenPage::Run_Design(bool design)
