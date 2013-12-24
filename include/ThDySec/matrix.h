@@ -124,15 +124,15 @@ public:
 														_titRows(capRow),						_titColumns(capCol)
 														{	_titRows.reserve (capRow ); _titColumns.reserve(capCol);}
 	index AddColummnTit	(const std::string &newColTit)	{ _titColumns.push_back (newColTit); return index(_titColumns.size()); }
-	index AddRowTit		(const std::string &newRowTit)	{ _titRows.push_back	 (newRowTit); return _titRows.size	 ();}
+	index AddRowTit		(const std::string &newRowTit)	{ _titRows.push_back	 (newRowTit); return  index(_titRows.size());}
 	void CreateMatrix	(index capRow, index capCol)
     {                                                                                         /* assert (!_mtx); */
         forceResize( capRow > _titRows   .size() ? capRow : _titRows   .size() , 
                      capCol > _titColumns.size() ? capCol : _titColumns.size()   );                                  }// si predices las posibles dimenciones
 	void CreateMatrix	(index capRow)				
     {                                                                                            /* assert (!_mtx); */
-        forceResize( capRow > _titRows   .size() ? capRow : _titRows   .size() , 
-                     _titColumns.size()                                          );                                  }// si predices las posibles dimenciones
+        forceResize( capRow > _titRows   .size() ? capRow : index(_titRows   .size()) , 
+                     index(_titColumns.size())                                          );                                  }// si predices las posibles dimenciones
 	void CreateMatrix	(			 )				{ /*assert (!_mtx);*/ forceResize(_titRows.size(), _titColumns.size() );    }// deduciendo las dimenc a partir de los tit
 	index	AddRow		(const std::string &newRowTit)	{ AddRowTit(newRowTit); AddRows(); return totalRow()-1;}
 	std::string	TitColumn	(index Col) const{	return _titColumns.at(Col);	}
