@@ -39,20 +39,24 @@ void CreateComplProbes(	CMultSec		&pr	)
     IPrgPar_uArr->_cp.Check_NNp_Targets ();
 	CreateComplProbes(	pr	);
 
-	microArrayProg   ( IPrgPar_uArr, pr	, pr, t_0, 300    , "_self"	)  ;
-   IPrgPar_uArr->_rtbl_self = IPrgPar_uArr->_rtbl;
+	          microArrayProg   ( IPrgPar_uArr, 
+                                 pr	, 
+                                 pr, 
+                                 t_0, 300    , 
+                                 "_self"	
+                               )  ;
 
-	//std::shared_ptr<CMultSec>  tg(		IPrgPar_uArr->_cp._pSeqTargets );
-	//		if (!tg)
-	//			tg.reset ( new CMultSec(IPrgPar_uArr->_cp._InputTargetFile.Get(),	pr._NNPar,
-	//									IPrgPar_uArr->_cp._MaxTgId,
-	//									IPrgPar_uArr->_cp._SecLim  ));	
-	return microArrayProg ( IPrgPar_uArr, 
-                            pr	, 
-                            *IPrgPar_uArr->_cp._pSeqTargets.get(), 
-                            t_0  , 300 
-                            /*, "_self"*/	
-                            )  ;
+   IPrgPar_uArr->_rtbl_self = IPrgPar_uArr->_rtbl;
+   IPrgPar_uArr->_rtbl->TitTable( "Primers / Primers (align method: " +IPrgPar_uArr->_cp.TAMeth.ToString() +  " ). Multiplex PCR.") ; 
+
+	auto res= microArrayProg ( IPrgPar_uArr, 
+                               pr	, 
+                               *IPrgPar_uArr->_cp._pSeqTargets.get(), 
+                               t_0  , 300 
+                              )  ;
+
+    IPrgPar_uArr->_rtbl->TitTable(IPrgPar_uArr->_rtbl->TitTable()+ ". Multiplex PCR.");
+	return res ; 
 }
 
 

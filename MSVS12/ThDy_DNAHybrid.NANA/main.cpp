@@ -150,9 +150,10 @@ class TableRes  : public nana::gui::form, public EditableForm
  public:
      TableRes    (std::shared_ptr<CTable<TmGPos>> table)  : _table(table), _Tm{*table.get()}, _G{*table.get()}, _Pos{*table.get()},  
                 nana::gui::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
-                EditableForm    (nullptr, *this, nana::charset( std::string("Table Tm: ") +  table->TitTable() ), STR("TableTm.lay.txt")) 
+                EditableForm    (nullptr, *this, nana::charset( table->TitTable() ), STR("TableTm.lay.txt")) 
    {
-        nana::gui::API::zoom_window(*this, true);
+        //nana::gui::API::zoom_window(*this, true);
+        caption( nana::string(STR("Table Tm: ") +  _Titel));
         InitMyLayout();
         SelectClickableWidget( _list);
         SelectClickableWidget( *this);

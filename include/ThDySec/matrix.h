@@ -138,6 +138,7 @@ public:
 	std::string	TitColumn	(index Col) const{	return _titColumns.at(Col);	}
 	std::string	TitRow		(index Row) const{	return    _titRows.at(Row);	}
 	std::string	TitTable	(		  ) const{	return    _titTable		  ;	}
+	void        TitTable	(std::string titel )  {	_titTable=titel	  ;	}
 //	bool	compact		();
 };
 
