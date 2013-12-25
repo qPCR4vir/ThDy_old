@@ -71,10 +71,22 @@ class TableRes  : public nana::gui::form, public EditableForm
  
     void SetValType(value &val_)
     { 
-        val = &val_;
-        _list.auto_draw(true);
-    }
+        _list.auto_draw(false);
+        bool freeze{true};
+        freeze=_list.freeze_sort(freeze);
 
+        val = &val_;
+        Repopulate();
+        
+        _list.auto_draw(true);
+        //_list.unsort();
+        _list.freeze_sort(freeze);
+    }
+    void Repopulate()
+    {
+        for (auto &i : _list.at(0))
+            i.resolve_from(i.value<index>());
+    }
     class ListTableMaker : public List::resolver_interface <index>
     {
         int     &n_dec,   &n_len;
@@ -176,6 +188,33 @@ class TableRes  : public nana::gui::form, public EditableForm
             _list.at(0).append(row).value  ( row );
 
         _list.auto_draw(true);
+
+        _menuProgram.append_splitter();
+        
+        _menuProgram.append(   STR("Show Tm")  ,   [&](nana::gui::menu::item_proxy& ip) 
+        {
+            SetFormat(1);
+            SetValType(_Tm);
+            caption( nana::string(STR("Table Tm: ") +  _Titel));
+
+        });
+        _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
+
+        _menuProgram.append(   STR("Show delta G")  ,   [&](nana::gui::menu::item_proxy& ip) 
+        {
+            SetFormat(1);
+            SetValType(_G);
+            caption( nana::string(STR("Table G: ") +  _Titel));
+        });
+        _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
+        _menuProgram.append(   STR("Show Pos")  ,   [&](nana::gui::menu::item_proxy& ip) 
+        {
+            SetFormat(0);
+            SetValType(_Pos);
+            caption( nana::string(STR("Table Pos: ") +  _Titel));
+        });
+        _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
+        //_menuProgram.checked    (_menuProgram.size()-1, false );
 
         //MakeResponive();
     }
