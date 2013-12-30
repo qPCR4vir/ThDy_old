@@ -126,28 +126,6 @@ class TableRes  : public nana::gui::form, public EditableForm
         //void SetValType(value *&val_){ val = &val_;};
         //void SetFormat(int dec=1 , int len=6){ n_len=len; n_dec=dec;}
     };
-    //class ListTableTmMaker : public ListTableMaker
-    //{
-    //   float value(index col,  index row)const override
-    //   {
-    //       return table(row,index(col)-1)._Tm;
-    //   }
-    //    
-    // public:
-    //    //using ListTableMaker::ListTableMaker;
-    //    ListTableTmMaker( CTable<TmGPos> &table, int &dec , int &len) : ListTableMaker( table, dec , len){}
-    //};
-    //class ListTableGMaker : public ListTableMaker
-    //{
-    //   float value(index col,  index row)const override
-    //   {
-    //       return table(row,index(col)-1)._G;
-    //   }
-    //    
-    // public:
-    //    //using ListTableMaker::ListTableMaker;
-    //    ListTableGMaker( CTable<TmGPos> &table, int &dec , int &len) : ListTableMaker( table, dec , len){}
-    //};
 
     bool comp(index col, nana::any* row1_, nana::any*row2_, bool reverse)
     {
@@ -230,15 +208,24 @@ class TableRes  : public nana::gui::form, public EditableForm
                             _bTm .pushed(false);
                             _bG  .pushed(false);
                             _bPos.pushed(true );
+                            _menuProgram.checked(mP, true);
         });
-        _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
-        //_menuProgram.checked    (_menuProgram.size()-1, false );
 
         _bTm .enable_pushed(true).pushed(true);
         _bG  .enable_pushed(true).pushed(false);
         _bPos.enable_pushed(true).pushed(false);
 
 
+        _menuProgram.append_splitter();
+        
+        _menuProgram.append(   STR("Show Tm")       ,   [&](nana::gui::menu::item_proxy& ip)   {  Click( _bTm);     });
+        _menuProgram.check_style(mTm=_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
+
+        _menuProgram.append(   STR("Show delta G")  ,   [&](nana::gui::menu::item_proxy& ip)   {  Click( _bG);      });
+        _menuProgram.check_style(mG=_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
+
+        _menuProgram.append(   STR("Show Pos")  ,       [&](nana::gui::menu::item_proxy& ip)   {  Click( _bPos);    });
+        _menuProgram.check_style(mP=_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
     }
         void SetFormat(int dec=1 , int len=6){  n_len=len; n_dec=dec; }
 };
