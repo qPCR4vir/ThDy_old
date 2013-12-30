@@ -254,23 +254,36 @@ class SetupPage : public CompoWidget
                                     numUpDowSdConc  {*this, STR("Sonde Conctr:"       ), 50, 0.1 , 1000,  "µM"}  ;
     nana::gui::button  _set_def_proj    {*this,STR("Set as Def. project") },
                        _load_def_proj   {*this,STR("ReLoad Def. project") };
+
+    nana::gui::checkbox ckBx_savTm      { *this, STR("Tm"    ) },
+                        ckBx_savPos     { *this, STR("Pos"   ) },
+                        ckBx_savG       { *this, STR("G"     ) },
+                        ckBx_savAlign   { *this, STR("Align" ) },
+                        ckBx_savProj    { *this, STR("Proj"  ) },
+                        ckBx_savG_Plasm { *this, STR("G->Plasmid") },
+                        ckBx_savTm_Plasm{ *this, STR("Tm->Plasmid") },
+                        ckBx_savLog       { *this, STR("log"     ) },
+                        ckBx_savExportSond{ *this, STR("Exp. probes" ) },
+                        ckBx_savExportTarg{ *this, STR("Exp. targets") },
+                        ckBx_savNNParam { *this, STR("load NNparam") },
+                        ckBx_loadNNParam{ *this, STR("save NNparam") }/*,*/
+                        ;
+
     BindGroup          _setup;
 
     void  SetDefLayout   () override
     {
         _DefLayout =
-	"vertical      gap=2         		\n\t"
 	"	   < weight=400   <weight=2><vertical min=50    max=800 gap=2 		\n\t"
 	"	               		                   <<Project     >      weight=23 >      			\n\t"
 	"			                                   <<Results     >      weight=23 >      			\n\t"
 	"		                                       <    _targets         weight=50      gap=2   vertical <gap=10 <weight=10%><TargOpt ><weight=10%> >  >       		\n\t"
-	"		                                       <    _nTsec        weight=50     gap=2   vertical <gap=10 <weight=10%><nTargOpt><weight=10%> >  >       		\n\t"
-	"		                                       <    _PCRfiltre      weight=50     gap=2   vertical <gap=10 <weight=10%><_PCRfiltreOpt><weight=10%> >  >       		\n\t"
-	"		                                       <    _PrimersFilePCR weight=50     gap=2   vertical <gap=10 <weight=10%><_PrimersFilePCROpt><weight=10%> >  >       		\n\t"
 	"		                                       <    _Prob_uArr      weight=50     gap=2   vertical <gap=10 <weight=10%><_Prob_uArrOpt><weight=10%> >  >       		\n\t"
 	"		                                       <<NN_param  >     weight=23 >      			\n\t"
 	"			                                     <min=50 <weight=2>  <vertical min=50 max=200 gap=2 buttons>  <>  >		\n\t"
-	"	                                                                                                                                                                                                     >      <weight=120 checks>   	>		\n\t"
+	"		          >                                                                             	\n\t"
+	"	            <  vertical weight=120 <vertical weight=210 checks> <>  >   	                          	\n\t"
+	"	       >			\n\t"
 	"					\n\t"
 	"	   < weight=46  gap=2  <>  <vertical ConcST   weight=200  gap=2>  		\n\t"
 	"	                                         <>  <vertical ConcSaltTa   weight=230  gap=2>   		\n\t"
@@ -279,6 +292,9 @@ class SetupPage : public CompoWidget
 	"	                                         <>  >      			\n\t"
 	"			\n\t"
 	"		\n\t"
+	"			\n\t"
+	"		\n\t"
+	"	\n\t"
     
             ;
         _nTsec        .ResetLayout(105);
@@ -316,6 +332,18 @@ class SetupPage : public CompoWidget
             << link( _Pr._cp.Ta	            ,       numUpDowTa  )        
             << link( _Pr._cp.SaltCorr	  ,      comBoxSalMeth  )        
             << link( _Pr._cp.TAMeth       ,       comBoxTAMeth  )        
+            << link( _Pr._cp.st_savTm	  ,       ckBx_savTm    )        
+            << link( _Pr._cp.st_savPos	  ,       ckBx_savPos   )        
+            << link( _Pr._cp.st_savG 	  ,         ckBx_savG   )        
+            << link( _Pr._cp.st_savAlign  ,     ckBx_savAlign   )        
+            << link( _Pr._cp.st_savProj   ,     ckBx_savProj    )        
+            << link( _Pr._cp.st_savG_Plasm , ckBx_savG_Plasm    )        
+            << link( _Pr._cp.st_savTm_Plasm , ckBx_savTm_Plasm  )     
+            << link( _Pr._cp.st_savLog 	  ,       ckBx_savLog   )        
+            << link( _Pr._cp.st_Exp_sond  ,ckBx_savExportSond   )        
+            << link( _Pr._cp.st_ExpTarg	 ,ckBx_savExportTarg    )        
+            << link( _Pr._cp.saveNNPar     , ckBx_savNNParam    )        
+            << link( _Pr._cp.loadNNPar    , ckBx_loadNNParam    )        
           ;
             
         _place.field("Project"  )    <<  _proj        ;
@@ -331,7 +359,9 @@ class SetupPage : public CompoWidget
         _place.field("_Prob_uArrOpt"  )    << _chkProbRecDir  << _chkProbOnlyStruct ;
 	    _place.field("NN_param" )    << _NNParamFile  ;
 	    _place.field("buttons"  )    <<  _set_def_proj << _load_def_proj;
-	    _place.field("checks"   )    << "save result" ;
+	    _place.field("checks"   )    << "save result" << ckBx_savTm    << ckBx_savPos     <<ckBx_savG         << ckBx_savAlign 
+                                                      << ckBx_savProj  << ckBx_savG_Plasm << ckBx_savTm_Plasm << ckBx_savLog
+                                                      << ckBx_savExportSond << ckBx_savExportTarg<< ckBx_savNNParam<< ckBx_loadNNParam;
 
 	    _place.field("ConcST"  )        << numUpDowSdConc   
                                         << numUpDowTgConc ;
