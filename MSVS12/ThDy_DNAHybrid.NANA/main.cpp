@@ -318,7 +318,7 @@ class SetupPage : public CompoWidget
         numUpDowSalConc.ResetLayout (110 );
 
     }
-    void  AsignWidgetToFields() override
+    virtual void  AsignWidgetToFields () final  override
     {
       _setup<< link( _Pr._cp._OutputFile      ,       _results  )
             << link( _Pr._cp._InputTargetFile ,       _targets  )
@@ -583,6 +583,17 @@ class SeqExpl : public CompoWidget
     std::vector<CSec*>      _dragSec;
     std::vector<CMultSec*>  _dragMSec;
 
+    nana::gui::button      _loadFile     {*this,STR("Load"   )},       //nana::gui::toolbar  _tbar { *this };
+                           _re_loadFile  {*this,STR("reLoad" )},   
+                           _loadDir      {*this,STR("Load"   )},       
+                           _re_loadDir   {*this,STR("reLoad" )},
+                           _scanDir      {*this,STR("Scan"   )},
+                           _cut          {*this,STR("Cut"    )},
+                           _paste        {*this,STR("Paste"  )},
+                           _del          {*this,STR("Del"    )},
+                           _show_locals_s{*this,STR("local"  )},
+                           _show_filt_s  {*this,STR("filtr"   )}
+                           ; 
     using pSec = CSec*;
     class ListSeqMaker : public List::resolver_interface <pSec>
     {
@@ -632,12 +643,13 @@ class SeqExpl : public CompoWidget
     //{
     //    return (item.value<CSec*>());
     //}
-
-    
     void SetDefLayout() override
     {
-        _DefLayout = "    horizontal  gap=2   <Tree weight=25% > <List >         \n\t"
-
+        _DefLayout = 
+	"vertical                                               		\n\t"
+	"	  <weight=20 <toolbar weight=520 ><>>       	            	\n\t"
+	"	  <horizontal  gap=2   <Tree weight=25% > <List >   >      	\n\t"
+	"		\n\t"
             ;
     }
     void AsignWidgetToFields() override
@@ -645,24 +657,7 @@ class SeqExpl : public CompoWidget
         _place.field("Tree") << _tree;
         _place.field("List") << _list;
     }
-    void MakeResponive()
-    {
-        _tree.ext_event().selected = [&](nana::gui::window w, Tree::item_proxy node, bool selected) { if (selected) RefreshList(node); };
-        _tree.ext_event().checked  = [&](nana::gui::window w, Tree::item_proxy node, bool checked)
-        {                                              
-            node.value<CMultSec*>()->Selected(checked);
-            if (node== _tree.selected())  
-                RefreshList(node);                //  ??????? Only RefreschList
-        };
-
-        _list.ext_event().checked  = [&](  List::item_proxy item, bool checked)
-        {                                               
-            item.value<CSec*>()->Selected(checked);
-            if ( ! _showAllseq && !checked) 
-                _list.erase(item) ;
-        };
-        
-    }
+    void MakeResponive();
 
     Node &Refresh(Tree::item_proxy& node)
     {
@@ -757,7 +752,26 @@ class SeqExpl : public CompoWidget
         else
            return Replace(tn, ms, ms->_Path,false);
     }
+    void ShowLocals(bool showLocals)
+    {        
+        if(showLocals != _showAllseq) return ;
+        else _showAllseq = ! showLocals;
 
+        _list.auto_draw(false);
+        _list.clear();
+            populate_list_recur(_tree.selected());
+        _list.auto_draw(true);
+    }
+    void ShowFiltered(bool showFiltered)
+    {        
+        if(showFiltered == _showFiltered) return ;
+        else _showFiltered = showFiltered;
+
+        _list.auto_draw(false);
+        _list.clear();
+            populate_list_recur(_tree.selected());
+        _list.auto_draw(true);
+    }
 public:
     SeqExpl(ThDyNanaForm& tdForm);
     void ShowFindedProbes_in_mPCR(bool show_=true);
@@ -1279,40 +1293,12 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
         menu.append(STR("Add a new, empty, group for sequences")  , [&](nana::gui::menu::item_proxy& ip) {  AddNewSeqGr(_tree.selected());    } );
         menu.append(STR("Add a group of sequences from a file..."), [&](nana::gui::menu::item_proxy& ip) 
-        {
-            nana::gui::filebox  fb{ *this, true };
-            fb .add_filter ( SetupPage::FastaFiltre( )                   )
-               .title      ( STR("Add a group of sequences from a file") );
-
-            if (fb()) 
-               AddMSeqFiles(nana::charset(fb.file()), false);
-        });
-        menu.append(STR("Add a tree of groups of sequences from a directory..."),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            nana::gui::filebox  fb{ *this, true };
-            fb .add_filter ( SetupPage::FastaFiltre( )                   )
-               .title(STR("Add a tree of groups of sequences from a directory"));
-            if (fb()) 
-                AddMSeqFiles(nana::charset(fb.file()), true);
-        });
+        menu.append(STR("Add a group of sequences from a file..."), [&](nana::gui::menu::item_proxy& ip) {  Click(_loadFile);                 });
+        menu.append(STR("Add a tree of groups of sequences from a directory..."),[&](nana::gui::menu::item_proxy& ip) {  Click(_loadDir);     });
 
         menu.append_splitter();
 
-        menu.append(STR("Reproduce only the structure of directory..."),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            nana::gui::filebox  fb{ *this, true };
-            fb .add_filter ( SetupPage::FastaFiltre( )                   )
-               .title(STR("Reproduce the structure of directory..."));
-            if (!fb()) return;
-
-            auto      tn    = _tree.selected();
-            CMultSec* ms    = tn.value<CMultSec*>();
-            CMultSec* newms = _Pr._cp.CopyStructFromDir	( ms, nana::charset(fb.file())	);
-            _tree.auto_draw(false);
-			populate(  appendNewNode  (tn, newms) );
-            tn.expend(true);
-            _tree.auto_draw(true);
-        });
+        menu.append(STR("Reproduce only the structure of directory..."),[&](nana::gui::menu::item_proxy& ip)  {  Click(_scanDir);     });
         menu.append(STR("Reload from the original file" )  , [&](nana::gui::menu::item_proxy& ip)   {  ReloadFile(_tree.selected());    });
         menu.append(STR("Reload from the original directory"), [&](nana::gui::menu::item_proxy& ip) {  ReloadDir(_tree.selected());     });
         menu.append(STR("Replace from a file..." )  , [&](nana::gui::menu::item_proxy& ip) 
@@ -1372,25 +1358,11 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
         menu.append_splitter();
 
-        menu.append(   STR("Show Only local sequences")  ,   [&](nana::gui::menu::item_proxy& ip) 
-        {
-            _list.auto_draw(false);
-            _showAllseq = ! menu.checked(ip.index());// =! _showAllseq; 
-            _list.clear();
-             populate_list_recur(_tree.selected());
-            _list.auto_draw(true);
-        });
+        menu.append(   STR("Show Only local sequences"),[&](nana::gui::menu::item_proxy& ip) { ShowLocals( menu.checked(ip.index()));    });
         menu.check_style(menu.size()-1, nana::gui::menu::check_t::check_highlight );
         menu.checked (menu.size()-1, false );
 
-        menu.append(STR("Show filtered sequences"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            _showFiltered = menu.checked(ip.index());// !_showFiltered;
-            _list.auto_draw(false);
-            _list.clear();
-             populate_list_recur(_tree.selected());
-            _list.auto_draw(true);
-        });
+        menu.append(STR("Show filtered sequences"     ),[&](nana::gui::menu::item_proxy& ip) { ShowFiltered( menu.checked(ip.index()));  });
         menu.check_style(menu.size()-1, nana::gui::menu::check_highlight); // check_option
         menu.checked (menu.size()-1, true );
 
@@ -1403,7 +1375,81 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
             // populate_list_recur(_tree.selected());
             //_list.auto_draw(true);
         });
-        menu.append(STR("Cut selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip) 
+        menu.append(STR("Cut selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip)  {  Click(_cut);     });
+        menu.append(STR("Paste the sequences"                       ),[&](nana::gui::menu::item_proxy& ip)  {  Click(_paste);     });
+
+        menu.append_splitter();
+        menu.append(STR("Del selected sequences from list"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
+            //_list.auto_draw(false);
+            //_list.clear();
+            // populate_list_recur(_tree.selected());
+            //_list.auto_draw(true);
+        });
+        menu.append(STR("Del selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip)  {  Click(_del);     });
+        menu.append(STR("Rename the selected group of sequences"),[&](nana::gui::menu::item_proxy& ip) 
+        {
+            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
+            //_list.auto_draw(false);
+            //_list.clear();
+            // populate_list_recur(_tree.selected());
+            //_list.auto_draw(true);
+        });
+
+    }
+    void SeqExpl::MakeResponive()
+    {
+        _tree.ext_event().selected = [&](nana::gui::window w, Tree::item_proxy node, bool selected) { if (selected) RefreshList(node); };
+        _tree.ext_event().checked  = [&](nana::gui::window w, Tree::item_proxy node, bool checked)
+        {                                              
+            node.value<CMultSec*>()->Selected(checked);
+            if (node== _tree.selected())  
+                RefreshList(node);                //  ??????? Only RefreschList
+        };
+
+        _list.ext_event().checked  = [&](  List::item_proxy item, bool checked)
+        {                                               
+            item.value<CSec*>()->Selected(checked);
+            if ( ! _showAllseq && !checked) 
+                _list.erase(item) ;
+        };
+ 
+        _loadFile   .make_event<nana::gui::events::click>([this]()
+                        {
+                            nana::gui::filebox  fb{ *this, true };
+                            fb .add_filter ( SetupPage::FastaFiltre( )                   )
+                               .title      ( STR("File load: Add a group of sequences from a file") );
+
+                            if (fb()) 
+                               AddMSeqFiles(nana::charset(fb.file()), false);
+                        });
+        _re_loadFile.make_event<nana::gui::events::click>([this]()  {  ReloadFile(_tree.selected());    });
+        _loadDir    .make_event<nana::gui::events::click>([this]()
+                        {
+                            nana::gui::filebox  fb{ *this, true };
+                            fb .add_filter ( SetupPage::FastaFiltre( )                   )
+                               .title(STR("Directory load: Add a tree of groups of sequences from a directory"));
+                            if (fb()) 
+                                AddMSeqFiles(nana::charset(fb.file()), true);
+                        });
+        _re_loadDir .make_event<nana::gui::events::click>([this]()  {  ReloadDir (_tree.selected());    });
+        _scanDir    .make_event<nana::gui::events::click>([this]()
+                        {
+                            nana::gui::filebox  fb{ *this, true };
+                            fb .add_filter ( SetupPage::FastaFiltre( )                   )
+                               .title(STR("Directory scan: Reproduce the structure of directory..."));
+                            if (!fb()) return;
+
+                            auto      tn    = _tree.selected();
+                            CMultSec* ms    = tn.value<CMultSec*>();
+                            CMultSec* newms = _Pr._cp.CopyStructFromDir	( ms, nana::charset(fb.file())	);
+                            _tree.auto_draw(false);
+			                populate(  appendNewNode  (tn, newms) );
+                            tn.expend(true);
+                            _tree.auto_draw(true);
+                        });
+        _cut        .make_event<nana::gui::events::click>([this]()
         {
 			auto tn= _tree.selected();
             if (tn->owner()->owner().empty())
@@ -1428,7 +1474,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
             populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
             own.select(true).expend(true);
         });
-        menu.append(STR("Paste the sequences"),[&](nana::gui::menu::item_proxy& ip) 
+        _paste      .make_event<nana::gui::events::click>([this]()
         {
 			auto       tn = _tree.selected();
             CMultSec *pms = tn.value<CMultSec*>();
@@ -1450,17 +1496,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
             _tree.auto_draw(false);
             _list.auto_draw(false);
         });
-
-        menu.append_splitter();
-        menu.append(STR("Del selected sequences from list"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
-            //_list.auto_draw(false);
-            //_list.clear();
-            // populate_list_recur(_tree.selected());
-            //_list.auto_draw(true);
-        });
-        menu.append(STR("Del selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip) 
+        _del        .make_event<nana::gui::events::click>([this]()
         {
 			auto tn= _tree.selected();
             if (tn->owner()->owner().empty())
@@ -1485,16 +1521,16 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
             own.select(true).expend(true);
 
         });
-        menu.append(STR("Rename the selected group of sequences"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
-            //_list.auto_draw(false);
-            //_list.clear();
-            // populate_list_recur(_tree.selected());
-            //_list.auto_draw(true);
-        });
 
+        _show_locals_s.enable_pushed(true);
+        _show_locals_s.pushed(false);
+        _show_locals_s.make_event<nana::gui::events::click>([this]() { ShowLocals( _show_locals_s.pushed());  });
+
+        _show_filt_s.enable_pushed(true)   ;
+        _show_filt_s.pushed(true);
+        _show_filt_s.make_event<nana::gui::events::click>([this]() { ShowFiltered( _show_filt_s.pushed());  });
     }
+
     void SeqExpl::InitTree()
     {
         _list.auto_draw(false);
@@ -1504,6 +1540,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
 			populate( AddRoot( ms->CurMSec())) ;
 
+        _tree.find(STR("Target seq")).select(true);
         populate_list_recur(_Pr._cp._pSeqTree.get());
 
     }
