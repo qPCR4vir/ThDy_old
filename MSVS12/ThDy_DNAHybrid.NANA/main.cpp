@@ -7,6 +7,7 @@
 #include <nana/gui/widgets/checkbox.hpp>
 #include <nana/gui/widgets/treebox.hpp>
 #include <nana/gui/widgets/listbox.hpp>
+#include <nana/gui/widgets/toolbar.hpp>
 
 #include <nana/gui/tooltip.hpp>
 #include <nana/gui/widgets/progress.hpp>
@@ -63,11 +64,18 @@ class TableRes  : public nana::gui::form, public EditableForm
 
     std::shared_ptr<Table> _table;
     List                   _list { *this };
+
+    nana::gui::button      _bTm {*this,STR("Tm")},       //nana::gui::toolbar     _tbar { *this };
+                           _bG  {*this,STR("G" )},   
+                           _bPos {*this,STR("Pos")}; 
+
     int                    n_dec{ 1 },   n_len{ 6 };
+
     Tm  _Tm;
     G   _G;
     Pos _Pos;
     value                  *val { &_Tm} ;
+    std::size_t            mTm, mG, mP;
  
     void SetValType(value &val_)
     { 
@@ -166,6 +174,10 @@ class TableRes  : public nana::gui::form, public EditableForm
    {
         //nana::gui::API::zoom_window(*this, true);
         caption( nana::string(STR("Table Tm: ") +  _Titel));
+        //_tbar.append(STR("Tm"));
+        //_tbar.append(STR("G"));
+        //_tbar.append(STR("Pos"));
+
         InitMyLayout();
         SelectClickableWidget( _list);
         SelectClickableWidget( *this);
@@ -189,34 +201,44 @@ class TableRes  : public nana::gui::form, public EditableForm
 
         _list.auto_draw(true);
 
-        _menuProgram.append_splitter();
-        
-        _menuProgram.append(   STR("Show Tm")  ,   [&](nana::gui::menu::item_proxy& ip) 
+        //MakeResponive();
+        _bTm .make_event<nana::gui::events::click>([this]()
         {
             SetFormat(1);
             SetValType(_Tm);
             caption( nana::string(STR("Table Tm: ") +  _Titel));
-
+                            _bTm .pushed(true);
+                            _bG  .pushed(false);
+                            _bPos.pushed(false);
+                            _menuProgram.checked(mTm, true);
         });
-        _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
-
-        _menuProgram.append(   STR("Show delta G")  ,   [&](nana::gui::menu::item_proxy& ip) 
+        _bG  .make_event<nana::gui::events::click>([this]()
         {
             SetFormat(1);
             SetValType(_G);
             caption( nana::string(STR("Table G: ") +  _Titel));
+                            _bTm .pushed(false);
+                            _bG  .pushed(true);
+                            _bPos.pushed(false);
+                            _menuProgram.checked(mG, true);
         });
-        _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
-        _menuProgram.append(   STR("Show Pos")  ,   [&](nana::gui::menu::item_proxy& ip) 
+        _bPos.make_event<nana::gui::events::click>([this]()
         {
             SetFormat(0);
             SetValType(_Pos);
             caption( nana::string(STR("Table Pos: ") +  _Titel));
+                            _bTm .pushed(false);
+                            _bG  .pushed(false);
+                            _bPos.pushed(true );
         });
         _menuProgram.check_style(_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
         //_menuProgram.checked    (_menuProgram.size()-1, false );
 
-        //MakeResponive();
+        _bTm .enable_pushed(true).pushed(true);
+        _bG  .enable_pushed(true).pushed(false);
+        _bPos.enable_pushed(true).pushed(false);
+
+
     }
         void SetFormat(int dec=1 , int len=6){  n_len=len; n_dec=dec; }
 };
