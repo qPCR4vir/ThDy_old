@@ -71,9 +71,9 @@ class TableRes  : public nana::gui::form, public EditableForm
 
     int                    n_dec{ 1 },   n_len{ 6 };
 
-    Tm  _Tm;
-    G   _G;
-    Pos _Pos;
+    Tm                     _Tm;
+    G                      _G;
+    Pos                    _Pos;
     value                  *val { &_Tm} ;
     std::size_t            mTm, mG, mP;
  
@@ -136,14 +136,17 @@ class TableRes  : public nana::gui::form, public EditableForm
     void SetDefLayout   () override
     {
         _DefLayout= 
-            "vertical      gap=2             \n\t"
-	        "  <_list  >       \n\t "
+	"vertical                  	\n\t"
+	"	  <weight=25 <toolbar weight=200 ><>>       	\n\t"
+	"	   <_list  >       	\n\t"
+	"	 	\n\t"
  
             ;
     }
     void AsignWidgetToFields() override
     {
- 	    _place.field("_list"         )<<_list;
+ 	    _place.field("toolbar"       ) <<_bTm << _bG << _bPos ;
+ 	    _place.field("_list"         ) <<_list;
      }
  public:
      TableRes    (std::shared_ptr<CTable<TmGPos>> table)  : _table(table), _Tm{*table.get()}, _G{*table.get()}, _Pos{*table.get()},  
@@ -181,35 +184,35 @@ class TableRes  : public nana::gui::form, public EditableForm
 
         //MakeResponive();
         _bTm .make_event<nana::gui::events::click>([this]()
-        {
-            SetFormat(1);
-            SetValType(_Tm);
-            caption( nana::string(STR("Table Tm: ") +  _Titel));
+                        {
+                            SetFormat(1);
+                            SetValType(_Tm);
+                            caption( nana::string(STR("Table Tm: ") +  _Titel));
                             _bTm .pushed(true);
                             _bG  .pushed(false);
                             _bPos.pushed(false);
                             _menuProgram.checked(mTm, true);
-        });
+                        });
         _bG  .make_event<nana::gui::events::click>([this]()
-        {
-            SetFormat(1);
-            SetValType(_G);
-            caption( nana::string(STR("Table G: ") +  _Titel));
+                        {
+                            SetFormat(1);
+                            SetValType(_G);
+                            caption( nana::string(STR("Table G: ") +  _Titel));
                             _bTm .pushed(false);
                             _bG  .pushed(true);
                             _bPos.pushed(false);
                             _menuProgram.checked(mG, true);
-        });
+                        });
         _bPos.make_event<nana::gui::events::click>([this]()
-        {
-            SetFormat(0);
-            SetValType(_Pos);
-            caption( nana::string(STR("Table Pos: ") +  _Titel));
+                        {
+                            SetFormat(0);
+                            SetValType(_Pos);
+                            caption( nana::string(STR("Table Pos: ") +  _Titel));
                             _bTm .pushed(false);
                             _bG  .pushed(false);
                             _bPos.pushed(true );
                             _menuProgram.checked(mP, true);
-        });
+                        });
 
         _bTm .enable_pushed(true).pushed(true);
         _bG  .enable_pushed(true).pushed(false);
@@ -283,24 +286,28 @@ class SetupPage : public CompoWidget
     void  SetDefLayout   () override
     {
         _DefLayout =
-	"	   < weight=400   <weight=2><vertical min=50    max=800 gap=2 		\n\t"
-	"	               		                   <<Project     >      weight=23 >      			\n\t"
-	"			                                   <<Results     >      weight=23 >      			\n\t"
-	"		                                       <    _targets         weight=50      gap=2   vertical <gap=10 <weight=10%><TargOpt ><weight=10%> >  >       		\n\t"
-	"		                                       <    _Prob_uArr      weight=50     gap=2   vertical <gap=10 <weight=10%><_Prob_uArrOpt><weight=10%> >  >       		\n\t"
-	"		                                       <<NN_param  >     weight=23 >      			\n\t"
-	"			                                     <min=50 <weight=2>  <vertical min=50 max=200 gap=2 buttons>  <>  >		\n\t"
+	"vertical      gap=3        			\n\t"
+	"		   < weight=400     gap=5     <weight=2><  vertical min=50    max=800 gap=2 			\n\t"
+	"		              <  <Project>      weight=23 >      				\n\t"
+	"				      <  <Results>      weight=23 >      				\n\t"
+	"			          <    <     weight=22 _targets>               weight=50       vertical <gap=10  weight=23  <weight=10%><TargOpt   ><weight=10%>    >   <>>       			\n\t"
+	"			          <    <     weight=22 _nTsec  >              weight=50       vertical <gap=10  weight=23  <weight=10%>< nTargOpt ><weight=10%>    >   <>>       	\n\t"
+	"			          <    <     weight=22 _PCRfiltre  >         weight=50       vertical <gap=10  weight=23  <weight=10%><_PCRfiltreOpt ><weight=10%>    >   <>>       	\n\t"
+	"			          <    <     weight=22 _PrimersFilePCR>weight=50       vertical <gap=10  weight=23  <weight=10%><_PrimersFilePCROpt ><weight=10%>    >   <>>       	\n\t"
+	"			          <    <     weight=22 _Prob_uArr   >    weight=50         vertical <gap=10  weight=23  <weight=10%><_Prob_uArrOpt ><weight=10%>    >   <>>       	\n\t"
+	" 		              <  <NN_param >     weight=23 >      				\n\t"
+	"				    <min=50 <weight=2>  <vertical min=50 max=200 gap=2 buttons>  <>  >			\n\t"
 	"		          >                                                                             	\n\t"
 	"	            <  vertical weight=120 <vertical weight=210 checks> <>  >   	                          	\n\t"
 	"	       >			\n\t"
+	"							\n\t"
+	"		   < weight=46  gap=2  <>  <vertical ConcST   weight=200  gap=2>  			\n\t"
+	"		                                         <>  <vertical ConcSaltTa   weight=230  gap=2>   			\n\t"
+	"		                                         <>  <vertical   weight=250 <SMeth gap=2>          				\n\t"
+	"				                                                                                <AMeth gap=2>   > 			\n\t"
+	"		                                         <>  >      				\n\t"
 	"					\n\t"
-	"	   < weight=46  gap=2  <>  <vertical ConcST   weight=200  gap=2>  		\n\t"
-	"	                                         <>  <vertical ConcSaltTa   weight=230  gap=2>   		\n\t"
-	"	                                         <>  <vertical   weight=250 <SMeth gap=2>          			\n\t"
-	"			                                                                                <AMeth gap=2>   > 		\n\t"
-	"	                                         <>  >      			\n\t"
-	"			\n\t"
-	"		\n\t"
+	"				\n\t"
 	"			\n\t"
 	"		\n\t"
 	"	\n\t"
@@ -654,8 +661,12 @@ class SeqExpl : public CompoWidget
     }
     void AsignWidgetToFields() override
     {
-        _place.field("Tree") << _tree;
-        _place.field("List") << _list;
+ 	    _place.field("toolbar") << "   Files:" << _loadFile << _re_loadFile   
+                                << "      Dir:" << _loadDir  << _re_loadDir  << _scanDir  
+                                << 10            << _cut      << _paste       << _del      
+                                << "      Seq:" << _show_locals_s  << _show_filt_s     ;
+        _place.field("Tree"   ) << _tree;
+        _place.field("List"   ) << _list;
     }
     void MakeResponive();
 
@@ -1327,8 +1338,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     {
         menu.append_splitter();
 
-        menu.append(STR("Add a new, empty, group for sequences")  , [&](nana::gui::menu::item_proxy& ip) {  AddNewSeqGr(_tree.selected());    } );
-        menu.append(STR("Add a group of sequences from a file..."), [&](nana::gui::menu::item_proxy& ip) 
+        menu.append(STR("Add a new, empty, group for sequences")  , [&](nana::gui::menu::item_proxy& ip) {  AddNewSeqGr(_tree.selected());    });
         menu.append(STR("Add a group of sequences from a file..."), [&](nana::gui::menu::item_proxy& ip) {  Click(_loadFile);                 });
         menu.append(STR("Add a tree of groups of sequences from a directory..."),[&](nana::gui::menu::item_proxy& ip) {  Click(_loadDir);     });
 
@@ -1403,7 +1413,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         menu.checked (menu.size()-1, true );
 
         menu.append_splitter();
-        menu.append(STR("Cut selected sequences from list"),[&](nana::gui::menu::item_proxy& ip) 
+        menu.append(STR("Cut selected sequences from list"          ),[&](nana::gui::menu::item_proxy& ip) 
         {
             //_showFiltered = menu.checked(ip.index());// !_showFiltered;
             //_list.auto_draw(false);
