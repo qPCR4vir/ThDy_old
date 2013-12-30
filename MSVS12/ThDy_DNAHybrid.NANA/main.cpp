@@ -869,6 +869,30 @@ public:
     void Run_Design(bool design);
 };
 
+class uArray : public CompoWidget
+{ public: 
+    ThDyNanaForm      &_Pr;
+    nana::gui::button  _do_uArray{*this, STR(" uArray ! ")};
+    BindGroup          _uArray;
+
+    uArray (ThDyNanaForm& tdForm);
+
+    void SetDefLayout   () override
+    {
+        _DefLayout= "vertical      gap=2             \n\t"
+	        "  < weight=23>       \n\t "
+            "  <<><_do_uArray  vertical min=50 max=200><> weight=50>       \n\t "
+
+            ;
+    }
+    void AsignWidgetToFields() override
+    {
+	    _place.field("_do_uArray"         )<<_do_uArray;
+    }
+
+  private: void buttuArray_Click(); //	  Run      _IPrgPar_mPCR
+};
+
 class MplexPCR : public CompoWidget
 { public: 
     ThDyNanaForm      &_Pr;
@@ -1026,6 +1050,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     SetupPage                       setup_      {*this};
     FindSondenPage                  findSond_   {*this};
     MplexPCR                        mPCR_       {*this};
+    uArray                          uArr_       {*this}; 
     TmCalcPage                      tmCalc_     {*this}; 
     nana::gui::NumUnitUpDown        numUpDwMaxTgId  {*this, STR("Max. ident.:"        ), 99,  50 , 100 ,   "%"}, 
                                     numUpDw_TgBeg   {*this, STR("Beg.:"               ),  0,   0 , 100000,"nt"},    /// rev !!
@@ -1053,6 +1078,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         add_page( mExpl_    );
         add_page( findSond_ );
         add_page( mPCR_     );
+        add_page( uArr_     );
         add_page( tmCalc_   );
 
         tabbar_.active (0);
@@ -1191,6 +1217,16 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     {
 
         _do_mPCR      .make_event <nana::gui::events::click>([&](){buttPCR_Click ();});
+
+        InitMyLayout();
+        SelectClickableWidget( *this);
+    }
+   uArray::uArray            (ThDyNanaForm& tdForm)
+        : _Pr             (tdForm), 
+          CompoWidget     (tdForm, STR("uArray"), STR("uArray.lay.txt"))
+    {
+
+        _do_uArray      .make_event <nana::gui::events::click>([&](){buttuArray_Click ();});
 
         InitMyLayout();
         SelectClickableWidget( *this);
@@ -1588,6 +1624,23 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         //ShowResTbl(_Pr._mPCR._rtbl_self );
         //_Pr._mPCR._rtbl_self = nullptr;
 
+	}
+    void uArray::buttuArray_Click()  
+	{	 			
+	 try{                                   
+		  _Pr._uArr ._cp.Actualice_NNp();  
+ 		  _Pr.Run(_Pr._uArr);	
+
+          _Pr._results.emplace_back(new TableRes(_Pr._uArr._rtbl));
+          _Pr._results.back()->show();
+		}
+	catch ( std::exception& e)
+		{ 
+          cerr<< e.what()    ;
+          (nana::gui::msgbox(*this,STR("Error during uArr analis !"), 
+                                                nana::gui::msgbox::button_t::ok)   <<e.what()) (  ) ;
+		  return;
+		}
 	}
 
 
