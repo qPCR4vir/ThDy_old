@@ -8,6 +8,7 @@
 #include <nana/gui/widgets/treebox.hpp>
 #include <nana/gui/widgets/listbox.hpp>
 #include <nana/gui/widgets/toolbar.hpp>
+#include <nana/gui/tooltip.hpp>
 
 #include <nana/gui/tooltip.hpp>
 #include <nana/gui/widgets/progress.hpp>
@@ -70,7 +71,7 @@ class TableRes  : public nana::gui::form, public EditableForm
                            _bPos {*this,STR("Pos")}; 
 
     int                    n_dec{ 1 },   n_len{ 6 };
-
+    
     Tm                     _Tm;
     G                      _G;
     Pos                    _Pos;
@@ -601,6 +602,10 @@ class SeqExpl : public CompoWidget
                            _show_locals_s{*this,STR("local"  )},
                            _show_filt_s  {*this,STR("filtr"   )}
                            ; 
+    nana::gui::tooltip    _loadFileTT {_loadFile,STR("File load: Add a group of sequences from a file")},
+                          _re_loadFileTT ;  
+;  
+
     using pSec = CSec*;
     class ListSeqMaker : public List::resolver_interface <pSec>
     {
@@ -801,14 +806,25 @@ class FindSondenPage : public CompoWidget
                              _MaxG     {*this, STR("Max G" ), 10, -10, 30, "kcal/mol" },  _MinTm   {*this, STR("Tm :"  ), 30,  10 , 60,"°C"}, 
                              _MinG     {*this, STR("Min G" ), 15, -10 , 30,"kcal/mol" }, _MaxTm    {*this, STR("Max Tm"), 10, -10, 75, "°C"}, 
                              _MinSelfG {*this, STR("Min G" ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{*this, STR("Max Tm"), 10, -10, 75, "°C"}, 	
+                             numUpDw_MinTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" }, 
+                             numUpDw_MaxTargCov{ *this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%" } ;
+    nana::gui::tooltip _Gmintt     {_Gmin, STR("Only probes with stronger interaction with target (smaller G by selected Ta) will be included"    ) }/*,   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
+                             _Tmmin    {*this, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {*this, STR(""), 63,  45, 75, "°C"      }, 
+                             _Lengthmin{*this, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{*this, STR(""), 35,  15, 40, "nt"      },
+                             _MaxG     {*this, STR("Max G" ), 10, -10, 30, "kcal/mol" },  _MinTm   {*this, STR("Tm :"  ), 30,  10 , 60,"°C"}, 
+                             _MinG     {*this, STR("Min G" ), 15, -10 , 30,"kcal/mol" }, _MaxTm    {*this, STR("Max Tm"), 10, -10, 75, "°C"}, 
+                             _MinSelfG {*this, STR("Min G" ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{*this, STR("Max Tm"), 10, -10, 75, "°C"}, 	
                              numUpDw_MinTargCov{ *this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%" }, 
-                             numUpDw_MaxTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" } ;
+                             numUpDw_MaxTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" }*/ ;
 
     nana::gui::button        _design{*this, STR("Design !" )}, 
                             _compare{*this, STR("Compare !")};
+
     nana::gui::checkbox      chkBx_unique{*this, STR("Report unique probes, ")}, 
-                             chkBx_common{*this, STR("Report cariel.rodriguezommon probes, ")}, 
+                             chkBx_common{*this, STR("Report common probes, ")}, 
                              chkBx_showFindedProbes{*this, STR("Show Finded Probes")};
+	nana::gui::tooltip       chkBx_uniqueTT{chkBx_unique, STR("For each target seq, probes with hybrid on it, AND maximum on a given percent of the OTHER targets will be reported")};
+	nana::gui::tooltip       chkBx_commonTT{chkBx_common, STR("All probes with hybrid on at laest the given percent of targets will be reported")};
 public: 
     FindSondenPage(ThDyNanaForm& tdForm);
     void SetDefLayout   () override
@@ -1217,11 +1233,17 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
         _design .make_event<nana::gui::events::click>([&]() 
         {
-            Run_Design(true );  });    
+            Run_Design(true );  
+        });    
+
         _compare.make_event<nana::gui::events::click>([&]() 
         {
-            Run_Design(false);  });  
-     }
+            Run_Design(false);  
+        });  
+
+        //_Gmin.tooltip(STR("Only probes with stronger interaction with target (smaller G by selected Ta) will be \"include\""));
+   
+   }
    MplexPCR::MplexPCR            (ThDyNanaForm& tdForm)
         : _Pr             (tdForm), 
           CompoWidget     (tdForm, STR("MplexPCR"), STR("MplexPCR.lay.txt"))
@@ -1446,7 +1468,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     }
     void SeqExpl::MakeResponive()
     {
-        _tree.ext_event().selected = [&](nana::gui::window w, Tree::item_proxy node, bool selected) { if (selected) RefreshList(node); };
+		_tree.ext_event().selected = [&](nana::gui::window w, Tree::item_proxy node, bool selected) { if (selected) RefreshList(node); };
         _tree.ext_event().checked  = [&](nana::gui::window w, Tree::item_proxy node, bool checked)
         {                                              
             node.value<CMultSec*>()->Selected(checked);
@@ -1470,8 +1492,13 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
                             if (fb()) 
                                AddMSeqFiles(nana::charset(fb.file()), false);
                         });
+        //_loadFileTT.set(_loadFile,STR("File load: Add a group of sequences from a file"));
+
         _re_loadFile.make_event<nana::gui::events::click>([this]()  {  ReloadFile(_tree.selected());    });
-        _loadDir    .make_event<nana::gui::events::click>([this]()
+        _re_loadFileTT.set(_re_loadFile,STR("File reload: Reload a group of sequences from a file, \nposible using new filtres."));
+
+        _loadDir    .tooltip(STR("Directory load: Add a tree of groups of sequences from a directory."))
+                    .make_event<nana::gui::events::click>([this]()
                         {
                             nana::gui::filebox  fb{ *this, true };
                             fb .add_filter ( SetupPage::FastaFiltre( )                   )
@@ -1479,8 +1506,10 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
                             if (fb()) 
                                 AddMSeqFiles(nana::charset(fb.file()), true);
                         });
-        _re_loadDir .make_event<nana::gui::events::click>([this]()  {  ReloadDir (_tree.selected());    });
-        _scanDir    .make_event<nana::gui::events::click>([this]()
+        _re_loadDir .tooltip(STR("Directory reload: Reload a tree of groups of sequences from a directory,\nposible using new filtres."))
+                    . make_event<nana::gui::events::click>([this]()  {  ReloadDir (_tree.selected());    });
+        _scanDir    .tooltip(STR("Directory scan: Reproduce the structure of directory..."))
+                    .make_event<nana::gui::events::click>([this]()
                         {
                             nana::gui::filebox  fb{ *this, true };
                             fb .add_filter ( SetupPage::FastaFiltre( )                   )
@@ -1495,7 +1524,8 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
                             tn.expend(true);
                             _tree.auto_draw(true);
                         });
-        _cut        .make_event<nana::gui::events::click>([this]()
+        _cut        .tooltip(STR("Cut a group of sequences"))
+                    .make_event<nana::gui::events::click>([this]()
         {
 			auto tn= _tree.selected();
             if (tn->owner()->owner().empty())
@@ -1520,7 +1550,8 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
             populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
             own.select(true).expend(true);
         });
-        _paste      .make_event<nana::gui::events::click>([this]()
+        _paste      .tooltip(STR("Paste a group of sequences"))
+                    .make_event<nana::gui::events::click>([this]()
         {
 			auto       tn = _tree.selected();
             CMultSec *pms = tn.value<CMultSec*>();
@@ -1542,7 +1573,8 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
             _tree.auto_draw(false);
             _list.auto_draw(false);
         });
-        _del        .make_event<nana::gui::events::click>([this]()
+        _del        .tooltip(STR("Delete a group of sequences "))
+                    .make_event<nana::gui::events::click>([this]()
         {
 			auto tn= _tree.selected();
             if (tn->owner()->owner().empty())
@@ -1568,13 +1600,15 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
         });
 
-        _show_locals_s.enable_pushed(true);
-        _show_locals_s.pushed(false);
-        _show_locals_s.make_event<nana::gui::events::click>([this]() { ShowLocals( _show_locals_s.pushed());  });
+        _show_locals_s.enable_pushed(true)
+                      .pushed(false)
+                      .tooltip(STR("Show only local sequences, and not the sequences in internal trees"))   
+                      .make_event<nana::gui::events::click>([this]() { ShowLocals( _show_locals_s.pushed());  });
 
-        _show_filt_s.enable_pushed(true)   ;
-        _show_filt_s.pushed(true);
-        _show_filt_s.make_event<nana::gui::events::click>([this]() { ShowFiltered( _show_filt_s.pushed());  });
+        _show_filt_s.enable_pushed(true)  
+                    .pushed(true) 
+                    .tooltip(STR("Show filtered sequences too"))   
+                    .make_event<nana::gui::events::click>([this]() { ShowFiltered( _show_filt_s.pushed());  });
     }
 
     void SeqExpl::InitTree()
