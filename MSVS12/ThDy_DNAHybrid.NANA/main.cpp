@@ -1073,7 +1073,8 @@ public:
 
 class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyProject
 {
-    nana::gui::tabbar<nana::string> tabbar_     {*this};
+    using tabbar = nana::gui::tabbar<nana::string> ;
+	tabbar                          tabbar_     {*this};
     SetupPage                       setup_      {*this};
     FindSondenPage                  findSond_   {*this};
     MplexPCR                        mPCR_       {*this};
@@ -1101,12 +1102,12 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         //background (0xEEEEEE);
         //foreground(1);
        
-        add_page( setup_    );
-        add_page( mExpl_    );
-        add_page( findSond_ );
-        add_page( mPCR_     );
-        add_page( uArr_     );
-        add_page( tmCalc_   );
+        add_page( setup_    ); // 0
+        add_page( mExpl_    ); // 1
+        add_page( findSond_ ); // 2
+        add_page( mPCR_     ); // 3
+        add_page( uArr_     ); // 4
+        add_page( tmCalc_   ); // 5
 
         tabbar_.active (0);
 
@@ -1133,11 +1134,24 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
         InitMyLayout();
 
-        setup_.AddMenuItems (_menuBar.push_back(STR("P&roject")));
-        mExpl_.AddMenuItems (_menuBar.push_back(STR("&Sequences")));
-        AddMenuProgram();
+        setup_.AddMenuItems (_menuBar.push_back(STR("P&roject")));     // 0
+        mExpl_.AddMenuItems (_menuBar.push_back(STR("&Sequences")));   // 1 
+        AddMenuProgram();                                              // 2
         
         SelectClickableWidget( _menuBar);
+
+		//nana::fn_group<void(tabbar&, value_type&)> active;
+
+		tabbar_.ext_event().active = [this]( tabbar & t, tabbar::value_type& tab)
+		{
+			bool enable	= tabbar_.active( )==1;
+			auto &m		= _menuBar. at(1);
+			auto sz		= m.size();
+
+			for(int i=0; i< sz; ++i)
+				m.enabled(i,enable);
+		};
+
 
    }
 
