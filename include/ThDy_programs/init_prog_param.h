@@ -188,7 +188,7 @@ class CParamNumRange: public CParamBNRange<Num>
 	{ if (!inRang(defValue)) 
 		throw ParamOutOfNumRange(std::string("Error contructing parametr: \"")
 											+ Titel() 
-											+ "\" ("+ Etiq() + ")" + ", tryin to set the default value " ,
+											+ "\" ("+ Etiq() + ")" + ", trying to set the default value " ,
 									defValue , *this  );
 	}
 	std::ostream	&saveValue	(std::ostream	&osPr) const override   
@@ -332,9 +332,13 @@ class CParamNumMinMax: public IBParam
 		            const std::string& titelmin, const std::string& etiqmin, Num minmin, Num maxmin, Num defValuemin,
 		            const std::string& titelmax, const std::string& etiqmax, Num minmax, Num maxmax, Num defValuemax,
 		            const std::string& unit=""
-					) : IBParam (titel), 
-					    min(pp, titel+". "+titelmin, etiqmin,  _v.Min(), minmin, maxmin, defValuemin, unit),
-					    max(pp, titel+". "+titelmax, etiqmax,  _v.Max(), minmax, maxmax, defValuemax, unit)
+					) :    CParamNumMinMax ( pp,  titel,  _v , 
+		                                     titelmin,   etiqmin,   minmin,   maxmin,   defValuemin,
+		                                     titelmax,   etiqmax,   minmax,   maxmax,   defValuemax,
+		                                     unit )
+					//IBParam (titel), 
+					//    min(pp, titel+". "+titelmin, etiqmin,  _v.Min(), minmin, maxmin, defValuemin, unit),
+					//    max(pp, titel+". "+titelmax, etiqmax,  _v.Max(), minmax, maxmax, defValuemax, unit)
 	          { 
 	          }
     CParamNumRange<Num> &Min(){ return min;}

@@ -380,11 +380,7 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 		_MaxSd_nTgTm (10),MaxSd_nTgTm(this, "Significative Tm probe-nontarget",	"MaxSdnTgTm",_MaxSd_nTgTm, -0.0f,  70.0f,	10.0f, "°C" ),	 
 
 		_MinSelfG (10),		 MinSelfG(this, "Significative selfprobe G",		"MinSdSlf_G", _MinSelfG,  0.0f, 30.0f,		10.0f, "kcal/mol" ),		
-		_MaxSelfTm (10),    MaxSelfTm(this, "Significative selfprobe Tm",		"MaxSdSlfTm",_MaxSelfTm, -0.0f,  70.0f,		10.0f, "°C" ),	
-        Coverage (this, "Find sondes with % of target coverage",  
-						    " less than of the others (unique probes)", "PercUnique",  0.0f,  100.0f,   0.0f, 
-						    " at last of the others (common probes)"  , "PercCommon",  0.0f,  100.0f, 100.0f, 
-						    "%")	
+		_MaxSelfTm (10),    MaxSelfTm(this, "Significative selfprobe Tm",		"MaxSdSlfTm",_MaxSelfTm, -0.0f,  70.0f,		10.0f, "°C" )
 		//_MinTgCov (100),	MinTgCov (this, "Find sondes with more % coverage",	"Min_Tg_Cov",  _MinTgCov,  0.0f,100.0f,		99.0f  ,"%")							
         {
 	    }  // revisar cuales deben ser estos valores !!!!	
@@ -405,7 +401,10 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 	//float		           _MinTgCov ;
 	//CParamNumRange<float>	MinTgCov ;
 
-    CParamNumMinMax<float> Coverage ; 
+    CParamNumMinMax<float> Coverage {this, "Find sondes with % of target coverage",  
+											" less than of the others (unique probes)", "PercUnique",  0.0f,  100.0f,   0.0f, 
+											" at last of the others (common probes)"  , "PercCommon",  0.0f,  100.0f, 100.0f, 
+											"%"}; 
 
 
 	int		Run		(){	
