@@ -597,7 +597,7 @@ int		CMultSec::AddFromFile (ifstream& ifile)		// return la cantidad de sec add -
 	ifile>>skipws  >> c1;
 	if ( ! ifile.good() ) 	
 	{
-	    throw std::ios_base::failure(string("Could not open the sequence file: ")/*+ file */);
+	    throw std::ios_base::failure(string("Could not read the sequence file: ")/*+ file */);
 	}
 
 	if( c1 =='>' ) 																		

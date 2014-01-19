@@ -697,12 +697,6 @@ class SeqExpl : public CompoWidget
 
             _list.auto_draw(true);
     }
-    void populate_list(CMultSec*ms)
-    {
-        for ( ms->goFirstSec() ;  ms->NotEndSec() ; ms->goNextSec() )
-		  if ( _showFiltered || !ms->CurSec()->Filtered() ) 
-              AddSecToList(ms->CurSec());
-    }
     void populate_list_recur(Tree::item_proxy& node)
     {
         populate_list_recur(node.value<CMultSec*>()); // msec(node)  );
@@ -714,6 +708,12 @@ class SeqExpl : public CompoWidget
 	            for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
                     populate_list_recur(ms->CurMSec());
 		}
+    void populate_list(CMultSec*ms)
+    {
+        for ( ms->goFirstSec() ;  ms->NotEndSec() ; ms->goNextSec() )
+		  if ( _showFiltered || !ms->CurSec()->Filtered() ) 
+              AddSecToList(ms->CurSec());
+    }
 
     List::item_proxy AddSecToList     (CSec* s)
     {
@@ -1282,20 +1282,10 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         : _Pr           (tdForm), 
           CompoWidget  (tdForm, STR("Tm Calc"), STR("Tm Calc.lay.txt"))
     {
-                         sec_.multi_lines(false);
-                   sec2align_.multi_lines(false);
-              txtBx_ResultSec.multi_lines(false);
-        txtBx_ResultSec2Align.multi_lines(false);
-
-                         sec_.editable(true);
-                   sec2align_.editable(true);
-              txtBx_ResultSec.editable(false);
-        txtBx_ResultSec2Align.editable(false);
-
-                         sec_.tip_string (STR("forward primer"));
-                   sec2align_.tip_string (STR("reverse primer"));
-              txtBx_ResultSec.tip_string (STR("alingned forward primer"));
-        txtBx_ResultSec2Align.tip_string (STR("alingned reverse primer"));
+                         sec_.multi_lines(false).editable(true ).tip_string (STR("forward primer"));
+                   sec2align_.multi_lines(false).editable(true ).tip_string (STR("reverse primer"));
+              txtBx_ResultSec.multi_lines(false).editable(false).tip_string (STR("alingned forward primer"));
+        txtBx_ResultSec2Align.multi_lines(false).editable(false).tip_string (STR("alingned reverse primer"));
 
         _TmCalc << link (   _Pr._TmCal.align      ,    chkBx_align    )    
                 << link (   _Pr._TmCal._Sec       ,    sec_           )
@@ -1306,7 +1296,6 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         copy_f_s_2.make_event <nana::gui::events::click>([&](){Copy();});      ;   //(*this, STR("copy")),   
         copy_s    .make_event <nana::gui::events::click>([&](){Self();});      ;  //  (*this, STR("c")),
         copy_s_a  .make_event <nana::gui::events::click>([&](){Rev ();});      ;  
-
 
         InitMyLayout();
         SelectClickableWidget( *this);
