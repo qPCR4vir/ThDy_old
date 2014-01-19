@@ -9,16 +9,12 @@ int DegTmCalc ( CProgParam_TmCalc *IPrgPar_Calc)
 {
 	const int MaxGrDeg=300 ;			// crear NonDegSet para las sondas con menos de este gr de deg. Poner como ProgParam??
 
-	//std::shared_ptr<CSaltCorrNN>  NNpar(IPrgPar_Calc->_cp._pSaltCorrNNp );
- //   if (!NNpar)
-	//    NNpar = Create_NNpar(IPrgPar_Calc->_cp); 	
-	//NNpar->SetTa(				CtoK(	IPrgPar_Calc->_cp._Ta));			// Aqui por si acaso. Revisar.
-	Temperature Ta=  IPrgPar_Calc->_cp._pSaltCorrNNp->Ta() ; //CtoK(IPrgPar_Calc->_cp._Ta);        //  Aqui no habia puesto CtoK()  // Mejor usar Ta=NNpar->Ta() ;   ??????   
     if (IPrgPar_Calc->_save)  
         IPrgPar_Calc->_cp.Check_NNp_Targets ();
     else 
         IPrgPar_Calc->_cp.Actualice_NNp ( );
 
+	Temperature Ta=  IPrgPar_Calc->_cp._pSaltCorrNNp->Ta() ; 
 	CSec			Sec		  (			IPrgPar_Calc->_Sec.Get() ,		0, "Sec",		IPrgPar_Calc->_cp._pSaltCorrNNp); 
 	if (Sec.Len() < 1)  return 0 ; // Error :  no sec !!!!!!
 	Sec.CreateNonDegSet();	

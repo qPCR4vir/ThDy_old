@@ -417,8 +417,11 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 		std::string			 _Path ;						// nombre unico?  
 
 
-explicit CMultSec (const std::string &Name  )                 : _name		(trim_string(Name))  {	}
-explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar)        : _NNPar      (NNpar)              {  }
+//explicit CMultSec (const std::string &Name  )                 : _name		(trim_string(Name))  {	}
+explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name = "")        
+                      : _NNPar      (NNpar            ), 
+					    _name       (trim_string(Name))            
+                 {  }
          CMultSec(CMultSec	*ms, const std::string &Name = ""): _name       (trim_string(Name)),
                                                                 _SecLim     (ms->_SecLim),
                                                                 _SecLenLim  (ms->_SecLenLim),

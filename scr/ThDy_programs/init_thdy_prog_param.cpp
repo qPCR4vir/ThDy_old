@@ -3,6 +3,7 @@
 #include "thdy_programs\init_thdy_prog_param.h"
 #include "ThDy_programs\prog_comm_functions.h"
 #include "ThDySec/sec.h"
+#include <assert.h>
 
 
 //ThDyCommProgParam::~ThDyCommProgParam(void)        {/*delete []_ProgList;*/}
@@ -11,33 +12,27 @@ CProgParam_microArray::~CProgParam_microArray()		{ /*delete _tlTm;*/}
 
 CMultSec* ThDyCommProgParam::CreateRoot	() 
 {
-	if (! _pSaltCorrNNp)
-		_pSaltCorrNNp=Create_NNpar( );			//Comprobar que no ha cambiado????????  revisar     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	return new CMultSec("All seq");
+	return new CMultSec(_pSaltCorrNNp,"All seq");
 }
+
 CMultSec* ThDyCommProgParam::AddSeqGroup		(CMultSec   *parentGr, const std::string&     Name)
 {
-	CMultSec *sG=new CMultSec(Name);                // Revisar esto    !!!!!!!!!!!!!!!!
 	if(parentGr)
-	{
-        parentGr->AddMultiSec(sG);
 	    if (  parentGr->_NNPar ) 
-	    {
-            sG->_NNPar= parentGr->_NNPar ;     //  revisar     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            return sG;
-        }
-    }
-	if ( _pSaltCorrNNp)
-            sG->_NNPar= _pSaltCorrNNp ;
-    return sG;
+            return parentGr->AddMultiSec(new CMultSec(parentGr->_NNPar, Name));
+		else
+            return parentGr->AddMultiSec(new CMultSec(_pSaltCorrNNp, Name));
+
+    return new CMultSec(_pSaltCorrNNp, Name);
 }
 
 CMultSec* ThDyCommProgParam::AddSeqFromFile(CMultSec *parentGr, const std::string& FileName, bool recursive/*=false*/, bool onlyStructure/*=false*/)
 {
-    if (! _pSaltCorrNNp )     Actualice_NNp ();
-
+	auto pNN=_pSaltCorrNNp;
+	if(parentGr && parentGr->_NNPar)
+        pNN=parentGr->_NNPar ;
 	CMultSec *sG=new CMultSec ( FileName , 
-                               _pSaltCorrNNp, 
+                                pNN, 
                                 recursive,
 							   _MaxTgId,
 							   _SecLim ,

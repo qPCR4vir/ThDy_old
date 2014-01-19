@@ -90,8 +90,8 @@ class ThDyCommProgParam : public CCommProgParam
     CParamEnumRange<SaltCorrection>	SaltCorr {this, "Salt correction methode",		  "SaltCorrMt", _SaltCorr, StLucia, StLucia, StLucia }  ;
 
 	float					_ConcSd,	_ConcTg,	_ConcSalt ;
-	CParamNumRange<float>	 ConcSd  {this,    "Conc of the sondes" ,				"ConcSonden", _ConcSd,  0.0f,50e-3f,  50e-9f ,"M" } ,	 
-                             ConcTg  {this,    "Conc of the targets",				"ConcTarget", _ConcTg,  0.0f,50e-3f,  50e-9f ,"M" } ,	 
+	CParamNumRange<float>	 ConcSd  {this,    "Conc of the sondes" ,				"ConcSonden", _ConcSd,  0.0f,50e-3f,  0.8e-6f ,"M" } ,	 
+                             ConcTg  {this,    "Conc of the targets",				"ConcTarget", _ConcTg,  0.0f,50e-3f,  1e-9f ,"M" } ,	 
                              ConcSalt{this,    "Conc of salt",						"ConcenSalt", _ConcSalt,0.0f,1.0f,    50e-3f ,"M" } ;
 
 	Temperature		               _Ta {55.0f }  ;				
@@ -124,6 +124,26 @@ class ThDyCommProgParam : public CCommProgParam
 	std::shared_ptr<CMultSec>     _pSeqTargets      {AddSeqGroup(_pSeqTree.get(), "Target seq") } ; 
 	std::shared_ptr<CMultSec>     _pSeqNonTargets   {AddSeqGroup(_pSeqTree.get(), "Non Target seq")  } ; 
 	std::shared_ptr<CMultSec>     _pPCRfiltrePrimers{AddSeqGroup(_pSeqTree.get(), "PCR Primers to <filtre> sequences")  } ; 
+	void Actualize_All_NNp()
+	{
+        if ( ! _pSaltCorrNNp->NeedActualization(_ConcSd, _ConcTg, _ConcSalt, _SaltCorr)  )
+			return;
+        _pSaltCorrNNp=Create_NNpar ();
+		Actualize_NNp_recur(_pSeqTree.get());
+	}
+	void Actualize_NNp_recur(CMultSec *ms)
+		{
+			Actualize_NNp(ms);
+            for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
+                Actualize_NNp_recur(ms->CurMSec());
+		}
+    void Actualize_NNp(CMultSec*ms)
+    {
+        ms->_NNPar=_pSaltCorrNNp;
+		//for ( ms->goFirstSec() ;  ms->NotEndSec() ; ms->goNextSec() )
+  //          ms->_NNPar=_pSaltCorrNNp;
+    }
+
 
     ThDyCommProgParam(const std::string& titel,   CProject *proj)
 		:	CCommProgParam(titel,proj), 

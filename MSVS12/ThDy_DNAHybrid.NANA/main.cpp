@@ -261,10 +261,10 @@ class SetupPage : public CompoWidget
 
     nana::gui::combox               comBoxSalMeth   {*this}, 
                                     comBoxTAMeth    {*this};
-    nana::gui::NumUnitUpDown        numUpDowTgConc  {*this, STR("Target Conctr:"      ), 50, 0.1 , 1000,  "然"}, 
-                                    numUpDowSalConc {*this, STR("Salt Conc [Cations]:"), 50, 0.1 , 10000000,"然"} , 
+    nana::gui::NumUnitUpDown        numUpDowTgConc  {*this, STR("Target Conctr:"      ), 50, 0.1 , 1000000,  "nM"}, 
+                                    numUpDowSalConc {*this, STR("Salt Conc [Cations]:"), 50, 0.0001 , 10000,"mM"} , 
                                     numUpDowTa      {*this, STR("Temp. Anneling:"     ), 55,  40 , 75,    "蚓"},  
-                                    numUpDowSdConc  {*this, STR("Sonde Conctr:"       ), 50, 0.1 , 1000,  "然"}  ;
+                                    numUpDowSdConc  {*this, STR("Sonde Conctr:"       ), 0.8, 0.001 , 1000,  "然"}  ;
     nana::gui::button  _set_def_proj    {*this,STR("Set as Def. project") },
                        _load_def_proj   {*this,STR("ReLoad Def. project") };
 
@@ -1128,7 +1128,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         }
 
 		//this->comBoxTAMeth->SelectedIndex  = SMStLucia;    
-
+		_cp.Actualize_All_NNp();
         LoadSequences();
         mExpl_.InitTree();
 
