@@ -617,6 +617,19 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name =
 			return count;
 		}
 
+		void			CreateNonDegSet	( )
+		{
+			for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec de esta misma ms
+			  CurSec()->CreateNonDegSet();
+		}
+		void			CreateNonDegSetRec	( )
+		{
+			CreateNonDegSet( ) ;
+			for (  goFirstMSec()   ; NotEndMSec()   ;   goNextMSec() )		// recorre todos las primeras sec
+				 CurMSec()->CreateNonDegSetRec( );
+		}
+
+
 		CMultSec	*AddMultiSec	(const std::string &Name )
 		{
 			return AddMultiSec(new CMultSec (this, Name  ));

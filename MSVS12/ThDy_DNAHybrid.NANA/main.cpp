@@ -619,7 +619,8 @@ class SeqExpl : public CompoWidget
             case 0: return nana::charset(sec->Name());
             case 1: swprintf(val,blen,     STR("%*d")  , 6,           sec->Len()       );
                     return val;
-            case 2: swprintf(val,blen, STR("% *.*f °C"), 6, 1,  KtoC( sec->_Tm.Ave() ) );
+			case 2: {Temperature t= sec->NonDegSet() ? sec->NonDegSet()->_Local._Tm.Ave() : sec->_Tm.Ave();
+				     swprintf(val,blen, STR("% *.*f °C"), 6, 1,  KtoC( t ) );}
                     return val;
             case 3: swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());
                     return val;  
@@ -1130,6 +1131,9 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 		//this->comBoxTAMeth->SelectedIndex  = SMStLucia;    
 		_cp.Actualize_All_NNp();
         LoadSequences();
+		this->_uArr._probesMS->CreateNonDegSetRec();
+		this->_TmCal._probesMS->CreateNonDegSetRec();
+		this->_mPCR._probesMS->CreateNonDegSetRec();
         mExpl_.InitTree();
 
         InitMyLayout();
