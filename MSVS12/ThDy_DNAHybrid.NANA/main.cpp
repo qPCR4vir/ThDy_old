@@ -625,7 +625,8 @@ class SeqExpl : public CompoWidget
             case 3: swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());
                     return val;  
             case 4: return nana::charset( sec->Description());
-            case 5: return nana::charset( std::string(sec->Get_charSec(), slen));
+			case 5: return nana::charset( (char*)(sec->Len()<slen? sec->GetCopyFullSec() 
+				                                                 : sec->GetCopyFullSec().substr (0,slen)).c_str()  );
 
             default:
                 return nana::string{};

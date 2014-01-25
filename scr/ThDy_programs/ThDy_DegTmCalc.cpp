@@ -71,8 +71,8 @@ int DegTmCalc ( CProgParam_TmCalc *IPrgPar_Calc)
 				if (IPrgPar_Calc->_TmHy.Max() <=  tm  ) 
 				{	IPrgPar_Calc->_TmHy.Max()  =  tm; 
 					CHitAligned Hit (Al);
-					IPrgPar_Calc->Copy_AlignedSec      ( (char*)(Hit._sd ) /*)*/);
-					IPrgPar_Calc->Copy_AlignedSec2Align( (char*)(Hit._tg ) /*)*/);
+					IPrgPar_Calc->Copy_AlignedSec      ( (char*)(Hit._sd.c_str() ) /*)*/);
+					IPrgPar_Calc->Copy_AlignedSec2Align( (char*)(Hit._tg.c_str() ) /*)*/);
 				} 
 				else if  (IPrgPar_Calc->_TmHy.Min() >  tm  ) {IPrgPar_Calc->_TmHy.Min() = tm; }
 
@@ -93,8 +93,8 @@ int DegTmCalc ( CProgParam_TmCalc *IPrgPar_Calc)
 	}
 	if ( ! IPrgPar_Calc->_align)	
 	{
-		IPrgPar_Calc->Set_AlignedSec      ( (char*)pr_maxTmH->GetCopyFullSec() );
-		IPrgPar_Calc->Set_AlignedSec2Align( (char*)tg_maxTmH->GetCopyFullSec() );
+		IPrgPar_Calc->Set_AlignedSec      ( (char*)pr_maxTmH->GetCopyFullSec().c_str() );
+		IPrgPar_Calc->Set_AlignedSec2Align( (char*)tg_maxTmH->GetCopyFullSec().c_str()  );
 	}
 
 	if   (!      Sec.NonDegSet()) {pr->Free();		delete pr;}	
