@@ -112,10 +112,6 @@ inline std::basic_string<_Elem, _Traits, _Alloc> trim_string(const std::basic_st
 
 //inline char *AddFileExt(const char *FileName, const char *Ext="")	{return AttachToCharStr(FileName,Ext);}// no olvide delete este pointer
 
-typedef unsigned char Base;
-//char operator Base(){return }
-Base *Generate_DegSec( const char *sec, bool rev, bool compl, long l=0) ;// , long l=0) ;
-inline char *Generate_DegSec_char( const char *sec, bool rev, bool compl, long l=0){return (char *)Generate_DegSec(sec, rev,  compl,  l);};
 
 ///  Clase para lidiar con las string como file name y sec que deben ser copiadas y liberadas todo el tiempo. Copy() vs Take() !!!!
 class C_str

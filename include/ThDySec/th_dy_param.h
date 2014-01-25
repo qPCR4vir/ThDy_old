@@ -10,7 +10,7 @@
 #include "cod_deg.h"
 #include "common_basics.h" 
 using namespace std;
-
+using namespace DegCod ;
 	// empezar por poner nombre a cosas como forbidden_enthalpy, iloop_entropy, bloop_entropy, bloop_enthalpy
 	// y de paso verificar todos estos datos. Dar posibilidad de ajustar solo algunos parametros (correcciones)
 
