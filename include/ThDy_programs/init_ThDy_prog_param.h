@@ -70,21 +70,21 @@ class CSaltCorrNN;
 /// concreta los parametros comunes. Mantiene lista de los prog Espec que los usan
 class ThDyCommProgParam : public CCommProgParam 
 {public:	
-    CParamString     _OutputFile      {this, "Results output file",                   "OutputFile", "" } ;
+    CParamString     _OutputFile      {this, "Results output file",                                  "OutputFile",     "" } ;
 
-    CParamString     _InputTargetFile {this, "Imput file for Targets",				  "TargetFile", "" } ;
-    CParamBool       _TRecurDir    {this, "Recursively add all Target seq-files from all dir", "TRecursDir", false} ;
-    CParamBool       _TDirStrOnly  {this, "Reproduce only the dir struct in targets"         , "TOlyDirStr", true } ;
+    CParamString     _InputTargetFile {this, "Imput file for Targets",				                 "TargetFile",     "" } ;
+    CParamBool       _TRecurDir       {this, "Recursively add all Target seq-files from all dir",    "TRecursDir",    false} ;
+    CParamBool       _TDirStrOnly     {this, "Reproduce only the dir struct in targets"         ,    "TOlyDirStr",    true } ;
 
-    CParamString     _NonTargetFile   {this, "Imput file for non-Targets",			  "NonTargetF", "" } ;
-    CParamBool       _nTRecurDir    {this, "Recursively add all non-Target seq-files from all dir", "nTRecurDir", false} ;
-    CParamBool       _nTDirStrOnly  {this, "Reproduce only the dir struct in non-targets"         , "nTlyDirStr", true } ;
+    CParamString     _NonTargetFile   {this, "Imput file for non-Targets",			                  "NonTargetF",    "" } ;
+    CParamBool       _nTRecurDir      {this, "Recursively add all non-Target seq-files from all dir",   "nTRecurDir",   false} ;
+    CParamBool       _nTDirStrOnly    {this, "Reproduce only the dir struct in non-targets"         ,   "nTlyDirStr",   true } ;
 
-   CParamString     _PCRfiltrPrFile  {this, "Imput file with primers for filtering", "PCRftrFile", "" } ;
+   CParamString     _PCRfiltrPrFile   {this, "Imput file with primers for filtering",                        "PCRftrFile", "" } ;
     CParamBool       _FiltrRecuDir    {this, "Recursively add all filtre PCR primer seq-files from all dir", "FltrRecDir", false} ;
-    CParamBool       _FiltrStrOnly  {this, "Reproduce only the dir struct in filtre PCR primer"     ,        "FltrStrOly", true } ;
+    CParamBool       _FiltrStrOnly    {this, "Reproduce only the dir struct in filtre PCR primer"     ,        "FltrStrOly", true } ;
    
-    CParamString     _InputNNFile {this, "Imput file with NN parametrs",		      "iNNParFile", ""	 } ;
+    CParamString     _InputNNFile     {this, "Imput file with NN parametrs",		                       "iNNParFile",   ""	 } ;
 
 	SaltCorrection                 _SaltCorr {StLucia }  ;			
     CParamEnumRange<SaltCorrection>	SaltCorr {this, "Salt correction methode",		  "SaltCorrMt", _SaltCorr, StLucia, StLucia, StLucia }  ;
@@ -94,15 +94,15 @@ class ThDyCommProgParam : public CCommProgParam
                              ConcTg  {this,    "Conc of the targets",				"ConcTarget", _ConcTg,  0.0f,50e-3f,  1e-9f ,"M" } ,	 
                              ConcSalt{this,    "Conc of salt",						"ConcenSalt", _ConcSalt,0.0f,1.0f,    50e-3f ,"M" } ;
 
-	Temperature		               _Ta {55.0f }  ;				
-    CParamNumRange <Temperature>	Ta {this, "Temp anneling expected in exp",		"TempAnnelg", _Ta,  20.0f, 90.0f, 55.0f, "°C"  }  ;	
+	Temperature		               _Ta  {55.0f }  ;				
+    CParamNumRange <Temperature>	Ta  {this, "Temp anneling expected in exp",		"TempAnnelg", _Ta,  20.0f, 90.0f, 55.0f, "°C"  }  ;	
 	AlignMeth		           _TAMeth  {TAMeth_Tm }  ;			
     CParamEnumRange<AlignMeth>	TAMeth  {this, "Optimized parametr during DynProg",	"AlignMethd", _TAMeth, TAMeth_Tm, TAMeth_Fract, TAMeth_Tm }  ;	
 
     ///  Sequence import filtres
 	float			           _MaxTgId {99.0f }  ;			
     CParamNumRange <float>	    MaxTgId {this, "Filtre Seq Target with more %id"  ,	"MaxTgIdent",  _MaxTgId,  0.0f,100.0f,  99.0f  ,"%" }  ;	
-	LonSecPosRang	           _SecLim {1, 0 } ;			
+	LonSecPosRang	           _SecLim  {1, 0 } ;			
     CParamNumMinMax<LonSecPos>  SecLim {this, "Fragments of seq. to use",	_SecLim, 
 													"Beginng",						"SecBeginng", 1, std::numeric_limits<LonSecPos>::max(), 1 ,
 													"End",							"SecuencEnd", 0, std::numeric_limits<LonSecPos>::max(), 0 ,		"nt" } ;	
@@ -111,12 +111,21 @@ class ThDyCommProgParam : public CCommProgParam
 													"Minimal length",				"MinSecuLen", 20, MAX_SEQ_LEN_ALIGN, 20 ,
 													"Maximal length",				"MaxSecuLen", 20, MAX_SEQ_LEN_ALIGN, MAX_SEQ_LEN_ALIGN ,		"nt" } ;	
 	///  Programm setup bool parametrs
-	bool			_loadNNPar {false } ,		_saveNNPar {false }  ;	
-    CParamBool       loadNNPar {this, "Programm option- Load NN parametr",		"LoadNNPara", _loadNNPar,  false } ,	     
-                     saveNNPar {this, "Programm option- save NN parametr",		"SaveNNPara", _saveNNPar,  false }  ; 
-	bool			_st_savTm, _st_savPos, _st_savG, _st_savAlign, _st_savProj, _st_savG_Plasm, _st_savTm_Plasm, _st_savLog, _st_Exp_sond, _st_ExpTarg ;
-    CParamBool		 st_savTm, st_savPos, st_savG, st_savAlign, st_savProj, st_savG_Plasm, st_savTm_Plasm, st_savLog, st_Exp_sond, st_ExpTarg;
+    CParamBool       loadNNPar  {this, "Programm option- Load NN parametr",		"LoadNNPara",    false } ,	     
+                     saveNNPar  {this, "Programm option- save NN parametr",		"SaveNNPara",    false }  ; 
+	CParamBool		 st_savTm   {this, "Programm option- Save Tm Table",		"SavTmTable",    true  }, 
+		             st_savPos  {this, "Programm option- Save Posicion Table",	"SavPosTabl",    true  }, 
+					 st_savG    {this, "Programm option- Save free Enrgie Table","SaveGTable",   true  }, 
+					 st_savAlign{this,"Programm option- Save Table of aligns",   "SavAlignTb",   true  }, 
+					 st_savProj {this,"Programm option- Save Project file",      "SavProject",   true  }, 
+					 st_savG_Plasm{this, "Programm option- Gtable for Plasmid",  "SavG_Plasm",   false }, 
+					 st_savTm_Plasm{this,"Programm option- Tm table for Plasmid","SavTmPlasm",   false }, 
+					 st_savLog  {this, "Programm option- save a log",			 "Save_Logfi",   false }, 
+					 st_Exp_sond{this, "Programm option- re-export probes",	     "Exp_probes",   false }, 
+					 st_ExpTarg {this, "Programm option- re-export targets",	 "Exp_target",   false };
 
+	//bool			_loadNNPar {false } ,		_saveNNPar {false }  ;	
+	//bool			_st_savTm, _st_savPos, _st_savG, _st_savAlign, _st_savProj, _st_savG_Plasm, _st_savTm_Plasm, _st_savLog, _st_Exp_sond, _st_ExpTarg ;
     ///  The roots of the sequences tree
     std::shared_ptr<CSaltCorrNN>  _pSaltCorrNNp{Create_NNpar( )};
 	std::shared_ptr<CMultSec>     _pSeqTree         {CreateRoot() } ;
@@ -146,42 +155,32 @@ class ThDyCommProgParam : public CCommProgParam
 
 
     ThDyCommProgParam(const std::string& titel,   CProject *proj)
-		:	CCommProgParam(titel,proj), 
-			_st_savTm(true) ,     st_savTm (this, "Programm option- Save Tm Table",			"SavTmTable", _st_savTm,   true), 
-			_st_savPos(true),     st_savPos(this, "Programm option- Save Posicion Table",	"SavPosTabl", _st_savPos,  true),  
-			_st_savG(true),       st_savG  (this, "Programm option- Save free Enrgie Table","SaveGTable", _st_savG,    true),  
-			_st_savAlign(true),   st_savAlign(this,"Programm option- Save Table of aligns", "SavAlignTb", _st_savAlign,true),  
-			_st_savProj(true),    st_savProj(this,"Programm option- Save Project file",     "SavProject", _st_savProj, true), 
-			_st_savG_Plasm(false),st_savG_Plasm(this, "Programm option- Gtable for Plasmid","SavG_Plasm", _st_savG_Plasm,  false), 
-			_st_savTm_Plasm(false),st_savTm_Plasm(this,"Programm option- Tm table for Plasmid","SavTmPlasm", _st_savTm_Plasm,  false),  
-			_st_savLog(false),    st_savLog(this, "Programm option- save a log",			"Save_Logfi", _st_savLog,  false), 
-			_st_Exp_sond(false),  st_Exp_sond(this, "Programm option- re-export probes",	"Exp_probes", _st_Exp_sond,false),  
-			_st_ExpTarg(false),   st_ExpTarg(this, "Programm option- re-export targets",	"Exp_target", _st_ExpTarg, false)
-	{	
-        TAMeth.AddStrValues("TAMeth_Tm",	TAMeth_Tm);
-		TAMeth.AddStrValues("TAMeth_G",		TAMeth_G);
-		TAMeth.AddStrValues("TAMeth_Fract",	TAMeth_Fract);
+		:	CCommProgParam(titel,proj)
+		{	
+			TAMeth.AddStrValues("TAMeth_Tm",	TAMeth_Tm);
+			TAMeth.AddStrValues("TAMeth_G",		TAMeth_G);
+			TAMeth.AddStrValues("TAMeth_Fract",	TAMeth_Fract);
 		
-        SaltCorr.AddStrValues("NoSelect",	NoSelect);
-		SaltCorr.AddStrValues("StLucia",	StLucia);
-		SaltCorr.AddStrValues("Owczarzy",	Owczarzy);
-	} 
+			SaltCorr.AddStrValues("NoSelect",	NoSelect);
+			SaltCorr.AddStrValues("StLucia",	StLucia);
+			SaltCorr.AddStrValues("Owczarzy",	Owczarzy);
+		} 
 	
 unique_ptr<CSaltCorrNN> Create_NNpar        ( )   //< Create a new set of NeirN parametrs based on current concentr. and Ta set in com-par.
 {
-	unique_ptr<CSaltCorrNN> NNpar ( new  	CSaltCorrNN	(	 _ConcSd,  _ConcTg,  _ConcSalt, _SaltCorr, _loadNNPar?_InputNNFile.get():"")); 		
+	unique_ptr<CSaltCorrNN> NNpar ( new  	CSaltCorrNN	(	 _ConcSd,  _ConcTg,  _ConcSalt, _SaltCorr, loadNNPar.get()?_InputNNFile.get():"")); 		
 	NNpar->SetTa(	CtoK(	 _Ta));			 
 	return NNpar ;
 }
 unique_ptr<CSaltCorrNN> Init_NNpar          ()   //< Initialize the set of NeirN parametrs  in com-par, loading/saving if necesary
 {                                      /// Depend on  _ConcSd,  _ConcTg,  _ConcSalt , _Ta, _loadNNPar,  _InputNNFile,  _saveNNPar,_OutputFile      
     unique_ptr<CSaltCorrNN> NNpar=Create_NNpar();
-	if (_loadNNPar) 
+	if (loadNNPar.get()) 
     {
         ifstream isTDP(_InputNNFile.get());	assert(isTDP);	
         NNpar->LoadNNParam(isTDP) ;	
     }
-	if ( _saveNNPar)
+	if ( saveNNPar.get())
 	{	
         //std::string OutputTDP( _OutputFile.Get()) ; OutputTDP += ".ThDyParam.csv";
 
