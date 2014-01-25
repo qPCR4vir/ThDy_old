@@ -436,51 +436,42 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 
 
 class CProgParam_TmCalc ;
-int DegTmCalc ( CProgParam_TmCalc *IPrgPar)  ; //int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr )  ;
-//typedef /*unsigned*/ char Base;
-//extern Base *Generate_DegSec( const char *sec, bool rev, bool compl, long l=0) ;// , long l=0) ;
+int DegTmCalc ( CProgParam_TmCalc *IPrgPar)  ;  
+
 class CProgParam_TmCalc : public CProgParam_MultiplexPCR
 {public:
-	bool			_save, _align ; //  save results as mPCR, using the TargetSecFile and ResultFile comunes. Use ThDyAlign or just calc Tm?
-	CParamBool		 save,  align ; //  save results as mPCR, using the TargetSecFile and ResultFile comunes. Use ThDyAlign or just calc Tm?
+	CParamBool		 save {this, "Save result to file"         , "TmCsaveRes",  false},  
+		             align{this, "Align primers before Tm calc", "TmUseAlign",  true } ; //  save results as mPCR, using the TargetSecFile and ResultFile comunes. Use ThDyAlign or just calc Tm?
+	CParamString    _Sec       {this, "Primer",						"TmCalc_Sec", ""} ,			
+		            _Sec2Align {this, "Primer to align",			"TmC_Sec2Al", ""};
+
 	TemperatureRang _TmS, _Tm2A , _TmHy ;	// Para recoger los reslutados y display it back. 
-	EnergyRang		_GS , _G2A  , _GHy  ; 	
+	EnergyRang		_GS , _G2A  , _GHy  ; 
+	std::string     _AlignedSec,	_AlignedSec2Align ;
+
 	CProgParam_TmCalc (const std::string& titel,ThDyCommProgParam &commThDyParam) :	
-		                _save (false), _align(true),
-						CProgParam_MultiplexPCR (titel,commThDyParam),
-						save		(this, "Save result to file",			"TmCsaveRes", _save,   false),
-						align		(this, "Align primers before Tm calc",	"TmUseAlign", _align,  true),
-						_Sec		(this, "Primer",						"TmCalc_Sec", ""			) ,
-						_Sec2Align	(this, "Primer to align",				"TmC_Sec2Al", ""			) 
-					{
-                        _InputSondeFile.SetTitel("Imput oligos for TmCalc"); 
-		                _InputSondeFile.SetEtiq("iOligo_TmC", this); 
-						RenameSondesMS("Tm calulator sondes??");
+						CProgParam_MultiplexPCR (titel,commThDyParam)
+			{
+                _InputSondeFile.SetTitel("Imput oligos for TmCalc"); 
+		        _InputSondeFile.SetEtiq ("iOligo_TmC", this); 
+				RenameSondesMS("Tm calulator sondes??");
 
-                        _PrRecurDir.SetTitel("Recursively add all oligos seq-files from all dir"); 
-		                _PrRecurDir.SetEtiq("OligRecDir", this); 
+                _PrRecurDir.SetTitel("Recursively add all oligos seq-files from all dir"); 
+		        _PrRecurDir.SetEtiq("OligRecDir", this); 
 
-                        _PrDirStrOnly.SetTitel("Reproduce only the dir struct in Oligos"); 
-		                _PrDirStrOnly.SetEtiq("OligDirStr", this); 
+                _PrDirStrOnly.SetTitel("Reproduce only the dir struct in Oligos"); 
+		        _PrDirStrOnly.SetEtiq("OligDirStr", this); 
+	        }
 
-                        //_probesMS->_name="Primers of Multiplex PCR";
+	void	Set_Sec				 (const std::string& Sec){_Sec      .set (Sec)	;	  }
+	void	Set_Sec2Align		 (const std::string& Sec){_Sec2Align.set (Sec)	;	  }
+	void	Set_AlignedSec		 (const std::string& Sec){_AlignedSec      =Sec	;	  }
+	void	Set_AlignedSec2Align (const std::string& Sec){_AlignedSec2Align=Sec ;     }
 
-	                }
-
-	bool	Set_Sec				 (char *Sec){_Sec.take(Sec)		;		 return true ;}
-	bool	Set_Sec2Align		 (char *Sec){_Sec2Align.take(Sec)		;return true ;}
-	bool	Set_AlignedSec		 (char *Sec){_AlignedSec.Take(Sec)		;return true ;}
-	bool	Set_AlignedSec2Align (char *Sec){_AlignedSec2Align.Take(Sec);return true ;}
-	bool	Copy_Sec			 (char *Sec){_Sec.set(Sec)		;		 return true ;}
-	bool	Copy_Sec2Align		 (char *Sec){_Sec2Align.set(Sec)		;return true ;}
-	bool	Copy_AlignedSec		 (char *Sec){_AlignedSec.Copy(Sec)		;return true ;}
-	bool	Copy_AlignedSec2Align(char *Sec){_AlignedSec2Align.Copy(Sec);return true ;}
-
-
-	bool	Update_Sec			(bool rev, bool compl)	{return Set_Sec      ( Generate_DegSec_char( _Sec.Get(),		rev, compl)  ); }
-	bool	Update_Sec_Sec2Align(bool rev, bool compl)	{return Set_Sec2Align( Generate_DegSec_char( _Sec.Get(),		rev, compl)  ); }
-	bool	Update_Sec2Align	(bool rev, bool compl)	{return Set_Sec2Align( Generate_DegSec_char( _Sec2Align.Get(),	rev, compl)  ); }
-	bool	Update_Sec2Align_Sec(bool rev, bool compl)	{return Set_Sec		 ( Generate_DegSec_char( _Sec2Align.Get(),	rev, compl)  ); }
+	void	Update_Sec			(bool rev, bool compl)	{ Set_Sec      ( Generate_DegSec_char( _Sec.get().c_str(),	     rev, compl)  ); }
+	void	Update_Sec_Sec2Align(bool rev, bool compl)	{ Set_Sec2Align( Generate_DegSec_char( _Sec.get().c_str(),	     rev, compl)  ); }
+	void	Update_Sec2Align	(bool rev, bool compl)	{ Set_Sec2Align( Generate_DegSec_char( _Sec2Align.get().c_str(), rev, compl)  ); }
+	void	Update_Sec2Align_Sec(bool rev, bool compl)	{ Set_Sec	   ( Generate_DegSec_char( _Sec2Align.get().c_str(), rev, compl)  ); }
 
 	~CProgParam_TmCalc(){}
 	int		Run		()
@@ -488,9 +479,6 @@ class CProgParam_TmCalc : public CProgParam_MultiplexPCR
         //if (_save)   Check_NNp_Targets ( _cp);
         return DegTmCalc ( this )  ;
     }
-//private:
-	CParamC_str	 _Sec ,			_Sec2Align ;
-	C_str	 _AlignedSec,	_AlignedSec2Align ;
 };
 
 

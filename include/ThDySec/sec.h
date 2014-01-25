@@ -27,15 +27,11 @@ class CMultSec	;
 class ISec				// Pure virtual class ?
 {public:			
 	using sequence = std::basic_string<Base> ;
-         /// crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
-	//virtual ISec		*CreateCopy		(DNAStrand strnd=direct								)=0 ;
-	virtual const sequence& GetCopyFullSec	(													)=0;
-	//virtual Base		*GetCopy_charSec(DNAStrand strnd=direct								)=0  ;
-	//virtual Base		*GetCopy_charSec(long InicBase, long EndBase, DNAStrand strnd=direct)=0 ;
-	//virtual Base		*Copy_charSec	(Base *charSecHier   ,long InicBase, long EndBase, DNAStrand strnd=direct)=0  ;
-	virtual ISec        *Clone   	(DNAStrand strnd=direct								)=0 ; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
-	virtual std::string& Copy_Seq   (std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd=direct)=0  ;
-	virtual std::string& Copy_Seq   (std::string &SecHier, DNAStrand strnd=direct)=0  ;
+	virtual const sequence& Sequence(													)	const=0 ;
+	const char*          charSequence()	const {return (char*) (  Sequence().c_str()  );}
+	virtual ISec        *Clone   	(DNAStrand strnd=direct								)	const=0 ; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+	virtual std::string& Copy_Seq   (std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd=direct)	const=0  ;
+	virtual std::string& Copy_Seq   (std::string &SecHier, DNAStrand strnd=direct)	const=0  ;
 	virtual				~ISec			(){}
 };
 
@@ -77,15 +73,12 @@ public:
 	void	    Description (std::string	description)		{ _description=description;}
 	virtual std::string	Description ()const	{return !_description.empty() ? _description : Name() ; }
 
-	virtual const sequence& GetCopyFullSec	(						)override   /// ver esto !!!
+	virtual const sequence& Sequence	(						)	const override   /// ver esto !!!
 								{	 
 									return _c ;
 								}
-	// Base		*GetCopy_charSec(DNAStrand strnd=direct	)override  ;
-	// Base		*GetCopy_charSec(long InicBase, long EndBase, DNAStrand strnd=direct) override ;
-	// Base		*Copy_charSec	(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd=direct) override ;
-	 std::string& Copy_Seq  	(std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd=direct)override ;
-	 std::string& Copy_Seq  	(std::string &SecHier,  DNAStrand strnd=direct)override {return Copy_Seq ( SecHier, 1, Len(), strnd ) ;}
+	 std::string& Copy_Seq  	(std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd=direct)	const override ;
+	 std::string& Copy_Seq  	(std::string &SecHier,  DNAStrand strnd=direct)	const override {return Copy_Seq ( SecHier, 1, Len(), strnd ) ;}
 	 bool		 NotIdem		(CSecBasInfo *sec) {return false;}
 	Base		operator[]	(int i)const{return _c[i];}  /// i+1 ????
 
@@ -126,7 +119,7 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
 	CSec		*GenerateNonDegVariant	(CSec *s, long pos, Base ndb)   ; //< recursiva
 	CSec		*CopyFirstBases			(long pos)	;			//< copia parcialmente hasta la pos
 	void		 CorrectSalt			() { if ( _NNpar->UseOwczarzy () ) CorrectSaltOwczarzy();};
-	CSec		*Clone   	(DNAStrand strnd=direct	 )override; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+	CSec		*Clone   	(DNAStrand strnd=direct	 ) const override; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 
 	//virtual CSec*CreateCopy		(DNAStrand strnd=direct) override;//< crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 	//const char	*Get_charSec			()const{return (const char*)_c.c_str();}  ///   ???????????

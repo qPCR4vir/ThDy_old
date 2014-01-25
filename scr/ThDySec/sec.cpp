@@ -32,7 +32,7 @@ CSecBasInfo::~CSecBasInfo()
 	// en otro caso, donde borrar _NonDegSet ????. Lo borra la lista en la que esta insertado
 }
 	 
-std::string& CSecBasInfo::Copy_Seq  	(std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd)
+std::string& CSecBasInfo::Copy_Seq  	(std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd) const
 {	
 	if ( EndBase< 1 || Len() <EndBase ) EndBase= Len(); 
 	long l=EndBase-InicBase+1 ;  
@@ -212,7 +212,7 @@ CSec::CSec (    const std::string&  sec,
 //	return newS;
 //}
     
-CSec* CSec::Clone   	(DNAStrand strnd 	 )  /// unique_ptr<ISec>   strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+CSec* CSec::Clone   	(DNAStrand strnd 	 ) const  /// unique_ptr<ISec>   strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 {	
 	
 	string s; 

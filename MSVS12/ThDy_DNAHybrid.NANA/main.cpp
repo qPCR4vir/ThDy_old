@@ -625,8 +625,8 @@ class SeqExpl : public CompoWidget
             case 3: swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());
                     return val;  
             case 4: return nana::charset( sec->Description());
-			case 5: return nana::charset( (char*)(sec->Len()<slen? sec->GetCopyFullSec() 
-				                                                 : sec->GetCopyFullSec().substr (0,slen)).c_str()  );
+			case 5: return nana::charset( (char*)(sec->Len()<slen? sec->Sequence() 
+				                                                 : sec->Sequence().substr (0,slen)).c_str()  );
 
             default:
                 return nana::string{};
@@ -1017,8 +1017,8 @@ public:
             (nana::gui::msgbox(*this,STR("Error during Tm calculation !"), nana::gui::msgbox::button_t::ok)<<e.what()) (  ) ;
 		    return;
 		}	 	        		 
-        txtBx_ResultSec      .caption (nana::charset (_Pr._TmCal._AlignedSec      .Get() ));
-        txtBx_ResultSec2Align.caption (nana::charset (_Pr._TmCal._AlignedSec2Align.Get() ));
+        txtBx_ResultSec      .caption (nana::charset (_Pr._TmCal._AlignedSec        ));
+        txtBx_ResultSec2Align.caption (nana::charset (_Pr._TmCal._AlignedSec2Align  ));
         Tm_min_Up.Value( _Pr._TmCal._TmS.Min ());
         Tm_Up    .Value( _Pr._TmCal._TmS.Ave ());  
         Tm_max_Up.Value( _Pr._TmCal._TmS.Max ()); 
