@@ -405,8 +405,17 @@ class CSecAl : public CLink // destinado a formar parte de una lista en un aline
 	CSec &_Sec ;	// ref a la sec, que ni se modifica ni se cambia de lugar
 	long *_inAlp_B ;// array que dice que base de la sec va en esa pos del Al (len=Al)
 	long *_inBp_Al ;// array que dice en que pos del Al va esa base de la sec (len=sec)
-	CSecAl(CSec &sec, long LenAlign): _Sec(sec), _inAlp_B(new long[sec.Len()]), _inBp_Al(new long[LenAlign]){}
-	CSecAl(CSec &sec): _Sec(sec), _inAlp_B(new long[sec.Len()]), _inBp_Al(0){}
+
+	CSecAl(CSec &sec, long LenAlign)
+		: _Sec(sec), 
+		  _inAlp_B(new long[sec.Len()]), 
+		  _inBp_Al(new long[LenAlign])
+	   {}
+	CSecAl(CSec &sec) 
+		: _Sec(sec), 
+		  _inAlp_B(new long[sec.Len()]), 
+		  _inBp_Al(0)
+	  {}
 	virtual ~CSecAl(){ delete []_inAlp_B; delete []_inBp_Al;}
 
 	char *CopyAlignedSecChar(long Al_pBeg, long Al_pEnd, char *CharSec)	;// CUIDADO !! asume suficiente espacio !!

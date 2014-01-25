@@ -449,7 +449,8 @@ void CHitAligned::ExtractAligment(ThDyAlign &Al)
 			// se busca la sonda en la sec complementaria a la target (la target se considerara de doble cadena) 
 			// y los ultimos: cuando i=ls: i_1=ls-1: $
 
-{	delete[]_sd; delete[]_tg ; delete[]_st ;
+{	
+	 //_sd;  _tg ;  _st ;
 	_mt= _mm= _sgap= _tgap= 0 ;    // count sonde and target - matchs , mistmatch, and gaps
 	ThDyAlign::Step st; 
 	Base gap= 	nu2dgba	[0] ; //	nu2dgba	[]="-GCSTKYBARMVWDHN"	,  // "convierte" el "codigo numerico" en letra del deg cod; lo contrario de db2nu[]. de "numero a 
@@ -458,7 +459,10 @@ void CHitAligned::ExtractAligment(ThDyAlign &Al)
 		if (! ( st= Al.step(_i0, _j0) ) ) { break;}		//_l++; no funciono
 		else 	{	_i0 -= ThDyAlign::sti1[ st ];  _j0 -= ThDyAlign::stj1[ st ];}  // i-= sti[ st ];  2 pasos de una vez ---comparar !!			
 
-	_sd = new Base[_l+1] ; 	_tg = new Base[_l+1] ; 	_st = new ThDyAlign::Step[_l] ;
+	_sd.resize( _l+1) ; 	
+	_tg.resize( _l+1) ; 
+	_st.resize( _l  ) ; 
+
 	_sd[_l] = 				_tg[_l]  = 0 ;
 
 	for (long a=_l-1, i=_i, j=_j ; a >=0  ; a--)
@@ -479,15 +483,26 @@ void CHitAligned::ExtractAligment(ThDyAlign &Al)
 
 
 void CHitAligned::ReCalcule( std::shared_ptr<CSaltCorrNN>  NNpar )
-{ 	Base a_1, a=bk2nu[_sd[0]], b_1, b=bk2c_nu[_tg[0]];
+{ 	
+	Base a_1 , 
+		 a    =bk2nu[_sd[0]], 
+		 b_1 , 
+		 b    =bk2c_nu[_tg[0]] ;
 
-	_Hr=0; _Sr= NNpar->GetInitialEntropy(); 
-	for (_i=_j= _i0= _j0=0 ; (_sd[_i] && _tg[_j]) && (_sd[_i+1] || _tg[_j+1]); _i++, _j++)
-	{	a_1=a; a=bk2nu[_sd[_i+1]];	b_1=b; b=bk2c_nu[_tg[_j+1]];
+	_Hr= 0; 
+	_Sr= NNpar->GetInitialEntropy();
+
+	for (_i=_j= _i0= _j0=0 ;  _i+1<_sd.length() && _j+1<_tg.length()    ;  ++_i, ++_j )
+	{	
+		a_1 = a; 
+		a   = bk2nu  [ _sd[_i+1] ];	
+		b_1 = b; 
+		b   = bk2c_nu[ _tg[_j+1] ];
+
 		_Sr += NNpar->GetEntr (a_1, a, b_1, b); 
 		_Hr += NNpar->GetEnth (a_1, a, b_1, b); 
 	}
-	_l=_i ;
+	_l    = _i ;
 	_Tmr  = NNpar->CalcTM( _Sr, _Hr) ;
 	_Gr	  = NNpar->CalcG	( _Sr, _Hr) ;
 }
@@ -810,28 +825,35 @@ void	CMSecCand::ExportCommonSonden(const std::string &fileName, bool colpased, N
 				<< sep <<"H"<< sep <<"S"<< sep <<"G(Ta=" << KtoC(_TDATmC->Ta()) << " gr)" << sep << "No.matchs";
 	}
 
-	Base *sonde=new Base [ _sL._L.Max() + 1];
+	string cur_s,  cur_cs ; 
+	cur_s .reserve( _sL._L.Max() );
+	cur_cs.reserve( _sL._L.Max() );
 	set <string> SondeList;
+
 	//for (auto x : SondeList);
 	FracTDAlign fAl( _sL._L.Max() + 1 ,  _sL._L.Max() + 1, _TDATmC->_NNpar);
     fAl.SetTa ( _TDATmC->Ta () );
     long Num{0};
 
 	for ( _LSecCand.goBeging() ;  _LSecCand.NotEnd() ;  _LSecCand.goNext()   )	
-	{	CSecCand &s=*((CSecCand *)_LSecCand.Cur());
+	{	
+		CSecCand &s=*((CSecCand *)_LSecCand.Cur());
 		long l= s._Sec.Len() ;
 		for (long fi=1 ; fi<=l;fi++)
 		{	CRang *r=s._rg[fi] ;
 			if (! r) continue;   
 			for (long pi=r->Min(); pi <=r->Max();pi++)
 			{	assert(pi<l);
-				string cur_s((char*)s._Sec.Copy_charSec(sonde,pi, fi) ); 
+				s._Sec.Copy_Seq(cur_s, pi, fi) ; 
 			    int matchs=r->matchs[pi- r->Min()];
 
 				if ( (colpased || !ExtrCov.isIntern (matchs) ) && SondeList.insert(cur_s).second )
-				{	CSec cand  (cur_s.c_str(),1,"s", _TDATmC->_NNpar);     char *cs=(char*)cand.GetCopy_charSec(rev_compl);
-					CSec c_cand(cs           ,1,"c", _TDATmC->_NNpar);
-					delete cs;
+				{	
+					CSec cand  (cur_s  , 1,"s", _TDATmC->_NNpar);     
+					
+					cand.Copy_Seq(cur_cs, rev_compl);
+					CSec c_cand(cur_cs , 1,"c", _TDATmC->_NNpar);
+
 					fAl.Align(&cand,&c_cand);
                     ++Num;
 					if (fAl.Tm() < _MaxSelfTm && fAl.G(_TDATmC->Ta()) > _MinSelfG)
@@ -850,7 +872,6 @@ void	CMSecCand::ExportCommonSonden(const std::string &fileName, bool colpased, N
 		}
 
 	}
-	delete []sonde;
 }//			
 
 void print_ThDyAlign (ofstream &osTm,ThDyAlign &Al)
@@ -865,7 +886,7 @@ void print_ThDyAlign (ofstream &osTm,ThDyAlign &Al)
 			<< "Iter:" 			<< sep
 			<< "gaps sond:" 	<< sep<< Hit._sgap			<< sep
 			<< Hit._i0			<< sep<< Hit._i				<< sep
-			<< Hit._sd
+			<< (char*)Hit._sd.c_str()
 
 	 		<< endl			
 			<< Hit._G			<< sep<< KtoC(Hit._Tm)		<< sep
@@ -875,7 +896,7 @@ void print_ThDyAlign (ofstream &osTm,ThDyAlign &Al)
 			<< Al.IterationNum()<< sep
 			<< "gaps tg:" 		<< sep<< Hit._tgap			<< sep
 			<< Hit._j0		<< sep<< Hit._j			<< sep
-			<< Hit._tg
+			<< (char*)Hit._tg.c_str()
 
 ;	// << "G aneling: " << sep<< Al.G()		 << sep;
 		//return osTm;	
@@ -905,13 +926,13 @@ void print_Tm		(ofstream &osTm, CMultSec	&pr, int MaxGrDeg=-1, char sep[]=";" )
 		if (MaxGrDeg!=-1 && MaxGrDeg < s->Degeneracy() ) continue;
 		pr.AddMultiSec (  s->CreateNonDegSet () ) ;
 	
-		assert (( (osTm  << endl<< s->Get_charSec()				 << sep//	 << "Tm=" <<'\b'	
-						 << (s->_Tm.Min() - 273.15) << sep // << " °C"		     << " ("  
-						 << (s->_Tm.Ave() - 273.15)    << sep //  << " °C"  << ") "
-					     << (s->_Tm.Max() - 273.15) << sep //  << " °C"  
-						 << s->Name() 			 << endl //	
-														//	 << "\n" 
-					) , 1 ) ) ;
+		//assert (( (osTm  << endl<< s->_c				 << sep//	 << "Tm=" <<'\b'	
+		//				 << (s->_Tm.Min() - 273.15) << sep // << " °C"		     << " ("  
+		//				 << (s->_Tm.Ave() - 273.15)    << sep //  << " °C"  << ") "
+		//			     << (s->_Tm.Max() - 273.15) << sep //  << " °C"  
+		//				 << s->Name() 			 << endl //	
+		//												//	 << "\n" 
+		//			) , 1 ) ) ;
 	}
 }
 
