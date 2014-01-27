@@ -1536,7 +1536,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
                     .make_event<nana::gui::events::click>([this]()
         {
 			auto tn= _tree.selected();
-            if (tn->owner()->owner().empty())
+            if (tn->owner()->owner().empty())    //   ???  if( tn->level() < 2 );
             {
                 (nana::gui::msgbox ( _tree , STR("Cut a group of sequences " + tn->text()) )
                           << STR("Sorry, you can´t cut the group: ") + tn->text() )
