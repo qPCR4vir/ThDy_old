@@ -661,7 +661,7 @@ class SeqExpl : public CompoWidget
     {
         _DefLayout = 
 	"vertical                                               		\n\t"
-	"	  <weight=20 <toolbar weight=520 ><>>       	            	\n\t"
+	"	  <weight=20 <toolbar weight=680 ><>>       	            	\n\t"
 	"	  <horizontal  gap=2   <Tree weight=25% > <List >   >      	\n\t"
 	"		\n\t"
             ;
