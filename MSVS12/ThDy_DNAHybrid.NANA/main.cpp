@@ -1445,11 +1445,17 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         menu.append_splitter();
         menu.append(STR("Cut selected sequences from list"          ),[&](nana::gui::menu::item_proxy& ip) 
         {
-            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
-            //_list.auto_draw(false);
-            //_list.clear();
-            // populate_list_recur(_tree.selected());
-            //_list.auto_draw(true);
+			auto sel =	_list.selected() ; 
+			for (auto i : sel)
+			{
+				auto s=_list.at(i.first, i.second).value<CSec*>();
+                _Pr._cp._pSeqNoUsed->AddSec( s );
+                _dragSec.push_back(s);
+			}
+            _list.auto_draw(false);
+            _list.clear();
+             populate_list_recur(_tree.selected());
+            _list.auto_draw(true);
         });
         menu.append(STR("Cut selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip)  {  Click(_cut);     });
         menu.append(STR("Paste the sequences"                       ),[&](nana::gui::menu::item_proxy& ip)  {  Click(_paste);     });
@@ -1535,7 +1541,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         _cut        .tooltip(STR("Cut a group of sequences"))
                     .make_event<nana::gui::events::click>([this]()
         {
-			auto tn= _tree.selected();
+			auto tn= _tree.selected(); 
             if (tn->owner()->owner().empty())    //   ???  if( tn->level() < 2 );
             {
                 (nana::gui::msgbox ( _tree , STR("Cut a group of sequences " + tn->text()) )
