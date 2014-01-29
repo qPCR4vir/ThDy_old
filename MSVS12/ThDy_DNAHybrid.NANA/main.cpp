@@ -599,6 +599,8 @@ class SeqExpl : public CompoWidget
                            _cut          {*this,STR("Cut"    )},
                            _paste        {*this,STR("Paste"  )},
                            _del          {*this,STR("Del"    )},
+                           _cutSec       {*this,STR("Cut"    )},
+                           _delSec       {*this,STR("Del"    )},
                            _show_locals_s{*this,STR("local"  )},
                            _show_filt_s  {*this,STR("filtr"   )}
                            ; 
@@ -661,17 +663,20 @@ class SeqExpl : public CompoWidget
     {
         _DefLayout = 
 	"vertical                                               		\n\t"
-	"	  <weight=20 <toolbar weight=680 ><>>       	            	\n\t"
+	"	  <weight=20 <toolbar weight=780 ><>>       	            	\n\t"
 	"	  <horizontal  gap=2   <Tree weight=25% > <List >   >      	\n\t"
 	"		\n\t"
             ;
     }
     void AsignWidgetToFields() override
     {
- 	    _place.field("toolbar") << "   Files:" << _loadFile << _re_loadFile   
+ 	    _place.field("toolbar") << "   Files:"  << _loadFile << _re_loadFile   
+                                << 10           << _paste           
                                 << "      Dir:" << _loadDir  << _re_loadDir  << _scanDir  
-                                << 10            << _cut      << _paste       << _del      
-                                << "      Seq:" << _show_locals_s  << _show_filt_s     ;
+                                << 10           << _cut      << _del      
+                                << "      Seq:" << _show_locals_s  << _show_filt_s 
+								<< 10           << _cutSec   << _delSec
+                                ;
         _place.field("Tree"   ) << _tree;
         _place.field("List"   ) << _list;
     }
@@ -1443,33 +1448,13 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         menu.checked (menu.size()-1, true );
 
         menu.append_splitter();
-        menu.append(STR("Cut selected sequences from list"          ),[&](nana::gui::menu::item_proxy& ip) 
-        {
-			auto sel =	_list.selected() ; 
-			for (auto i : sel)
-			{
-				auto s=_list.at(i.first, i.second).value<CSec*>();
-                _Pr._cp._pSeqNoUsed->AddSec( s );
-                _dragSec.push_back(s);
-			}
-            _list.auto_draw(false);
-            _list.clear();
-             populate_list_recur(_tree.selected());
-            _list.auto_draw(true);
-        });
-        menu.append(STR("Cut selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip)  {  Click(_cut);     });
-        menu.append(STR("Paste the sequences"                       ),[&](nana::gui::menu::item_proxy& ip)  {  Click(_paste);     });
+        menu.append(STR("Cut selected sequences from list"          ),[&](nana::gui::menu::item_proxy& ip)  {  Click(_cutSec);  });
+        menu.append(STR("Cut selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip)  {  Click(_cut   );  });
+        menu.append(STR("Paste the sequences"                       ),[&](nana::gui::menu::item_proxy& ip)  {  Click(_paste );  });
 
         menu.append_splitter();
-        menu.append(STR("Del selected sequences from list"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
-            //_list.auto_draw(false);
-            //_list.clear();
-            // populate_list_recur(_tree.selected());
-            //_list.auto_draw(true);
-        });
-        menu.append(STR("Del selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip)  {  Click(_del);     });
+        menu.append(STR("Del selected sequences from list"),[&](nana::gui::menu::item_proxy& ip)            {  Click(_delSec);  });
+        menu.append(STR("Del selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip)  {  Click(_del   );  });
         menu.append(STR("Rename the selected group of sequences"),[&](nana::gui::menu::item_proxy& ip) 
         {
             //_showFiltered = menu.checked(ip.index());// !_showFiltered;
@@ -1538,6 +1523,32 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
                             tn.expend(true);
                             _tree.auto_draw(true);
                         });
+        _paste      .tooltip(STR("Paste sequences"))
+                    .make_event<nana::gui::events::click>([this]()
+        {
+			auto       tn = _tree.selected();
+            CMultSec *pms = tn.value<CMultSec*>();
+
+            for (auto ms : _dragMSec)
+                pms->AddMultiSec(ms);
+            for (auto s : _dragSec)
+                pms->AddSec(s);
+
+            _dragMSec.clear();
+            _dragSec .clear();
+
+            _tree.auto_draw(false);
+            _list.auto_draw(false);
+
+            populate(tn);
+            populate(_tree.find(STR("Dont use") ));
+            _list.clear();
+            populate_list_recur(tn);
+            tn.select(true).expend(true);
+
+            _tree.auto_draw(false);
+            _list.auto_draw(false);
+        });
         _cut        .tooltip(STR("Cut a group of sequences"))
                     .make_event<nana::gui::events::click>([this]()
         {
@@ -1564,29 +1575,6 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
             populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
             own.select(true).expend(true);
         });
-        _paste      .tooltip(STR("Paste a group of sequences"))
-                    .make_event<nana::gui::events::click>([this]()
-        {
-			auto       tn = _tree.selected();
-            CMultSec *pms = tn.value<CMultSec*>();
-
-            for (auto ms : _dragMSec)
-                pms->AddMultiSec(ms);
-
-            _dragMSec.clear();
-
-            _tree.auto_draw(false);
-            _list.auto_draw(false);
-
-            populate(tn);
-            populate(_tree.find(STR("Dont use") ));
-            _list.clear();
-            populate_list_recur(tn);
-            tn.select(true).expend(true);
-
-            _tree.auto_draw(false);
-            _list.auto_draw(false);
-        });
         _del        .tooltip(STR("Delete a group of sequences "))
                     .make_event<nana::gui::events::click>([this]()
         {
@@ -1612,6 +1600,29 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
             own.select(true).expend(true);
 
+        });
+        _cutSec     .tooltip(STR("Cut selected sequences from list"))
+                    .make_event<nana::gui::events::click>([this]()
+        {
+			auto sel =	_list.selected() ; 
+			for (auto i : sel)
+			{
+				auto s=_list.at(i.first, i.second).value<CSec*>();
+                _Pr._cp._pSeqNoUsed->AddSec( s );
+                _dragSec.push_back(s);
+			}
+			RefreshList();
+        });
+        _delSec     .tooltip(STR("Delete selected sequences from list"))
+                    .make_event<nana::gui::events::click>([this]()
+        {
+			auto sel =	_list.selected() ; 
+			for (auto i : sel)
+			{
+				auto s=_list.at(i.first, i.second).value<CSec*>();
+                _Pr._cp._pSeqNoUsed->AddSec( s );
+			}
+			RefreshList();
         });
 
         _show_locals_s.enable_pushed(true)
