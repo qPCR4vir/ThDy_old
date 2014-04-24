@@ -1116,7 +1116,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         add_page( uArr_     ); // 4
         add_page( tmCalc_   ); // 5
 
-        tabbar_.active (0);
+        tabbar_.active (1);
 
         setup_._proj.FileNameOnly(nana::charset ( ProjetFile()  ));
         try{ 
@@ -1607,7 +1607,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 			auto sel =	_list.selected() ; 
 			for (auto i : sel)
 			{
-				auto s=_list.at(i.first, i.second).value<CSec*>();
+				auto s=_list.at(i ).value<CSec*>();
                 _Pr._cp._pSeqNoUsed->AddSec( s );
                 _dragSec.push_back(s);
 			}
@@ -1619,7 +1619,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 			auto sel =	_list.selected() ; 
 			for (auto i : sel)
 			{
-				auto s=_list.at(i.first, i.second).value<CSec*>();
+				auto s=_list.at(i ).value<CSec*>();
                 _Pr._cp._pSeqNoUsed->AddSec( s );
 			}
 			RefreshList();
