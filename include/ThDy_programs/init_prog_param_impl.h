@@ -14,7 +14,7 @@
 
 #include "..\ThDySec\common_basics.h" 
 
- // TODO:  PROBLEMA : como organizar estos parametros si usamos procesos? Hacer copia de ellos !!!!!!!!?
+ ///  \todo:  PROBLEMA : como organizar estos parametros si usamos procesos? Hacer copia de ellos !!!!!!!!?
  
 /// Organize a "software" or Project into Specialized Programns and manage the input/config parametrs for each of the programs, 
 /// making ease to write a program interfase with a command-line, a text "project file" or a GUI, or all of then together. 
@@ -68,7 +68,7 @@ class IParam : public IBParam
                const std::string& etiq, 
                const std::string& unit="" ) ;
 
-	 std::string Etiq(           )const{return _etiq;}      ///< semiHuman readable and unique. Best with length 10
+	 std::string Etiq(           )const{return _etiq;}      ///< semiHuman readable and unique. I use with length 10
 	 void     SetEtiq(std::string etiq, IProg *prog);
 	
 	 std::string Unit()const{return _unit;}      ///< Human redeable and optional
@@ -77,7 +77,7 @@ class IParam : public IBParam
 			            {    
                             osPr<< _etiq << ":\t"; 
 			                saveValue(osPr)<<"\t"<<_unit<<"\t";
-							IBParam::save(osPr)	; 
+							IBParam::save(osPr)	;                 ///< << ".\t"<<Titel()<<std::endl; 
 							return osPr;
 			            } 
      bool       load	(std::istream   &isPr)  /* throw( std::out_of_range) */      override   /**< Asume etiquete allready tested OK !!!!  */
@@ -127,7 +127,7 @@ class CParamBNRange: public IParam, public NumRang<Num>
 			        throw OutOfNumRange(string("Default Value out of Range while trying to construct: ")+Titel() );*/
 	             _value=defValue ; 
 	          }
-	void set(Num value){ if (!inRang(value)) /// TODO: Incluir value y rang que no concuerdan en mensaje to throw
+	void set(Num value){ if (!inRang(value)) ///  \todo: Incluir value y rang que no concuerdan en mensaje to throw
 		                    throw OutOfNumRange(std::string("Value out of Range while trying to set: ")+Titel(), value, *this );
 	                     if (_value==value) return; 
 						 _value=value ; 
@@ -141,7 +141,7 @@ class CParamBNRange: public IParam, public NumRang<Num>
 
 class CProject;
 //class CEspProg ;
-/**   Para crear y anadir un nuevo programa:
+/**   \todo Para crear y anadir un nuevo programa:
  *		- crear interfase de usuario para tener idea de los parametros a usar
  *		- crear funcion del programa en su propio .cpp en el proyecto de prog
  *		- crear class tomando como base CEspProg o uno de sus derivados : anadir los paramet espec com se vio en la interfase e inicializarlos en el constr
@@ -221,7 +221,7 @@ public:
 	bool	         load_defPr	()                                 {  ProjetFile(_defPr);         return load();	}
 	bool	         load	    (const std::string &ProjetFileName){  ProjetFile(ProjetFileName); return load();	}
 
-    //  Este es el verdadero save !!! El que abre el fichero y lo salva todo.
+    ///  \todo  Este es el verdadero save !!! El que abre el fichero y lo salva todo.
 	std::ofstream	&saveToFile	(const char *ProjetFileName) const{	std::ofstream osPr(ProjetFileName);			return save_all(osPr);}
 
 	std::ofstream	&save		()		const		            {	return saveToFile(_ProjetFileName.c_str())	;   }

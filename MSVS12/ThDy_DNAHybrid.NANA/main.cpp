@@ -496,9 +496,9 @@ public:
         //                        {STR("All files" )  , STR("*.*"               ) }
         //                     });
     }
-    static nana::gui::filebox::filtres FastaFiltre( )
+    static FilePickBox::filtres FastaFiltre( )
     {
-        return nana::gui::filebox::filtres{ {STR("fasta")       , STR("*.fas;*.fasta"     ) },
+        return FilePickBox::filtres       { {STR("fasta")       , STR("*.fas;*.fasta"     ) },
                                             {STR("NCBI BLAST")  , STR("*-Alignment.xml"   ) },
                                             {STR("GB"        )  , STR("*.gb;*-sequence.xml")},
                                             {STR("Text"      )  , STR("*.txt"             ) },
