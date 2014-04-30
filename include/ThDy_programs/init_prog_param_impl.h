@@ -122,10 +122,8 @@ class CParamBNRange: public IParam, public NumRang<Num>
     CParamBNRange (IProg *pp, const std::string& titel, const std::string& etiq, 
 						Num min, Num max, Num defValue,
 						const std::string& unit=""
-					) : IParam (pp, titel, etiq, unit), NumRang<Num>(min,max), _value(_v)
-	          { /*if (!inRang(defValue)) 
-			        throw OutOfNumRange(string("Default Value out of Range while trying to construct: ")+Titel() );*/
-	             _value=defValue ; 
+					) : CParamBNRange ( pp,  titel,  etiq, _v, min,  max,  defValue, unit )  
+	          {  
 	          }
 	void set(Num value){ if (!inRang(value)) ///  \todo: Incluir value y rang que no concuerdan en mensaje to throw
 		                    throw OutOfNumRange(std::string("Value out of Range while trying to set: ")+Titel(), value, *this );
