@@ -662,10 +662,10 @@ class SeqExpl : public CompoWidget
     void SetDefLayout() override
     {
         _DefLayout = 
-	"vertical                                               		\n\t"
-	"	  <weight=20 <toolbar weight=780 ><>>       	            	\n\t"
-	"	  <horizontal  gap=2   <Tree weight=25% > <List >   >      	\n\t"
-	"		\n\t"
+	                    "vertical                                               		\n\t"
+	                    "	  <weight=20 <toolbar weight=780 ><>>       	            \n\t"
+	                    "	  <horizontal  gap=2   <Tree weight=25% > <List >   >      	\n\t"
+	                    "		\n\t"
             ;
     }
     void AsignWidgetToFields() override
@@ -1462,7 +1462,8 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
             //_list.clear();
             // populate_list_recur(_tree.selected());
             //_list.auto_draw(true);
-        });
+        })
+            .enabled(false);
 
     }
     void SeqExpl::MakeResponive()
