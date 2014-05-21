@@ -30,7 +30,7 @@ IParam::IParam (  IProg *pp,
 
 void     IParam::SetEtiq(std::string etiq, IProg *prog)
 { 
-    auto param = prog->_parametrs[_etiq];     // revisar posibles inconsistencias   !!!!!!!!!!!!!!!!
+    auto param = prog->_parametrs[_etiq];     /// \todo revisar posibles inconsistencias   !!!!!!!!!!!!!!!!
     prog->_parametrs.erase(_etiq);
     _etiq=etiq;
     prog->_parametrs[_etiq]=param;

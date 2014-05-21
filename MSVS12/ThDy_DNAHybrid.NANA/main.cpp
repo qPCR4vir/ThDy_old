@@ -1714,8 +1714,27 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 	}
 
 
-int main(int argc, char *argv[]) try
+int main(int argc, char *argv[]) 
 {
+  try	
+  {
+    IParBind::SetDef(PriorizeDefault::Parametr );
+    ThDyNanaForm tdForm(  argc,  argv);
+	tdForm.show();
+	nana::gui::exec();
+	return 0;
+  }
+    catch (std::exception& e)
+        {
+            std::cerr<< std::endl<< e.what();
+            throw ;
+        } 
+    catch (...)
+        {
+            std::cerr<< std::endl<< "exeption !!";
+            throw ;
+        }
+} 
 
     //MIndex  idx{Invalid_Menu_idx};
     //{ auto t_idx=std::string::npos;
@@ -1736,22 +1755,4 @@ int main(int argc, char *argv[]) try
    ////  { ;}                                                 // found, use idx.i
    ////else
    ////  { ;}                                                 // not found, still use idx.i if you want to return a non_value.
-
-	IParBind::SetDef(PriorizeDefault::Parametr );
-    ThDyNanaForm tdForm(  argc,  argv);
-	tdForm.show();
-	nana::gui::exec();
-	return 0;
-
-} 
-catch (std::exception& e)
-    {
-        std::cerr<< std::endl<< e.what();
-        throw ;
-    } 
-catch (...)
-    {
-        std::cerr<< std::endl<< "exeption !!";
-        throw ;
-    }
 
