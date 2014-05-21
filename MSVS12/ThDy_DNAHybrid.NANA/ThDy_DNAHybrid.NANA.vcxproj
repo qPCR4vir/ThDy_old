@@ -587,10 +587,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClInclude Include="..\..\scr\ThDy_DNAHybrid.Nana\main.Nana.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="nanaBind.hpp" />
+    <ClCompile Include="..\..\scr\ThDy_DNAHybrid.Nana\main.Nana.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
