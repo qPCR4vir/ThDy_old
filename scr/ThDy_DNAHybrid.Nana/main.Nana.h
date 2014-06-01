@@ -226,14 +226,17 @@ class TableRes  : public nana::gui::form, public EditableForm
 
         _menuProgram.append_splitter();
         
-        _menuProgram.append(   STR("Show Tm")       ,   [&](nana::gui::menu::item_proxy& ip)   {  Click( _bTm);     });
-        _menuProgram.check_style(mTm=_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
+        mTm=_menuProgram.append     ( STR("Show Tm")    , [&](nana::gui::menu::item_proxy& ip)  { Click( _bTm); })
+                        .check_style( nana::gui::menu::checks::option)
+                        .index();
 
-        _menuProgram.append(   STR("Show delta G")  ,   [&](nana::gui::menu::item_proxy& ip)   {  Click( _bG);      });
-        _menuProgram.check_style(mG=_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
+        mG=_menuProgram.append      ( STR("Show delta G"), [&](nana::gui::menu::item_proxy& ip) { Click( _bG);  })
+                        .check_style( nana::gui::menu::checks::option)
+                        .index();
 
-        _menuProgram.append(   STR("Show Pos")  ,       [&](nana::gui::menu::item_proxy& ip)   {  Click( _bPos);    });
-        _menuProgram.check_style(mP=_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
+        mP=_menuProgram.append      ( STR("Show Pos")    , [&](nana::gui::menu::item_proxy& ip) { Click( _bPos);})
+                        .check_style( nana::gui::menu::checks::option)
+                        .index();
     }
         void SetFormat(int dec=1 , int len=6){  n_len=len; n_dec=dec; }
 };

@@ -276,14 +276,14 @@ int main(int argc, char *argv[])
 
         menu.append_splitter();
 
-        menu.append(   STR("Show Only local sequences"),[&](nana::gui::menu::item_proxy& ip) { ShowLocals( menu.checked(ip.index()));    });
-        menu.check_style(menu.size()-1, nana::gui::menu::check_t::check_highlight );
-        menu.checked (menu.size()-1, false );
+        menu.append     ( STR("Show Only local sequences"),[&](nana::gui::menu::item_proxy& ip) { ShowLocals( menu.checked(ip.index())); })
+            .check_style( nana::gui::menu::checks::option)
+            .checked    ( false );
 
-        menu.append(STR("Show filtered sequences"     ),[&](nana::gui::menu::item_proxy& ip) { ShowFiltered( menu.checked(ip.index()));  });
-        menu.check_style(menu.size()-1, nana::gui::menu::check_highlight); // check_option
-        menu.checked (menu.size()-1, true );
-
+        menu.append     ( STR("Show filtered sequences"  ),[&](nana::gui::menu::item_proxy& ip) { ShowFiltered( menu.checked(ip.index())); })
+            .check_style( nana::gui::menu::checks::highlight )
+            .checked    ( true );
+ 
         menu.append_splitter();
         menu.append(STR("Cut selected sequences from list"          ),[&](nana::gui::menu::item_proxy& ip)  {  Click(_cutSec);  });
         menu.append(STR("Cut selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip)  {  Click(_cut   );  });
