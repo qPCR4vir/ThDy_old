@@ -9,6 +9,7 @@
 #include "ThDy_programs/init_prog_param.h" 
 #include "ThDy_programs/ParamGUIBind.hpp" 
 #include <../temp/EditableForm.hpp>
+#include <../temp/Numer.hpp>
 #include <nana/gui/widgets/checkbox.hpp>
 
 namespace ParamGUIBind 
@@ -16,26 +17,26 @@ namespace ParamGUIBind
 class nanaWidgetBind : public virtual IParBind 
 {
   protected:
-    nana::gui::widget& _w;
+    nana::widget& _w;
 public: 
-    nanaWidgetBind (nana::gui::widget& w ): _w(w)
+    nanaWidgetBind (nana::widget& w ): _w(w)
     {
-        //_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        //_w.make_event <nana::events::focus>([&](const nana::eventinfo& ei)
         //        {  
         //            std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
         //            std::wcerr<< _w.caption() << std::endl;
         //            //if (!ei.focus.getting) 
         //            //    validate_edit( );
         //        }); 
-        _w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        _w.events().focus([&](const nana::arg_focus& ei)
         {  
                     //assert((   std::cerr<< "\n" << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: "  , true  ));;
                     //assert((   std::wcerr<< _w.caption() << std::endl  , true  ));;
 
-            if (!ei.focus.getting) 
+            if (!ei.getting) 
                 UpDateProg ();
         });
-        //_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        //_w.make_event <nana::events::focus>([&](const nana::eventinfo& ei)
         //        {  
         //            std::cerr<< "\nAfter " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
         //            std::wcerr<< _w.caption() << std::endl;
@@ -43,24 +44,24 @@ public:
         //            //    validate_edit( );
         //        }); 
     }
-    nanaWidgetBind (nana::gui::widget& w, nana::gui::widget& resp_w): _w(w)
+    nanaWidgetBind (nana::widget& w, nana::widget& resp_w): _w(w)
     {
-        //resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        //resp_w.make_event <nana::events::focus>([&](const nana::eventinfo& ei)
         //        {  
         //            std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
         //            std::wcerr<< _w.caption() << std::endl;
         //            //if (!ei.focus.getting) 
         //            //    validate_edit( );
         //        }); 
-        resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        resp_w.events().focus([&](const nana::arg_focus&ei)
         {  
                     //std::cerr<< "\n" << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
                     //std::wcerr<< _w.caption() << std::endl;
             
-            if (!ei.focus.getting) 
+            if (!ei .getting) 
                 UpDateProg ();
         });
-        //resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        //resp_w.make_event <nana::events::focus>([&](const nana::eventinfo& ei)
         //        {  
         //            std::cerr<< "\nAfter " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
         //            std::wcerr<< _w.caption() << std::endl;
@@ -90,7 +91,7 @@ public:
         //            std::wcerr<< CW._Titel  << std::endl;
         //        }); 
     }
-    nanaWidgetBind (CompoWidget & CW, nana::gui::widget& resp_w): _w(CW)
+    nanaWidgetBind (CompoWidget & CW, nana::widget& resp_w): _w(CW)
     {
         CW.add_validate ([&]()->bool
         {  
@@ -99,22 +100,22 @@ public:
             UpDateProg ();
             return true;
         });
-        //resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        //resp_w.make_event <nana::events::focus>([&](const nana::eventinfo& ei)
         //        {  
         //            std::cerr<< "\nBefore " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
         //            std::wcerr<< _w.caption() << std::endl;
         //            //if (!ei.focus.getting) 
         //            //    validate_edit( );
         //        }); 
-        resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        resp_w.events().focus([&](const nana::arg_focus& ei)
         {  
                     //assert((  std::cerr<< "\n" << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind-duo: " , true  ));;
                     //assert((  std::wcerr<< _w.caption() << std::endl , true  ));;
             
-            if (!ei.focus.getting) 
+            if (!ei.getting) 
                 UpDateProg ();  // debiera ser:  CW.validate_only ???
         });
-        //resp_w.make_event <nana::gui::events::focus>([&](const nana::gui::eventinfo& ei)
+        //resp_w.make_event <nana::events::focus>([&](const nana::eventinfo& ei)
         //        {  
         //            std::cerr<< "\nAfter " << (ei.focus.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind: ";
         //            std::wcerr<< _w.caption() << std::endl;
@@ -124,7 +125,7 @@ public:
     }
 
     void          updateForm(nana::string val){
-                                                    _w.caption(val); nana::gui::API::update_window (_w);
+                                                    _w.caption(val); nana::API::update_window (_w);
                                               }
     nana::string  getFormVal(       ){ return   _w.caption (   );
                                      }
@@ -134,33 +135,33 @@ public:
 class Bind_checkbox : public nanaWidgetBind  
 { 	
  public:				
-    Bind_checkbox ( nana::gui::checkbox& c):nanaWidgetBind(c){} 
+    Bind_checkbox ( nana::checkbox& c):nanaWidgetBind(c){} 
 
-    void updateForm(bool val){  static_cast <nana::gui::checkbox&>(_w).check  (val); nana::gui::API::update_window (_w);
+    void updateForm(bool val){  static_cast <nana::checkbox&>(_w).check  (val); nana::API::update_window (_w);
                              }
-    bool getFormVal()/*const*/ {  return  static_cast <nana::gui::checkbox&>(_w).checked(   ); 
+    bool getFormVal()/*const*/ {  return  static_cast <nana::checkbox&>(_w).checked(   ); 
                                }
 };
 class Bind_NumUpDw : public nanaWidgetBind  
 { 	
  public:				
-    Bind_NumUpDw ( nana::gui::NumerUpDown & c):nanaWidgetBind(c,c._num){} 
+    Bind_NumUpDw ( nana::NumerUpDown & c):nanaWidgetBind(c,c._num){} 
 
-    void   updateForm(double val){  static_cast <nana::gui::NumerUpDown&>(_w).Value  (val); nana::gui::API::update_window (_w);}
-    double getFormVal(  ){  return  static_cast <nana::gui::NumerUpDown&>(_w).Value  (   ); }
+    void   updateForm(double val){  static_cast <nana::NumerUpDown&>(_w).Value  (val); nana::API::update_window (_w);}
+    double getFormVal(  ){  return  static_cast <nana::NumerUpDown&>(_w).Value  (   ); }
 };
 class Bind_UnitUpDw : public nanaWidgetBind  
 { 	
  public:				
-    Bind_UnitUpDw ( nana::gui::NumUnitUpDown & c):nanaWidgetBind(c    ,c._num._num){} 
+    Bind_UnitUpDw ( nana::NumUnitUpDown & c):nanaWidgetBind(c    ,c._num._num){} 
 
-    void   updateForm(double val){  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (val); nana::gui::API::update_window (_w);
+    void   updateForm(double val){  static_cast <nana::NumUnitUpDown&>(_w).Value  (val); nana::API::update_window (_w);
                                  }
-    double getFormVal(  )/*const*/{  return  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (   ); 
+    double getFormVal(  )/*const*/{  return  static_cast <nana::NumUnitUpDown&>(_w).Value  (   ); 
                                   }
-    void   updateForm(double val, const CUnit::unit_name &un){  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (val, un);nana::gui::API::update_window (_w);
+    void   updateForm(double val, const CUnit::unit_name &un){  static_cast <nana::NumUnitUpDown&>(_w).Value  (val, un);nana::API::update_window (_w);
                                                              }
-    double getFormVal/*const*/(const CUnit::unit_name &un    ){  return  static_cast <nana::gui::NumUnitUpDown&>(_w).Value  (un     );
+    double getFormVal/*const*/(const CUnit::unit_name &un    ){  return  static_cast <nana::NumUnitUpDown&>(_w).Value  (un     );
                                                               }
 };
 class Bind_FilePickBox : public nanaWidgetBind  
@@ -171,7 +172,7 @@ class Bind_FilePickBox : public nanaWidgetBind
     void         updateForm(nana::string file)
     {  
         static_cast <FilePickBox&>(_w).FileNameOnly (file);
-        nana::gui::API::update_window (_w); 
+        nana::API::update_window (_w); 
     }
     nana::string getFormVal(  ){  return  static_cast <FilePickBox&>(_w).FileName  (   ); }
 };
@@ -179,7 +180,7 @@ class Bind_FilePickBox : public nanaWidgetBind
 class Bind_CParamStr_widget : public nanaWidgetBind, public Bind_CParamString  
 { 	
  public:				
-    Bind_CParamStr_widget (CParamString &p, nana::gui::widget& c):Bind_CParamString(p),nanaWidgetBind(c){SetDef();} 
+    Bind_CParamStr_widget (CParamString &p, nana::widget& c):Bind_CParamString(p),nanaWidgetBind(c){SetDef();} 
 
     void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
 	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )))        ;}
@@ -187,7 +188,7 @@ class Bind_CParamStr_widget : public nanaWidgetBind, public Bind_CParamString
 class Bind_CParamC_str_widget : public nanaWidgetBind, public Bind_CParamC_str  
 { 	
  public:				
-    Bind_CParamC_str_widget (CParamC_str &p, nana::gui::widget& c):Bind_CParamC_str(p),nanaWidgetBind(c){SetDef();} 
+    Bind_CParamC_str_widget (CParamC_str &p, nana::widget& c):Bind_CParamC_str(p),nanaWidgetBind(c){SetDef();} 
 
     void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
 	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )).c_str());}
@@ -195,7 +196,7 @@ class Bind_CParamC_str_widget : public nanaWidgetBind, public Bind_CParamC_str
 class BindBool   : public Bind_checkbox, public Bind_CParamBool  
 { 	
  public:				
-    BindBool (CParamBool &p, nana::gui::checkbox& c):Bind_CParamBool(p),Bind_checkbox(c){SetDef();} 
+    BindBool (CParamBool &p, nana::checkbox& c):Bind_CParamBool(p),Bind_checkbox(c){SetDef();} 
 
     void	UpDateForm(	 )	override {         updateForm(getProgVal()); }
 	void	UpDateProg(	 )	override {         updateProg(getFormVal()); }
@@ -204,11 +205,11 @@ class BindBool   : public Bind_checkbox, public Bind_CParamBool
 class Bind_NumR_UnitUpDw   : public Bind_UnitUpDw, public Bind_CParamRang<Num>  
 { 	
  public:				
-    Bind_NumR_UnitUpDw (CParamNumRange<Num>  &p, nana::gui::NumUnitUpDown& c):Bind_CParamRang<Num> (p), Bind_UnitUpDw(c)
+    Bind_NumR_UnitUpDw (CParamNumRange<Num>  &p, nana::NumUnitUpDown& c):Bind_CParamRang<Num> (p), Bind_UnitUpDw(c)
     {
-        //CUnit::unit_name gui(static_cast <nana::gui::NumUnitUpDown&>(_w)._unit._defUnit);
+        //CUnit::unit_name gui(static_cast <nana::NumUnitUpDown&>(_w)._unit._defUnit);
         //CUnit::unit_name                  prog( _p.Unit());
-        //CUnit u( static_cast <nana::gui::NumUnitUpDown&>(_w)._unit._defUnit
+        //CUnit u( static_cast <nana::NumUnitUpDown&>(_w)._unit._defUnit
         //assert(   );
         SetDef();
     } 
@@ -221,8 +222,8 @@ class Bind_NumR_UnitUpDw   : public Bind_UnitUpDw, public Bind_CParamRang<Num>
    template <class Num> 
 class Bind_MinMaxUnitUpDw : public BindGroup 
 {public:
-    Bind_MinMaxUnitUpDw(CParamNumMinMax<Num>&p, nana::gui::NumUnitUpDown& min, 
-                                                nana::gui::NumUnitUpDown& max)
+    Bind_MinMaxUnitUpDw(CParamNumMinMax<Num>&p, nana::NumUnitUpDown& min, 
+                                                nana::NumUnitUpDown& max)
     {
          add(upPbind(new  Bind_NumR_UnitUpDw<Num> ( p.Min() ,min)  ));
          add(upPbind(new  Bind_NumR_UnitUpDw<Num> ( p.Max() ,max)  ));
@@ -233,7 +234,7 @@ template <typename enumType>
 class Bind_EnumRange_combox   : public nanaWidgetBind, public Bind_CParamEnumRange<enumType>
 { 	
  public:				
-    Bind_EnumRange_combox (CParamEnumRange<enumType>&  p, nana::gui::combox& c, bool initialize=true)
+    Bind_EnumRange_combox (CParamEnumRange<enumType>&  p, nana::combox& c, bool initialize=true)
                        :Bind_CParamEnumRange<enumType> (p),    nanaWidgetBind(c)
     {
         if (initialize)
@@ -255,7 +256,7 @@ class Bind_CParamStr_FilePickBox : public Bind_FilePickBox, public Bind_CParamSt
 };
 
 
-upPbind link(CParamString &p,            nana::gui::widget&      w)
+upPbind link(CParamString &p,            nana::widget&      w)
 {
     return  upPbind(new Bind_CParamStr_widget (p, w));
 }
@@ -264,7 +265,7 @@ upPbind link(CParamString &p,            FilePickBox&            w)
     return  upPbind(new Bind_CParamStr_FilePickBox  (p, w ));
 }
 
-upPbind link(CParamC_str &p,            nana::gui::widget&      w)
+upPbind link(CParamC_str &p,            nana::widget&      w)
 {
     return  upPbind(new Bind_CParamC_str_widget (p, w));
 }
@@ -274,26 +275,26 @@ upPbind link(CParamC_str &p,            nana::gui::widget&      w)
 //}
 
 
-upPbind link(CParamBool &p,             nana::gui::checkbox&    c)
+upPbind link(CParamBool &p,             nana::checkbox&    c)
 {
     return  upPbind(new BindBool (p, c));
 }
 
              template <class Num> 
-upPbind link(CParamNumRange<Num>  &p, nana::gui::NumUnitUpDown& c)
+upPbind link(CParamNumRange<Num>  &p, nana::NumUnitUpDown& c)
 {
     return  upPbind(new  Bind_NumR_UnitUpDw<Num> (p,  c) );
 }
              
              template <class Num> 
-upPbind link(CParamNumMinMax<Num> &p, nana::gui::NumUnitUpDown& min, 
-                                      nana::gui::NumUnitUpDown& max)
+upPbind link(CParamNumMinMax<Num> &p, nana::NumUnitUpDown& min, 
+                                      nana::NumUnitUpDown& max)
 {
     return  upPbind(new  Bind_MinMaxUnitUpDw<Num> (p,min,max) );
 }
              
              template <typename enumType>
-upPbind link(CParamEnumRange<enumType>& p, nana::gui::combox& c, bool initialize=true)
+upPbind link(CParamEnumRange<enumType>& p, nana::combox& c, bool initialize=true)
 {
     return  upPbind(new  Bind_EnumRange_combox<enumType>(p,c,initialize));
 }
@@ -329,7 +330,7 @@ upPbind link( Param &p,  Widget&  w)
 //class Bind_C_str_txtbox : public Bind_txtbox, public Bind_C_str //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
 //{ 	
 // public:				
-//    Bind_C_str_txtbox (CParamC_str &p, nana::gui::textbox& c):Bind_C_str(p),Bind_txtbox(c){SetDef();} 
+//    Bind_C_str_txtbox (CParamC_str &p, nana::textbox& c):Bind_C_str(p),Bind_txtbox(c){SetDef();} 
 //
 //    void UpDateForm()override { updateForm(             nana::charset ( getProgVal() ))         ;}
 //	void UpDateProg()override { updateProg(std::string( nana::charset ( getFormVal() )).c_str());}
@@ -337,18 +338,18 @@ upPbind link( Param &p,  Widget&  w)
 //class PrgPrmNanaBind : public nanaWidgetBind, public ProgPBind
 //{
 //  public:
-//      PrgPrmNanaBind(IParam& p,nana::gui::widget& w):ProgPBind(p), nanaWidgetBind(w){}
+//      PrgPrmNanaBind(IParam& p,nana::widget& w):ProgPBind(p), nanaWidgetBind(w){}
 //
 //};
 //class Bind_bool : public PrgPrmNanaBind //    Bind a Control.CheckBox with a bool variable ---- TagBinding_bool    :
 //{ 	
 // public:				
-//    Bind_bool (CParamBool &p, nana::gui::checkbox& c):PrgPrmNanaBind(p,c){} 
+//    Bind_bool (CParamBool &p, nana::checkbox& c):PrgPrmNanaBind(p,c){} 
 //
-//    void updateForm(bool val){ static_cast <nana::gui::checkbox&>(_w).check  (val); }
+//    void updateForm(bool val){ static_cast <nana::checkbox&>(_w).check  (val); }
 //    void updateProg(bool val){ static_cast <CParamBool&         >(_p).set    (val); }
 //    bool getProgVal(){ return  static_cast <CParamBool&         >(_p).get    () ; }
-//    bool getFormVal(){ return  static_cast <nana::gui::checkbox&>(_w).checked() ; }
+//    bool getFormVal(){ return  static_cast <nana::checkbox&>(_w).checked() ; }
 //    
 //    void	UpDateForm(	 )	override { updateForm(getProgVal()); }
 //	void	UpDateProg(	 )	override { updateProg(getFormVal()); }
@@ -356,13 +357,13 @@ upPbind link( Param &p,  Widget&  w)
 //class Bind_txtbox : public nanaWidgetBind  
 //{ 	
 // public:				
-//    Bind_txtbox ( nana::gui::textbox& c):nanaWidgetBind(c){} 
+//    Bind_txtbox ( nana::textbox& c):nanaWidgetBind(c){} 
 //
-//    //void          updateForm(nana::string val){ static_cast <nana::gui::textbox&>(_w).caption (val); }
-//    //nana::string  getFormVal(       ){ return   static_cast <nana::gui::textbox&>(_w).caption (   ); }
+//    //void          updateForm(nana::string val){ static_cast <nana::textbox&>(_w).caption (val); }
+//    //nana::string  getFormVal(       ){ return   static_cast <nana::textbox&>(_w).caption (   ); }
 //};
      //BindGroup&	operator<<	(upPbind&& pb){  _pb.push_back(std::move(pb)) ;	  return *this;	 }
-//upPbind link(CParamC_str &p, nana::gui::textbox& c)
+//upPbind link(CParamC_str &p, nana::textbox& c)
 //{
 //    return  upPbind(new Bind_C_str_txtbox (p, c));
 //}

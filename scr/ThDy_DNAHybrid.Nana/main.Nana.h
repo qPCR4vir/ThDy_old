@@ -30,9 +30,9 @@ using namespace ParamGUIBind;
 
 class ThDyNanaForm ;
  
-class TableRes  : public nana::gui::form, public EditableForm
+class TableRes  : public nana::form, public EditableForm
 {   
-    using List  = nana::gui::listbox;
+    using List  = nana::listbox;
     using Table = CTable<TmGPos> ;
     using index = Table::index;
     struct value
@@ -70,7 +70,7 @@ class TableRes  : public nana::gui::form, public EditableForm
     std::shared_ptr<Table> _table;
     List                   _list { *this };
 
-    nana::gui::button      _bTm {*this,STR("Tm")},       //nana::gui::toolbar     _tbar { *this };
+    nana::button      _bTm {*this,STR("Tm")},       //nana::toolbar     _tbar { *this };
                            _bG  {*this,STR("G" )},   
                            _bPos {*this,STR("Pos")}; 
 
@@ -155,10 +155,10 @@ class TableRes  : public nana::gui::form, public EditableForm
      }
  public:
      TableRes    (std::shared_ptr<CTable<TmGPos>> table)  : _table(table), _Tm{*table.get()}, _G{*table.get()}, _Pos{*table.get()},  
-                nana::gui::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
+                nana::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
                 EditableForm    (nullptr, *this, nana::charset( table->TitTable() ), STR("TableTm.lay.txt")) 
    {
-        //nana::gui::API::zoom_window(*this, true);
+        //nana::API::zoom_window(*this, true);
         caption( nana::string(STR("Table Tm: ") +  _Titel));
         //_tbar.append(STR("Tm"));
         //_tbar.append(STR("G"));
@@ -188,7 +188,7 @@ class TableRes  : public nana::gui::form, public EditableForm
         _list.auto_draw(true);
 
         //MakeResponive();
-        _bTm .make_event<nana::gui::events::click>([this]()
+        _bTm .events().click([this]()
                         {
                             SetFormat(1);
                             SetValType(_Tm);
@@ -198,7 +198,7 @@ class TableRes  : public nana::gui::form, public EditableForm
                             _bPos.pushed(false);
                             _menuProgram.checked(mTm, true);
                         });
-        _bG  .make_event<nana::gui::events::click>([this]()
+        _bG  .events().click([this]()
                         {
                             SetFormat(1);
                             SetValType(_G);
@@ -208,7 +208,7 @@ class TableRes  : public nana::gui::form, public EditableForm
                             _bPos.pushed(false);
                             _menuProgram.checked(mG, true);
                         });
-        _bPos.make_event<nana::gui::events::click>([this]()
+        _bPos.events().click([this]()
                         {
                             SetFormat(0);
                             SetValType(_Pos);
@@ -226,16 +226,16 @@ class TableRes  : public nana::gui::form, public EditableForm
 
         _menuProgram.append_splitter();
         
-        mTm=_menuProgram.append     ( STR("Show Tm")    , [&](nana::gui::menu::item_proxy& ip)  { Click( _bTm); })
-                        .check_style( nana::gui::menu::checks::option)
+        mTm=_menuProgram.append     ( STR("Show Tm")    , [&](nana::menu::item_proxy& ip)  { Click( _bTm); })
+                        .check_style( nana::menu::checks::option)
                         .index();
 
-        mG=_menuProgram.append      ( STR("Show delta G"), [&](nana::gui::menu::item_proxy& ip) { Click( _bG);  })
-                        .check_style( nana::gui::menu::checks::option)
+        mG=_menuProgram.append      ( STR("Show delta G"), [&](nana::menu::item_proxy& ip) { Click( _bG);  })
+                        .check_style( nana::menu::checks::option)
                         .index();
 
-        mP=_menuProgram.append      ( STR("Show Pos")    , [&](nana::gui::menu::item_proxy& ip) { Click( _bPos);})
-                        .check_style( nana::gui::menu::checks::option)
+        mP=_menuProgram.append      ( STR("Show Pos")    , [&](nana::menu::item_proxy& ip) { Click( _bPos);})
+                        .check_style( nana::menu::checks::option)
                         .index();
     }
         void SetFormat(int dec=1 , int len=6){  n_len=len; n_dec=dec; }
@@ -247,35 +247,35 @@ class SetupPage : public CompoWidget
     FilePickBox         _results    { *this, STR("Results:") } ;
 
     FilePickBox         _targets    { *this, STR("Targets:") }  ;
-    nana::gui::checkbox _chkTargRecDir    { *this, STR("Targets - Recur Dir") },
+    nana::checkbox _chkTargRecDir    { *this, STR("Targets - Recur Dir") },
                         _chkTargOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
 
     FilePickBox         _nTsec      {*this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt")};
-    nana::gui::checkbox _chk_nTgRecDir    { *this, STR("Non Targets - Recur Dir") },
+    nana::checkbox _chk_nTgRecDir    { *this, STR("Non Targets - Recur Dir") },
                         _chk_nTgOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
 
     FilePickBox         _PCRfiltre  { *this, STR("PCR-filtre:")};
 
     FilePickBox         _PrimersFilePCR{*this, STR("Primers seq. file:") };
-    nana::gui::checkbox _chkPrimRecDir    { *this, STR("Primers - Recur Dir") },
+    nana::checkbox _chkPrimRecDir    { *this, STR("Primers - Recur Dir") },
                         _chkPrOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
 
     FilePickBox         _Prob_uArr{*this, STR("Probes seq. file:") };
-    nana::gui::checkbox _chkProbRecDir    { *this, STR("Probes - Recur Dir") },
+    nana::checkbox _chkProbRecDir    { *this, STR("Probes - Recur Dir") },
                         _chkProbOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
 
     OpenSaveBox         _NNParamFile {*this, STR("NN param:")};
 
-    nana::gui::combox               comBoxSalMeth   {*this}, 
+    nana::combox               comBoxSalMeth   {*this}, 
                                     comBoxTAMeth    {*this};
-    nana::gui::NumUnitUpDown        numUpDowTgConc  {*this, STR("Target Conctr:"      ), 50, 0.1 , 1000000,  "nM"}, 
+    nana::NumUnitUpDown        numUpDowTgConc  {*this, STR("Target Conctr:"      ), 50, 0.1 , 1000000,  "nM"}, 
                                     numUpDowSalConc {*this, STR("Salt Conc [Cations]:"), 50, 0.0001 , 10000,"mM"} , 
                                     numUpDowTa      {*this, STR("Temp. Anneling:"     ), 55,  40 , 75,    "°C"},  
                                     numUpDowSdConc  {*this, STR("Sonde Conctr:"       ), 0.8, 0.001 , 1000,  "µM"}  ;
-    nana::gui::button  _set_def_proj    {*this,STR("Set as Def. project") },
+    nana::button  _set_def_proj    {*this,STR("Set as Def. project") },
                        _load_def_proj   {*this,STR("ReLoad Def. project") };
 
-    nana::gui::checkbox ckBx_savTm      { *this, STR("Tm"    ) },
+    nana::checkbox ckBx_savTm      { *this, STR("Tm"    ) },
                         ckBx_savPos     { *this, STR("Pos"   ) },
                         ckBx_savG       { *this, STR("G"     ) },
                         ckBx_savAlign   { *this, STR("Align" ) },
@@ -438,8 +438,8 @@ class SetupPage : public CompoWidget
             //assert((  std::cerr << "onSave: Saved NNp file: " << _Pr._cp._InputNNFile.get() << std::endl, true  ));;
          } );
 
-        _set_def_proj .make_event	<nana::gui::events::click> ([&](){ setAsDefProject() ;} );
-        _load_def_proj.make_event	<nana::gui::events::click> ([&](){ RestDefPr      () ;} );
+        _set_def_proj .events().click ([&](){ setAsDefProject() ;} );
+        _load_def_proj.events().click ([&](){ RestDefPr      () ;} );
     }
     void  SaveProj()
 	{	 
@@ -464,15 +464,15 @@ class SetupPage : public CompoWidget
 						+ "\tYes:  The default project will be overwrited. " + "\n"
 						+ "\tNo:  No action will be taken. " + "\n"
 						;
-		switch ( (nana::gui::msgbox(  *this, nana::charset (caption) , nana::gui::msgbox::yes_no )
+		switch ( (nana::msgbox(  *this, nana::charset (caption) , nana::msgbox::yes_no )
                         <<  message
-                    ).icon(nana::gui::msgbox::icon_question ) .show (  ))
+                    ).icon(nana::msgbox::icon_question ) .show (  ))
 		{
-			case  nana::gui::msgbox::pick_yes :  
+			case  nana::msgbox::pick_yes :  
                                     _Pr.save_asDefPr() ; 					 // crea el Def Project.
 				return;
 
-			case  nana::gui::msgbox::pick_no:    
+			case  nana::msgbox::pick_no:    
             default:;
         }
     }
@@ -483,7 +483,7 @@ class SetupPage : public CompoWidget
 		    }
 		catch ( std::exception& e)
 		{ 
-			(nana::gui::msgbox ( STR("Error loading Def Project" ) )<< e.what()).show() ;
+			(nana::msgbox ( STR("Error loading Def Project" ) )<< e.what()).show() ;
  		}		 
 	}
 
@@ -515,14 +515,14 @@ public:
     }
 
 
-    void AddMenuItems(nana::gui::menu& menu)
+    void AddMenuItems(nana::menu& menu)
     {
-  //      		_menuFile.append  (STR("&Open..."   ),[this](nana::gui::menu::item_proxy& ip){ this->_OSbx.open(nana::string(nana::charset(this->_textBox.filename())));this->OpenFile()  ;}                );
-  //      _menuFile.append  (STR("&Save"      ),[&](nana::gui::menu::item_proxy& ip){  ForceSave(nana::string(nana::charset(_textBox.filename())) ) ;}   );
-		//_menuFile.append  (STR("Save &As..."),[&](nana::gui::menu::item_proxy& ip){ _OSbx.save(nana::string(nana::charset(_textBox.filename())));SaveFile() ;} );
+  //      		_menuFile.append  (STR("&Open..."   ),[this](nana::menu::item_proxy& ip){ this->_OSbx.open(nana::string(nana::charset(this->_textBox.filename())));this->OpenFile()  ;}                );
+  //      _menuFile.append  (STR("&Save"      ),[&](nana::menu::item_proxy& ip){  ForceSave(nana::string(nana::charset(_textBox.filename())) ) ;}   );
+		//_menuFile.append  (STR("Save &As..."),[&](nana::menu::item_proxy& ip){ _OSbx.save(nana::string(nana::charset(_textBox.filename())));SaveFile() ;} );
 
-        menu.append(STR("New"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
-        menu.append(STR("Open...")  , [&](nana::gui::menu::item_proxy& ip)  
+        menu.append(STR("New"    )  , [&](nana::menu::item_proxy& ip)  {  ;  } );
+        menu.append(STR("Open...")  , [&](nana::menu::item_proxy& ip)  
         { 
             _proj.open(_proj.FileName()); /*OpenProj() ;*/   
             if (!_proj.Canceled())
@@ -530,7 +530,7 @@ public:
             //this->_OSbx.open(nana::string(nana::charset(this->_textBox.filename())));this->OpenFile()  ;}                );
 
         } );
-        menu.append(STR("Save...")  , [&](nana::gui::menu::item_proxy& ip)  
+        menu.append(STR("Save...")  , [&](nana::menu::item_proxy& ip)  
         { 
             _proj.save(_proj.FileName()); 
             if( ! _proj.Canceled () )   
@@ -539,10 +539,10 @@ public:
             //SaveProj() ;  
         } );
         menu.append_splitter();
-        menu.append(STR("Set as deffault") , [&](nana::gui::menu::item_proxy& ip)  {;  });
-        menu.append(STR("Restore deffault"), [&](nana::gui::menu::item_proxy& ip)  {;  });
+        menu.append(STR("Set as deffault") , [&](nana::menu::item_proxy& ip)  {;  });
+        menu.append(STR("Restore deffault"), [&](nana::menu::item_proxy& ip)  {;  });
         menu.append_splitter();
-        menu.append(STR("Exit"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
+        menu.append(STR("Exit"    )  , [&](nana::menu::item_proxy& ip)  {  ;  } );
 
     }
     void LoadProjectAndReg(nana::string file)
@@ -566,16 +566,16 @@ public:
 							+ "\tNo:  Select a project file to be loaded. " + "\n"
 							+ "\tCancel: Use the values correctly loaded mixed with the\t\t\t previus existing. "
 							;
-			switch ( (nana::gui::msgbox(  *this, nana::charset (caption) , nana::gui::msgbox::yes_no_cancel )
+			switch ( (nana::msgbox(  *this, nana::charset (caption) , nana::msgbox::yes_no_cancel )
                             <<  message
-                        ).icon(nana::gui::msgbox::icon_error) .show (  ))
+                        ).icon(nana::msgbox::icon_error) .show (  ))
 			{
-				case  nana::gui::msgbox::pick_yes :  
+				case  nana::msgbox::pick_yes :  
 					    _Pr.load_defPr();
                         _proj.FileName(nana::charset ( _Pr.ProjetFile ()  ));
 					return;
 
-				case  nana::gui::msgbox::pick_no:    
+				case  nana::msgbox::pick_no:    
                         _proj.open (nana::charset (file));
                         if ( !  _proj.Canceled() )
                                 LoadProject(nana::charset (  _proj.FileName()));
@@ -587,9 +587,9 @@ public:
 
 class SeqExpl : public CompoWidget
 {
-    using Tree = nana::gui::treebox;
+    using Tree = nana::treebox;
     using Node = Tree::item_proxy;
-    using List = nana::gui::listbox;
+    using List = nana::listbox;
 
     ThDyNanaForm       &_Pr;
     Tree                _tree{ *this };
@@ -598,7 +598,7 @@ class SeqExpl : public CompoWidget
     std::vector<CSec*>      _dragSec;
     std::vector<CMultSec*>  _dragMSec;
 
-    nana::gui::button      _loadFile     {*this,STR("Load"   )},       //nana::gui::toolbar  _tbar { *this };
+    nana::button      _loadFile     {*this,STR("Load"   )},       //nana::toolbar  _tbar { *this };
                            _re_loadFile  {*this,STR("reLoad" )},   
                            _loadDir      {*this,STR("Load"   )},       
                            _re_loadDir   {*this,STR("reLoad" )},
@@ -611,7 +611,7 @@ class SeqExpl : public CompoWidget
                            _show_locals_s{*this,STR("local"  )},
                            _show_filt_s  {*this,STR("filtr"   )}
                            ; 
-    nana::gui::tooltip    _loadFileTT {_loadFile,STR("File load: Add a group of sequences from a file")},
+    nana::tooltip    _loadFileTT {_loadFile,STR("File load: Add a group of sequences from a file")},
                           _re_loadFileTT ;  
 ;  
 
@@ -671,7 +671,7 @@ class SeqExpl : public CompoWidget
         _DefLayout = 
 	                    "vertical                                               		\n\t"
 	                    "	  <weight=20 <toolbar weight=780 ><>>       	            \n\t"
-	                    "	  <horizontal  gap=2   <Tree weight=25% > <List >   >      	\n\t"
+	                    "	  <horizontal  gap=2   <Tree weight=25% > | <List >   >      	\n\t"
 	                    "		\n\t"
             ;
     }
@@ -734,7 +734,7 @@ class SeqExpl : public CompoWidget
         return _list.at(0).append(s).value  ( s             )
                                     .check  ( s->Selected() )
                                     .fgcolor( s->Filtered()     ?   0xFF00FF 
-                                                                :   0x0     );//nana::gui::color::gray_border );
+                                                                :   0x0     );//nana::color::gray_border );
     }
 
     Node AddRoot          (CMultSec*ms)  
@@ -806,7 +806,7 @@ public:
     SeqExpl(ThDyNanaForm& tdForm);
     void ShowFindedProbes_in_mPCR(bool show_=true);
     void RefreshProbes_mPCR(bool show_=true);
-    void AddMenuItems(nana::gui::menu& menu);
+    void AddMenuItems(nana::menu& menu);
     void InitTree();
 };
 
@@ -814,7 +814,7 @@ class FindSondenPage : public CompoWidget
 {    
     ThDyProject &_Pr;
     BindGroup   _findSond;
-    nana::gui::NumUnitUpDown _Gmin     {*this, STR("G :"    ), -5, -10 , 10,"kcal/mol"},   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
+    nana::NumUnitUpDown _Gmin     {*this, STR("G :"    ), -5, -10 , 10,"kcal/mol"},   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
                              _Tmmin    {*this, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {*this, STR(""), 63,  45, 75, "°C"      }, 
                              _Lengthmin{*this, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{*this, STR(""), 35,  15, 40, "nt"      },
                              _MaxG     {*this, STR("Max G" ), 10, -10, 30, "kcal/mol" },  _MinTm   {*this, STR("Tm :"  ), 30,  10 , 60,"°C"}, 
@@ -822,7 +822,7 @@ class FindSondenPage : public CompoWidget
                              _MinSelfG {*this, STR("Min G" ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{*this, STR("Max Tm"), 10, -10, 75, "°C"}, 	
                              numUpDw_MinTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" }, 
                              numUpDw_MaxTargCov{ *this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%" } ;
-    nana::gui::tooltip _Gmintt     {_Gmin, STR("Only probes with stronger interaction with target (smaller G by selected Ta) will be included"    ) }/*,   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
+    nana::tooltip _Gmintt     {_Gmin, STR("Only probes with stronger interaction with target (smaller G by selected Ta) will be included"    ) }/*,   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
                              _Tmmin    {*this, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {*this, STR(""), 63,  45, 75, "°C"      }, 
                              _Lengthmin{*this, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{*this, STR(""), 35,  15, 40, "nt"      },
                              _MaxG     {*this, STR("Max G" ), 10, -10, 30, "kcal/mol" },  _MinTm   {*this, STR("Tm :"  ), 30,  10 , 60,"°C"}, 
@@ -831,14 +831,14 @@ class FindSondenPage : public CompoWidget
                              numUpDw_MinTargCov{ *this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%" }, 
                              numUpDw_MaxTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" }*/ ;
 
-    nana::gui::button        _design{*this, STR("Design !" )}, 
+    nana::button        _design{*this, STR("Design !" )}, 
                             _compare{*this, STR("Compare !")};
 
-    nana::gui::checkbox      chkBx_unique{*this, STR("Report unique probes, ")}, 
+    nana::checkbox      chkBx_unique{*this, STR("Report unique probes, ")}, 
                              chkBx_common{*this, STR("Report common probes, ")}, 
                              chkBx_showFindedProbes{*this, STR("Show Finded Probes")};
-	nana::gui::tooltip       chkBx_uniqueTT{chkBx_unique, STR("For each target seq, probes with hybrid on it, AND maximum on a given percent of the OTHER targets will be reported")};
-	nana::gui::tooltip       chkBx_commonTT{chkBx_common, STR("All probes with hybrid on at laest the given percent of targets will be reported")};
+	nana::tooltip       chkBx_uniqueTT{chkBx_unique, STR("For each target seq, probes with hybrid on it, AND maximum on a given percent of the OTHER targets will be reported")};
+	nana::tooltip       chkBx_commonTT{chkBx_common, STR("All probes with hybrid on at laest the given percent of targets will be reported")};
 public: 
     FindSondenPage(ThDyNanaForm& tdForm);
     void SetDefLayout   () override
@@ -913,7 +913,7 @@ public:
 class uArray : public CompoWidget
 { public: 
     ThDyNanaForm      &_Pr;
-    nana::gui::button  _do_uArray{*this, STR(" uArray ! ")};
+    nana::button  _do_uArray{*this, STR(" uArray ! ")};
     BindGroup          _uArray;
 
     uArray (ThDyNanaForm& tdForm);
@@ -937,7 +937,7 @@ class uArray : public CompoWidget
 class MplexPCR : public CompoWidget
 { public: 
     ThDyNanaForm      &_Pr;
-    nana::gui::button  _do_mPCR{*this, STR(" PCR ! ")};
+    nana::button  _do_mPCR{*this, STR(" PCR ! ")};
     BindGroup          _mPCR;
 
     MplexPCR (ThDyNanaForm& tdForm);
@@ -967,20 +967,20 @@ class MplexPCR : public CompoWidget
 class TmCalcPage : public CompoWidget
 {
     ThDyProject             &_Pr;
-    nana::gui::textbox          sec_                {*this},  
+    nana::textbox          sec_                {*this},  
                                 sec2align_          {*this},  
                                 txtBx_ResultSec     {*this},  
                                 txtBx_ResultSec2Align{*this};
-    nana::gui::checkbox         chkBx_Tm_save_asPCR {*this, STR("save")},   
+    nana::checkbox         chkBx_Tm_save_asPCR {*this, STR("save")},   
                                 chkBx_align         {*this, STR("align")},
                                 chkBx_copy_rev      {*this, STR("rev")},    
                                 chkBx_copy_compl    {*this, STR("cpl")};
-    nana::gui::button           run_                {*this, STR("Tm !")},
+    nana::button           run_                {*this, STR("Tm !")},
                                 copy_f_s_2          {*this, STR("copy")},   
                                 copy_s              {*this, STR("c")},
                                 copy_s_a            {*this, STR("c")};      
-    nana::gui::label            error_              {*this, STR("no error")};
-    nana::gui::NumberBox        Tm_min_Up{*this}, Tm_Up{*this}, Tm_max_Up{*this} ,
+    nana::label            error_              {*this, STR("no error")};
+    nana::NumberBox        Tm_min_Up{*this}, Tm_Up{*this}, Tm_max_Up{*this} ,
                                 Tm_min_Dw{*this}, Tm_Dw{*this}, Tm_max_Dw{*this} ,
                                 Tm_min_In{*this}, Tm_In{*this}, Tm_max_In{*this} ,
                                 G_min_Up{*this},   G_Up{*this},  G_max_Up{*this} ,
@@ -1008,7 +1008,7 @@ public:
 	    _place.field("InputSec" )<< sec_ << sec2align_ ;
 	    _place.field("error"    )<< error_ ;
 	    _place.field("Left"     )<< run_  << chkBx_align;
-	    _place.field("CopyBut"  )<< nana::gui::vplace::room (copy_f_s_2, 1, 2)<< copy_s << copy_s_a ;
+	    _place.field("CopyBut"  )<< nana::vplace::room (copy_f_s_2, 1, 2)<< copy_s << copy_s_a ;
 	    _place.field("Table"    )<< ""          << "   min-" << "Tm(°C)"   << "-max" << "   min-"  << "G(kJ)"   << "-max   "  ;
 	    _place.field("Table"    )<< "Up"        << Tm_min_Up << Tm_Up      << Tm_max_Up<<G_min_Up  <<  G_Up     <<  G_max_Up  ;
 	    _place.field("Table"    )<< "Down"      << Tm_min_Dw << Tm_Dw      << Tm_max_Dw<<G_min_Dw  <<  G_Dw     <<  G_max_Dw  ;
@@ -1026,7 +1026,7 @@ public:
 		}
 		catch ( std::exception& e)
 		{ 
-            (nana::gui::msgbox(*this,STR("Error during Tm calculation !"), nana::gui::msgbox::button_t::ok)<<e.what()) (  ) ;
+            (nana::msgbox(*this,STR("Error during Tm calculation !"), nana::msgbox::button_t::ok)<<e.what()) (  ) ;
 		    return;
 		}	 	        		 
         txtBx_ResultSec      .caption (nana::charset (_Pr._TmCal._AlignedSec        ));
@@ -1085,16 +1085,16 @@ public:
 
 };
 
-class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyProject
+class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
 {
-    using tabbar = nana::gui::tabbar<nana::string> ;
+    using tabbar = nana::tabbar<nana::string> ;
 	tabbar                          tabbar_     {*this};
     SetupPage                       setup_      {*this};
     FindSondenPage                  findSond_   {*this};
     MplexPCR                        mPCR_       {*this};
     uArray                          uArr_       {*this}; 
     TmCalcPage                      tmCalc_     {*this}; 
-    nana::gui::NumUnitUpDown        numUpDwMaxTgId  {*this, STR("Max. ident.:"        ), 99,  50 , 100 ,   "%"}, 
+    nana::NumUnitUpDown        numUpDwMaxTgId  {*this, STR("Max. ident.:"        ), 99,  50 , 100 ,   "%"}, 
                                     numUpDw_TgBeg   {*this, STR("Beg.:"               ),  0,   0 , 100000,"nt"},    /// rev !!
                                     numUpDw_TgEnd   {*this, STR("End.:"               ),  0,   0 , 100000,"nt"},    /// rev !!	
                                     numUpDw_SLenMin {*this, STR("Min.Len.:"           ),  0,   0 , 100000,"nt"},
@@ -1102,14 +1102,14 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
     BindGroup                       _commPP     ;
 
   public:    
-    std::vector<std::unique_ptr<nana::gui::form>> _results;
+    std::vector<std::unique_ptr<nana::form>> _results;
     SeqExpl                         mExpl_      {*this};
 
     ThDyNanaForm (int argc, char *argv[])
-                  :nana::gui::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
+                  :nana::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
                    EditableForm    (nullptr, *this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")) 
    {
-        nana::gui::API::zoom_window(*this, true);
+        //nana::API::zoom_window(*this, true);
         //nana::pixel_rgb_t bk;
         //bk.u.color = background ();
         //bk.u.element.blue =0; 
@@ -1123,7 +1123,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         add_page( uArr_     ); // 4
         add_page( tmCalc_   ); // 5
 
-        tabbar_.active (1);
+        tabbar_.activate (1);
 
         setup_._proj.FileNameOnly(nana::charset ( ProjetFile()  ));
         try{ 
@@ -1134,8 +1134,8 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 		    }
     	catch ( std::exception& e )      // Por ejemplo cuando no existe Def Project: 1ra vez que se usa el prog.
 		{   
-            (nana::gui::msgbox(*this, STR("Error during initial project load !\n\t"), nana::gui::msgbox::button_t::ok)
-                             .icon(nana::gui::msgbox::icon_information )
+            (nana::msgbox(*this, STR("Error during initial project load !\n\t"), nana::msgbox::button_t::ok)
+                             .icon(nana::msgbox::icon_information )
                             << e.what()    << "\n\n A new Default Project will be created. "
                           ).show (  ) ;
 		    save_defPr() ; 					                
@@ -1159,15 +1159,15 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
 		//nana::fn_group<void(tabbar&, value_type&)> active;
 
-		tabbar_.ext_event().active = [this]( tabbar & t, tabbar::value_type& tab)
+		tabbar_.events().activated( [this]()// const tabbar & t, const tabbar::value_type& tab)
 		{
-			bool enable	= tabbar_.active( )==1;
+			bool enable	= tabbar_.activated( )==1;
 			auto &m		= _menuBar. at(1);
 			auto sz		= m.size();
 
 			for(int i=0; i< sz; ++i)
 				m.enabled(i,enable);
-		};
+		});
 
 
    }
@@ -1215,7 +1215,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         tabbar_.relate    (tabbar_.length()-1, w          );
 	    _place.field("Pages"   ).fasten( w)  ;
     }         
-    void ShowExpl(){tabbar_.active(1);}
+    void ShowExpl(){tabbar_.activate(1);}
 };
 
 

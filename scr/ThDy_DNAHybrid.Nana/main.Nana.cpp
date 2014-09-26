@@ -28,12 +28,31 @@
 
 int main(int argc, char *argv[]) 
 {
+
+    //std::ifstream in("in.txt");
+    //std::streambuf *cinbuf = std::cin.rdbuf(); //save old buf
+    //std::cin.rdbuf(in.rdbuf()); //redirect std::cin to in.txt!
+
+    //std::ofstream out("out.txt");
+    //std::streambuf *coutbuf = std::cout.rdbuf(); //save old buf
+    //std::cout.rdbuf(out.rdbuf()); //redirect std::cout to out.txt!
+
+    //std::string word;
+    //std::cin >> word;           //input from the file in.txt
+    //std::cout << word << "  ";  //output to the file out.txt
+
+    //f(); //call function
+
+
+    //std::cin.rdbuf(cinbuf);   //reset to standard input again
+
+
   try	
   {
     IParBind::SetDef(PriorizeDefault::Parametr );
     ThDyNanaForm tdForm(  argc,  argv);
 	tdForm.show();
-	nana::gui::exec();
+	nana::exec();
 	return 0;
   }
     catch (std::exception& e)
@@ -46,6 +65,10 @@ int main(int argc, char *argv[])
             std::cerr<< std::endl<< "exeption !!";
             throw ;
         }
+
+    
+    //std::cout.rdbuf(coutbuf); //reset to standard output again
+
 } 
 
    SetupPage::SetupPage          (ThDyNanaForm& tdForm)
@@ -92,12 +115,12 @@ int main(int argc, char *argv[])
         InitMyLayout();
         SelectClickableWidget( *this);
 
-        _design .make_event<nana::gui::events::click>([&]() 
+        _design .events().click([&]() 
         {
             Run_Design(true );  
         });    
 
-        _compare.make_event<nana::gui::events::click>([&]() 
+        _compare.events().click([&]() 
         {
             Run_Design(false);  
         });  
@@ -110,7 +133,7 @@ int main(int argc, char *argv[])
           CompoWidget     (tdForm, STR("MplexPCR"), STR("MplexPCR.lay.txt"))
     {
 
-        _do_mPCR      .make_event <nana::gui::events::click>([&](){buttPCR_Click ();});
+        _do_mPCR      .events().click([&](){buttPCR_Click ();});
 
         InitMyLayout();
         SelectClickableWidget( *this);
@@ -120,7 +143,7 @@ int main(int argc, char *argv[])
           CompoWidget     (tdForm, STR("uArray"), STR("uArray.lay.txt"))
     {
 
-        _do_uArray      .make_event <nana::gui::events::click>([&](){buttuArray_Click ();});
+        _do_uArray      .events().click([&](){buttuArray_Click ();});
 
         InitMyLayout();
         SelectClickableWidget( *this);
@@ -139,10 +162,10 @@ int main(int argc, char *argv[])
                 << link (   _Pr._TmCal._Sec2Align ,    sec2align_     )
                 ;
 
-        run_      .make_event <nana::gui::events::click>([&](){Run ();});
-        copy_f_s_2.make_event <nana::gui::events::click>([&](){Copy();});      ;   //(*this, STR("copy")),   
-        copy_s    .make_event <nana::gui::events::click>([&](){Self();});      ;  //  (*this, STR("c")),
-        copy_s_a  .make_event <nana::gui::events::click>([&](){Rev ();});      ;  
+        run_      .events().click([&](){Run ();});
+        copy_f_s_2.events().click([&](){Copy();});      ;   //(*this, STR("copy")),   
+        copy_s    .events().click([&](){Self();});      ;  //  (*this, STR("c")),
+        copy_s_a  .events().click([&](){Rev ();});      ;  
 
         InitMyLayout();
         SelectClickableWidget( *this);
@@ -154,7 +177,7 @@ int main(int argc, char *argv[])
 		        }
 				catch ( std::exception& e)
 		        { 
-				  (nana::gui::msgbox ( STR("Error adding new group" ) )<< e.what()).show() ;
+				  (nana::msgbox ( STR("Error adding new group" ) )<< e.what()).show() ;
                   return node;
 		        }		
 		}
@@ -168,7 +191,7 @@ int main(int argc, char *argv[])
 		}
 		catch ( std::exception& e)
 		{ 
-			(nana::gui::msgbox ( STR("Error adding sequences" ) )<< e.what()).show() ;
+			(nana::msgbox ( STR("Error adding sequences" ) )<< e.what()).show() ;
             return _tree.selected();
  		}		 
 	}
@@ -186,7 +209,7 @@ int main(int argc, char *argv[])
 		}
 		catch ( std::exception& e)
 		{ 
-			(nana::gui::msgbox ( STR("Error replacing sequences" ) )<< e.what()).show() ;
+			(nana::msgbox ( STR("Error replacing sequences" ) )<< e.what()).show() ;
                   return tn;
  		}		 
     }
@@ -206,28 +229,28 @@ int main(int argc, char *argv[])
         if (show_) 
             _Pr.ShowExpl();
     }
-    void SeqExpl::AddMenuItems(nana::gui::menu& menu)
+    void SeqExpl::AddMenuItems(nana::menu& menu)
     {
         menu.append_splitter();
 
-        menu.append(STR("Add a new, empty, group for sequences")  , [&](nana::gui::menu::item_proxy& ip) {  AddNewSeqGr(_tree.selected());    });
-        menu.append(STR("Add a group of sequences from a file..."), [&](nana::gui::menu::item_proxy& ip) {  Click(_loadFile);                 });
-        menu.append(STR("Add a tree of groups of sequences from a directory..."),[&](nana::gui::menu::item_proxy& ip) {  Click(_loadDir);     });
+        menu.append(STR("Add a new, empty, group for sequences")  , [&](nana::menu::item_proxy& ip) {  AddNewSeqGr(_tree.selected());    });
+        menu.append(STR("Add a group of sequences from a file..."), [&](nana::menu::item_proxy& ip) {  Click(_loadFile);                 });
+        menu.append(STR("Add a tree of groups of sequences from a directory..."),[&](nana::menu::item_proxy& ip) {  Click(_loadDir);     });
 
         menu.append_splitter();
 
-        menu.append(STR("Reproduce only the structure of directory..."),[&](nana::gui::menu::item_proxy& ip)  {  Click(_scanDir);     });
-        menu.append(STR("Reload from the original file" )  , [&](nana::gui::menu::item_proxy& ip)   {  ReloadFile(_tree.selected());    });
-        menu.append(STR("Reload from the original directory"), [&](nana::gui::menu::item_proxy& ip) {  ReloadDir(_tree.selected());     });
-        menu.append(STR("Replace from a file..." )  , [&](nana::gui::menu::item_proxy& ip) 
+        menu.append(STR("Reproduce only the structure of directory..."),[&](nana::menu::item_proxy& ip)  {  Click(_scanDir);     });
+        menu.append(STR("Reload from the original file" )  , [&](nana::menu::item_proxy& ip)   {  ReloadFile(_tree.selected());    });
+        menu.append(STR("Reload from the original directory"), [&](nana::menu::item_proxy& ip) {  ReloadDir(_tree.selected());     });
+        menu.append(STR("Replace from a file..." )  , [&](nana::menu::item_proxy& ip) 
         {
 			auto tn= _tree.selected();
             if (isRoot(tn))
             {
-                nana::gui::msgbox ( STR("Sorry, you can´t replace group " + tn.text()) ).show() ;
+                nana::msgbox ( STR("Sorry, you can´t replace group " + tn.text()) ).show() ;
                 return;
             }
-            nana::gui::filebox  fb{ *this, true };
+            nana::filebox  fb{ *this, true };
             fb .add_filter ( SetupPage::FastaFiltre( )                   )
                .title(STR("Replace/reload a group of sequences from a file"));
             if (!fb()) return;
@@ -242,15 +265,15 @@ int main(int argc, char *argv[])
             //Refresh(appendNewNode  (own, newms) );
             //_tree.auto_draw(true);
         });
-        menu.append(STR("Replace from directory..."), [&](nana::gui::menu::item_proxy& ip) 
+        menu.append(STR("Replace from directory..."), [&](nana::menu::item_proxy& ip) 
         {
 			auto tn= _tree.selected();
             if (tn->owner()->owner().empty())
             {
-                nana::gui::msgbox ( STR("Sorry, you can´t replace group " + tn->text()) ) ;
+                nana::msgbox ( STR("Sorry, you can´t replace group " + tn->text()) ) ;
                 return;
             }
-            nana::gui::filebox  fb{ *this, true };
+            nana::filebox  fb{ *this, true };
             fb.title(STR("Replace/reload a group of sequences from a directory"));
             if (!fb()) return;
 
@@ -276,23 +299,23 @@ int main(int argc, char *argv[])
 
         menu.append_splitter();
 
-        menu.append     ( STR("Show Only local sequences"),[&](nana::gui::menu::item_proxy& ip) { ShowLocals( menu.checked(ip.index())); })
-            .check_style( nana::gui::menu::checks::option)
+        menu.append     ( STR("Show Only local sequences"),[&](nana::menu::item_proxy& ip) { ShowLocals( menu.checked(ip.index())); })
+            .check_style( nana::menu::checks::option)
             .checked    ( false );
 
-        menu.append     ( STR("Show filtered sequences"  ),[&](nana::gui::menu::item_proxy& ip) { ShowFiltered( menu.checked(ip.index())); })
-            .check_style( nana::gui::menu::checks::highlight )
+        menu.append     ( STR("Show filtered sequences"  ),[&](nana::menu::item_proxy& ip) { ShowFiltered( menu.checked(ip.index())); })
+            .check_style( nana::menu::checks::highlight )
             .checked    ( true );
  
         menu.append_splitter();
-        menu.append(STR("Cut selected sequences from list"          ),[&](nana::gui::menu::item_proxy& ip)  {  Click(_cutSec);  });
-        menu.append(STR("Cut selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip)  {  Click(_cut   );  });
-        menu.append(STR("Paste the sequences"                       ),[&](nana::gui::menu::item_proxy& ip)  {  Click(_paste );  });
+        menu.append(STR("Cut selected sequences from list"          ),[&](nana::menu::item_proxy& ip)  {  Click(_cutSec);  });
+        menu.append(STR("Cut selected groups of sequences from tree"),[&](nana::menu::item_proxy& ip)  {  Click(_cut   );  });
+        menu.append(STR("Paste the sequences"                       ),[&](nana::menu::item_proxy& ip)  {  Click(_paste );  });
 
         menu.append_splitter();
-        menu.append(STR("Del selected sequences from list"),[&](nana::gui::menu::item_proxy& ip)            {  Click(_delSec);  });
-        menu.append(STR("Del selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip)  {  Click(_del   );  });
-        menu.append(STR("Rename the selected group of sequences"),[&](nana::gui::menu::item_proxy& ip) 
+        menu.append(STR("Del selected sequences from list"),[&](nana::menu::item_proxy& ip)            {  Click(_delSec);  });
+        menu.append(STR("Del selected groups of sequences from tree"),[&](nana::menu::item_proxy& ip)  {  Click(_del   );  });
+        menu.append(STR("Rename the selected group of sequences"),[&](nana::menu::item_proxy& ip) 
         {
             //_showFiltered = menu.checked(ip.index());// !_showFiltered;
             //_list.auto_draw(false);
@@ -305,24 +328,24 @@ int main(int argc, char *argv[])
     }
     void SeqExpl::MakeResponive()
     {
-		_tree.ext_event().selected = [&](nana::gui::window w, Tree::item_proxy node, bool selected) { if (selected) RefreshList(node); };
-        _tree.ext_event().checked  = [&](nana::gui::window w, Tree::item_proxy node, bool checked)
+		_tree.events().selected ( [&]( const nana::arg_treebox &tbox_arg_info ) { if (tbox_arg_info.operated) RefreshList(tbox_arg_info.item); });
+        _tree.events().checked  ( [&]( const nana::arg_treebox &tbox_arg_info )
         {                                              
-            node.value<CMultSec*>()->Selected(checked);
-            if (node== _tree.selected())  
-                RefreshList(node);                //  ??????? Only RefreschList
-        };
+            tbox_arg_info.item.value<CMultSec*>()->Selected(tbox_arg_info.operated);
+            if (tbox_arg_info.item== _tree.selected())  
+                RefreshList(tbox_arg_info.item);                //  ??????? Only RefreschList
+        });
 
-        _list.ext_event().checked  = [&](  List::item_proxy item, bool checked)
+        _list.events().checked  ( [&](  const nana::arg_listbox &lbox_arg_info )
         {                                               
-            item.value<CSec*>()->Selected(checked);
-            if ( ! _showAllseq && !checked) 
-                _list.erase(item) ;
-        };
+            lbox_arg_info.item.value<CSec*>()->Selected(lbox_arg_info.selected);
+            if ( ! _showAllseq && !lbox_arg_info.selected) 
+                _list.erase(lbox_arg_info.item) ;
+        });
  
-        _loadFile   .make_event<nana::gui::events::click>([this]()
+        _loadFile   .events().click([this]()
                         {
-                            nana::gui::filebox  fb{ *this, true };
+                            nana::filebox  fb{ *this, true };
                             fb .add_filter ( SetupPage::FastaFiltre( )                   )
                                .title      ( STR("File load: Add a group of sequences from a file") );
 
@@ -331,24 +354,24 @@ int main(int argc, char *argv[])
                         });
         //_loadFileTT.set(_loadFile,STR("File load: Add a group of sequences from a file"));
 
-        _re_loadFile.make_event<nana::gui::events::click>([this]()  {  ReloadFile(_tree.selected());    });
+        _re_loadFile.events().click([this]()  {  ReloadFile(_tree.selected());    });
         _re_loadFileTT.set(_re_loadFile,STR("File reload: Reload a group of sequences from a file, \nposible using new filtres."));
 
         _loadDir    .tooltip(STR("Directory load: Add a tree of groups of sequences from a directory."))
-                    .make_event<nana::gui::events::click>([this]()
+                    .events().click([this]()
                         {
-                            nana::gui::filebox  fb{ *this, true };
+                            nana::filebox  fb{ *this, true };
                             fb .add_filter ( SetupPage::FastaFiltre( )                   )
                                .title(STR("Directory load: Add a tree of groups of sequences from a directory"));
                             if (fb()) 
                                 AddMSeqFiles(nana::charset(fb.file()), true);
                         });
         _re_loadDir .tooltip(STR("Directory reload: Reload a tree of groups of sequences from a directory,\nposible using new filtres."))
-                    . make_event<nana::gui::events::click>([this]()  {  ReloadDir (_tree.selected());    });
+                    . events().click([this]()  {  ReloadDir (_tree.selected());    });
         _scanDir    .tooltip(STR("Directory scan: Reproduce the structure of directory..."))
-                    .make_event<nana::gui::events::click>([this]()
+                    .events().click([this]()
                         {
-                            nana::gui::filebox  fb{ *this, true };
+                            nana::filebox  fb{ *this, true };
                             fb .add_filter ( SetupPage::FastaFiltre( )                   )
                                .title(STR("Directory scan: Reproduce the structure of directory..."));
                             if (!fb()) return;
@@ -362,7 +385,7 @@ int main(int argc, char *argv[])
                             _tree.auto_draw(true);
                         });
         _paste      .tooltip(STR("Paste sequences"))
-                    .make_event<nana::gui::events::click>([this]()
+                    .events().click([this]()
         {
 			auto       tn = _tree.selected();
             CMultSec *pms = tn.value<CMultSec*>();
@@ -388,14 +411,14 @@ int main(int argc, char *argv[])
             _list.auto_draw(false);
         });
         _cut        .tooltip(STR("Cut a group of sequences"))
-                    .make_event<nana::gui::events::click>([this]()
+                    .events().click([this]()
         {
 			auto tn= _tree.selected(); 
             if (tn->owner()->owner().empty())    //   ???  if( tn->level() < 2 );
             {
-                (nana::gui::msgbox ( _tree , STR("Cut a group of sequences " + tn->text()) )
+                (nana::msgbox ( _tree , STR("Cut a group of sequences " + tn->text()) )
                           << STR("Sorry, you can´t cut the group: ") + tn->text() )
-                          .icon(nana::gui::msgbox::icon_error )
+                          .icon(nana::msgbox::icon_error )
                           .show() ;
                 return;
             }
@@ -414,14 +437,14 @@ int main(int argc, char *argv[])
             own.select(true).expend(true);
         });
         _del        .tooltip(STR("Delete a group of sequences "))
-                    .make_event<nana::gui::events::click>([this]()
+                    .events().click([this]()
         {
 			auto tn= _tree.selected();
             if (tn->owner()->owner().empty())
             {
-                (nana::gui::msgbox ( _tree , STR("Deleting a group of sequences " + tn->text()) )
+                (nana::msgbox ( _tree , STR("Deleting a group of sequences " + tn->text()) )
                           << STR("Sorry, you can´t delete the group: ") + tn->text() )
-                          .icon(nana::gui::msgbox::icon_error )
+                          .icon(nana::msgbox::icon_error )
                           .show() ;
                 return;
             }
@@ -440,7 +463,7 @@ int main(int argc, char *argv[])
 
         });
         _cutSec     .tooltip(STR("Cut selected sequences from list"))
-                    .make_event<nana::gui::events::click>([this]()
+                    .events().click([this]()
         {
 			auto sel =	_list.selected() ; 
 			for (auto i : sel)
@@ -452,7 +475,7 @@ int main(int argc, char *argv[])
 			RefreshList();
         });
         _delSec     .tooltip(STR("Delete selected sequences from list"))
-                    .make_event<nana::gui::events::click>([this]()
+                    .events().click([this]()
         {
 			auto sel =	_list.selected() ; 
 			for (auto i : sel)
@@ -466,12 +489,12 @@ int main(int argc, char *argv[])
         _show_locals_s.enable_pushed(true)
                       .pushed(false)
                       .tooltip(STR("Show only local sequences, and not the sequences in internal trees"))   
-                      .make_event<nana::gui::events::click>([this]() { ShowLocals( _show_locals_s.pushed());  });
+                      .events().click([this]() { ShowLocals( _show_locals_s.pushed());  });
 
         _show_filt_s.enable_pushed(true)  
                     .pushed(true) 
                     .tooltip(STR("Show filtered sequences too"))   
-                    .make_event<nana::gui::events::click>([this]() { ShowFiltered( _show_filt_s.pushed());  });
+                    .events().click([this]() { ShowFiltered( _show_filt_s.pushed());  });
     }
 
     void SeqExpl::InitTree()
@@ -501,7 +524,7 @@ int main(int argc, char *argv[])
  		}
 		catch ( std::exception& e)
 		{ 
-            (nana::gui::msgbox(*this,STR("Error during Sonde Design !"), nana::gui::msgbox::button_t::ok)<<e.what()) (  ) ;
+            (nana::msgbox(*this,STR("Error during Sonde Design !"), nana::msgbox::button_t::ok)<<e.what()) (  ) ;
 		    return;
 		}	 	        		 
     }   
@@ -521,8 +544,8 @@ int main(int argc, char *argv[])
 	catch ( std::exception& e)
 		{ 
           cerr<< e.what()    ;
-          (nana::gui::msgbox(*this,STR("Error during multiplex PCR analis !"), 
-                                                nana::gui::msgbox::button_t::ok)   <<e.what()) (  ) ;
+          (nana::msgbox(*this,STR("Error during multiplex PCR analis !"), 
+                                                nana::msgbox::button_t::ok)   <<e.what()) (  ) ;
 		  return;
 		}
         //ShowResTbl(_Pr._mPCR._rtbl );
@@ -544,8 +567,8 @@ int main(int argc, char *argv[])
 	catch ( std::exception& e)
 		{ 
           cerr<< e.what()    ;
-          (nana::gui::msgbox(*this,STR("Error during uArr analis !"), 
-                                                nana::gui::msgbox::button_t::ok)   <<e.what()) (  ) ;
+          (nana::msgbox(*this,STR("Error during uArr analis !"), 
+                                                nana::msgbox::button_t::ok)   <<e.what()) (  ) ;
 		  return;
 		}
 	}
