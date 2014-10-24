@@ -1,3 +1,7 @@
+#ifndef main_nana_H
+#define main_nana_H
+
+
 #include <iostream>    // temp, for debugging
 #include <fstream>     // temp, for debugging
 #include <filesystem>
@@ -26,9 +30,9 @@ using namespace ParamGUIBind;
 
 class ThDyNanaForm ;
  
-class TableRes  : public nana::gui::form, public EditableForm
+class TableRes  : public nana::form, public EditableForm
 {   
-    using List  = nana::gui::listbox;
+    using List  = nana::listbox;
     using Table = CTable<TmGPos> ;
     using index = Table::index;
     struct value
@@ -66,7 +70,7 @@ class TableRes  : public nana::gui::form, public EditableForm
     std::shared_ptr<Table> _table;
     List                   _list { *this };
 
-    nana::gui::button      _bTm {*this,STR("Tm")},       //nana::gui::toolbar     _tbar { *this };
+    nana::button      _bTm {*this,STR("Tm")},       //nana::toolbar     _tbar { *this };
                            _bG  {*this,STR("G" )},   
                            _bPos {*this,STR("Pos")}; 
 
@@ -151,10 +155,10 @@ class TableRes  : public nana::gui::form, public EditableForm
      }
  public:
      TableRes    (std::shared_ptr<CTable<TmGPos>> table)  : _table(table), _Tm{*table.get()}, _G{*table.get()}, _Pos{*table.get()},  
-                nana::gui::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
+                nana::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
                 EditableForm    (nullptr, *this, nana::charset( table->TitTable() ), STR("TableTm.lay.txt")) 
    {
-        //nana::gui::API::zoom_window(*this, true);
+        //nana::API::zoom_window(*this, true);
         caption( nana::string(STR("Table Tm: ") +  _Titel));
         //_tbar.append(STR("Tm"));
         //_tbar.append(STR("G"));
@@ -184,7 +188,7 @@ class TableRes  : public nana::gui::form, public EditableForm
         _list.auto_draw(true);
 
         //MakeResponive();
-        _bTm .make_event<nana::gui::events::click>([this]()
+        _bTm .events().click([this]()
                         {
                             SetFormat(1);
                             SetValType(_Tm);
@@ -194,7 +198,7 @@ class TableRes  : public nana::gui::form, public EditableForm
                             _bPos.pushed(false);
                             _menuProgram.checked(mTm, true);
                         });
-        _bG  .make_event<nana::gui::events::click>([this]()
+        _bG  .events().click([this]()
                         {
                             SetFormat(1);
                             SetValType(_G);
@@ -204,7 +208,7 @@ class TableRes  : public nana::gui::form, public EditableForm
                             _bPos.pushed(false);
                             _menuProgram.checked(mG, true);
                         });
-        _bPos.make_event<nana::gui::events::click>([this]()
+        _bPos.events().click([this]()
                         {
                             SetFormat(0);
                             SetValType(_Pos);
@@ -222,14 +226,17 @@ class TableRes  : public nana::gui::form, public EditableForm
 
         _menuProgram.append_splitter();
         
-        _menuProgram.append(   STR("Show Tm")       ,   [&](nana::gui::menu::item_proxy& ip)   {  Click( _bTm);     });
-        _menuProgram.check_style(mTm=_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
+        mTm=_menuProgram.append     ( STR("Show Tm")    , [&](nana::menu::item_proxy& ip)  { Click( _bTm); })
+                        .check_style( nana::menu::checks::option)
+                        .index();
 
-        _menuProgram.append(   STR("Show delta G")  ,   [&](nana::gui::menu::item_proxy& ip)   {  Click( _bG);      });
-        _menuProgram.check_style(mG=_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
+        mG=_menuProgram.append      ( STR("Show delta G"), [&](nana::menu::item_proxy& ip) { Click( _bG);  })
+                        .check_style( nana::menu::checks::option)
+                        .index();
 
-        _menuProgram.append(   STR("Show Pos")  ,       [&](nana::gui::menu::item_proxy& ip)   {  Click( _bPos);    });
-        _menuProgram.check_style(mP=_menuProgram.size()-1, nana::gui::menu::check_t::check_option);
+        mP=_menuProgram.append      ( STR("Show Pos")    , [&](nana::menu::item_proxy& ip) { Click( _bPos);})
+                        .check_style( nana::menu::checks::option)
+                        .index();
     }
         void SetFormat(int dec=1 , int len=6){  n_len=len; n_dec=dec; }
 };
@@ -237,49 +244,49 @@ class TableRes  : public nana::gui::form, public EditableForm
 class SetupPage : public CompoWidget
 {
     ThDyProject        &_Pr;
-    FilePickBox         _results    { *this, STR("Results:") } ;
+    FilePickBox         _results            { *this, STR("Results:") } ;
 
-    FilePickBox         _targets    { *this, STR("Targets:") }  ;
-    nana::gui::checkbox _chkTargRecDir    { *this, STR("Targets - Recur Dir") },
-                        _chkTargOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
+    FilePickBox         _targets            { *this, STR("Targets:") }  ;
+    nana::checkbox      _chkTargRecDir      { *this, STR("Targets - Recur Dir") },
+                        _chkTargOnlyStruct  { *this, STR("Only reproduce Dir Structure") };
 
-    FilePickBox         _nTsec      {*this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt")};
-    nana::gui::checkbox _chk_nTgRecDir    { *this, STR("Non Targets - Recur Dir") },
-                        _chk_nTgOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
+    FilePickBox         _nTsec              { *this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt")};
+    nana::checkbox      _chk_nTgRecDir      { *this, STR("Non Targets - Recur Dir") },
+                        _chk_nTgOnlyStruct  { *this, STR("Only reproduce Dir Structure") };
 
-    FilePickBox         _PCRfiltre  { *this, STR("PCR-filtre:")};
+    FilePickBox         _PCRfiltre          { *this, STR("PCR-filtre:")};
 
-    FilePickBox         _PrimersFilePCR{*this, STR("Primers seq. file:") };
-    nana::gui::checkbox _chkPrimRecDir    { *this, STR("Primers - Recur Dir") },
-                        _chkPrOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
+    FilePickBox         _PrimersFilePCR     { *this, STR("Primers seq. file:") };
+    nana::checkbox      _chkPrimRecDir      { *this, STR("Primers - Recur Dir") },
+                        _chkPrOnlyStruct    { *this, STR("Only reproduce Dir Structure") };
 
-    FilePickBox         _Prob_uArr{*this, STR("Probes seq. file:") };
-    nana::gui::checkbox _chkProbRecDir    { *this, STR("Probes - Recur Dir") },
-                        _chkProbOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
+    FilePickBox         _Prob_uArr          { *this, STR("Probes seq. file:") };
+    nana::checkbox      _chkProbRecDir      { *this, STR("Probes - Recur Dir") },
+                        _chkProbOnlyStruct  { *this, STR("Only reproduce Dir Structure") };
 
-    OpenSaveBox         _NNParamFile {*this, STR("NN param:")};
+    OpenSaveBox         _NNParamFile        { *this, STR("NN param:")};
 
-    nana::gui::combox               comBoxSalMeth   {*this}, 
-                                    comBoxTAMeth    {*this};
-    nana::gui::NumUnitUpDown        numUpDowTgConc  {*this, STR("Target Conctr:"      ), 50, 0.1 , 1000000,  "nM"}, 
-                                    numUpDowSalConc {*this, STR("Salt Conc [Cations]:"), 50, 0.0001 , 10000,"mM"} , 
-                                    numUpDowTa      {*this, STR("Temp. Anneling:"     ), 55,  40 , 75,    "°C"},  
-                                    numUpDowSdConc  {*this, STR("Sonde Conctr:"       ), 0.8, 0.001 , 1000,  "µM"}  ;
-    nana::gui::button  _set_def_proj    {*this,STR("Set as Def. project") },
-                       _load_def_proj   {*this,STR("ReLoad Def. project") };
+    nana::combox        comBoxSalMeth       { *this}, 
+                        comBoxTAMeth        { *this};
+    nana::NumUnitUpDown numUpDowTgConc      { *this, STR("Target Conctr:"      ), 50, 0.1    , 1000000,  "nM"}, 
+                        numUpDowSalConc     { *this, STR("Salt Conc [Cations]:"), 50, 0.0001 , 10000,    "mM"} , 
+                        numUpDowTa          { *this, STR("Temp. Anneling:"     ), 55, 40     , 75,       "°C"},  
+                        numUpDowSdConc      { *this, STR("Sonde Conctr:"       ), 0.8, 0.001 , 1000,     "µM"}  ;
+    nana::button        _set_def_proj       { *this,STR("Set as Def. project") },
+                       _load_def_proj       { *this,STR("ReLoad Def. project") };
 
-    nana::gui::checkbox ckBx_savTm      { *this, STR("Tm"    ) },
-                        ckBx_savPos     { *this, STR("Pos"   ) },
-                        ckBx_savG       { *this, STR("G"     ) },
-                        ckBx_savAlign   { *this, STR("Align" ) },
-                        ckBx_savProj    { *this, STR("Proj"  ) },
-                        ckBx_savG_Plasm { *this, STR("G->Plasmid") },
-                        ckBx_savTm_Plasm{ *this, STR("Tm->Plasmid") },
-                        ckBx_savLog       { *this, STR("log"     ) },
-                        ckBx_savExportSond{ *this, STR("Exp. probes" ) },
-                        ckBx_savExportTarg{ *this, STR("Exp. targets") },
-                        ckBx_savNNParam { *this, STR("load NNparam") },
-                        ckBx_loadNNParam{ *this, STR("save NNparam") }/*,*/
+    nana::checkbox      ckBx_savTm          { *this, STR("Tm"    ) },
+                        ckBx_savPos         { *this, STR("Pos"   ) },
+                        ckBx_savG           { *this, STR("G"     ) },
+                        ckBx_savAlign       { *this, STR("Align" ) },
+                        ckBx_savProj        { *this, STR("Proj"  ) },
+                        ckBx_savG_Plasm     { *this, STR("G->Plasmid") },
+                        ckBx_savTm_Plasm    { *this, STR("Tm->Plasmid") },
+                        ckBx_savLog         { *this, STR("log"     ) },
+                        ckBx_savExportSond  { *this, STR("Exp. probes" ) },
+                        ckBx_savExportTarg  { *this, STR("Exp. targets") },
+                        ckBx_savNNParam     { *this, STR("load NNparam") },
+                        ckBx_loadNNParam    { *this, STR("save NNparam") }/*,*/
                         ;
 
     BindGroup          _setup;
@@ -289,17 +296,17 @@ class SetupPage : public CompoWidget
         _DefLayout =
 	"vertical      gap=3        			\n\t"
 	"		   < weight=400     gap=5     <weight=2><  vertical min=50    max=800 gap=2 			\n\t"
-	"		              <  <Project>      weight=23 >      				\n\t"
-	"				      <  <Results>      weight=23 >      				\n\t"
-	"			          <    <     weight=22 _targets>               weight=50       vertical <gap=10  weight=23  <weight=10%><TargOpt   ><weight=10%>    >   <>>       			\n\t"
-	"			          <    <     weight=22 _nTsec  >              weight=50       vertical <gap=10  weight=23  <weight=10%>< nTargOpt ><weight=10%>    >   <>>       	\n\t"
-	"			          <    <     weight=22 _PCRfiltre  >         weight=50       vertical <gap=10  weight=23  <weight=10%><_PCRfiltreOpt ><weight=10%>    >   <>>       	\n\t"
-	"			          <    <     weight=22 _PrimersFilePCR>weight=50       vertical <gap=10  weight=23  <weight=10%><_PrimersFilePCROpt ><weight=10%>    >   <>>       	\n\t"
-	"			          <    <     weight=22 _Prob_uArr   >    weight=50         vertical <gap=10  weight=23  <weight=10%><_Prob_uArrOpt ><weight=10%>    >   <>>       	\n\t"
-	" 		              <  <NN_param >     weight=23 >      				\n\t"
-	"				    <min=50 <weight=2>  <vertical min=50 max=200 gap=2 buttons>  <>  >			\n\t"
-	"		          >                                                                             	\n\t"
-	"	            <  vertical weight=120 <vertical weight=210 checks> <>  >   	                          	\n\t"
+	"		               		             <  <Project>      weight=23 >      				\n\t"
+	"				                         <  <Results>      weight=23 >      				\n\t"
+	"			                             <    <     weight=22 _targets>               weight=50       vertical <gap=10  weight=23  <weight=10%><TargOpt   ><weight=10%>    >   <>>       			\n\t"
+	"			                             <    <     weight=22 _nTsec  >              weight=50       vertical <gap=10  weight=23  <weight=10%>< nTargOpt ><weight=10%>    >   <>>       	\n\t"
+	"			                             <    <     weight=22 _PCRfiltre  >         weight=50       vertical <gap=10  weight=23  <weight=10%><_PCRfiltreOpt ><weight=10%>    >   <>>       	\n\t"
+	"			                             <    <     weight=22 _PrimersFilePCR>weight=50       vertical <gap=10  weight=23  <weight=10%><_PrimersFilePCROpt ><weight=10%>    >   <>>       	\n\t"
+	"			                             <    <     weight=22 _Prob_uArr   >    weight=50         vertical <gap=10  weight=23  <weight=10%><_Prob_uArrOpt ><weight=10%>    >   <>>       	\n\t"
+	" 		                             <  <NN_param >     weight=23 >      				\n\t"
+	"				                         <min=50 <weight=2>  <vertical min=50 max=200 gap=2 buttons>  <>  >			\n\t"
+	"		                            >                                                                             	\n\t"
+	"	                              <  vertical weight=120 <vertical weight=210 checks> <>  >   	                          	\n\t"
 	"	       >			\n\t"
 	"							\n\t"
 	"		   < weight=46  gap=2  <>  <vertical ConcST   weight=200  gap=2>  			\n\t"
@@ -312,6 +319,7 @@ class SetupPage : public CompoWidget
 	"			\n\t"
 	"		\n\t"
 	"	\n\t"
+
     
             ;
         _nTsec        .ResetLayout(105);
@@ -431,8 +439,8 @@ class SetupPage : public CompoWidget
             //assert((  std::cerr << "onSave: Saved NNp file: " << _Pr._cp._InputNNFile.get() << std::endl, true  ));;
          } );
 
-        _set_def_proj .make_event	<nana::gui::events::click> ([&](){ setAsDefProject() ;} );
-        _load_def_proj.make_event	<nana::gui::events::click> ([&](){ RestDefPr      () ;} );
+        _set_def_proj .events().click ([&](){ setAsDefProject() ;} );
+        _load_def_proj.events().click ([&](){ RestDefPr      () ;} );
     }
     void  SaveProj()
 	{	 
@@ -457,15 +465,15 @@ class SetupPage : public CompoWidget
 						+ "\tYes:  The default project will be overwrited. " + "\n"
 						+ "\tNo:  No action will be taken. " + "\n"
 						;
-		switch ( (nana::gui::msgbox(  *this, nana::charset (caption) , nana::gui::msgbox::yes_no )
+		switch ( (nana::msgbox(  *this, nana::charset (caption) , nana::msgbox::yes_no )
                         <<  message
-                    ).icon(nana::gui::msgbox::icon_question ) .show (  ))
+                    ).icon(nana::msgbox::icon_question ) .show (  ))
 		{
-			case  nana::gui::msgbox::pick_yes :  
+			case  nana::msgbox::pick_yes :  
                                     _Pr.save_asDefPr() ; 					 // crea el Def Project.
 				return;
 
-			case  nana::gui::msgbox::pick_no:    
+			case  nana::msgbox::pick_no:    
             default:;
         }
     }
@@ -476,7 +484,7 @@ class SetupPage : public CompoWidget
 		    }
 		catch ( std::exception& e)
 		{ 
-			(nana::gui::msgbox ( STR("Error loading Def Project" ) )<< e.what()).show() ;
+			(nana::msgbox ( STR("Error loading Def Project" ) )<< e.what()).show() ;
  		}		 
 	}
 
@@ -496,9 +504,9 @@ public:
         //                        {STR("All files" )  , STR("*.*"               ) }
         //                     });
     }
-    static nana::gui::filebox::filtres FastaFiltre( )
+    static FilePickBox::filtres FastaFiltre( )
     {
-        return nana::gui::filebox::filtres{ {STR("fasta")       , STR("*.fas;*.fasta"     ) },
+        return FilePickBox::filtres       { {STR("fasta")       , STR("*.fas;*.fasta"     ) },
                                             {STR("NCBI BLAST")  , STR("*-Alignment.xml"   ) },
                                             {STR("GB"        )  , STR("*.gb;*-sequence.xml")},
                                             {STR("Text"      )  , STR("*.txt"             ) },
@@ -508,14 +516,14 @@ public:
     }
 
 
-    void AddMenuItems(nana::gui::menu& menu)
+    void AddMenuItems(nana::menu& menu)
     {
-  //      		_menuFile.append  (STR("&Open..."   ),[this](nana::gui::menu::item_proxy& ip){ this->_OSbx.open(nana::string(nana::charset(this->_textBox.filename())));this->OpenFile()  ;}                );
-  //      _menuFile.append  (STR("&Save"      ),[&](nana::gui::menu::item_proxy& ip){  ForceSave(nana::string(nana::charset(_textBox.filename())) ) ;}   );
-		//_menuFile.append  (STR("Save &As..."),[&](nana::gui::menu::item_proxy& ip){ _OSbx.save(nana::string(nana::charset(_textBox.filename())));SaveFile() ;} );
+  //      		_menuFile.append  (STR("&Open..."   ),[this](nana::menu::item_proxy& ip){ this->_OSbx.open(nana::string(nana::charset(this->_textBox.filename())));this->OpenFile()  ;}                );
+  //      _menuFile.append  (STR("&Save"      ),[&](nana::menu::item_proxy& ip){  ForceSave(nana::string(nana::charset(_textBox.filename())) ) ;}   );
+		//_menuFile.append  (STR("Save &As..."),[&](nana::menu::item_proxy& ip){ _OSbx.save(nana::string(nana::charset(_textBox.filename())));SaveFile() ;} );
 
-        menu.append(STR("New"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
-        menu.append(STR("Open...")  , [&](nana::gui::menu::item_proxy& ip)  
+        menu.append(STR("New"    )  , [&](nana::menu::item_proxy& ip)  {  ;  } );
+        menu.append(STR("Open...")  , [&](nana::menu::item_proxy& ip)  
         { 
             _proj.open(_proj.FileName()); /*OpenProj() ;*/   
             if (!_proj.Canceled())
@@ -523,7 +531,7 @@ public:
             //this->_OSbx.open(nana::string(nana::charset(this->_textBox.filename())));this->OpenFile()  ;}                );
 
         } );
-        menu.append(STR("Save...")  , [&](nana::gui::menu::item_proxy& ip)  
+        menu.append(STR("Save...")  , [&](nana::menu::item_proxy& ip)  
         { 
             _proj.save(_proj.FileName()); 
             if( ! _proj.Canceled () )   
@@ -532,10 +540,10 @@ public:
             //SaveProj() ;  
         } );
         menu.append_splitter();
-        menu.append(STR("Set as deffault") , [&](nana::gui::menu::item_proxy& ip)  {;  });
-        menu.append(STR("Restore deffault"), [&](nana::gui::menu::item_proxy& ip)  {;  });
+        menu.append(STR("Set as deffault") , [&](nana::menu::item_proxy& ip)  {;  });
+        menu.append(STR("Restore deffault"), [&](nana::menu::item_proxy& ip)  {;  });
         menu.append_splitter();
-        menu.append(STR("Exit"    )  , [&](nana::gui::menu::item_proxy& ip)  {  ;  } );
+        menu.append(STR("Exit"    )  , [&](nana::menu::item_proxy& ip)  {  ;  } );
 
     }
     void LoadProjectAndReg(nana::string file)
@@ -559,16 +567,16 @@ public:
 							+ "\tNo:  Select a project file to be loaded. " + "\n"
 							+ "\tCancel: Use the values correctly loaded mixed with the\t\t\t previus existing. "
 							;
-			switch ( (nana::gui::msgbox(  *this, nana::charset (caption) , nana::gui::msgbox::yes_no_cancel )
+			switch ( (nana::msgbox(  *this, nana::charset (caption) , nana::msgbox::yes_no_cancel )
                             <<  message
-                        ).icon(nana::gui::msgbox::icon_error) .show (  ))
+                        ).icon(nana::msgbox::icon_error) .show (  ))
 			{
-				case  nana::gui::msgbox::pick_yes :  
+				case  nana::msgbox::pick_yes :  
 					    _Pr.load_defPr();
                         _proj.FileName(nana::charset ( _Pr.ProjetFile ()  ));
 					return;
 
-				case  nana::gui::msgbox::pick_no:    
+				case  nana::msgbox::pick_no:    
                         _proj.open (nana::charset (file));
                         if ( !  _proj.Canceled() )
                                 LoadProject(nana::charset (  _proj.FileName()));
@@ -580,9 +588,9 @@ public:
 
 class SeqExpl : public CompoWidget
 {
-    using Tree = nana::gui::treebox;
+    using Tree = nana::treebox;
     using Node = Tree::item_proxy;
-    using List = nana::gui::listbox;
+    using List = nana::listbox;
 
     ThDyNanaForm       &_Pr;
     Tree                _tree{ *this };
@@ -591,18 +599,20 @@ class SeqExpl : public CompoWidget
     std::vector<CSec*>      _dragSec;
     std::vector<CMultSec*>  _dragMSec;
 
-    nana::gui::button      _loadFile     {*this,STR("Load"   )},       //nana::gui::toolbar  _tbar { *this };
-                           _re_loadFile  {*this,STR("reLoad" )},   
-                           _loadDir      {*this,STR("Load"   )},       
-                           _re_loadDir   {*this,STR("reLoad" )},
-                           _scanDir      {*this,STR("Scan"   )},
-                           _cut          {*this,STR("Cut"    )},
-                           _paste        {*this,STR("Paste"  )},
-                           _del          {*this,STR("Del"    )},
-                           _show_locals_s{*this,STR("local"  )},
-                           _show_filt_s  {*this,STR("filtr"   )}
-                           ; 
-    nana::gui::tooltip    _loadFileTT {_loadFile,STR("File load: Add a group of sequences from a file")},
+    nana::button    _loadFile     {*this,STR("Load"   )},       //nana::toolbar  _tbar { *this };
+                    _re_loadFile  {*this,STR("reLoad" )},   
+                    _loadDir      {*this,STR("Load"   )},       
+                    _re_loadDir   {*this,STR("reLoad" )},
+                    _scanDir      {*this,STR("Scan"   )},
+                    _cut          {*this,STR("Cut"    )},
+                    _paste        {*this,STR("Paste"  )},
+                    _del          {*this,STR("Del"    )},
+                    _cutSec       {*this,STR("Cut"    )},
+                    _delSec       {*this,STR("Del"    )},
+                    _show_locals_s{*this,STR("local"  )},
+                    _show_filt_s  {*this,STR("filtr"  )}
+                    ; 
+    nana::tooltip    _loadFileTT {_loadFile,STR("File load: Add a group of sequences from a file")},
                           _re_loadFileTT ;  
 ;  
 
@@ -625,7 +635,8 @@ class SeqExpl : public CompoWidget
             case 3: swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());
                     return val;  
             case 4: return nana::charset( sec->Description());
-            case 5: return nana::charset( std::string(sec->Get_charSec(), slen));
+			case 5: return nana::charset( sec->Len()<slen ? sec->charSequence() 
+				                                          : (char *)(sec->Sequence().substr (0,slen)).c_str()  );
 
             default:
                 return nana::string{};
@@ -659,18 +670,24 @@ class SeqExpl : public CompoWidget
     void SetDefLayout() override
     {
         _DefLayout = 
-	"vertical                                               		\n\t"
-	"	  <weight=20 <toolbar weight=520 ><>>       	            	\n\t"
-	"	  <horizontal  gap=2   <Tree weight=25% > <List >   >      	\n\t"
-	"		\n\t"
+	                "vertical                                                 \n\t"
+	                "		  <weight=23 <toolbar weight=680 margin=2 ><>>    \n\t"
+	                "		  <      <Tree  > |75% <List >   >      		  \n\t"
+	                "				                                          \n\t"
+	                "		                                                  \n\t"
+	                "	                                                      \n\t"
+
             ;
     }
     void AsignWidgetToFields() override
     {
- 	    _place.field("toolbar") << "   Files:" << _loadFile << _re_loadFile   
+ 	    _place.field("toolbar") << "   Files:"  << _loadFile << _re_loadFile   
+                                << 10           << _paste           
                                 << "      Dir:" << _loadDir  << _re_loadDir  << _scanDir  
-                                << 10            << _cut      << _paste       << _del      
-                                << "      Seq:" << _show_locals_s  << _show_filt_s     ;
+                                << 10           << _cut      << _del      
+                                << "      Seq:" << _show_locals_s  << _show_filt_s 
+								<< 10           << _cutSec   << _delSec
+                                ;
         _place.field("Tree"   ) << _tree;
         _place.field("List"   ) << _list;
     }
@@ -721,7 +738,7 @@ class SeqExpl : public CompoWidget
         return _list.at(0).append(s).value  ( s             )
                                     .check  ( s->Selected() )
                                     .fgcolor( s->Filtered()     ?   0xFF00FF 
-                                                                :   0x0     );//nana::gui::color::gray_border );
+                                                                :   0x0     );//nana::color::gray_border );
     }
 
     Node AddRoot          (CMultSec*ms)  
@@ -793,7 +810,7 @@ public:
     SeqExpl(ThDyNanaForm& tdForm);
     void ShowFindedProbes_in_mPCR(bool show_=true);
     void RefreshProbes_mPCR(bool show_=true);
-    void AddMenuItems(nana::gui::menu& menu);
+    void AddMenuItems(nana::menu& menu);
     void InitTree();
 };
 
@@ -801,15 +818,15 @@ class FindSondenPage : public CompoWidget
 {    
     ThDyProject &_Pr;
     BindGroup   _findSond;
-    nana::gui::NumUnitUpDown _Gmin     {*this, STR("G :"    ), -5, -10 , 10,"kcal/mol"},   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
-                             _Tmmin    {*this, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {*this, STR(""), 63,  45, 75, "°C"      }, 
-                             _Lengthmin{*this, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{*this, STR(""), 35,  15, 40, "nt"      },
-                             _MaxG     {*this, STR("Max G" ), 10, -10, 30, "kcal/mol" },  _MinTm   {*this, STR("Tm :"  ), 30,  10 , 60,"°C"}, 
-                             _MinG     {*this, STR("Min G" ), 15, -10 , 30,"kcal/mol" }, _MaxTm    {*this, STR("Max Tm"), 10, -10, 75, "°C"}, 
-                             _MinSelfG {*this, STR("Min G" ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{*this, STR("Max Tm"), 10, -10, 75, "°C"}, 	
-                             numUpDw_MinTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" }, 
-                             numUpDw_MaxTargCov{ *this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%" } ;
-    nana::gui::tooltip _Gmintt     {_Gmin, STR("Only probes with stronger interaction with target (smaller G by selected Ta) will be included"    ) }/*,   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
+    nana::NumUnitUpDown _Gmin     {*this, STR("G :"    ), -5, -10 , 10,"kcal/mol"},   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
+                        _Tmmin    {*this, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {*this, STR(""), 63,  45, 75, "°C"      }, 
+                        _Lengthmin{*this, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{*this, STR(""), 35,  15, 40, "nt"      },
+                        _MaxG     {*this, STR("Max G" ), 10, -10, 30, "kcal/mol" },  _MinTm   {*this, STR("Tm :"  ), 30,  10 , 60,"°C"}, 
+                        _MinG     {*this, STR("Min G" ), 15, -10 , 30,"kcal/mol" }, _MaxTm    {*this, STR("Max Tm"), 10, -10, 75, "°C"}, 
+                        _MinSelfG {*this, STR("Min G" ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{*this, STR("Max Tm"), 10, -10, 75, "°C"}, 	
+                        numUpDw_MinTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" }, 
+                        numUpDw_MaxTargCov{ *this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%" } ;
+    nana::tooltip _Gmintt     {_Gmin, STR("Only probes with stronger interaction with target (smaller G by selected Ta) will be included"    ) }/*,   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
                              _Tmmin    {*this, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {*this, STR(""), 63,  45, 75, "°C"      }, 
                              _Lengthmin{*this, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{*this, STR(""), 35,  15, 40, "nt"      },
                              _MaxG     {*this, STR("Max G" ), 10, -10, 30, "kcal/mol" },  _MinTm   {*this, STR("Tm :"  ), 30,  10 , 60,"°C"}, 
@@ -818,14 +835,14 @@ class FindSondenPage : public CompoWidget
                              numUpDw_MinTargCov{ *this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%" }, 
                              numUpDw_MaxTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" }*/ ;
 
-    nana::gui::button        _design{*this, STR("Design !" )}, 
+    nana::button        _design{*this, STR("Design !" )}, 
                             _compare{*this, STR("Compare !")};
 
-    nana::gui::checkbox      chkBx_unique{*this, STR("Report unique probes, ")}, 
+    nana::checkbox      chkBx_unique{*this, STR("Report unique probes, ")}, 
                              chkBx_common{*this, STR("Report common probes, ")}, 
                              chkBx_showFindedProbes{*this, STR("Show Finded Probes")};
-	nana::gui::tooltip       chkBx_uniqueTT{chkBx_unique, STR("For each target seq, probes with hybrid on it, AND maximum on a given percent of the OTHER targets will be reported")};
-	nana::gui::tooltip       chkBx_commonTT{chkBx_common, STR("All probes with hybrid on at laest the given percent of targets will be reported")};
+	nana::tooltip       chkBx_uniqueTT{chkBx_unique, STR("For each target seq, probes with hybrid on it, AND maximum on a given percent of the OTHER targets will be reported")};
+	nana::tooltip       chkBx_commonTT{chkBx_common, STR("All probes with hybrid on at laest the given percent of targets will be reported")};
 public: 
     FindSondenPage(ThDyNanaForm& tdForm);
     void SetDefLayout   () override
@@ -900,7 +917,7 @@ public:
 class uArray : public CompoWidget
 { public: 
     ThDyNanaForm      &_Pr;
-    nana::gui::button  _do_uArray{*this, STR(" uArray ! ")};
+    nana::button  _do_uArray{*this, STR(" uArray ! ")};
     BindGroup          _uArray;
 
     uArray (ThDyNanaForm& tdForm);
@@ -924,7 +941,7 @@ class uArray : public CompoWidget
 class MplexPCR : public CompoWidget
 { public: 
     ThDyNanaForm      &_Pr;
-    nana::gui::button  _do_mPCR{*this, STR(" PCR ! ")};
+    nana::button  _do_mPCR{*this, STR(" PCR ! ")};
     BindGroup          _mPCR;
 
     MplexPCR (ThDyNanaForm& tdForm);
@@ -954,25 +971,25 @@ class MplexPCR : public CompoWidget
 class TmCalcPage : public CompoWidget
 {
     ThDyProject             &_Pr;
-    nana::gui::textbox          sec_                {*this},  
-                                sec2align_          {*this},  
-                                txtBx_ResultSec     {*this},  
-                                txtBx_ResultSec2Align{*this};
-    nana::gui::checkbox         chkBx_Tm_save_asPCR {*this, STR("save")},   
-                                chkBx_align         {*this, STR("align")},
-                                chkBx_copy_rev      {*this, STR("rev")},    
-                                chkBx_copy_compl    {*this, STR("cpl")};
-    nana::gui::button           run_                {*this, STR("Tm !")},
-                                copy_f_s_2          {*this, STR("copy")},   
-                                copy_s              {*this, STR("c")},
-                                copy_s_a            {*this, STR("c")};      
-    nana::gui::label            error_              {*this, STR("no error")};
-    nana::gui::NumberBox        Tm_min_Up{*this}, Tm_Up{*this}, Tm_max_Up{*this} ,
-                                Tm_min_Dw{*this}, Tm_Dw{*this}, Tm_max_Dw{*this} ,
-                                Tm_min_In{*this}, Tm_In{*this}, Tm_max_In{*this} ,
-                                G_min_Up{*this},   G_Up{*this},  G_max_Up{*this} ,
-                                G_min_Dw{*this},   G_Dw{*this},  G_max_Dw{*this} ,
-                                G_min_In{*this},   G_In{*this},  G_max_In{*this} ;
+    nana::textbox           sec_                {*this},  
+                            sec2align_          {*this},  
+                            txtBx_ResultSec     {*this},  
+                            txtBx_ResultSec2Align{*this};
+    nana::checkbox          chkBx_Tm_save_asPCR {*this, STR("save")},   
+                            chkBx_align         {*this, STR("align")},
+                            chkBx_copy_rev      {*this, STR("rev")},    
+                            chkBx_copy_compl    {*this, STR("cpl")};
+    nana::button            run_                {*this, STR("Tm !")},
+                            copy_f_s_2          {*this, STR("copy")},   
+                            copy_s              {*this, STR("c")},
+                            copy_s_a            {*this, STR("c")};      
+    nana::label             error_              {*this, STR("no error")};
+    nana::NumberBox         Tm_min_Up{*this}, Tm_Up{*this}, Tm_max_Up{*this} ,
+                            Tm_min_Dw{*this}, Tm_Dw{*this}, Tm_max_Dw{*this} ,
+                            Tm_min_In{*this}, Tm_In{*this}, Tm_max_In{*this} ,
+                            G_min_Up{*this},   G_Up{*this},  G_max_Up{*this} ,
+                            G_min_Dw{*this},   G_Dw{*this},  G_max_Dw{*this} ,
+                            G_min_In{*this},   G_In{*this},  G_max_In{*this} ;
 
     BindGroup              _TmCalc;
 public:     
@@ -995,7 +1012,7 @@ public:
 	    _place.field("InputSec" )<< sec_ << sec2align_ ;
 	    _place.field("error"    )<< error_ ;
 	    _place.field("Left"     )<< run_  << chkBx_align;
-	    _place.field("CopyBut"  )<< nana::gui::vplace::room (copy_f_s_2, 1, 2)<< copy_s << copy_s_a ;
+	    _place.field("CopyBut"  )<< nana::vplace::room (copy_f_s_2, 1, 2)<< copy_s << copy_s_a ;
 	    _place.field("Table"    )<< ""          << "   min-" << "Tm(°C)"   << "-max" << "   min-"  << "G(kJ)"   << "-max   "  ;
 	    _place.field("Table"    )<< "Up"        << Tm_min_Up << Tm_Up      << Tm_max_Up<<G_min_Up  <<  G_Up     <<  G_max_Up  ;
 	    _place.field("Table"    )<< "Down"      << Tm_min_Dw << Tm_Dw      << Tm_max_Dw<<G_min_Dw  <<  G_Dw     <<  G_max_Dw  ;
@@ -1013,11 +1030,11 @@ public:
 		}
 		catch ( std::exception& e)
 		{ 
-            (nana::gui::msgbox(*this,STR("Error during Tm calculation !"), nana::gui::msgbox::button_t::ok)<<e.what()) (  ) ;
+            (nana::msgbox(*this,STR("Error during Tm calculation !"), nana::msgbox::button_t::ok)<<e.what()) (  ) ;
 		    return;
 		}	 	        		 
-        txtBx_ResultSec      .caption (nana::charset (_Pr._TmCal._AlignedSec      .Get() ));
-        txtBx_ResultSec2Align.caption (nana::charset (_Pr._TmCal._AlignedSec2Align.Get() ));
+        txtBx_ResultSec      .caption (nana::charset (_Pr._TmCal._AlignedSec        ));
+        txtBx_ResultSec2Align.caption (nana::charset (_Pr._TmCal._AlignedSec2Align  ));
         Tm_min_Up.Value( _Pr._TmCal._TmS.Min ());
         Tm_Up    .Value( _Pr._TmCal._TmS.Ave ());  
         Tm_max_Up.Value( _Pr._TmCal._TmS.Max ()); 
@@ -1072,31 +1089,31 @@ public:
 
 };
 
-class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyProject
+class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
 {
-    using tabbar = nana::gui::tabbar<nana::string> ;
-	tabbar                          tabbar_     {*this};
-    SetupPage                       setup_      {*this};
-    FindSondenPage                  findSond_   {*this};
-    MplexPCR                        mPCR_       {*this};
-    uArray                          uArr_       {*this}; 
-    TmCalcPage                      tmCalc_     {*this}; 
-    nana::gui::NumUnitUpDown        numUpDwMaxTgId  {*this, STR("Max. ident.:"        ), 99,  50 , 100 ,   "%"}, 
-                                    numUpDw_TgBeg   {*this, STR("Beg.:"               ),  0,   0 , 100000,"nt"},    /// rev !!
-                                    numUpDw_TgEnd   {*this, STR("End.:"               ),  0,   0 , 100000,"nt"},    /// rev !!	
-                                    numUpDw_SLenMin {*this, STR("Min.Len.:"           ),  0,   0 , 100000,"nt"},
-                                    numUpDw_SLenMax {*this, STR("Max.Len.:"           ),  0,   0 , 100000,"nt"};
-    BindGroup                       _commPP     ;
+    using tabbar = nana::tabbar<nana::string> ;
+	tabbar                     tabbar_     {*this};
+    SetupPage                  setup_      {*this};
+    FindSondenPage             findSond_   {*this};
+    MplexPCR                   mPCR_       {*this};
+    uArray                     uArr_       {*this}; 
+    TmCalcPage                 tmCalc_     {*this}; 
+    nana::NumUnitUpDown        numUpDwMaxTgId  {*this, STR("Max. ident.:"        ), 99,  50 , 100 ,   "%"}, 
+                               numUpDw_TgBeg   {*this, STR("Beg.:"               ),  0,   0 , 100000,"nt"},    /// rev !!
+                               numUpDw_TgEnd   {*this, STR("End.:"               ),  0,   0 , 100000,"nt"},    /// rev !!	
+                               numUpDw_SLenMin {*this, STR("Min.Len.:"           ),  0,   0 , 100000,"nt"},
+                               numUpDw_SLenMax {*this, STR("Max.Len.:"           ),  0,   0 , 100000,"nt"};
+    BindGroup                  _commPP     ;
 
   public:    
-    std::vector<std::unique_ptr<nana::gui::form>> _results;
+    std::vector<std::unique_ptr<nana::form>> _results;
     SeqExpl                         mExpl_      {*this};
 
     ThDyNanaForm (int argc, char *argv[])
-                  :nana::gui::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
+                  :nana::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
                    EditableForm    (nullptr, *this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")) 
    {
-        nana::gui::API::zoom_window(*this, true);
+        //nana::API::zoom_window(*this, true);
         //nana::pixel_rgb_t bk;
         //bk.u.color = background ();
         //bk.u.element.blue =0; 
@@ -1110,7 +1127,7 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         add_page( uArr_     ); // 4
         add_page( tmCalc_   ); // 5
 
-        tabbar_.active (0);
+        tabbar_.activate (1);
 
         setup_._proj.FileNameOnly(nana::charset ( ProjetFile()  ));
         try{ 
@@ -1121,8 +1138,8 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 		    }
     	catch ( std::exception& e )      // Por ejemplo cuando no existe Def Project: 1ra vez que se usa el prog.
 		{   
-            (nana::gui::msgbox(*this, STR("Error during initial project load !\n\t"), nana::gui::msgbox::button_t::ok)
-                             .icon(nana::gui::msgbox::icon_information )
+            (nana::msgbox(*this, STR("Error during initial project load !\n\t"), nana::msgbox::button_t::ok)
+                             .icon(nana::msgbox::icon_information )
                             << e.what()    << "\n\n A new Default Project will be created. "
                           ).show (  ) ;
 		    save_defPr() ; 					                
@@ -1146,15 +1163,15 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
 
 		//nana::fn_group<void(tabbar&, value_type&)> active;
 
-		tabbar_.ext_event().active = [this]( tabbar & t, tabbar::value_type& tab)
+		tabbar_.events().activated( [this]()// const tabbar & t, const tabbar::value_type& tab)
 		{
-			bool enable	= tabbar_.active( )==1;
+			bool enable	= tabbar_.activated( )==1;
 			auto &m		= _menuBar. at(1);
 			auto sz		= m.size();
 
 			for(int i=0; i< sz; ++i)
 				m.enabled(i,enable);
-		};
+		});
 
 
    }
@@ -1202,537 +1219,8 @@ class ThDyNanaForm : public nana::gui::form, public EditableForm , public ThDyPr
         tabbar_.relate    (tabbar_.length()-1, w          );
 	    _place.field("Pages"   ).fasten( w)  ;
     }         
-    void ShowExpl(){tabbar_.active(1);}
+    void ShowExpl(){tabbar_.activate(1);}
 };
 
-   SetupPage::SetupPage          (ThDyNanaForm& tdForm)
-        : _Pr           (tdForm), 
-          CompoWidget  (tdForm, STR("Setup"), STR("Setup.lay.txt"))
-    {
-        InitMyLayout();
-        SelectClickableWidget( _set_def_proj);
-        SelectClickableWidget( *this);
 
-        MakeResponive();
-    }
-   SeqExpl::SeqExpl              (ThDyNanaForm& tdForm)
-        : _Pr             (tdForm), 
-          CompoWidget     (tdForm, STR("Seq Explorer"), STR("SeqExpl.lay.txt"))
-    {
-        InitMyLayout();
-        SelectClickableWidget( _tree);
-        SelectClickableWidget( *this);
-        _tree.checkable(true);
-        _list.checkable(true);
-        _list.append_header(STR("Name")  , 120);
-        _list.append_header(STR("Lenght"), 50);
-        _list.append_header(STR("Tm °C") , 60);
-        _list.append_header(STR("Deg")   , 50);
-        _list.append_header(STR("Description")   , 220);
-        _list.append_header(STR("Seq")   , 420);
-        _list.resolver(ListSeqMaker());
-
-
-        AddMenuItems(_menuProgram);
-        MakeResponive();
-
-        _tree.auto_draw(true);
-        _list.auto_draw(true);
-    }
-   FindSondenPage::FindSondenPage(ThDyNanaForm& tdForm)
-        : _Pr        (tdForm), 
-          CompoWidget(tdForm, STR("Find probes"), STR("FindSonden.lay.txt"))
-    {
-                background (0xAAAAAA);
-
-        chkBx_showFindedProbes.check(true);
-        InitMyLayout();
-        SelectClickableWidget( *this);
-
-        _design .make_event<nana::gui::events::click>([&]() 
-        {
-            Run_Design(true );  
-        });    
-
-        _compare.make_event<nana::gui::events::click>([&]() 
-        {
-            Run_Design(false);  
-        });  
-
-        //_Gmin.tooltip(STR("Only probes with stronger interaction with target (smaller G by selected Ta) will be \"include\""));
-   
-   }
-   MplexPCR::MplexPCR            (ThDyNanaForm& tdForm)
-        : _Pr             (tdForm), 
-          CompoWidget     (tdForm, STR("MplexPCR"), STR("MplexPCR.lay.txt"))
-    {
-
-        _do_mPCR      .make_event <nana::gui::events::click>([&](){buttPCR_Click ();});
-
-        InitMyLayout();
-        SelectClickableWidget( *this);
-    }
-   uArray::uArray            (ThDyNanaForm& tdForm)
-        : _Pr             (tdForm), 
-          CompoWidget     (tdForm, STR("uArray"), STR("uArray.lay.txt"))
-    {
-
-        _do_uArray      .make_event <nana::gui::events::click>([&](){buttuArray_Click ();});
-
-        InitMyLayout();
-        SelectClickableWidget( *this);
-    }
-   TmCalcPage::TmCalcPage        (ThDyNanaForm& tdForm)
-        : _Pr           (tdForm), 
-          CompoWidget  (tdForm, STR("Tm Calc"), STR("Tm Calc.lay.txt"))
-    {
-                         sec_.multi_lines(false).editable(true ).tip_string (STR("forward primer"));
-                   sec2align_.multi_lines(false).editable(true ).tip_string (STR("reverse primer"));
-              txtBx_ResultSec.multi_lines(false).editable(false).tip_string (STR("alingned forward primer"));
-        txtBx_ResultSec2Align.multi_lines(false).editable(false).tip_string (STR("alingned reverse primer"));
-
-        _TmCalc << link (   _Pr._TmCal.align      ,    chkBx_align    )    
-                << link (   _Pr._TmCal._Sec       ,    sec_           )
-                << link (   _Pr._TmCal._Sec2Align ,    sec2align_     )
-                ;
-
-        run_      .make_event <nana::gui::events::click>([&](){Run ();});
-        copy_f_s_2.make_event <nana::gui::events::click>([&](){Copy();});      ;   //(*this, STR("copy")),   
-        copy_s    .make_event <nana::gui::events::click>([&](){Self();});      ;  //  (*this, STR("c")),
-        copy_s_a  .make_event <nana::gui::events::click>([&](){Rev ();});      ;  
-
-        InitMyLayout();
-        SelectClickableWidget( *this);
-        SelectClickableWidget( error_);
-    }
-   SeqExpl::Node SeqExpl::AddNewSeqGr  (Tree::item_proxy& node) 
-		{	try{    
-					return appendNewNode(node, _Pr._cp.AddSeqGroup(node.value<CMultSec*>(),"New group")).expend(true);
-		        }
-				catch ( std::exception& e)
-		        { 
-				  (nana::gui::msgbox ( STR("Error adding new group" ) )<< e.what()).show() ;
-                  return node;
-		        }		
-		}
-   SeqExpl::Node SeqExpl::AddMSeqFiles (const std::string &file, bool  all_in_dir) 
-	{	 
-    try{ 
-			auto      tn    = _tree.selected();
-            CMultSec* ms    = tn.value<CMultSec*>();
-            CMultSec* newms = _Pr._cp.AddSeqFromFile	(ms , file, all_in_dir	);
-			return Refresh(   tn);
-		}
-		catch ( std::exception& e)
-		{ 
-			(nana::gui::msgbox ( STR("Error adding sequences" ) )<< e.what()).show() ;
-            return _tree.selected();
- 		}		 
-	}
-   SeqExpl::Node SeqExpl::Replace      (Tree::item_proxy& tn, CMultSec *ms, const std::string& Path, bool all_in_dir)
-    {        
-    try{ 
-         auto      own = tn->owner();
-         CMultSec *pms = ms->_parentMS;  
-
-         _Pr._cp._pSeqNoUsed->AddMultiSec(ms); 
-         _tree.erase(tn);
-
-		 CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(Path), all_in_dir	);
-         return appendNewNode(own, newms).expend(true).select(true) ;
-		}
-		catch ( std::exception& e)
-		{ 
-			(nana::gui::msgbox ( STR("Error replacing sequences" ) )<< e.what()).show() ;
-                  return tn;
- 		}		 
-    }
-    void SeqExpl::ShowFindedProbes_in_mPCR(bool show_/*=true*/)
-    {
-        auto idp = _Pr._cp.MaxTgId.get();
-        _Pr._cp.MaxTgId.set(100);
-        CMultSec *ms= _Pr._cp.AddSeqFromFile	(_Pr._mPCR._probesMS.get() , _Pr._cp._OutputFile.get() + ".sonden.fasta", false	);
-        _Pr._cp.MaxTgId.set(idp);
-
-        RefreshProbes_mPCR( show_ );
-    }
-    void SeqExpl::RefreshProbes_mPCR(bool show_/*=true*/)
-    {
-        auto probNode = _tree.find(nana::charset(_Pr._mPCR._probesMS->_name));
-        Refresh(probNode).expend(true).select(true);
-        if (show_) 
-            _Pr.ShowExpl();
-    }
-    void SeqExpl::AddMenuItems(nana::gui::menu& menu)
-    {
-        menu.append_splitter();
-
-        menu.append(STR("Add a new, empty, group for sequences")  , [&](nana::gui::menu::item_proxy& ip) {  AddNewSeqGr(_tree.selected());    });
-        menu.append(STR("Add a group of sequences from a file..."), [&](nana::gui::menu::item_proxy& ip) {  Click(_loadFile);                 });
-        menu.append(STR("Add a tree of groups of sequences from a directory..."),[&](nana::gui::menu::item_proxy& ip) {  Click(_loadDir);     });
-
-        menu.append_splitter();
-
-        menu.append(STR("Reproduce only the structure of directory..."),[&](nana::gui::menu::item_proxy& ip)  {  Click(_scanDir);     });
-        menu.append(STR("Reload from the original file" )  , [&](nana::gui::menu::item_proxy& ip)   {  ReloadFile(_tree.selected());    });
-        menu.append(STR("Reload from the original directory"), [&](nana::gui::menu::item_proxy& ip) {  ReloadDir(_tree.selected());     });
-        menu.append(STR("Replace from a file..." )  , [&](nana::gui::menu::item_proxy& ip) 
-        {
-			auto tn= _tree.selected();
-            if (isRoot(tn))
-            {
-                nana::gui::msgbox ( STR("Sorry, you can´t replace group " + tn.text()) ).show() ;
-                return;
-            }
-            nana::gui::filebox  fb{ *this, true };
-            fb .add_filter ( SetupPage::FastaFiltre( )                   )
-               .title(STR("Replace/reload a group of sequences from a file"));
-            if (!fb()) return;
-
-            CMultSec *ms = tn.value<CMultSec*>();
-            CMultSec *pms = ms->_parentMS; // tn->owner.value<CMultSec*>();
-            _Pr._cp._pSeqNoUsed->AddMultiSec(ms);
-			_Pr._cp.AddSeqFromFile	( pms, nana::charset(fb.file()), false	);
-            Refresh(tn->owner());
-            //_tree.auto_draw(false);
-            //_tree.erase(tn);
-            //Refresh(appendNewNode  (own, newms) );
-            //_tree.auto_draw(true);
-        });
-        menu.append(STR("Replace from directory..."), [&](nana::gui::menu::item_proxy& ip) 
-        {
-			auto tn= _tree.selected();
-            if (tn->owner()->owner().empty())
-            {
-                nana::gui::msgbox ( STR("Sorry, you can´t replace group " + tn->text()) ) ;
-                return;
-            }
-            nana::gui::filebox  fb{ *this, true };
-            fb.title(STR("Replace/reload a group of sequences from a directory"));
-            if (!fb()) return;
-
-            CMultSec *ms = tn.value<CMultSec*>();
-            CMultSec *pms = ms->_parentMS; // tn->owner.value<CMultSec*>();
-            ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
-            auto own = tn->owner();
-
-            _tree.auto_draw(false);
-            _list.auto_draw(false);
-
-			CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(fb.file()), true	);
-            _tree.erase(tn);
-            populate(appendNewNode  (own, newms) );
-            own.expend(true);
-
-            _list.clear();
-            populate_list_recur(pms);
-
-            _tree.auto_draw(true);
-            _list.auto_draw(true);
-        });
-
-        menu.append_splitter();
-
-        menu.append(   STR("Show Only local sequences"),[&](nana::gui::menu::item_proxy& ip) { ShowLocals( menu.checked(ip.index()));    });
-        menu.check_style(menu.size()-1, nana::gui::menu::check_t::check_highlight );
-        menu.checked (menu.size()-1, false );
-
-        menu.append(STR("Show filtered sequences"     ),[&](nana::gui::menu::item_proxy& ip) { ShowFiltered( menu.checked(ip.index()));  });
-        menu.check_style(menu.size()-1, nana::gui::menu::check_highlight); // check_option
-        menu.checked (menu.size()-1, true );
-
-        menu.append_splitter();
-        menu.append(STR("Cut selected sequences from list"          ),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
-            //_list.auto_draw(false);
-            //_list.clear();
-            // populate_list_recur(_tree.selected());
-            //_list.auto_draw(true);
-        });
-        menu.append(STR("Cut selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip)  {  Click(_cut);     });
-        menu.append(STR("Paste the sequences"                       ),[&](nana::gui::menu::item_proxy& ip)  {  Click(_paste);     });
-
-        menu.append_splitter();
-        menu.append(STR("Del selected sequences from list"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
-            //_list.auto_draw(false);
-            //_list.clear();
-            // populate_list_recur(_tree.selected());
-            //_list.auto_draw(true);
-        });
-        menu.append(STR("Del selected groups of sequences from tree"),[&](nana::gui::menu::item_proxy& ip)  {  Click(_del);     });
-        menu.append(STR("Rename the selected group of sequences"),[&](nana::gui::menu::item_proxy& ip) 
-        {
-            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
-            //_list.auto_draw(false);
-            //_list.clear();
-            // populate_list_recur(_tree.selected());
-            //_list.auto_draw(true);
-        });
-
-    }
-    void SeqExpl::MakeResponive()
-    {
-		_tree.ext_event().selected = [&](nana::gui::window w, Tree::item_proxy node, bool selected) { if (selected) RefreshList(node); };
-        _tree.ext_event().checked  = [&](nana::gui::window w, Tree::item_proxy node, bool checked)
-        {                                              
-            node.value<CMultSec*>()->Selected(checked);
-            if (node== _tree.selected())  
-                RefreshList(node);                //  ??????? Only RefreschList
-        };
-
-        _list.ext_event().checked  = [&](  List::item_proxy item, bool checked)
-        {                                               
-            item.value<CSec*>()->Selected(checked);
-            if ( ! _showAllseq && !checked) 
-                _list.erase(item) ;
-        };
- 
-        _loadFile   .make_event<nana::gui::events::click>([this]()
-                        {
-                            nana::gui::filebox  fb{ *this, true };
-                            fb .add_filter ( SetupPage::FastaFiltre( )                   )
-                               .title      ( STR("File load: Add a group of sequences from a file") );
-
-                            if (fb()) 
-                               AddMSeqFiles(nana::charset(fb.file()), false);
-                        });
-        //_loadFileTT.set(_loadFile,STR("File load: Add a group of sequences from a file"));
-
-        _re_loadFile.make_event<nana::gui::events::click>([this]()  {  ReloadFile(_tree.selected());    });
-        _re_loadFileTT.set(_re_loadFile,STR("File reload: Reload a group of sequences from a file, \nposible using new filtres."));
-
-        _loadDir    .tooltip(STR("Directory load: Add a tree of groups of sequences from a directory."))
-                    .make_event<nana::gui::events::click>([this]()
-                        {
-                            nana::gui::filebox  fb{ *this, true };
-                            fb .add_filter ( SetupPage::FastaFiltre( )                   )
-                               .title(STR("Directory load: Add a tree of groups of sequences from a directory"));
-                            if (fb()) 
-                                AddMSeqFiles(nana::charset(fb.file()), true);
-                        });
-        _re_loadDir .tooltip(STR("Directory reload: Reload a tree of groups of sequences from a directory,\nposible using new filtres."))
-                    . make_event<nana::gui::events::click>([this]()  {  ReloadDir (_tree.selected());    });
-        _scanDir    .tooltip(STR("Directory scan: Reproduce the structure of directory..."))
-                    .make_event<nana::gui::events::click>([this]()
-                        {
-                            nana::gui::filebox  fb{ *this, true };
-                            fb .add_filter ( SetupPage::FastaFiltre( )                   )
-                               .title(STR("Directory scan: Reproduce the structure of directory..."));
-                            if (!fb()) return;
-
-                            auto      tn    = _tree.selected();
-                            CMultSec* ms    = tn.value<CMultSec*>();
-                            CMultSec* newms = _Pr._cp.CopyStructFromDir	( ms, nana::charset(fb.file())	);
-                            _tree.auto_draw(false);
-			                populate(  appendNewNode  (tn, newms) );
-                            tn.expend(true);
-                            _tree.auto_draw(true);
-                        });
-        _cut        .tooltip(STR("Cut a group of sequences"))
-                    .make_event<nana::gui::events::click>([this]()
-        {
-			auto tn= _tree.selected();
-            if (tn->owner()->owner().empty())
-            {
-                (nana::gui::msgbox ( _tree , STR("Cut a group of sequences " + tn->text()) )
-                          << STR("Sorry, you can´t cut the group: ") + tn->text() )
-                          .icon(nana::gui::msgbox::icon_error )
-                          .show() ;
-                return;
-            }
-            CMultSec *ms = tn.value<CMultSec*>();
-            CMultSec *pms = ms->_parentMS;  
-            _Pr._cp._pSeqNoUsed->AddMultiSec(ms);
-            _dragMSec.push_back(ms);
-            //ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
-            auto own = tn->owner();
-
-            _tree.auto_draw(false);
-            _list.auto_draw(false);
-
-            _tree.erase(tn);
-            populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
-            own.select(true).expend(true);
-        });
-        _paste      .tooltip(STR("Paste a group of sequences"))
-                    .make_event<nana::gui::events::click>([this]()
-        {
-			auto       tn = _tree.selected();
-            CMultSec *pms = tn.value<CMultSec*>();
-
-            for (auto ms : _dragMSec)
-                pms->AddMultiSec(ms);
-
-            _dragMSec.clear();
-
-            _tree.auto_draw(false);
-            _list.auto_draw(false);
-
-            populate(tn);
-            populate(_tree.find(STR("Dont use") ));
-            _list.clear();
-            populate_list_recur(tn);
-            tn.select(true).expend(true);
-
-            _tree.auto_draw(false);
-            _list.auto_draw(false);
-        });
-        _del        .tooltip(STR("Delete a group of sequences "))
-                    .make_event<nana::gui::events::click>([this]()
-        {
-			auto tn= _tree.selected();
-            if (tn->owner()->owner().empty())
-            {
-                (nana::gui::msgbox ( _tree , STR("Deleting a group of sequences " + tn->text()) )
-                          << STR("Sorry, you can´t delete the group: ") + tn->text() )
-                          .icon(nana::gui::msgbox::icon_error )
-                          .show() ;
-                return;
-            }
-            CMultSec *ms = tn.value<CMultSec*>();
-            CMultSec *pms = ms->_parentMS;           
-            _Pr._cp._pSeqNoUsed->AddMultiSec(ms); //ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
-            auto own = tn->owner();
-
-            _tree.auto_draw(false);
-            _list.auto_draw(false);
-
-            _tree.erase(tn);
-            populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
-
-            own.select(true).expend(true);
-
-        });
-
-        _show_locals_s.enable_pushed(true)
-                      .pushed(false)
-                      .tooltip(STR("Show only local sequences, and not the sequences in internal trees"))   
-                      .make_event<nana::gui::events::click>([this]() { ShowLocals( _show_locals_s.pushed());  });
-
-        _show_filt_s.enable_pushed(true)  
-                    .pushed(true) 
-                    .tooltip(STR("Show filtered sequences too"))   
-                    .make_event<nana::gui::events::click>([this]() { ShowFiltered( _show_filt_s.pushed());  });
-    }
-
-    void SeqExpl::InitTree()
-    {
-        _list.auto_draw(false);
-        _tree.auto_draw(false);
-
-        CMultSec *ms=_Pr._cp._pSeqTree.get();
-        for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
-			populate( AddRoot( ms->CurMSec())) ;
-
-        _tree.find(STR("Target seq")).select(true);
-        populate_list_recur(_Pr._cp._pSeqTree.get());
-
-    }
-
-    void FindSondenPage::Run_Design(bool design)
-    {
-        _Pr._SdDes._design	 = design ;		
-		 
-		try{                                   
-		        _Pr._SdDes._cp.Actualice_NNp();  
-                _Pr.Run(_Pr._SdDes);	 //     _Pr._SdDes.Run ();	
-
-                if (chkBx_showFindedProbes.checked()) 
-                    ( dynamic_cast<ThDyNanaForm&>(_Pr)).mExpl_.ShowFindedProbes_in_mPCR();
- 		}
-		catch ( std::exception& e)
-		{ 
-            (nana::gui::msgbox(*this,STR("Error during Sonde Design !"), nana::gui::msgbox::button_t::ok)<<e.what()) (  ) ;
-		    return;
-		}	 	        		 
-    }   
-    void MplexPCR::buttPCR_Click()  //	  Run      _IPrgPar_mPCR
-	{	 			
-	 try{                                   
-		  _Pr._mPCR._cp.Actualice_NNp();  
- 		  _Pr.Run(_Pr._mPCR);	
-
-          _Pr.mExpl_.RefreshProbes_mPCR(/*false*/); 
-
-          _Pr._results.emplace_back(new TableRes(_Pr._mPCR._rtbl));
-          _Pr._results.back()->show();
-          _Pr._results.emplace_back(new TableRes(_Pr._mPCR._rtbl_self));
-          _Pr._results.back()->show();
-		}
-	catch ( std::exception& e)
-		{ 
-          cerr<< e.what()    ;
-          (nana::gui::msgbox(*this,STR("Error during multiplex PCR analis !"), 
-                                                nana::gui::msgbox::button_t::ok)   <<e.what()) (  ) ;
-		  return;
-		}
-        //ShowResTbl(_Pr._mPCR._rtbl );
-        //_Pr._uArr._rtbl = nullptr;
-
-        //ShowResTbl(_Pr._mPCR._rtbl_self );
-        //_Pr._mPCR._rtbl_self = nullptr;
-
-	}
-    void uArray::buttuArray_Click()  
-	{	 			
-	 try{                                   
-		  _Pr._uArr ._cp.Actualice_NNp();  
- 		  _Pr.Run(_Pr._uArr);	
-
-          _Pr._results.emplace_back(new TableRes(_Pr._uArr._rtbl));
-          _Pr._results.back()->show();
-		}
-	catch ( std::exception& e)
-		{ 
-          cerr<< e.what()    ;
-          (nana::gui::msgbox(*this,STR("Error during uArr analis !"), 
-                                                nana::gui::msgbox::button_t::ok)   <<e.what()) (  ) ;
-		  return;
-		}
-	}
-
-
-int main(int argc, char *argv[]) try
-{
-
-    //MIndex  idx{Invalid_Menu_idx};
-    //{ auto t_idx=std::string::npos;
-    //  if (t_idx == std::string::npos )
-    //           t_idx = Invalid_Menu_idx ;
-    //  idx = t_idx;                    // use a cast to avoid false warning??
-    //}                                       // this could be a "graped" for some standard function
-    //if (idx == Invalid_Menu_idx)
-    //        ;      // not found
-    //else
-    //       ;      // found
-    //  auto t_idx = std::string::npos;
-    //  if ( t_idx >= Invalid_Menu_idx )
-    //          idx = Invalid_Menu_idx ;    // not found
-    //  else
-    //          idx = t_idx;                           // found, use a cast to avoid false warning??
-   ////if (SmartMIndex idx= std::find(some_menu_item....)!= Invalid_SMenu_idx )
-   ////  { ;}                                                 // found, use idx.i
-   ////else
-   ////  { ;}                                                 // not found, still use idx.i if you want to return a non_value.
-
-	IParBind::SetDef(PriorizeDefault::Parametr );
-    ThDyNanaForm tdForm(  argc,  argv);
-	tdForm.show();
-	nana::gui::exec();
-	return 0;
-
-} 
-catch (std::exception& e)
-    {
-        std::cerr<< std::endl<< e.what();
-        throw ;
-    } 
-catch (...)
-    {
-        std::cerr<< std::endl<< "exeption !!";
-        throw ;
-    }
-
+#endif

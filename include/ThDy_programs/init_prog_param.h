@@ -77,9 +77,12 @@ class CParamString: public IParam
 {    std::string  _v, &_value;
  public:
     /// Link to an existing parameter. Do not use the internal string _v. For compatibility.
-    CParamString (IProg *pp,  const std::string& titel, const std::string& etiq, std::string &parRef,  
+    CParamString  (IProg *pp,  const std::string& titel, const std::string& etiq, std::string &parRef,  
 		            const std::string& defValue
-					) : IParam (pp, titel, etiq), _value(parRef)            {  _value= defValue;	          }
+				  ) : IParam (pp, titel, etiq), _value(parRef)            
+                 {  
+                    _value= defValue;	          
+                 }
 	///// Use the internal parameter and dont need an external one
        CParamString (IProg *pp,      const std::string& titel, const std::string& etiq, 
 		            const std::string& defValue
@@ -90,7 +93,12 @@ class CParamString: public IParam
 		  //          const std::string& defValue
 				//	) : CParamString (pp,  titel, etiq, _v,  defValue	)  {            }
 
-	void set(const std::string& value){ if (value == _value) return; _value = value;  changed();    }
+	void set(const std::string& value)
+            { 
+               if (value == _value) return; 
+               _value = value;  
+               changed();    
+            }
 	std::string get()const{ return _value;    }
 
 	virtual std::ostream	    &saveValue	(std::ostream	&osPr) const override   

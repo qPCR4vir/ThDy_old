@@ -87,12 +87,12 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr,
 
     string of{ IPrgPar_uArr->_cp._OutputFile.get() + of_x }, f;
 
-	f=of+".uArr.Tm.csv" ;	ofstream osTm;		if (IPrgPar_uArr->_cp._st_savTm		)	{ osTm.open		(f.c_str()	);	assert(osTm		);}
-	f=of+".uArr.G.csv"  ;	ofstream osG ;		if (IPrgPar_uArr->_cp._st_savG		)	{ osG.open		(f.c_str()	);	assert(osG		);}
-	f=of+".uArr.Pos.csv";	ofstream osPos;		if (IPrgPar_uArr->_cp._st_savPos	)	{ osPos.open	(f.c_str()	);	assert(osPos	);}
-	f=of+".Plasm_Tm.csv";	ofstream osPl_Tm;	if (IPrgPar_uArr->_cp._st_savTm_Plasm)	{ osPl_Tm.open	(f.c_str()	);	assert(osPl_Tm	);}
-	f=of+".Plasm_G.csv";	ofstream osPl_G;	if (IPrgPar_uArr->_cp._st_savG_Plasm)	{ osPl_G.open	(f.c_str()	);	assert(osPl_G	);}
-	f=of+".uArr.Al.csv";	ofstream osAl;		if (IPrgPar_uArr->_cp._st_savAlign	)	{ osAl.open		(f.c_str()	);	assert(osAl		);}
+	f=of+".uArr.Tm.csv" ;	ofstream osTm;		if (IPrgPar_uArr->_cp.st_savTm .get()	)	{ osTm.open		(f.c_str()	);	assert(osTm		);}
+	f=of+".uArr.G.csv"  ;	ofstream osG ;		if (IPrgPar_uArr->_cp.st_savG  .get()	)	{ osG.open		(f.c_str()	);	assert(osG		);}
+	f=of+".uArr.Pos.csv";	ofstream osPos;		if (IPrgPar_uArr->_cp.st_savPos.get()	)	{ osPos.open	(f.c_str()	);	assert(osPos	);}
+	f=of+".Plasm_Tm.csv";	ofstream osPl_Tm;	if (IPrgPar_uArr->_cp.st_savTm_Plasm.get()) { osPl_Tm.open	(f.c_str()	);	assert(osPl_Tm	);}
+	f=of+".Plasm_G.csv";	ofstream osPl_G;	if (IPrgPar_uArr->_cp.st_savG_Plasm.get())	{ osPl_G.open	(f.c_str()	);	assert(osPl_G	);}
+	f=of+".uArr.Al.csv";	ofstream osAl;		if (IPrgPar_uArr->_cp.st_savAlign.get())	{ osAl.open		(f.c_str()	);	assert(osAl		);}
 
     std::shared_ptr<CSaltCorrNN>  NNpar {  pr._NNPar };
 

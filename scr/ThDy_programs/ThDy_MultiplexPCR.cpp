@@ -26,7 +26,7 @@ void CreateComplProbes(	CMultSec		&pr	)
 	for (  pr.goFirstSec()   ; pr.NotEndSec()   ;   pr.goNextSec() )				// recorre todos las sondas
 	{	CSec &s = *pr.CurSec() ;
 		if( s.Selected())
-		    cms->AddSec ( s.CreateCopy(rev_compl) ); 
+		    cms->AddSec ( s.Clone(rev_compl) ); 
 	}
 }
 

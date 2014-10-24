@@ -72,7 +72,7 @@ void	CSaltCorrNN::InitOwczarzySaltNNMatriz() // recalcular solo cuando se "pone"
 											* ((4.29f * _GCp -3.95f )*(1e-5f)*LogSC+ (9.4e-6f)*LogSC*LogSC);
 }	
 
-void	CSaltCorrNN::SetStLuciaSaltCorr( float C1, float C2, float Csalt)  // TODO
+void	CSaltCorrNN::SetStLuciaSaltCorr( float C1, float C2, float Csalt)  ///  \todo
 {	//kplus = Csalt ;	
 //	kfac  = 0.368 * log (kplus) ;
 	;

@@ -5,8 +5,11 @@
 #include <ctype.h>
 #pragma warning( disable : 4996 )
 
-
-typedef unsigned char Base;
+namespace DegCod
+{
+using Base = unsigned char ;
+using Code = Base;
+inline Base base(char b){return static_cast<Base>(b);}
 
 // Introducir Letter->UCHAR_MAX , Base -> "ACGT<>-" , DegBase -> "-GCSTKYBARMVWDHN"
 // las 4 bases en el orden complementario de Kadelari. Cambiar a algo asi "-TGCA." o "GCTA-." o "GCTAx-." Calcular si no es mejor "-GCSTKYBARMVWDHN"
@@ -36,8 +39,9 @@ extern Base is_base		[UCHAR_MAX],		// <> 0  si base. =base, pero para U, =T
 											// El resto no lo modifica.
 			grad_deg	[UCHAR_MAX],		// grado de degeneracion: 0- no permitido, 1-base, 
 											//						  2-Y,R,K....,     4-N.
-			is_GC		[UCHAR_MAX],		// 1-G or C, 0-lo demas.                    Y que con los deg ??????????????????
-			bk2nu		[UCHAR_MAX],		// codigo corto de Kadelari
+			is_GC		[UCHAR_MAX];		// 1-G or C, 0-lo demas.                    Y que con los deg ??????????????????
+
+extern Code bk2nu		[UCHAR_MAX],		// codigo corto de Kadelari
 			bk2c_nu		[UCHAR_MAX],		// codigo corto de Kadelari complementario a la base
 			bkn2c_nu	[n_basek],			// codigo corto de Kadelari complementario
 			ba2nu		[UCHAR_MAX],		// codigo corto
@@ -45,7 +49,7 @@ extern Base is_base		[UCHAR_MAX],		// <> 0  si base. =base, pero para U, =T
 			ban2c_nu	[n_ba],				// codigo corto complementario
 			dbn2c_nu	[n_dgba],			// cod numerico complementario a la base deg
 			db2c_nu		[UCHAR_MAX],		// cod numerico complementario a la base deg
-			db2nu		[UCHAR_MAX],		// dada la letra devuelve el cod numerico; lo contrario 
+			db2nu		[UCHAR_MAX];		// dada la letra devuelve el cod numerico; lo contrario 
 											// de degcod[]; 0- no validos, pero tambien el '-'.
 											// si las bases a y b pueden match se comprueba: 
 											// if (base2bin[a] & base2bin[b]) ...   : ejemplo - si match 
@@ -53,7 +57,7 @@ extern Base is_base		[UCHAR_MAX],		// <> 0  si base. =base, pero para U, =T
 											// (base2bin[a] & base2bin[b]) da el cod de la min letra comun:
 											// R y G = G, R y K = G
 											// para calcular consenso: degcod[base2bin[a] | base2bin[b])]
-			dg2ba		[n_dgba][n_ba],		// caracter a generar,para generar todas las variantes de una base deg
+extern Base dg2ba		[n_dgba][n_ba],		// caracter a generar,para generar todas las variantes de una base deg
 			dg2ban		[n_dgba][n_ba],		// array de arrays (para cada base deg), 
 			dg2bkn		[n_dgba][n_ba];		// con el que generar no deg variantes
 
@@ -67,7 +71,10 @@ class CInit_Cod_Deg
 
 extern	CInit_Cod_Deg Init_Cod_Deg;
 long	CountDegBases  ( const char *sec);
+Base    *Generate_DegSec( const char *sec, bool rev, bool compl, long l=0) ;// , long l=0) ;
+inline char *Generate_DegSec_char( const char *sec, bool rev, bool compl, long l=0){return (char *)Generate_DegSec(sec, rev,  compl,  l);};
 
+}
 //class CBase	// inventar algo para lograr que las converciones sean automaticas: Base - char
 //{public:
 //	Base b;

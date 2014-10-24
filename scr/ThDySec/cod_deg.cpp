@@ -1,15 +1,17 @@
 //#include "stdafx.h"
 //#pragma unmanaged
 #include "ThDySec/cod_deg.h"
+namespace DegCod
+{
  
  Base		is_base		[UCHAR_MAX],		// <> 0  si base. =base, pero para U, =T 
 			is_degbase	[UCHAR_MAX],		// <> 0  si letra valida (cualquiera del cod deg,may o minuscula
 											//+ insercion '-').=base, pero para U, =T 
 			c_degbase	[UCHAR_MAX],		// devuelve base complementaria, tambien para codigo deg. 
 											// El resto no lo modifica.
-			grad_deg	[UCHAR_MAX],		// grado de degeneracion: 0- no permitido, 1-base, 
+			grad_deg	[UCHAR_MAX];		// grado de degeneracion: 0- no permitido, 1-base, 
 											//						  2-Y,R,K....,     4-N.
-			is_GC		[UCHAR_MAX],		// 1-G or C, 0-lo demas.
+ Code		is_GC		[UCHAR_MAX],		// 1-G or C, 0-lo demas.
 			bk2nu		[UCHAR_MAX],		// codigo corto de Kadelari
 			bk2c_nu		[UCHAR_MAX],		// codigo corto de Kadelari complementario a la base
 			bkn2c_nu	[n_basek],			// codigo corto de Kadelari complementario
@@ -18,7 +20,7 @@
 			ban2c_nu	[n_ba],				// codigo corto complementario
 			dbn2c_nu	[n_dgba],			// cod numerico complementario a la base deg
 			db2c_nu		[UCHAR_MAX],		// cod numerico complementario a la base deg
-			db2nu		[UCHAR_MAX],		// dada la letra devuelve el cod numerico; lo contrario 
+			db2nu		[UCHAR_MAX];		// dada la letra devuelve el cod numerico; lo contrario 
 											// de degcod[]; 0- no validos, pero tambien el '-'.
 											// si las bases a y b pueden match se comprueba: 
 											// if (base2bin[a] & base2bin[b]) ...   : ejemplo - si match 
@@ -26,7 +28,7 @@
 											// (base2bin[a] & base2bin[b]) da el cod de la min letra comun:
 											// R y G = G, R y K = G
 											// para calcular consenso: degcod[base2bin[a] | base2bin[b])]
-			dg2ba		[n_dgba][n_ba],		// para generar todas las variantes de una base deg
+ Base		dg2ba		[n_dgba][n_ba],		// para generar todas las variantes de una base deg
 			dg2ban		[n_dgba][n_ba],
 			dg2bkn		[n_dgba][n_ba];
 
@@ -35,11 +37,12 @@
 
 
 CInit_Cod_Deg::CInit_Cod_Deg()	
-{			for (Base b=0; b<UCHAR_MAX; b++)	
+{			
+	        for (Base b=0; b<UCHAR_MAX; b++)	
 			{	is_base		[b]	= 
 				is_degbase	[b] = 
-				is_GC		[b] = 
-				grad_deg	[b] = 
+				is_GC		[b] =
+				grad_deg	[b] = 0 ;  
 				bk2nu		[b]	=
 				db2nu		[b]	=
 				ba2nu		[b]	= 0 ;   // por ejemplo '.' or '-'
@@ -138,11 +141,14 @@ long CountDegBases (const char *sec)
 	for (long i=0 ; sec[i] ; i++) if( is_degbase	[Base (sec[i])] ) cb++ ;
 	return cb;
 }
-Base *Generate_DegSec( const char *sec, bool rev, bool compl, long l=0)  
+Base *Generate_DegSec( const char *sec, bool rev, bool compl, long l/*=0*/)  
 {	if ( ! l ) l=CountDegBases (sec);
 	Base *DegSec=new Base[l+1], b;			 DegSec[l]=0 ;
 	if (rev && compl) { for(long p=l-1, i=0;  b=Base (sec[i]) ;  i++)	if (b=is_degbase[b]) DegSec[p--]=c_degbase[b]; return DegSec;	}
 	if (rev         ) { for(long p=l-1, i=0;  b=Base (sec[i]) ;  i++)	if (b=is_degbase[b]) DegSec[p--]=          b ; return DegSec;	}
 	if (       compl) { for(long p=0,   i=0;  b=Base (sec[i]) ;  i++)	if (b=is_degbase[b]) DegSec[p++]=c_degbase[b]; return DegSec;	}
                         for(long p=0,   i=0;  b=Base (sec[i]) ;  i++)	if (b=is_degbase[b]) DegSec[p++]=          b ; return DegSec;	
+}
+
+
 }

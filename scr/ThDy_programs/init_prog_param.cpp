@@ -30,7 +30,7 @@ IParam::IParam (  IProg *pp,
 
 void     IParam::SetEtiq(std::string etiq, IProg *prog)
 { 
-    auto param = prog->_parametrs[_etiq];     // revisar posibles inconsistencias   !!!!!!!!!!!!!!!!
+    auto param = prog->_parametrs[_etiq];     /// \todo revisar posibles inconsistencias   !!!!!!!!!!!!!!!!
     prog->_parametrs.erase(_etiq);
     _etiq=etiq;
     prog->_parametrs[_etiq]=param;
@@ -55,7 +55,7 @@ bool	CProject::load()
 	if (!isPr) 
 		throw std::ios_base::failure(string("Could not open project file: ")+_ProjetFileName );
 		
-	//	return false;	 // TODO: en realidad hay que trabajar con las exepciones aqui !!!!!!!!!!!!!!!!!
+	//	return false;	 //  \todo: en realidad hay que trabajar con las exepciones aqui !!!!!!!!!!!!!!!!!
    // isPr.exceptions(ifstream::failbit | ifstream::badbit);   // no eofbit: http://www.cplusplus.com/reference/iostream/ios/exceptions/
 	isPr >> skipws ;
 

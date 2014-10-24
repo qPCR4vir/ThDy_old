@@ -17,49 +17,89 @@ using namespace std ;
 
 #include "ThDySec/sec.h"
 #include "ThDySec/common_basics.h" 
+using namespace DegCod;
 
 #define SEQUENCES_MAX_SIZE 100000
 char *DNAStrandName[]=	{""		, "(c)", ""		, "(r)"	, "(i)", "(c)"		} ;
 // enum DNAStrand		{plus	, minus, direct	, rev	, compl, rev_compl	} ;
 
-		CSecBasInfo::CSecBasInfo( long l):			
-			_len( l ) , 			
-			_NonDegSet( nullptr ), 				
-			_GCp( 0 ),	
-			_selected(true), 
-			_filtered(false),
-			_ID(NewS_ID())	,									
-			_GrDeg( 1 ),			_NDB( 0 ),							_c(new Base[l+3])
-{}
 
-        CSecBasInfo::~CSecBasInfo()
+CSecBasInfo::~CSecBasInfo()
 {
-	delete[] _c;
-	if (_NonDegSet) if (!_NonDegSet->Prev() && !_NonDegSet->Next()) delete _NonDegSet;
+	if (_NonDegSet) 
+	     if (!_NonDegSet->Prev() && !_NonDegSet->Next()) 
+			 delete _NonDegSet;
 	// en otro caso, donde borrar _NonDegSet ????. Lo borra la lista en la que esta insertado
 }
-
-
-		CSec::CSec ( long l, std::shared_ptr<CSaltCorrNN> NNpar) 		
-			:	CSecBasInfo ( l ) ,			
-				_NNpar(NNpar),		_parentMS(nullptr),
-				_b(new Base[l+3]),
-				_SdS(new Entropy[l+3]),		
-				_SdH(new Energy[l+3])
-
+	 
+std::string& CSecBasInfo::Copy_Seq  	(std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd) const
 {	
+	if ( EndBase< 1 || Len() <EndBase ) EndBase= Len(); 
+	long l=EndBase-InicBase+1 ;  
+	if (l>=0) 	//assert(l>=0);
+	{
+		SecHier.clear();
+		SecHier.reserve(l);
+		switch (strnd)
+		{	case DNAStrand::plus :
+			case DNAStrand::direct:		for(long p=InicBase;  p<=EndBase;    p++) 	SecHier.push_back ( _c[p] );  				    break;
+			case DNAStrand::compl:		for(long p=InicBase;  p<=EndBase;    p++) 	SecHier.push_back ( c_degbase[_c[p]]);      	break;
+			case DNAStrand::rev:		for(long p=EndBase ;  p>=InicBase;   p--)	SecHier.push_back ( _c[p] );  				    break;
+			case DNAStrand::minus:
+			case DNAStrand::rev_compl:	for(long p=EndBase ;  p>=InicBase;   p--)	SecHier.push_back ( c_degbase[_c[p]]);      	break;
+ 		}
+	}
+	return  SecHier ;
+}
+
+/// Best just return sequence
+//Base  *	CSecBasInfo::Copy_charSec(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd)//DNAStrand strnd=direct)
+//{	if ( EndBase< 1 || Len() <EndBase ) EndBase= Len(); 
+//	long l=EndBase-InicBase+1 ; charSecHier[l]=0 ;
+//	if (l>=0) 
+//	//assert(l>=0);
+//	switch (strnd)
+//	{	case DNAStrand::plus :
+//		case DNAStrand::direct:		for(long i=0,   p=InicBase;  p<=EndBase;    i++, p++) 	charSecHier[i]=_c[p];				break;
+//		case DNAStrand::compl:		for(long i=0,   p=InicBase;  p<=EndBase;    i++, p++) 	charSecHier[i]=c_degbase[_c[p]];	break;
+//		case DNAStrand::rev:		for(long i=l-1, p=InicBase;  p<=EndBase;    i--, p++)	charSecHier[i]=_c[p];				break;
+//		case DNAStrand::minus:
+//		case DNAStrand::rev_compl:	for(long i=l-1, p=InicBase;  p<=EndBase;    i--, p++)	charSecHier[i]=c_degbase[_c[p]];	break;
+//
+//		default : return 0;
+//	}
+//	return charSecHier ;
+//}
+//Base  *	CSecBasInfo::GetCopy_charSec(DNAStrand strnd)
+//{	return GetCopy_charSec(1, Len(), strnd);
+//}
+//Base  *	CSecBasInfo::GetCopy_charSec(long InicBase, long EndBase, DNAStrand strnd)       // recuerde los $...$, aqui se cuentan, 
+//{	if ( InicBase< 1 )					InicBase=1;
+//	if ( EndBase< 1 || Len() <EndBase )	EndBase=Len();
+//	long l=EndBase-InicBase+1 ;
+//	assert(l>=0);
+//	Base *charSecHier=new Base[l+1];						 // asi como InicBase y EndBase inclusive!!
+//	assert(charSecHier);	
+//
+//	return Copy_charSec(charSecHier, InicBase, EndBase, strnd)  ;
+//}
+
+
+CSec::CSec ( long l, std::shared_ptr<CSaltCorrNN> NNpar) 		
+			:	CSecBasInfo ( l ) ,			
+				_NNpar(NNpar)
+{	
+			_b  .reserve(l+3);
+			_SdS.reserve(l+3);
+			_SdH.reserve(l+3);
+
 };  
 
-        bool		CSec::Selected(		) const {return CSecBasInfo::Selected() && (_parentMS ? _parentMS->Selected(): true)  ;}					 //< User-editable
+bool		CSec::Selected(		) const //< User-editable  ??
+{
+	return CSecBasInfo::Selected() && (_parentMS ? _parentMS->Selected(): true)  ;
+}					 
 
-
-		CSecBasInfo::CSecBasInfo (int id, const std::string& nam, const std::string& clas) 
-								:	_ID		( id ), 	_selected(true), _filtered(false),
-									_NonDegSet( nullptr ), _c(nullptr), 				_GCp( 0 ),	
-									_GrDeg( 1 ),			_NDB( 0 ),							
-									_name( trim_string	(nam )),	
-								_Clas(clas )
-		{} 
 CSec::CSec (    const std::string&  sec, 
                 int                 id, 
                 const std::string&  nam, 
@@ -70,12 +110,9 @@ CSec::CSec (    const std::string&  sec,
                 float               conc        ) 
 :	CSecBasInfo ( id, nam, clas) ,		
 	_NNpar	    ( NNpar),
-    _parentMS   ( nullptr),		/*_c( nullptr),*/	 _b( nullptr),	 _SdS( nullptr),	 _SdH( nullptr),	 		
 	_Conc	    ( conc )
-							//	_GCp	( 0 ), 	_GrDeg	( 1 ), 	_NDB	( 0 ),	_NonDegSet( 0 )
 {		
 		if (secBeg<1) secBeg=1;
-        _len  = 0 ;
 
         LonSecPos sb,       /* se,*/  sp,      /// s - string seq. Original string text of the seq.  (index in sec[])
                   ob=secBeg, oe,  op,      /// o - original "abstract" seq for with s intent to be the representation
@@ -112,106 +149,90 @@ CSec::CSec (    const std::string&  sec,
                     ++op ;	// salta no-bases 
 		}
         oe=op ;
-        _len = oe-ob+1;   /// _len is the numer of "bases" to be readed (posible including gaps and deg-bases)
+        LonSecPos len = oe-ob+1;   /// _len is the numer of "bases" to be readed (posible including gaps and deg-bases)
 			              /// as in:" TGCA$" . Dont count the 2 '$' - principio y fin de Kadelari and the final '\0'
-        if ( _len < 2 )   /// return if only 0 or 1 base to analize
+        if ( sLen < 2 )   /// return if only 0 or 1 base to analize
             return;
-		_c   = new Base   [_len+3];      			auto_ptr<Base>	  ap_c  (_c  );
-		_b   = new Base   [_len+3];      			auto_ptr<Base>    ap_b  (_b  );
-		_SdS = new Entropy[_len+2];      			auto_ptr<Entropy> ap_SdS(_SdS);
-		_SdH = new Energy [_len+2];      			auto_ptr<Energy>  ap_SdH(_SdH);	//assert(_c && _b && _SdS && _SdH); /*{err<< "Demaciadas sec!!!"; return 0;}*/
+		_c  .reserve(len+2)   ;
+		_b  .reserve(len+2)   ;
+		_SdS.reserve(len+1)   ;
+		_SdH.reserve(len+1)   ;	
+
 		register Base a_1, a;
 		for (a=0; a<n_dgba; a++)	_Count[a]=0 ;
 
-		_c  [0]	= basek[n_basek-1] ; // '$' principio y fin de Kadelari.=" TGCA$"   in fp=0
-		_b  [0]	= n_basek-1 ; 	  	
-		_SdS[0] = _NNpar->GetInitialEntropy(); // Solo dep de las conc, no de la sec. Ajustar primero la conc del target, y despues volverla a poner,?? 
-		_SdH[0] = 0 ;							// y comprobar que se hacen los calculos necesarios
+		_c  .push_back( basek[n_basek-1] ); // '$' principio y fin de Kadelari.=" TGCA$"   in fp=0
+		_b  .push_back( n_basek-1) ; 	  	
+		_SdS.push_back( _NNpar->GetInitialEntropy()); // Solo dep de las conc, no de la sec. Ajustar primero la conc del target, y despues volverla a poner,?? 
+		_SdH.push_back(  0 );						  // y comprobar que se hacen los calculos necesarios
 
 	    a_1=is_degbase	[ sec[sb] ] ; 		// in fp=1 when sp=sb
 		_GCp	+= is_GC	[a_1] ;
 		_GrDeg	*= grad_deg	[a_1] ;
 		_Count  [  db2nu	[a_1]]++ ;
 		if (grad_deg[a_1] >1) _NDB++ ;
-		_c[1] =	a_1 ;
-		_b[1] = a_1 =bk2nu[is_base[a_1]] ;						// que hacer si en la sec hay bases deg que Kadelari no considera?
+		_c.push_back( a_1  );
+		_b.push_back( a_1 =bk2nu[is_base[a_1]]) ;						// que hacer si en la sec hay bases deg que Kadelari no considera?
 
-		fp= 2 ;
-		for (sp=sb+1; fp <= _len /*&& sp<se*/ ; ++sp)						// suficiente    curPos <= _len   ???
+		for (sp=sb+1, fp= 2; fp <= len /*&& sp<se*/ ; ++sp)						// suficiente    curPos <= _len   ???
 			if ( a=is_degbase	[ sec[sp] ] ) 	
 			{	
 				_GCp	+= is_GC		[a] ;						// 1-G or C, 0-lo demas.      Y que con las bases deg ??????????????????
 				_GrDeg	*= grad_deg		[a] ;
 				_Count  [  db2nu		[a] ]++ ;
 				if (grad_deg[a] >1) _NDB++ ;
-				_c  [fp  ] = a ;
-				_b  [fp  ] = a =bk2nu[is_base[a]] ;				// que hacer si en la sec hay bases deg que Kadelari no considera?
-				_SdS[fp-1] = _SdS[fp-2] + NNpar->GetSelfEntr (	a_1 , a);
-				_SdH[fp-1] = _SdH[fp-2] + NNpar->GetSelfEnth (	a_1 , a);
+				_c  .push_back( a                     );
+				_b  .push_back( a =bk2nu[is_base[a]]  );				// que hacer si en la sec hay bases deg que Kadelari no considera?
+				_SdS.push_back( _SdS.back() + NNpar->GetSelfEntr (	a_1 , a)  );
+				_SdH.push_back( _SdH.back() + NNpar->GetSelfEnth (	a_1 , a)  );
 				a_1 = a ;
                 fp++ ;
 			}	
-		_c[_len+1]= basek[n_basek-1] ; // '$' principio y fin de Kadelari.=" TGCA$", + '\0'
-		_b[_len+1]=	    n_basek-1  ; 	  	
-		_c[_len+2]= 
-		_b[_len+2]=	    0  ; 	  	
-		_GCp	= _GCp*100/_len ;	
-		_Tm.Set( NNpar->CalcTM( _SdS[_len-1], _SdH[_len-1]) ) ; //_maxTm = _minTm =
-
-		ap_c.release();ap_b.release();ap_SdS.release();ap_SdS.release();ap_SdH.release();// eliminar cambiando por vector
+		_c.push_back( basek[n_basek-1] ); // '$' principio y fin de Kadelari.=" TGCA$", + '\0'
+		_b.push_back(       n_basek-1  ); 	  	
+		_GCp	= _GCp*100/len ;	
+		_Tm.Set( NNpar->CalcTM( _SdS.back(), _SdH.back()) ) ;      //_maxTm = _minTm =
 
 }
 
-CSec  * CSec::CreateCopy(DNAStrand strnd) // strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
-{	Base *s=GetCopy_charSec(strnd); 
-	//char *n; 
-	CSec *newS=new CSec( (char*)s, 
-						NewS_ID(),				
-						_name + DNAStrandName[strnd],
-						_NNpar	,
-						0,1,
-						_Clas,
-						_Conc
-						);
+//CSec  * CSec::CreateCopy(DNAStrand strnd) // strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+//{	Base *s=GetCopy_charSec(strnd); 
+//	//char *n; 
+//	CSec *newS=new CSec( (char*)s, 
+//						NewS_ID(),				
+//						_name + DNAStrandName[strnd],
+//						_NNpar	,
+//						0,1,
+//						_Clas,
+//						_Conc
+//						);
+//	newS->Selected(Selected());
+//	newS->Filtered(Filtered());
+//	delete []s;/*delete []n;*/
+//	return newS;
+//}
+    
+CSec* CSec::Clone   	(DNAStrand strnd 	 ) const  /// unique_ptr<ISec>   strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+{	
+	
+	string s; 
+	unique_ptr<CSec> newS {new CSec( Copy_Seq(s,strnd), 
+						             NewS_ID(),				
+									_name + DNAStrandName[strnd],
+									_NNpar	,
+									0,1,
+									_Clas,
+									_Conc
+									)
+	                       };
 	newS->Selected(Selected());
 	newS->Filtered(Filtered());
-	delete []s;/*delete []n;*/
-	return newS;
+ 	return newS.release();
 }
 
-Base  *	CSecBasInfo::Copy_charSec(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd)//DNAStrand strnd=direct)
-{	if ( EndBase< 1 || _len <EndBase ) EndBase=_len; 
-	long l=EndBase-InicBase+1 ; charSecHier[l]=0 ;
-	if (l>=0) 
-	//assert(l>=0);
-	switch (strnd)
-	{	case DNAStrand::plus :
-		case DNAStrand::direct:		for(long i=0,   p=InicBase;  p<=EndBase;    i++, p++) 	charSecHier[i]=_c[p];				break;
-		case DNAStrand::compl:		for(long i=0,   p=InicBase;  p<=EndBase;    i++, p++) 	charSecHier[i]=c_degbase[_c[p]];	break;
-		case DNAStrand::rev:		for(long i=l-1, p=InicBase;  p<=EndBase;    i--, p++)	charSecHier[i]=_c[p];				break;
-		case DNAStrand::minus:
-		case DNAStrand::rev_compl:	for(long i=l-1, p=InicBase;  p<=EndBase;    i--, p++)	charSecHier[i]=c_degbase[_c[p]];	break;
-
-		default : return 0;
-	}
-	return charSecHier ;
-}
-Base  *	CSecBasInfo::GetCopy_charSec(DNAStrand strnd)
-{	return GetCopy_charSec(1, _len, strnd);
-}
-Base  *	CSecBasInfo::GetCopy_charSec(long InicBase, long EndBase, DNAStrand strnd)       // recuerde los $...$, aqui se cuentan, 
-{	if ( InicBase< 1 )					InicBase=1;
-	if ( EndBase< 1 || _len <EndBase )	EndBase=_len;
-	long l=EndBase-InicBase+1 ;
-	assert(l>=0);
-	Base *charSecHier=new Base[l+1];						 // asi como InicBase y EndBase inclusive!!
-	assert(charSecHier);	
-
-	return Copy_charSec(charSecHier, InicBase, EndBase, strnd)  ;
-}
 
 float	CSec::Tm	(long pi, long pf)const
-{	assert( 0< pi/* && pi<=pf*/); 		assert( /*0< pi && */pi<=pf+1);		assert(pf<=_len);
+{	assert( 0< pi/* && pi<=pf*/); 		assert( /*0< pi && */pi<=pf+1);		// assert(pf<=_len);
 	if (pi==1) 		return _NNpar->CalcTM(	_SdS[pf-1]					 ,		_SdH[pf-1]			 );
 					return _NNpar->CalcTM(	_SdS[pf-1]-_SdS[pi-2]+_SdS[0],		_SdH[pf-1]-_SdH[pi-2]);
 }
@@ -219,7 +240,7 @@ float	CSec::Tm	(long pi, long pf)const
 	//float		G	(long pi, float Ta)const{return G(pi,_len, Ta);}   // G de la sonda con sec desde pi hasta el final, inclusive ambos!!
 	//float		G	(float Ta )const	    {return G(1 ,_len, Ta);}   // G de la sonda con sec desde pi hasta el final, inclusive ambos!!
 float	CSec::G	(long pi, long pf, float Ta)const				// G de la sonda con sec desde pi hasta pf, inclusive ambas!! 
-{	assert( 0< pi/* && pi<=pf*/);		assert( /*0< pi && */pi<=pf+1);		assert(pf<=_len);
+{	assert( 0< pi/* && pi<=pf*/);		assert( /*0< pi && */pi<=pf+1);		// assert(pf<=_len);
 	if (pi==1) 		return _NNpar->CalcG(	_SdS[pf-1]					 ,		_SdH[pf-1]			 , Ta);
 					return _NNpar->CalcG(	_SdS[pf-1]-_SdS[pi-2]+_SdS[0],		_SdH[pf-1]-_SdH[pi-2], Ta);
 } 
@@ -227,23 +248,23 @@ float	CSec::G	(long pi, long pf, float Ta)const				// G de la sonda con sec desd
 //float		G	(long pi)const	{return G(pi,_len);}   // G de la sonda con sec desde pi hasta el final, inclusive ambos!!
 //float		G	( )const		{return G(1,_len) ;}   // G de la sonda con sec desde pi hasta el final, inclusive ambos!!
 float	CSec::G	(long pi, long pf) const
-{	assert( 0< pi/* && pi<=pf*/);		assert( /*0< pi && */pi<=pf+1);		assert(pf<=_len);
+{	assert( 0< pi/* && pi<=pf*/);		assert( /*0< pi && */pi<=pf+1);		// assert(pf<=_len);
 	if (pi==1) 		return _NNpar->CalcG(	_SdS[pf-1]					 ,		_SdH[pf-1]			 );
 					return _NNpar->CalcG(	_SdS[pf-1]-_SdS[pi-2]+_SdS[0],		_SdH[pf-1]-_SdH[pi-2]);
 } 
 
 		CSec::~CSec () 
-{	delete [] _SdS ;
-	delete [] _SdH ;
-	delete [] _b ;
+{	
 	Remove();
 }    
 
 void	CSec::CorrectSaltOwczarzy() 
-{	for (long j=2; j<=_len;j++)
+{	
+	auto len=_SdS.size() ;
+	for (long j=2; j< len ; j++)
 		_SdS[j-1] = _SdS[j-2] + _NNpar->GetCorrectSaltOwczarzySelfEntr ( _b[j-1] , _b[j] , _GCp );
 
-	_Tm.Set( _NNpar->CalcTM( _SdS[_len-1], _SdH[_len-1]) ) ; //_maxTm = _minTm =	_Tm  = _maxTm = _minTm =  ;
+	_Tm.Set( _NNpar->CalcTM( _SdS.back(), _SdH.back()) ) ; //_maxTm = _minTm =	_Tm  = _maxTm = _minTm =  ;
 } 
 
 CMultSec *CSec::CreateNonDegSet()
@@ -270,7 +291,8 @@ CMultSec *CSec::ForceNonDegSet()
 			delete _NonDegSet ;	// lo borramos 
 		_NonDegSet= new CMultSec(_NNpar) ;
 		_NonDegSet->AddSec( GenerateNonDegVariant(this, 0, 0) ) ;
-		_Tm = _NonDegSet->_Local._Tm ; //	_maxTm = _NonDegSet->_maxTm ; _minTm = _NonDegSet->_minTm ;	_Tm    = (_maxTm + _minTm )/2 ;
+		_Tm = _NonDegSet->_Local._Tm ; 
+
 		//assert ( ( (cout << "Post Deg set generation: "<< _name << "\t" << _c << "\t" 
 		//			 << "Tm=" << (_minTm - 273)  << " °C"
 		//			 << " ("  << (_Tm - 273)     << " °C"  << ") "
@@ -281,7 +303,7 @@ CMultSec *CSec::ForceNonDegSet()
 
 CSec *	CSec::CopyFirstBases(long pos) 
 {	
-	CSec *sec = new CSec ( _len, _NNpar) ;
+	CSec *sec = new CSec ( Len(), _NNpar) ;
 	assert(sec);
     sec->_name =  _name ;
     sec->_Clas =  _Clas ;
@@ -291,12 +313,18 @@ CSec *	CSec::CopyFirstBases(long pos)
 	for (Base b=0	  ; b<n_dgba   ; b++)	sec->_Count[b]= _Count[b] ;
 	sec->_NDB = _NDB ;
 
-	for (long i=0; i<=pos; i++)
-	{	sec->_c[i] = _c[i] ;
-		sec->_b[i] = _b[i] ;
-		sec->_SdS[i] = _SdS[i] ;
-		sec->_SdH[i] = _SdH[i] ;
+ //   sec->_c .assign(_c,0,pos);
+	//sec->_b .assign(_b,0,pos); 
+	long i=0;
+	for (; i<pos; i++)
+	{	
+		sec->_c  .push_back(_c[i]);
+		sec->_b  .push_back(_b[i]);
+		sec->_SdS.push_back(_SdS[i] );
+		sec->_SdH.push_back(_SdH[i]);
 	}
+	sec->_c  .push_back(_c[i]);
+	sec->_b  .push_back(_b[i]);
 	return sec ;
 }
 
@@ -306,6 +334,9 @@ CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) // crear varia
 	if (pos==0) 
 	{	sec = s->CopyFirstBases(0);   // caso esp: ni pos -1, ni muto a ndb
 		pre = sec->_b[0];
+		sec->_SdS.push_back(_SdS[0] );
+		sec->_SdH.push_back(_SdH[0]);
+
 	}
 	else 
 	{
@@ -317,15 +348,15 @@ CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) // crear varia
 			  cur = bk2nu[ndb];	
 			  pre = sec->_b[pos-1];
 			  
-		sec->_c[pos] =		ndb ;
-		sec->_b[pos] =		cur ;
-		sec->_GCp	+= float ((is_GC[ndb]-is_GC[b_or]))/_len ;
+		sec->_c.push_back(	ndb );
+		sec->_b.push_back(	cur );
+		sec->_GCp	+= float ((is_GC[ndb]-is_GC[b_or]))/Len() ;
 		sec->_NDB-- ;
 		sec->_GrDeg *= (grad_deg[ndb] / ( grad_deg[b_or] ? grad_deg[b_or] : 1) ) ;	
 		
 		if ( pos > 1 ) 	
-		{	sec->_SdS[pos-1] = sec->_SdS[pos-2] + _NNpar->GetSelfEntr (	pre  ,	cur);
-			sec->_SdH[pos-1] = sec->_SdH[pos-2] + _NNpar->GetSelfEnth (	pre  ,	cur);
+		{	sec->_SdS.push_back(  sec->_SdS.back() + _NNpar->GetSelfEntr (	pre  ,	cur) );
+			sec->_SdH.push_back(  sec->_SdH.back() + _NNpar->GetSelfEnth (	pre  ,	cur) );
 		}
 		_Count[db2nu[ ndb]]++ ;
 		_Count[db2nu[b_or]]-- ;
@@ -333,12 +364,13 @@ CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) // crear varia
 		pre = cur ;
 	}
 	// continua actualizando el resto
-	long i;
-	for ( i=pos+1; i<=_len; i++)
+	long i, len=Len();
+	for ( i=pos+1; i<=len; i++)
 	{	b_or = _c[i] ;
 		Base n = grad_deg[b_or];
 		if (n<2)
-		{	sec->_b[i] = cur= _b[i];
+		{	
+			sec->_b.push_back( cur= _b[i]) ;
 		}
 		else 		// hasta que encuentra la siguiente bas deg
 		{	for (Base d=0; d < n-1 ; d++)	// recorre las bas no deg de la base deg b_or, menos la ultima
@@ -347,30 +379,30 @@ CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) // crear varia
 			}
 
 			ndb			 = dg2ba [  db2nu[b_or]  ][n-1];   // aqui me quedo con la ultima variante para seguir
-			sec->_GCp	+= (is_GC[ndb]-is_GC[b_or])/_len;
+			sec->_GCp	+= (is_GC[ndb]-is_GC[b_or])/len;
 			sec->_GrDeg	/= grad_deg[b_or] ;	
-			sec->_b[i] = cur=  bk2nu[ndb];
+			sec->_b.push_back( cur=  bk2nu[ndb] );
 			_Count[db2nu[ ndb]]++ ;
 			_Count[db2nu[b_or]]-- ;
 			sec->_NDB-- ;
 			b_or = ndb ;      
 		} 
-		sec->_c[i] = b_or ;
+		sec->_c.push_back( b_or ) ;
 		if ( i > 1 ) 	
-		{	sec->_SdS[i-1] = sec->_SdS[i-2] + _NNpar->GetSelfEntr (	pre  ,	cur);
-			sec->_SdH[i-1] = sec->_SdH[i-2] + _NNpar->GetSelfEnth (	pre  ,	cur);
+		{	sec->_SdS.push_back(  sec->_SdS.back() + _NNpar->GetSelfEntr (	pre  ,	cur) );
+			sec->_SdH.push_back(  sec->_SdH.back() + _NNpar->GetSelfEnth (	pre  ,	cur) );
 		}
 		pre = cur ;
 	}
-	sec->_c[i]= basek[n_basek-1] ; // '$' principio y fin de Kadelari.=" TGCA$"
-	sec->_b[i]=	    n_basek-1  ; 
-	sec->_c[i+1]= 
-	sec->_b[i+1]= 0 ;
+	sec->_c.push_back(  basek[n_basek-1]) ; // '$' principio y fin de Kadelari.=" TGCA$"
+	sec->_b.push_back(  	   n_basek-1) ; 
+	//sec->_c.push_back(  0 )
+	//sec->_b.push_back(  0 );
 
-	sec->_Tm.Set(_NNpar->CalcTM( sec->_SdS[_len-1], sec->_SdH[_len-1])) ;  // usar _len or i ?????= sec->_maxTm = sec->_minTm 
+	sec->_Tm.Set(_NNpar->CalcTM( sec->_SdS.back(), sec->_SdH.back())) ;   
 
 	sec->_name += std::to_string(_NonDegSet->_Local._NSec);
-    //ChangeCharStrAttaching(sec->_name, _NonDegSet->_Local._NSec);
+
 	return sec ;
 }
 //	assert ( ( (cout << sec->_name << "\t" << sec->_c << "\t" << (sec->_Tm - 273) << " °C" << "\n" ) , 1 ) ) ;
@@ -389,7 +421,8 @@ CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) // crear varia
 						_NumCand(0),
 						_NumCandExact(0)							
 
-{	long fi, i0;										//	assert (_rg);	trow exeption !!
+{	
+	long fi, i0;										//	assert (_rg);	trow exeption !!
 	for (fi=0; fi< sL._L.Min() ; fi++)  _rg[fi]=0;		// se salta las primeras pos
 														// al comienzo fi = L_min	
 	for (	; fi<=sec.Len(); fi++)						// fi - final base of candidate, recorre toda la sec
@@ -697,9 +730,12 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 		std::string	   clas;
 
 	while(getline(fi,li,'>')&& string::npos==li.find("Hit_num"      ) ) ;  fi>>_Hit_num;				//  <Hit_num>1</Hit_num>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hit_id"       ) ) ;  getline (fi, _Hit_id, '<') ;	//<Hit_id>gi|84028434|gb|DQ318020.1|</Hit_id> 
-	while(getline(fi,li,'>')&& string::npos==li.find("Hit_def"      ) ) ;  getline (fi, _Hit_def,'<') ;	//<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hit_accession") ) ;  getline (fi, _Hit_accession,'<') ;	//<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
+	while(getline(fi,li,'>')&& string::npos==li.find("Hit_id"       ) ) ;                           	//<Hit_id>gi|84028434|gb|DQ318020.1|</Hit_id> 
+                                                            if ( ! getline (fi, _Hit_id, '<') ) return id;
+	while(getline(fi,li,'>')&& string::npos==li.find("Hit_def"      ) ) ;                               //<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
+                                                            if ( ! getline (fi, _Hit_def,'<') ) return id;
+	while(getline(fi,li,'>')&& string::npos==li.find("Hit_accession") ) ;                              	//<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
+                                                            if ( ! getline (fi, _Hit_accession,'<') ) return id;
 	while(getline(fi,li,'>')&& string::npos==li.find("Hit_len"      ) ) ;  fi>>_Hit_len;				//  <Hit_len>11048</Hit_len> 
 	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_bit-score") ) ;  fi>>_Hsp_bit_score;			//  <Hsp_bit-score>482.786</Hsp_bit-score>
 	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_score"    ) ) ;  fi>>_Hsp_score;              //  <Hsp_score>534</Hsp_score>		
@@ -713,62 +749,11 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_positive" ) ) ;  fi>>_Hsp_positive;			//  <Hsp_positive>267</Hsp_positive>
 	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_gaps"     ) ) ;  fi>>_Hsp_gaps;	 		    //  <Hsp_gaps>0</Hsp_gaps>
 	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_align-len") ) ;  fi>>_Hsp_align_len;		    //  <Hsp_align-len>267</Hsp_align-len>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_hseq") ) ;  getline (fi, sec,'<') ;	// <Hsp_hseq>TACAACATGATGGGAAAGAGAGAGAAGAAG 
-if ( ! fi.good() ) return id;
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_midline") ) ;  getline (fi, _Hsp_midline,'<') ;	//       <Hsp_midline>|||||||||||||||||||||||||||||||||||||||||
-if ( ! fi.good() ) return id;
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_hseq") ) ; 	                            	//  <Hsp_hseq>TACAACATGATGGGAAAGAGAGAGAAGAAG 
+                                                            if ( ! getline (fi, sec         ,'<') ) return id;
+	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_midline") ) ;                                 //  <Hsp_midline>|||||||||||||||||||||||||||||||||||||||||
+                                                            if ( ! getline (fi, _Hsp_midline,'<') ) return id;
 
-            //do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  // BLAST format error
-	//		
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; } 	//<Hit_id>gi|84028434|gb|DQ318020.1|</Hit_id> 
-			//while  (string::npos==li.find("Hit_id") );  				_Hit_id=new char[li.length()+1] ;
-			//li.copy(_Hit_id,li.length()) ;	_Hit_id	[li.length()]=0;
-            //
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
-			//while  (string::npos==li.find("Hit_def") );
-			//getline (fi, li,'<') ; _Hit_def=new char[li.length()+1] ;
-			//li.copy(_Hit_def,li.length()) ;	_Hit_def[li.length()]=0;	
-    //
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }		//<Hit_accession>DQ318020</Hit_accession>
-			//while  (string::npos==li.find("Hit_accession") );
-			//getline (fi, li,'<') ; _Hit_accession=new char[li.length()+1] ;
-			//li.copy(_Hit_accession,li.length()) ;	_Hit_accession[li.length()]=0;	
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  
-			//while  (string::npos==li.find("Hit_len") );fi>>_Hit_len;			
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  
-			//while  (string::npos==li.find("Hsp_bit-score") );fi>>_Hsp_bit_score;			
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }
-			//while  (string::npos==li.find(  "Hsp_score"  ) );fi>>   _Hsp_score   ; 	
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_evalue>3.71782e-133</Hsp_evalue>
-			//while  (string::npos==li.find(  "Hsp_evalue"  ) );fi>>   _Hsp_evalue   ;			
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_query-from>1</Hsp_query-from>
-			//while  (string::npos==li.find(  "Hsp_query-from"  ) );fi>>   _Hsp_query_from   ;			
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_query-to>267</Hsp_query-to>
-			//while  (string::npos==li.find(  "Hsp_query-to"  ) );fi>>   _Hsp_query_to   ;			
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_hit-from>9043</Hsp_hit-from>
-			//while  (string::npos==li.find(  "Hsp_hit-from"  ) );fi>>   _Hsp_hit_from   ;			
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_hit-to>9309</Hsp_hit-to>
-			//while  (string::npos==li.find(  "Hsp_hit-to"  ) );fi>>   _Hsp_hit_to   ;			
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_query-frame>1</Hsp_query-frame>
-			//while  (string::npos==li.find(  "Hsp_query-frame"  ) );fi>>   _Hsp_query_frame   ;			
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_hit-frame>1</Hsp_hit-frame>
-			//while  (string::npos==li.find(  "Hsp_hit-frame"  ) );fi>>   _Hsp_hit_frame   ;			
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_identity>267</Hsp_identity>
-			//while  (string::npos==li.find(  "Hsp_identity"  ) );fi>>   _Hsp_identity   ;			
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_positive>267</Hsp_positive>
-			//while  (string::npos==li.find(  "Hsp_positive"  ) );fi>>   _Hsp_positive   ;			
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_gaps>0</Hsp_gaps>
-			//while  (string::npos==li.find(  "Hsp_gaps"  ) );fi>>   _Hsp_gaps   ;			
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }  //  <Hsp_align-len>267</Hsp_align-len>
-			//while  (string::npos==li.find(  "Hsp_align-len"  ) );fi>>   _Hsp_align_len   ;			
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }	// <Hsp_hseq>TACAACATGATGGGAAAGAGAGAGAAGAAG
-			//while  (string::npos==li.find(  "Hsp_hseq"  ) );
-			//getline (fi, li,'<') ;         sec=new char[li.length()+1] ;
-			//li.copy(sec,li.length()) ;	sec[li.length()]=0;	
-			//do  {	getline (fi, li,'>') ;	if ( ! fi.good() ) return id; }	//       <Hsp_midline>|||||||||||||||||||||||||||||||||||||||||
-			//while  (string::npos==li.find(  "Hsp_midline"  ) );
-			//getline (fi, li,'<') ;         _Hsp_midline=new char[li.length()+1] ;
-			//li.copy(_Hsp_midline,li.length()) ;	_Hsp_midline[li.length()]=0;	
 			// long SecBeg = _SecBeg - _Hsp_query_from +1 ;			// if (_SecBeg >= _Hsp_query_from)
 			//if ( (_SecBeg		<= _Hsp_query_to) && ( (!_SecEnd)		 || _SecEnd		  >=_Hsp_query_from) ) // _SecEnd=0 significa no recortar la sec.
 

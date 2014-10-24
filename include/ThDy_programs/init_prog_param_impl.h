@@ -14,13 +14,13 @@
 
 #include "..\ThDySec\common_basics.h" 
 
- // TODO:  PROBLEMA : como organizar estos parametros si usamos procesos? Hacer copia de ellos !!!!!!!!?
- 
-/// Organize a "software" or Project into Specialized Programns and manage the input/config parametrs for each of the programs, 
-/// making ease to write a program interfase with a command-line, a text "project file" or a GUI, or all of then together. 
-/// Definiciones y declaraciones para user interface. A usar tambien por programs. Casi Primaria, depende solo de Common basics.
+/// \brief Organize a "software" or Project into Specialized Programns and manage the input/config parametrs for each of the programs. 
+/// Make ease to write a program interfase with a command-line, a text "project file" or a GUI, or all of then together. 
+/// Definitions and declarations for the user interface. Also to be used directly by the programs. Almost primary, depend only on Common basics.
+///  \todo:  PROBLEMA : como organizar estos parametros si usamos procesos? Hacer copia de ellos !!!!!!!!?
 namespace Programs{
 class IProg ;
+/// Non abstract basic Interface of programms parametr which define default save, load and title use.
 class IBParam
 {
    std::string _Titel;
@@ -32,74 +32,78 @@ class IBParam
 	        }    
 	 virtual ~IBParam(){}
 
-	 std::string Titel   ()const{return _Titel;}                //  ????  Human redeable
-	 void        SetTitel(std::string titel){ _Titel=titel;}    //  ????  Human redeable
+	 std::string Titel   ()const{return _Titel;}               ///<  ???  Human redeable
+	 void        SetTitel(std::string titel){ _Titel=titel;}   ///<  ???  Human redeable
 
 
  virtual std::ostream &save	(std::ostream	&osPr) const        ///< The default. To be change in derivate classes
 			            {   osPr<< ".\t"<<Titel()<<std::endl; 
 							return osPr;
 			            } 
- virtual bool   load	(std::istream   &isPr)  /*throw( std::out_of_range)  */              
+ virtual bool   load	(std::istream   &isPr)  ///< throw( std::out_of_range)                
 			            {   return false;}   
- virtual bool   load	(std::string &etiq, std::istream &isPr) /*throw( std::out_of_range)*/
+ virtual bool   load	(std::string &etiq, std::istream &isPr) ///<  throw( std::out_of_range) 
 			            {   return false;}   
 
 };
    // ifstream& operator >>(ifstream& ifs,IParam& p);                             //    ?????????????????
    // ofstream& operator <<(ofstream& ofs,const IParam& p){ p.save(ofs); return ofs;};  //    ?????????????????
 
-/// Base clase to manage a parametr of "some" type (defined in derived classes) 
-/// that will call a ValueChanged callback function and set Unit and Etiq
-/// used for save and load to a stream, without implementing the load ans saveValue functions. 
+///  \brief Base clase to manage a parametr of "some" type (defined in derived classes).  
+///
+/// It will call a IParam::ValueChanged callback function and set IParam::Unit and IParam::Etiq. 
+/// Used to save to and load from an stream, without implementing the load and IParam::saveValue functions. 
 class IParam : public IBParam
-{    std::string _etiq, _unit;
+{    
+    std::string _etiq, _unit;
  protected: 
 	void changed()
-	            {   if(ValueChanged) 
-				        ValueChanged(/**this*/);
-	            }
+	        {   
+                if(ValueChanged) 
+				    ValueChanged(/**this*/);
+	        }
 
  public:
-     std::function<void(void/*IBParam& param*/)> ValueChanged ;
+     std::function<void(void/*IBParam& param*/)> ValueChanged ; ///< A callback each time the value change
 
-	 IParam (  IProg *pp, 
+	 IParam (  IProg *pp,                     ///< the programm who own the parametr (tipicaly "this", the object for which the parametr is a member) 
                const std::string& titel, 
-               const std::string& etiq, 
+               const std::string& etiquete, 
                const std::string& unit="" ) ;
 
-	 std::string Etiq(           )const{return _etiq;}      ///< semiHuman readable and unique. Best with length 10
+	 std::string Etiq(           )const{return _etiq;}      ///< semiHuman readable and unique. I use with length 10
 	 void     SetEtiq(std::string etiq, IProg *prog);
 	
-	 std::string Unit()const{return _unit;}      ///< Human redeable and optional
+	 std::string Unit()const{return _unit;}                 ///< Human redeable and optional
 
-	 std::ostream	&save	(std::ostream	&osPr) const override
+	 std::ostream	&save	(std::ostream	&osPr) const override  ///< Implemented using IParam::saveValuee plus a call to IBParam::save 
 			            {    
                             osPr<< _etiq << ":\t"; 
 			                saveValue(osPr)<<"\t"<<_unit<<"\t";
-							IBParam::save(osPr)	; 
+							IBParam::save(osPr)	;              ///< << ".\t"<<Titel()<<std::endl; 
 							return osPr;
 			            } 
-     bool       load	(std::istream   &isPr)  /* throw( std::out_of_range) */      override   /**< Asume etiquete allready tested OK !!!!  */
+     bool       load	(std::istream   &isPr)    override   ///< Asume etiquete allready tested OK !!!!   throw( std::out_of_range).  
 			            {   
                             return loadValue(isPr);}   
-	 bool       load	(std::string		&etiq, std::istream &isPr) /*throw( std::out_of_range)   */  override
+	 bool       load	(std::string		&etiq, std::istream &isPr)  override  ///<   throw( std::out_of_range).  
 			            {   
                             if (etiq!=_etiq) 
 						        return false;
 			                return load(isPr);
 			            }  
                                             /// Default behavior, not yet a real implementation 
-	virtual std::ostream	    &saveValue	(std::ostream	&osPr	) const  // =0;   ??No salva nada, no tiene "value" todavia
+	virtual std::ostream	    &saveValue	(std::ostream	&osPr	) const  ///<  =0;   ??No salva nada, no tiene "value" todavia
 	                                {return osPr;} 
                                             /// Default behavior, not yet a real implementation 
-    virtual bool        loadValue	(std::istream   &isPr) /*throw( std::out_of_range)   */
+    virtual bool        loadValue	(std::istream   &isPr)  ///<   throw( std::out_of_range).  
 	                                {return false;}         // =0;   ??    ?????????????????
 
 	  ~IParam()override{}
 };
 
-           /// Only partialy manage a parametr of type Num (a "numeric" type) for with the value have to be in a range defined by min and max. 
+           /// \brief Only partialy manage a parametr of type Num (a "numeric" type) for with the value have to be in a range defined by min and max. 
+           ///
            /// Implement get and set (with check if value is in range and throw) but NOT loadValue and saveValue. Do not check the DefValue. 
   template <typename Num>
 class CParamBNRange: public IParam, public NumRang<Num>
@@ -118,16 +122,14 @@ class CParamBNRange: public IParam, public NumRang<Num>
 	             _value=defValue ;
 	          }
 
-								/// Num &parRef,   _v used and therefore does not need an external parameter
+								/// Num &parRef,   _v used and therefore does not need an external parametr
     CParamBNRange (IProg *pp, const std::string& titel, const std::string& etiq, 
 						Num min, Num max, Num defValue,
 						const std::string& unit=""
-					) : IParam (pp, titel, etiq, unit), NumRang<Num>(min,max), _value(_v)
-	          { /*if (!inRang(defValue)) 
-			        throw OutOfNumRange(string("Default Value out of Range while trying to construct: ")+Titel() );*/
-	             _value=defValue ; 
+					) : CParamBNRange ( pp,  titel,  etiq, _v, min,  max,  defValue, unit )  
+	          {  
 	          }
-	void set(Num value){ if (!inRang(value)) /// TODO: Incluir value y rang que no concuerdan en mensaje to throw
+	void set(Num value){ if (!inRang(value)) ///  \todo: Incluir value y rang que no concuerdan en mensaje to throw
 		                    throw OutOfNumRange(std::string("Value out of Range while trying to set: ")+Titel(), value, *this );
 	                     if (_value==value) return; 
 						 _value=value ; 
@@ -141,14 +143,20 @@ class CParamBNRange: public IParam, public NumRang<Num>
 
 class CProject;
 //class CEspProg ;
-/**   Para crear y anadir un nuevo programa:
- *		- crear interfase de usuario para tener idea de los parametros a usar
- *		- crear funcion del programa en su propio .cpp en el proyecto de prog
- *		- crear class tomando como base CEspProg o uno de sus derivados : anadir los paramet espec com se vio en la interfase e inicializarlos en el constr
- *		- implementar funciones de actualizar parametros <=> interfase de usuario : UpdateThDyP() & UpdateThDyForm()
- *		- implementar funciones load/save del project. Load: con etiqueta para cada param, "	<< boolalpha " para bool, 
+
+/**  \brief   Abstract "Interface" for parametrs of programs which only save/load project and run programs (all virtual)
+ *   \todo Para crear y anadir un nuevo programa:
+ *		- General plan: crear (plan) interfase de usuario para tener idea de los parametros a usar
+ *		- Common Programm Parametrs: crear class tomando como base Programs::CCommProgParam o uno de sus derivados para contener todos los parametros comunes
+ *		- Specific programs: Para cada tarea crear class tomando como base CEspProg o uno de sus derivados para contener los parametros especificos
+ *      - Project: crear class tomando como base Programs::CProject y anadirle todos los Programs::IProg anteriores
+ *      - Parametrs: Anadir a cada uno de los anteriores Programs::IProg los parametr especif (como se vio en la UI) e inicializarlos 
+ *      - New Parametrs: Si es necesario implementar derivado de Programs::IParam:
+ *		    - implementar funciones load/save del project. Load: con etiqueta para cada param, "	<< boolalpha " para bool, 
+ *		    - implementar funciones de actualizar parametros <=> interfase de usuario : UpdateThDyP() & UpdateThDyForm()
+*		- crear funcion del programa en su propio .cpp que toma como argumento un puntero a class C, call it in a overloaded Programs::IProg::Run 
  */
-class IProg : public IBParam // -------	  Clase base "interfase" para param de prog.Solo salva/load project y run prog (virtual todo)   ----------
+class IProg : public IBParam // -------	  Clase    ----------
 {   
  public:
     std::map<std::string,IParam*> _parametrs;
@@ -221,7 +229,7 @@ public:
 	bool	         load_defPr	()                                 {  ProjetFile(_defPr);         return load();	}
 	bool	         load	    (const std::string &ProjetFileName){  ProjetFile(ProjetFileName); return load();	}
 
-    //  Este es el verdadero save !!! El que abre el fichero y lo salva todo.
+    ///  \todo  Este es el verdadero save !!! El que abre el fichero y lo salva todo.
 	std::ofstream	&saveToFile	(const char *ProjetFileName) const{	std::ofstream osPr(ProjetFileName);			return save_all(osPr);}
 
 	std::ofstream	&save		()		const		            {	return saveToFile(_ProjetFileName.c_str())	;   }

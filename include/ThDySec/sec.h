@@ -6,6 +6,7 @@
 #include <cassert>
 #include <string>
 #include <memory>
+#include <vector>
 
 
 using namespace std;
@@ -25,64 +26,66 @@ using namespace std;
 class CMultSec	;
 class ISec				// Pure virtual class ?
 {public:			
-         /// crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
-	virtual ISec		*CreateCopy		(DNAStrand strnd=direct								)=0 ;
-	virtual Base		*GetCopyFullSec	(													)=0;
-	virtual Base		*GetCopy_charSec(DNAStrand strnd=direct								)=0  ;
-	virtual Base		*GetCopy_charSec(long InicBase, long EndBase, DNAStrand strnd=direct)=0 ;
-	virtual Base		*Copy_charSec	(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd=direct)=0  ;
+	using sequence = std::basic_string<Base> ;
+	virtual const sequence& Sequence(													)	const=0 ;
+	const char*          charSequence()	const {return (char*) (  Sequence().c_str()  );}
+	virtual ISec        *Clone   	(DNAStrand strnd=direct								)	const=0 ; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+	virtual std::string& Copy_Seq   (std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd=direct)	const=0  ;
+	virtual std::string& Copy_Seq   (std::string &SecHier, DNAStrand strnd=direct)	const=0  ;
 	virtual				~ISec			(){}
 };
 
 
 class CSecBasInfo : public ISec
 { protected:	
-	bool			_selected, _filtered;
-	int				_ID ;			//< num de la sec en file original?? en total??, num unico?
-	std::string     _name ;			//< nombre unico? FASTA id	// char			*_name ;
+	bool			_selected{true}, _filtered{false};
+	int				_ID{NewS_ID()} ;			                    //< num de la sec en file original?? en total??, num unico?
+	std::string     _name ;			                                //< nombre unico? FASTA id	// char			*_name ;
 	std::string		_description;
-	long			_len ;			//< longitud corregida, sin los '$'
-	long			_GrDeg ;		//< Grado de degeneracion. Cantidad total de diferentes molec, dependiendo de deg
-	float			_GCp ;		
-	long			_Count[n_dgba];	//< An array of counters for each deg base - inicializar!!
-	long			_NDB ;			//< cantidad de bases deg
-	std::string     _Clas ;		//< clasificacion
-	Base			*_c;			//< sec char, comienzan y terminan con '$'0
-	CMultSec		*_NonDegSet ;
-	static int	NewS_ID     ()	{static int last_ID(0);	return ++last_ID;	}
+	//long			_len ;			                                //< longitud corregida, sin los '$'
+	long			_GrDeg {1} ;		                            //< Grado de degeneracion. Cantidad total de diferentes molec, dependiendo de deg
+	float			_GCp   {} ;		
+	long			_Count[DegCod::n_dgba];	                        //< An array of counters for each deg base - inicializar!!
+	long			_NDB   {};			                            //< cantidad de bases deg
+	std::string     _Clas ;		                                    //< clasificacion
+	sequence	    _c/*{2,DegCod::basek[DegCod::n_basek]}*/;			//< sec char, comienzan y terminan con '$'0
+	CMultSec		*_NonDegSet{nullptr} ;                          /// TODO: std::unique_ptr<>
+	static int	NewS_ID     ()	{static int last_ID{};	return ++last_ID;	}
 
-		CSecBasInfo (int id,     const std::string& nam    , const std::string& clas) ;
-		CSecBasInfo() :_filtered(false), _selected(true), _ID(NewS_ID()), _NonDegSet(nullptr),_c(nullptr) {}
-		CSecBasInfo ( long l);
+		CSecBasInfo (int id,     const std::string& nam    , const std::string& clas) 						
+			           :	_ID	 ( id ), 								
+							_name( trim_string	(nam )),	
+						    _Clas(clas )/*,
+							_c{2,DegCod::basek[DegCod::n_basek]}*/
+                       {} 
+
+		CSecBasInfo()  {}
+		CSecBasInfo ( long l)    {_c.reserve(l+2);}   ///   ????????????????????
 public:
-	CSecBasInfo			*CopyFirstBases	(long pos)	;			// copia parcialmente hasta la pos
-    ~CSecBasInfo();
-    std::string Name		()const		{return _name;} //< User-editable
-	int			ID			()const		{return _ID;}	//< Run-time-sistem define, non-editable
+	//CSecBasInfo			*CopyFirstBases	(long pos)	;			 // copia parcialmente hasta la pos
+    ~CSecBasInfo() override;
+    std::string Name		()const		{return _name;}              //< User-editable
+	int			ID			()const		{return _ID;}	             //< Run-time-sistem define, non-editable
 	bool		Filtered(bool filter)	{return _filtered=filter;}   //< User-editable ?????
 	bool		Filtered(		) const {return _filtered;}
-	bool		Selected(bool select)	{return _selected=select;} 			//< make protected: ??
+	bool		Selected(bool select)	{return _selected=select;} 		  	 //< make protected: ??
 	bool		Selected(		) const {return _selected;}					 //< User-editable
-	void				Description (std::string	description)		{ _description=description;}
+	void	    Description (std::string	description)		{ _description=description;}
 	virtual std::string	Description ()const	{return !_description.empty() ? _description : Name() ; }
 
-	virtual Base		*GetCopyFullSec	(						)override
-								{	Base *s=new Base[Len()+3]; 
-									for(int i=0 ; i<Len()+2  ; i++ ) 
-										s[i]=_c[i]; 
-									s[Len()+2]=0; 
-									return s;
+	virtual const sequence& Sequence	(						)	const override   /// ver esto !!!
+								{	 
+									return _c ;
 								}
-	virtual Base		*GetCopy_charSec(DNAStrand strnd=direct	)override  ;
-	virtual Base		*GetCopy_charSec(long InicBase, long EndBase, DNAStrand strnd=direct) override ;
-	virtual Base		*Copy_charSec	(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd=direct) override ;
-	virtual bool		 NotIdem		(CSecBasInfo *sec) {return false;}
-	Base		operator[]	(int i)const{return _c[i];}
+	 std::string& Copy_Seq  	(std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd=direct)	const override ;
+	 std::string& Copy_Seq  	(std::string &SecHier,  DNAStrand strnd=direct)	const override {return Copy_Seq ( SecHier, 1, Len(), strnd ) ;}
+	 bool		 NotIdem		(CSecBasInfo *sec) {return false;}
+	Base		operator[]	(int i)const{return _c[i];}  /// i+1 ????
 
-	long		Len			()const		{return _len;} //
+	long		Len			()const		{return _c.length()-2;} //
 	long		Degeneracy	()const		{return _GrDeg;}
 	long		*BaseCount	()			{return _Count;}
-	long		BaseCount	(Base b)	{ if(is_degbase[b]) return _Count[db2nu[b]]; else return 0;}
+	long		BaseCount	(Base b)	{ return  DegCod::is_degbase[b] ?  _Count[DegCod::db2nu[b]] : 0;}
 	CMultSec	*NonDegSet	()			{return _NonDegSet;}
 	float		GCpercent	()const		{return	_GCp ;}		
 };
@@ -90,33 +93,37 @@ public:
 
 class CSec : public CLink, public CSecBasInfo	// ---------------------------------------   CSec	---------------------------------------------------
 {public:
+	    int                     x;				//<  ????
+		NumRang<float>	        _Tm ;			//< float		_Tm, _minTm, _maxTm ;				//  
+		std::shared_ptr<CSaltCorrNN>  _NNpar ;
+		float			        _Conc ;			//< conc de esta molec. Si igual al resto -1 y la toma de NNParam
+		std::vector<Code>	    _b;			//< sec cod, inicialmente basek
+		std::vector<Entropy>    _SdS ;			//< dS acumulada. Calcular Delta S sera solo restar la final menos la inicial	
+		std::vector<Energy>		_SdH ;			// 
+		CMultSec	           *_parentMS{nullptr}	;   //std::weak_ptr<CMultSec> _parentMS	;
+
 	CSec (  const std::string&  sec, 
-            int                 id, 
+		    int                 id,
             const std::string&  nam,     // char*
             std::shared_ptr<CSaltCorrNN>  NNpar, 
             long                lmax=0, //< limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
             long                secBeg=1, 
-            const std::string&  clas="", 
+            const std::string&  clas="" , 
             float               conc=-1         );
 	CSec ( long l, std::shared_ptr<CSaltCorrNN>  NNpar) ;
 
-	    int                     x;
-		NumRang<float>	        _Tm ;			//< float		_Tm, _minTm, _maxTm ;				//  
-		std::shared_ptr<CSaltCorrNN>  _NNpar ;
-		float			        _Conc ;			//< conc de esta molec. Si igual al resto -1 y la toma de NNParam
-		Base			        *_b;			//< sec cod, inicialmente basek
-		float		            *_SdS ;			//< dS acumulada. Calcular Delta S sera solo restar la final menos la inicial	
-		float		            *_SdH ;			// 
-		CMultSec	            *_parentMS	;   //std::weak_ptr<CMultSec> _parentMS	;
 
+	long		Len			()const		{return _SdS.size();} //
 	void		 CorrectSaltOwczarzy    () ;
 	CMultSec	*CreateNonDegSet		()			;   //< crea todo el set si no existia, solo si existen bases deg: _NDB>0
 	CMultSec	*ForceNonDegSet			();				//< lo crea siempre, incluso para =1??
 	CSec		*GenerateNonDegVariant	(CSec *s, long pos, Base ndb)   ; //< recursiva
 	CSec		*CopyFirstBases			(long pos)	;			//< copia parcialmente hasta la pos
 	void		 CorrectSalt			() { if ( _NNpar->UseOwczarzy () ) CorrectSaltOwczarzy();};
-	virtual CSec*CreateCopy		(DNAStrand strnd=direct) override;//< crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
-	const char	*Get_charSec			()const{return (const char*)_c;}
+	CSec		*Clone   	(DNAStrand strnd=direct	 ) const override; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+
+	//virtual CSec*CreateCopy		(DNAStrand strnd=direct) override;//< crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+	//const char	*Get_charSec			()const{return (const char*)_c.c_str();}  ///   ???????????
 
     bool		Selected() const;				 //< User-editable    ???????????????????????????????????????????????????????????????????????????
     bool		Selected(bool select)	{ _selected = select; return Selected(); } 			//< make protected: ?????????????????????????????????????????????????
@@ -131,7 +138,7 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
 	Energy		G	(long pi			)const	{return G(pi,Len())    ;}   //< G de la sonda con sec desde pi hasta el final, inclusive ambos!!
 	Energy		G	(					)const	{return G(1,Len())     ;}   //< G de la sonda con sec desde inicio hasta el final, inclusive ambos!!
 
-	virtual		~CSec()   ;   // decidir si vale la pena que sea virtual. Cual es el efecto??
+	 ~CSec() override  ;   // decidir si vale la pena que sea virtual. Cual es el efecto??
 	virtual bool NotIdem(CSec *sec) {return false;}
 };
 
@@ -392,8 +399,17 @@ class CSecAl : public CLink // destinado a formar parte de una lista en un aline
 	CSec &_Sec ;	// ref a la sec, que ni se modifica ni se cambia de lugar
 	long *_inAlp_B ;// array que dice que base de la sec va en esa pos del Al (len=Al)
 	long *_inBp_Al ;// array que dice en que pos del Al va esa base de la sec (len=sec)
-	CSecAl(CSec &sec, long LenAlign): _Sec(sec), _inAlp_B(new long[sec.Len()]), _inBp_Al(new long[LenAlign]){}
-	CSecAl(CSec &sec): _Sec(sec), _inAlp_B(new long[sec.Len()]), _inBp_Al(0){}
+
+	CSecAl(CSec &sec, long LenAlign)
+		: _Sec(sec), 
+		  _inAlp_B(new long[sec.Len()]), 
+		  _inBp_Al(new long[LenAlign])
+	   {}
+	CSecAl(CSec &sec) 
+		: _Sec(sec), 
+		  _inAlp_B(new long[sec.Len()]), 
+		  _inBp_Al(0)
+	  {}
 	virtual ~CSecAl(){ delete []_inAlp_B; delete []_inBp_Al;}
 
 	char *CopyAlignedSecChar(long Al_pBeg, long Al_pEnd, char *CharSec)	;// CUIDADO !! asume suficiente espacio !!

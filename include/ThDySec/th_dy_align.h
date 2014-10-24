@@ -151,25 +151,28 @@ public:
 };
 
 class CHitAligned  : public CHit
-{public:
-//	CHit _Hit;
-//	explicit CHitAligned(CHit &Hit) : _Hit(Hit), _sd(0), _tg(0) {}
-	explicit CHitAligned(ThDyAlign &Al) : CHit(Al), _sd(0), _tg(0), _st(0){ExtractAligment(Al);}
-	Base *_sd, *_tg ;
-	ThDyAlign::Step *_st ;
-	long _mt, _mm, _sgap, _tgap ;    // count sonde and target - matchs , mistmatch, and gaps
-	float			_Hr, _Sr, _Gr, _Tmr ;
-	void ExtractAligment(ThDyAlign &Al);
-	explicit CHitAligned(Base *s, Base *t, std::shared_ptr<CSaltCorrNN>  NNpar ) // OJO : se aduena de las sec s, t !!!!!!!!!!!!!!! Las borra !!
-									: _sd(s), _tg(t){ReCalcule( NNpar );}; 
+{
+public:
+	ISec::sequence          _sd, _tg ;
+	vector<ThDyAlign::Step> _st ;
+	long                    _mt, _mm, _sgap, _tgap ;    // count sonde and target - matchs , mistmatch, and gaps
+	float		            _Hr, _Sr, _Gr, _Tmr ;
 
-	virtual ~CHitAligned()  {delete []_sd; delete []_tg;}
+	explicit CHitAligned(ThDyAlign &Al) : CHit(Al) {ExtractAligment(Al);}
+	explicit CHitAligned(ISec::sequence s, ISec::sequence t, std::shared_ptr<CSaltCorrNN>  NNpar )  
+									: _sd(std::move(s)), 
+									  _tg(std::move(t))
+	                              {ReCalcule( NNpar );}; 
+
+	void ExtractAligment(ThDyAlign &Al);
+
+	virtual ~CHitAligned()  { }
 	void ReCalcule( std::shared_ptr<CSaltCorrNN>  NNpar );
 };
 
 class AlignedSecPar : public CHitAligned
 {public: 
-explicit AlignedSecPar( Base *s,  Base *t, std::shared_ptr<CSaltCorrNN>  NNpar ):CHitAligned(s, t, NNpar){};
+explicit AlignedSecPar( ISec::sequence s,  ISec::sequence t, std::shared_ptr<CSaltCorrNN>  NNpar ):CHitAligned(s, t, NNpar){};
 Temperature Tm(){return _Tmr;}
 float  G(){return _Gr ;}
 	virtual ~AlignedSecPar()  {_sd=_tg=nullptr;}
