@@ -244,49 +244,49 @@ class TableRes  : public nana::form, public EditableForm
 class SetupPage : public CompoWidget
 {
     ThDyProject        &_Pr;
-    FilePickBox         _results    { *this, STR("Results:") } ;
+    FilePickBox         _results            { *this, STR("Results:") } ;
 
-    FilePickBox         _targets    { *this, STR("Targets:") }  ;
-    nana::checkbox _chkTargRecDir    { *this, STR("Targets - Recur Dir") },
-                        _chkTargOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
+    FilePickBox         _targets            { *this, STR("Targets:") }  ;
+    nana::checkbox      _chkTargRecDir      { *this, STR("Targets - Recur Dir") },
+                        _chkTargOnlyStruct  { *this, STR("Only reproduce Dir Structure") };
 
-    FilePickBox         _nTsec      {*this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt")};
-    nana::checkbox _chk_nTgRecDir    { *this, STR("Non Targets - Recur Dir") },
-                        _chk_nTgOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
+    FilePickBox         _nTsec              { *this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt")};
+    nana::checkbox      _chk_nTgRecDir      { *this, STR("Non Targets - Recur Dir") },
+                        _chk_nTgOnlyStruct  { *this, STR("Only reproduce Dir Structure") };
 
-    FilePickBox         _PCRfiltre  { *this, STR("PCR-filtre:")};
+    FilePickBox         _PCRfiltre          { *this, STR("PCR-filtre:")};
 
-    FilePickBox         _PrimersFilePCR{*this, STR("Primers seq. file:") };
-    nana::checkbox _chkPrimRecDir    { *this, STR("Primers - Recur Dir") },
-                        _chkPrOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
+    FilePickBox         _PrimersFilePCR     { *this, STR("Primers seq. file:") };
+    nana::checkbox      _chkPrimRecDir      { *this, STR("Primers - Recur Dir") },
+                        _chkPrOnlyStruct    { *this, STR("Only reproduce Dir Structure") };
 
-    FilePickBox         _Prob_uArr{*this, STR("Probes seq. file:") };
-    nana::checkbox _chkProbRecDir    { *this, STR("Probes - Recur Dir") },
-                        _chkProbOnlyStruct{ *this, STR("Only reproduce Dir Structure") };
+    FilePickBox         _Prob_uArr          { *this, STR("Probes seq. file:") };
+    nana::checkbox      _chkProbRecDir      { *this, STR("Probes - Recur Dir") },
+                        _chkProbOnlyStruct  { *this, STR("Only reproduce Dir Structure") };
 
-    OpenSaveBox         _NNParamFile {*this, STR("NN param:")};
+    OpenSaveBox         _NNParamFile        { *this, STR("NN param:")};
 
-    nana::combox               comBoxSalMeth   {*this}, 
-                                    comBoxTAMeth    {*this};
-    nana::NumUnitUpDown        numUpDowTgConc  {*this, STR("Target Conctr:"      ), 50, 0.1 , 1000000,  "nM"}, 
-                                    numUpDowSalConc {*this, STR("Salt Conc [Cations]:"), 50, 0.0001 , 10000,"mM"} , 
-                                    numUpDowTa      {*this, STR("Temp. Anneling:"     ), 55,  40 , 75,    "°C"},  
-                                    numUpDowSdConc  {*this, STR("Sonde Conctr:"       ), 0.8, 0.001 , 1000,  "µM"}  ;
-    nana::button  _set_def_proj    {*this,STR("Set as Def. project") },
-                       _load_def_proj   {*this,STR("ReLoad Def. project") };
+    nana::combox        comBoxSalMeth       { *this}, 
+                        comBoxTAMeth        { *this};
+    nana::NumUnitUpDown numUpDowTgConc      { *this, STR("Target Conctr:"      ), 50, 0.1    , 1000000,  "nM"}, 
+                        numUpDowSalConc     { *this, STR("Salt Conc [Cations]:"), 50, 0.0001 , 10000,    "mM"} , 
+                        numUpDowTa          { *this, STR("Temp. Anneling:"     ), 55, 40     , 75,       "°C"},  
+                        numUpDowSdConc      { *this, STR("Sonde Conctr:"       ), 0.8, 0.001 , 1000,     "µM"}  ;
+    nana::button        _set_def_proj       { *this,STR("Set as Def. project") },
+                       _load_def_proj       { *this,STR("ReLoad Def. project") };
 
-    nana::checkbox ckBx_savTm      { *this, STR("Tm"    ) },
-                        ckBx_savPos     { *this, STR("Pos"   ) },
-                        ckBx_savG       { *this, STR("G"     ) },
-                        ckBx_savAlign   { *this, STR("Align" ) },
-                        ckBx_savProj    { *this, STR("Proj"  ) },
-                        ckBx_savG_Plasm { *this, STR("G->Plasmid") },
-                        ckBx_savTm_Plasm{ *this, STR("Tm->Plasmid") },
-                        ckBx_savLog       { *this, STR("log"     ) },
-                        ckBx_savExportSond{ *this, STR("Exp. probes" ) },
-                        ckBx_savExportTarg{ *this, STR("Exp. targets") },
-                        ckBx_savNNParam { *this, STR("load NNparam") },
-                        ckBx_loadNNParam{ *this, STR("save NNparam") }/*,*/
+    nana::checkbox      ckBx_savTm          { *this, STR("Tm"    ) },
+                        ckBx_savPos         { *this, STR("Pos"   ) },
+                        ckBx_savG           { *this, STR("G"     ) },
+                        ckBx_savAlign       { *this, STR("Align" ) },
+                        ckBx_savProj        { *this, STR("Proj"  ) },
+                        ckBx_savG_Plasm     { *this, STR("G->Plasmid") },
+                        ckBx_savTm_Plasm    { *this, STR("Tm->Plasmid") },
+                        ckBx_savLog         { *this, STR("log"     ) },
+                        ckBx_savExportSond  { *this, STR("Exp. probes" ) },
+                        ckBx_savExportTarg  { *this, STR("Exp. targets") },
+                        ckBx_savNNParam     { *this, STR("load NNparam") },
+                        ckBx_loadNNParam    { *this, STR("save NNparam") }/*,*/
                         ;
 
     BindGroup          _setup;
@@ -296,17 +296,17 @@ class SetupPage : public CompoWidget
         _DefLayout =
 	"vertical      gap=3        			\n\t"
 	"		   < weight=400     gap=5     <weight=2><  vertical min=50    max=800 gap=2 			\n\t"
-	"		              <  <Project>      weight=23 >      				\n\t"
-	"				      <  <Results>      weight=23 >      				\n\t"
-	"			          <    <     weight=22 _targets>               weight=50       vertical <gap=10  weight=23  <weight=10%><TargOpt   ><weight=10%>    >   <>>       			\n\t"
-	"			          <    <     weight=22 _nTsec  >              weight=50       vertical <gap=10  weight=23  <weight=10%>< nTargOpt ><weight=10%>    >   <>>       	\n\t"
-	"			          <    <     weight=22 _PCRfiltre  >         weight=50       vertical <gap=10  weight=23  <weight=10%><_PCRfiltreOpt ><weight=10%>    >   <>>       	\n\t"
-	"			          <    <     weight=22 _PrimersFilePCR>weight=50       vertical <gap=10  weight=23  <weight=10%><_PrimersFilePCROpt ><weight=10%>    >   <>>       	\n\t"
-	"			          <    <     weight=22 _Prob_uArr   >    weight=50         vertical <gap=10  weight=23  <weight=10%><_Prob_uArrOpt ><weight=10%>    >   <>>       	\n\t"
-	" 		              <  <NN_param >     weight=23 >      				\n\t"
-	"				    <min=50 <weight=2>  <vertical min=50 max=200 gap=2 buttons>  <>  >			\n\t"
-	"		          >                                                                             	\n\t"
-	"	            <  vertical weight=120 <vertical weight=210 checks> <>  >   	                          	\n\t"
+	"		               		             <  <Project>      weight=23 >      				\n\t"
+	"				                         <  <Results>      weight=23 >      				\n\t"
+	"			                             <    <     weight=22 _targets>               weight=50       vertical <gap=10  weight=23  <weight=10%><TargOpt   ><weight=10%>    >   <>>       			\n\t"
+	"			                             <    <     weight=22 _nTsec  >              weight=50       vertical <gap=10  weight=23  <weight=10%>< nTargOpt ><weight=10%>    >   <>>       	\n\t"
+	"			                             <    <     weight=22 _PCRfiltre  >         weight=50       vertical <gap=10  weight=23  <weight=10%><_PCRfiltreOpt ><weight=10%>    >   <>>       	\n\t"
+	"			                             <    <     weight=22 _PrimersFilePCR>weight=50       vertical <gap=10  weight=23  <weight=10%><_PrimersFilePCROpt ><weight=10%>    >   <>>       	\n\t"
+	"			                             <    <     weight=22 _Prob_uArr   >    weight=50         vertical <gap=10  weight=23  <weight=10%><_Prob_uArrOpt ><weight=10%>    >   <>>       	\n\t"
+	" 		                             <  <NN_param >     weight=23 >      				\n\t"
+	"				                         <min=50 <weight=2>  <vertical min=50 max=200 gap=2 buttons>  <>  >			\n\t"
+	"		                            >                                                                             	\n\t"
+	"	                              <  vertical weight=120 <vertical weight=210 checks> <>  >   	                          	\n\t"
 	"	       >			\n\t"
 	"							\n\t"
 	"		   < weight=46  gap=2  <>  <vertical ConcST   weight=200  gap=2>  			\n\t"
@@ -319,6 +319,7 @@ class SetupPage : public CompoWidget
 	"			\n\t"
 	"		\n\t"
 	"	\n\t"
+
     
             ;
         _nTsec        .ResetLayout(105);
@@ -598,19 +599,19 @@ class SeqExpl : public CompoWidget
     std::vector<CSec*>      _dragSec;
     std::vector<CMultSec*>  _dragMSec;
 
-    nana::button      _loadFile     {*this,STR("Load"   )},       //nana::toolbar  _tbar { *this };
-                           _re_loadFile  {*this,STR("reLoad" )},   
-                           _loadDir      {*this,STR("Load"   )},       
-                           _re_loadDir   {*this,STR("reLoad" )},
-                           _scanDir      {*this,STR("Scan"   )},
-                           _cut          {*this,STR("Cut"    )},
-                           _paste        {*this,STR("Paste"  )},
-                           _del          {*this,STR("Del"    )},
-                           _cutSec       {*this,STR("Cut"    )},
-                           _delSec       {*this,STR("Del"    )},
-                           _show_locals_s{*this,STR("local"  )},
-                           _show_filt_s  {*this,STR("filtr"   )}
-                           ; 
+    nana::button    _loadFile     {*this,STR("Load"   )},       //nana::toolbar  _tbar { *this };
+                    _re_loadFile  {*this,STR("reLoad" )},   
+                    _loadDir      {*this,STR("Load"   )},       
+                    _re_loadDir   {*this,STR("reLoad" )},
+                    _scanDir      {*this,STR("Scan"   )},
+                    _cut          {*this,STR("Cut"    )},
+                    _paste        {*this,STR("Paste"  )},
+                    _del          {*this,STR("Del"    )},
+                    _cutSec       {*this,STR("Cut"    )},
+                    _delSec       {*this,STR("Del"    )},
+                    _show_locals_s{*this,STR("local"  )},
+                    _show_filt_s  {*this,STR("filtr"  )}
+                    ; 
     nana::tooltip    _loadFileTT {_loadFile,STR("File load: Add a group of sequences from a file")},
                           _re_loadFileTT ;  
 ;  
@@ -669,10 +670,13 @@ class SeqExpl : public CompoWidget
     void SetDefLayout() override
     {
         _DefLayout = 
-	                    "vertical                                               		\n\t"
-	                    "	  <weight=20 <toolbar weight=780 ><>>       	            \n\t"
-	                    "	  <horizontal  gap=2   <Tree weight=25% > | <List >   >      	\n\t"
-	                    "		\n\t"
+	                "vertical                                                 \n\t"
+	                "		  <weight=23 <toolbar weight=680 margin=2 ><>>    \n\t"
+	                "		  <      <Tree  > |75% <List >   >      		  \n\t"
+	                "				                                          \n\t"
+	                "		                                                  \n\t"
+	                "	                                                      \n\t"
+
             ;
     }
     void AsignWidgetToFields() override
@@ -815,13 +819,13 @@ class FindSondenPage : public CompoWidget
     ThDyProject &_Pr;
     BindGroup   _findSond;
     nana::NumUnitUpDown _Gmin     {*this, STR("G :"    ), -5, -10 , 10,"kcal/mol"},   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
-                             _Tmmin    {*this, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {*this, STR(""), 63,  45, 75, "°C"      }, 
-                             _Lengthmin{*this, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{*this, STR(""), 35,  15, 40, "nt"      },
-                             _MaxG     {*this, STR("Max G" ), 10, -10, 30, "kcal/mol" },  _MinTm   {*this, STR("Tm :"  ), 30,  10 , 60,"°C"}, 
-                             _MinG     {*this, STR("Min G" ), 15, -10 , 30,"kcal/mol" }, _MaxTm    {*this, STR("Max Tm"), 10, -10, 75, "°C"}, 
-                             _MinSelfG {*this, STR("Min G" ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{*this, STR("Max Tm"), 10, -10, 75, "°C"}, 	
-                             numUpDw_MinTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" }, 
-                             numUpDw_MaxTargCov{ *this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%" } ;
+                        _Tmmin    {*this, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {*this, STR(""), 63,  45, 75, "°C"      }, 
+                        _Lengthmin{*this, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{*this, STR(""), 35,  15, 40, "nt"      },
+                        _MaxG     {*this, STR("Max G" ), 10, -10, 30, "kcal/mol" },  _MinTm   {*this, STR("Tm :"  ), 30,  10 , 60,"°C"}, 
+                        _MinG     {*this, STR("Min G" ), 15, -10 , 30,"kcal/mol" }, _MaxTm    {*this, STR("Max Tm"), 10, -10, 75, "°C"}, 
+                        _MinSelfG {*this, STR("Min G" ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{*this, STR("Max Tm"), 10, -10, 75, "°C"}, 	
+                        numUpDw_MinTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" }, 
+                        numUpDw_MaxTargCov{ *this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%" } ;
     nana::tooltip _Gmintt     {_Gmin, STR("Only probes with stronger interaction with target (smaller G by selected Ta) will be included"    ) }/*,   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
                              _Tmmin    {*this, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {*this, STR(""), 63,  45, 75, "°C"      }, 
                              _Lengthmin{*this, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{*this, STR(""), 35,  15, 40, "nt"      },
@@ -967,25 +971,25 @@ class MplexPCR : public CompoWidget
 class TmCalcPage : public CompoWidget
 {
     ThDyProject             &_Pr;
-    nana::textbox          sec_                {*this},  
-                                sec2align_          {*this},  
-                                txtBx_ResultSec     {*this},  
-                                txtBx_ResultSec2Align{*this};
-    nana::checkbox         chkBx_Tm_save_asPCR {*this, STR("save")},   
-                                chkBx_align         {*this, STR("align")},
-                                chkBx_copy_rev      {*this, STR("rev")},    
-                                chkBx_copy_compl    {*this, STR("cpl")};
-    nana::button           run_                {*this, STR("Tm !")},
-                                copy_f_s_2          {*this, STR("copy")},   
-                                copy_s              {*this, STR("c")},
-                                copy_s_a            {*this, STR("c")};      
-    nana::label            error_              {*this, STR("no error")};
-    nana::NumberBox        Tm_min_Up{*this}, Tm_Up{*this}, Tm_max_Up{*this} ,
-                                Tm_min_Dw{*this}, Tm_Dw{*this}, Tm_max_Dw{*this} ,
-                                Tm_min_In{*this}, Tm_In{*this}, Tm_max_In{*this} ,
-                                G_min_Up{*this},   G_Up{*this},  G_max_Up{*this} ,
-                                G_min_Dw{*this},   G_Dw{*this},  G_max_Dw{*this} ,
-                                G_min_In{*this},   G_In{*this},  G_max_In{*this} ;
+    nana::textbox           sec_                {*this},  
+                            sec2align_          {*this},  
+                            txtBx_ResultSec     {*this},  
+                            txtBx_ResultSec2Align{*this};
+    nana::checkbox          chkBx_Tm_save_asPCR {*this, STR("save")},   
+                            chkBx_align         {*this, STR("align")},
+                            chkBx_copy_rev      {*this, STR("rev")},    
+                            chkBx_copy_compl    {*this, STR("cpl")};
+    nana::button            run_                {*this, STR("Tm !")},
+                            copy_f_s_2          {*this, STR("copy")},   
+                            copy_s              {*this, STR("c")},
+                            copy_s_a            {*this, STR("c")};      
+    nana::label             error_              {*this, STR("no error")};
+    nana::NumberBox         Tm_min_Up{*this}, Tm_Up{*this}, Tm_max_Up{*this} ,
+                            Tm_min_Dw{*this}, Tm_Dw{*this}, Tm_max_Dw{*this} ,
+                            Tm_min_In{*this}, Tm_In{*this}, Tm_max_In{*this} ,
+                            G_min_Up{*this},   G_Up{*this},  G_max_Up{*this} ,
+                            G_min_Dw{*this},   G_Dw{*this},  G_max_Dw{*this} ,
+                            G_min_In{*this},   G_In{*this},  G_max_In{*this} ;
 
     BindGroup              _TmCalc;
 public:     
@@ -1088,18 +1092,18 @@ public:
 class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
 {
     using tabbar = nana::tabbar<nana::string> ;
-	tabbar                          tabbar_     {*this};
-    SetupPage                       setup_      {*this};
-    FindSondenPage                  findSond_   {*this};
-    MplexPCR                        mPCR_       {*this};
-    uArray                          uArr_       {*this}; 
-    TmCalcPage                      tmCalc_     {*this}; 
+	tabbar                     tabbar_     {*this};
+    SetupPage                  setup_      {*this};
+    FindSondenPage             findSond_   {*this};
+    MplexPCR                   mPCR_       {*this};
+    uArray                     uArr_       {*this}; 
+    TmCalcPage                 tmCalc_     {*this}; 
     nana::NumUnitUpDown        numUpDwMaxTgId  {*this, STR("Max. ident.:"        ), 99,  50 , 100 ,   "%"}, 
-                                    numUpDw_TgBeg   {*this, STR("Beg.:"               ),  0,   0 , 100000,"nt"},    /// rev !!
-                                    numUpDw_TgEnd   {*this, STR("End.:"               ),  0,   0 , 100000,"nt"},    /// rev !!	
-                                    numUpDw_SLenMin {*this, STR("Min.Len.:"           ),  0,   0 , 100000,"nt"},
-                                    numUpDw_SLenMax {*this, STR("Max.Len.:"           ),  0,   0 , 100000,"nt"};
-    BindGroup                       _commPP     ;
+                               numUpDw_TgBeg   {*this, STR("Beg.:"               ),  0,   0 , 100000,"nt"},    /// rev !!
+                               numUpDw_TgEnd   {*this, STR("End.:"               ),  0,   0 , 100000,"nt"},    /// rev !!	
+                               numUpDw_SLenMin {*this, STR("Min.Len.:"           ),  0,   0 , 100000,"nt"},
+                               numUpDw_SLenMax {*this, STR("Max.Len.:"           ),  0,   0 , 100000,"nt"};
+    BindGroup                  _commPP     ;
 
   public:    
     std::vector<std::unique_ptr<nana::form>> _results;
