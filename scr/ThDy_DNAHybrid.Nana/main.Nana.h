@@ -1089,6 +1089,39 @@ public:
 
 };
 
+class RenameFrom : public nana::form, public EditableForm
+{
+    std::string     _name;
+    bool            _renamed    {false};
+    nana::textbox   edit        {*this};
+    nana:: button   OK          {*this, STR("rename")}, 
+                    Cancel      {*this, STR("abort" )};
+    BindGroup       _bind     ;
+
+
+  public:
+    RenameFrom(nana::widget& owner, std::string name) : 
+            _name(name),  
+             nana::form  (nana::rectangle( nana::point(150,500), nana::size(300,150) )),
+             EditableForm(&owner, *this, STR("Rename") )     
+        {
+            InitMyLayout();
+            OK.events().click([this]()
+            {
+                std::string  name=nana::charset(edit.caption()); 
+                _renamed = (_name!=name);
+                if (_renamed)
+                    _name=name;
+                this->close(); 
+            });
+            Cancel.events().click([this](){_renamed = false; this->close(); });
+
+        }
+    std::string Name(){return _name;}
+
+
+};
+
 class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
 {
     using tabbar = nana::tabbar<nana::string> ;
