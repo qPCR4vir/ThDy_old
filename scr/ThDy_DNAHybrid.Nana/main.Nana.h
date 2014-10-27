@@ -1102,9 +1102,10 @@ class RenameFrom : public nana::form, public EditableForm
   public:
     RenameFrom(nana::widget* owner, std::string name) : 
             _name(name),  
-             nana::form  (nana::rectangle( nana::point(150,500), nana::size(300,150) )),
+             nana::form  (nana::rectangle( nana::point(150,500), nana::size(300,50) )),
              EditableForm(owner, *this, STR("Rename") )     
         {
+            edit.caption(nana::charset(_name) );
             InitMyLayout();
             OK.events().click([this]()
             {

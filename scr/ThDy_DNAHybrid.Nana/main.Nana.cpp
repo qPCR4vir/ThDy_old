@@ -319,8 +319,10 @@ int main(int argc, char *argv[])
         {
             
             RenameFrom rnm(&_tree, nana::charset(_tree.selected().text()));
-            rnm.show();
+            nana::API::modal_window( rnm );
             _tree.selected().text(nana::charset(rnm.Name()));
+            _tree.selected().value<CMultSec*>()->_name = rnm.Name() ;
+
         }).enabled(true);
 
     }
