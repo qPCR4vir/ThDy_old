@@ -317,13 +317,11 @@ int main(int argc, char *argv[])
         menu.append(STR("Del selected groups of sequences from tree"),[&](nana::menu::item_proxy& ip)  {  Click(_del   );  });
         menu.append(STR("Rename the selected group of sequences"),[&](nana::menu::item_proxy& ip) 
         {
-            //_showFiltered = menu.checked(ip.index());// !_showFiltered;
-            //_list.auto_draw(false);
-            //_list.clear();
-            // populate_list_recur(_tree.selected());
-            //_list.auto_draw(true);
-        })
-            .enabled(false);
+            
+            RenameFrom rnm(&_tree, nana::charset(_tree.selected().text()));
+            rnm.show();
+            _tree.selected().text(nana::charset(rnm.Name()));
+        }).enabled(true);
 
     }
     void SeqExpl::MakeResponive()

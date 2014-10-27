@@ -1100,10 +1100,10 @@ class RenameFrom : public nana::form, public EditableForm
 
 
   public:
-    RenameFrom(nana::widget& owner, std::string name) : 
+    RenameFrom(nana::widget* owner, std::string name) : 
             _name(name),  
              nana::form  (nana::rectangle( nana::point(150,500), nana::size(300,150) )),
-             EditableForm(&owner, *this, STR("Rename") )     
+             EditableForm(owner, *this, STR("Rename") )     
         {
             InitMyLayout();
             OK.events().click([this]()
@@ -1118,8 +1118,21 @@ class RenameFrom : public nana::form, public EditableForm
 
         }
     std::string Name(){return _name;}
-
-
+    void SetDefLayout   () override
+    {
+        _DefLayout= "vertical gap=2 <Edit weigth=24> <weigth=24 <free_left><Buttons gap=10>>                   \n\t ";
+    }
+    void AsignWidgetToFields() override
+    {
+        //_commPP  << link( _cp.MaxTgId                 ,       numUpDwMaxTgId  )
+        //         << link( _cp.SecLim         , numUpDw_TgBeg,  numUpDw_TgEnd  )
+        //         << link( _cp.SecLenLim   ,  numUpDw_SLenMin, numUpDw_SLenMax )
+        //    ;
+ 
+	    _place.field("Edit")     << edit  ;
+	    _place.field("Buttons" ) << OK <<   Cancel  ;
+                               
+    }                                        
 };
 
 class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
