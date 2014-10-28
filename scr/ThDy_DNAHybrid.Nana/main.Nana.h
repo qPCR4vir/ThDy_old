@@ -978,7 +978,7 @@ class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
 			    if ( argc > 1 )
 				    setup_._proj.FileNameOpen(nana::charset( argv[1]) )   ;
 			    else
-				    load() ;						// cuando no existe Def Project: 1ra vez que se usa el prog??
+				    load() ;						
 		    }
     	catch ( std::exception& e )      // Por ejemplo cuando no existe Def Project: 1ra vez que se usa el prog.
 		{   

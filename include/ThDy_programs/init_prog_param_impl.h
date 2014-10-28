@@ -195,17 +195,20 @@ class IProg : public IBParam // -------	  Clase    ----------
 /// Clase base para los parametros "Especificos" de programas "Especificos".
 /// derivar para concretar parametros comunes. Mantiene link a proj de los prog Espec que los usan.
 /// 
-/// How to use?  Each program's parameter have an unique identificator or etiquette.  
-/// While loading, the text between the beginning of a line and the first : will be taken as 
-/// an etiquette (discarding surrounding but not internal spaces). 
-/// IF the etiquette is know (valid), the rest of the line will be use to deduce the value of the parameter. 
-/// Some parameter (like file´s names) will assume this rest-line-text entirely as his valid value. 
-/// For such parameter please, add any comment in the next line. 
-/// Other parameter (like numeric or bool parameters) will only use the beginning of this rest-line-text and ignore the end. 
-/// Any line without a valid etiquette will be ignore (they are comments!).
-/// Only the last valid value of each parameter will be used
-/// For not defined parameters, the previous value (from the previously active project or from the program´s default) will be use.
-/// Direct questions please to ArielVina.Rodriguez@fli.bund.de
+//How to use? 
+// Each parameter have an unique identificator or etiquette. 
+// While loading, the text between the beginning of a line and the first : will be taken as
+// an etiquette (discarding surrounding but not internal spaces). 
+//If the etiquette is known (valid), the rest of the line will be use to deduce the value of the parameter. 
+//Some parameter (like names of files) will assume this rest-line-text entirely as his valid value. 
+//For such parameter please, add any comment in the next line. 
+//Others parameter (like numeric or bool parameters) will only use the beginning of this rest-line-text 
+//and will ignore the end. 
+//Any line without a valid etiquette will be ignore (they are comments!).” 
+//Only the last valid value of each parameter will be used.
+//For not defined parameters, the previous value (from the previously active project 
+//or from the program´s default) will be use.
+//Send questions please to: ArielVina.Rodriguez@fli.bund.de
 
 class CProject : public IProg
 {
@@ -214,9 +217,9 @@ class CProject : public IProg
 	    std::vector<IProg*> _ProgList;
 public:
 	CProject(std::string titel, std::string	prFname="", std::string	defProFN="Def.Proj.txt")
-		:   IProg           (std::move(titel)), 
-            _defPr          (std::move(defProFN))  ,
-		    _ProjetFileName (prFname.empty () ? _defPr :  std::move(prFname) )  
+		:   IProg           (titel), 
+            _defPr          (defProFN)  ,
+		    _ProjetFileName (prFname.empty () ? _defPr :  prFname )  
 	{  
 	} 
 

@@ -6,17 +6,18 @@ ConcTarget:	1e-007	M	.	Conc of the targets
 ConcenSalt:	0.05	M	.	Conc of salt
 Exp_probes:	false		.	Programm option- re-export probes
 Exp_target:	false		.	Programm option- re-export targets
+FltrRecDir:	false		.	Recursively add all filtre PCR primer seq-files from all dir
+FltrStrOly:	true		.	Reproduce only the dir struct in filtre PCR primer
 LoadNNPara:	false		.	Programm option- Load NN parametr
 MaxSecuLen:	2001	nt	.	Limits of the length of the seq. to be useful. Maximal length
 MaxTgIdent:	99	%	.	Filtre Seq Target with more %id
 MinSecuLen:	20	nt	.	Limits of the length of the seq. to be useful. Minimal length
 NonTargetF:	
 						.	Imput file for non-Targets
-OutputFile:	C:\Users\Ariel\Documents\Exp\ThDy\res
+OutputFile:	res1
 						.	Results output file
 PCRftrFile:	
 						.	Imput file with primers for filtering
-RecursiDir:	true		.	Recursively add all seq-files from all dir
 SaltCorrMt:	StLucia		.	Salt correction methode
 SavAlignTb:	true		.	Programm option- Save Table of aligns
 SavG_Plasm:	true		.	Programm option- Gtable for Plasmid
@@ -29,18 +30,26 @@ SaveNNPara:	false		.	Programm option- save NN parametr
 Save_Logfi:	false		.	Programm option- save a log
 SecBeginng:	1	nt	.	Fragments of seq. to use. Beginng
 SecuencEnd:	0	nt	.	Fragments of seq. to use. End
-TargetFile:	C:\Users\Ariel\Documents\Exp\ThDy\Virus\Virus
+TOlyDirStr:	true		.	Reproduce only the dir struct in targets
+TRecursDir:	true		.	Recursively add all Target seq-files from all dir
+TargetFile:	..\sequences\Virus
 						.	Imput file for Targets
 TempAnnelg:	55	°C	.	Temp anneling expected in exp
 iNNParFile:	
 						.	Imput file with NN parametrs
+nTRecurDir:	true		.	Recursively add all non-Target seq-files from all dir
+nTlyDirStr:	true		.	Reproduce only the dir struct in non-targets
 
 	------	Virtual microarray experiment 
-iSonde_uAr:	C:\Users\Rodriguez\Documents\ThDySec\sonden\
+ProbDirStr:	true		.	Reproduce only the dir struct in probe
+ProbRecDir:	true		.	Recursively add all probe seq-files from all dir
+iSonde_uAr:	..\sequences\probes
 						.	Imput file for Sondes
 
 	------	Check multiplex PCR 
-iSonde_PCR:	
+PrimDirStr:	false		.	Reproduce only the dir struct in primers
+PrimRecDir:	true		.	Recursively add all primers seq-files from all dir
+iSonde_PCR:	..\sequences\primers
 						.	Imput file for primers
 
 	------	Find sondes 
@@ -63,14 +72,16 @@ PercCommon:	100	%	.	Find sondes with % of target coverage.  at last of the other
 PercUnique:	0	%	.	Find sondes with % of target coverage.  less than of the others (unique probes)
 
 	------	Tm calculator 
+OligDirStr:	true		.	Reproduce only the dir struct in Oligos
+OligRecDir:	false		.	Recursively add all oligos seq-files from all dir
 TmC_Sec2Al:	
 						.	Primer to align
 TmCalc_Sec:	
 						.	Primer
 TmCsaveRes:	false		.	Save result to file
 TmUseAlign:	true		.	Align primers before Tm calc
-iSonde_PCR:	
-						.	Imput file for primers
+iOligo_TmC:	
+						.	Imput oligos for TmCalc
 
 	------	ThDy DNA Hybrid Project. 
 
