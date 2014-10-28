@@ -990,8 +990,18 @@ class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
         }
 
 		//this->comBoxTAMeth->SelectedIndex  = SMStLucia;    
-		_cp.Actualize_All_NNp();
-        LoadSequences();
+        try{ 
+		        _cp.Actualize_All_NNp();
+                LoadSequences();
+		    }
+    	catch ( std::exception& e )      //  
+		{   
+            (nana::msgbox(*this, STR("Error during sequence or NN parametr load !\n\t"), nana::msgbox::button_t::ok)
+                             .icon(nana::msgbox::icon_information )
+                            << e.what()     
+                          ).show (  ) ;
+		    save_defPr() ; 					                
+        }
 		this->_uArr._probesMS->CreateNonDegSetRec();
 		this->_TmCal._probesMS->CreateNonDegSetRec();
 		this->_mPCR._probesMS->CreateNonDegSetRec();
