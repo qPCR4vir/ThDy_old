@@ -463,7 +463,7 @@ void  SetupPage::LoadProject(nana::string file)
         menu.append(STR("Reproduce only the structure of directory..."),[&](nana::menu::item_proxy& ip)  {  Click(_scanDir);     });
         menu.append(STR("Reload from the original file" )  , [&](nana::menu::item_proxy& ip)   {  ReloadFile(_tree.selected());    });
         menu.append(STR("Reload from the original directory"), [&](nana::menu::item_proxy& ip) {  ReloadDir(_tree.selected());     });
-        menu.append(STR("Replace from a file..." )  , [&](nana::menu::item_proxy& ip) 
+        menu.append(STR("Replace from a file . . ." )  , [&](nana::menu::item_proxy& ip) 
         {
 			auto tn= _tree.selected();
             if (isRoot(tn))
@@ -486,7 +486,7 @@ void  SetupPage::LoadProject(nana::string file)
             //Refresh(appendNewNode  (own, newms) );
             //_tree.auto_draw(true);
         });
-        menu.append(STR("Replace from directory..."), [&](nana::menu::item_proxy& ip) 
+        menu.append(STR("Replace from directory . . ."), [&](nana::menu::item_proxy& ip) 
         {
 			auto tn= _tree.selected();
             if (tn->owner()->owner().empty())
@@ -545,6 +545,15 @@ void  SetupPage::LoadProject(nana::string file)
             _tree.selected().value<CMultSec*>()->_name = rnm.Name() ;
 
         }).enabled(true);
+
+        menu.append_splitter();
+        auto  indxFASTA = menu.append(STR("Export FASTA . . ."          ),[&](nana::menu::item_proxy& ip)            {  /*_tree.selected().value<CMultSec*>()->ExportFASTA();*/  }).index();
+        auto& menuFASTA = *menu.create_sub_menu(indxFASTA);
+        menuFASTA.append(STR("Only current sequences"     ),[&](nana::menu::item_proxy& ip)            {  ;  });
+        menuFASTA.append(STR("Selected sequences in group"),[&](nana::menu::item_proxy& ip)            {  /*_tree.selected().value<CMultSec*>()->ExportFASTA();*/  });
+        menuFASTA.append(STR("All sequences in group"     ),[&](nana::menu::item_proxy& ip)            {  ;  });
+        menuFASTA.append(STR("All selected sequences"     ),[&](nana::menu::item_proxy& ip)            {  ;  });
+        menuFASTA.append(STR("All sequences"              ),[&](nana::menu::item_proxy& ip)            {  ;  });
 
     }
     void SeqExpl::MakeResponive()
