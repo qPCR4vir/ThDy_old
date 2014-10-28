@@ -62,6 +62,10 @@ class CSecBasInfo : public ISec
 		CSecBasInfo()  {}
 		CSecBasInfo ( long l)    {_c.reserve(l+2);}   ///   ????????????????????
 public:
+    void ExportFASTA(ofstream& ofile)
+    {
+        ofile << std::endl << ">" << _name << " " << _description << std::endl << charSequence() << std::endl  ;
+    }
 	//CSecBasInfo			*CopyFirstBases	(long pos)	;			 // copia parcialmente hasta la pos
     ~CSecBasInfo() override;
     std::string Name		()const		{return _name;}              //< User-editable
@@ -589,6 +593,22 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name =
 		int			CMultSec::AddFromFileGBtxt	(ifstream &ifileGB);
 		int			CMultSec::AddFromFileODT	(ifstream &ifileODT);
 		int			CMultSec::AddFromFileODS	(ifstream &ifileODS);
+        void        ExportFASTA(std::string filename, bool only_selected)
+        {
+        	ofstream ofile( filename ); 
+	        if ( ! ofile ) 
+	        {
+	            throw std::ios_base::failure(string("Could not create the sequence file: ")+ filename );
+	        }
+            FASTA( ofile, only_selected);
+        }
+        void   FASTA(ofstream& ofile, bool only_selected)
+        {
+        	for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las sec locales
+				CurSec()->ExportFASTA(ofile) ; 
+            for (  goFirstMSec()   ; NotEndMSec() ;   goNextMSec())		// recorre todos las msec
+			    CurMSec()->FASTA(ofile, only_selected);
+        }
 		CSec		*Idem			(CSec &sec);  //		CConsParam	_ConsPar ;
 		CSec		*AddSec			( CSec *sec );
 		CSec		*InsertSec		( CSec *sec ) ;
