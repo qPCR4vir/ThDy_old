@@ -32,7 +32,7 @@ SecBeginng:	1	nt	.	Fragments of seq. to use. Beginng
 SecuencEnd:	0	nt	.	Fragments of seq. to use. End
 TOlyDirStr:	true		.	Reproduce only the dir struct in targets
 TRecursDir:	true		.	Recursively add all Target seq-files from all dir
-TargetFile:	..\sequences\Virus
+TargetFile:	sequences\Virus
 						.	Imput file for Targets
 TempAnnelg:	55	°C	.	Temp anneling expected in exp
 iNNParFile:	
@@ -43,13 +43,13 @@ nTlyDirStr:	true		.	Reproduce only the dir struct in non-targets
 	------	Virtual microarray experiment 
 ProbDirStr:	true		.	Reproduce only the dir struct in probe
 ProbRecDir:	true		.	Recursively add all probe seq-files from all dir
-iSonde_uAr:	..\sequences\probes
+iSonde_uAr:	sequences\probes
 						.	Imput file for Sondes
 
 	------	Check multiplex PCR 
 PrimDirStr:	false		.	Reproduce only the dir struct in primers
 PrimRecDir:	true		.	Recursively add all primers seq-files from all dir
-iSonde_PCR:	..\sequences\primers
+iSonde_PCR:	sequences\primers
 						.	Imput file for primers
 
 	------	Find sondes 
