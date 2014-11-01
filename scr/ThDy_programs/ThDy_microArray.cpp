@@ -42,12 +42,12 @@ void	CreateColumns(CTable<TmGPos> &rtbl, CMultSec &pr, int MaxGrDeg, OutStr &os 
 void	Hybrid(CTable<TmGPos> &rtbl, CMultSec &tg, CMultSec &pr, ThDyAlign	&Al, OutStr &os, int MAxGrDegTg=1)
 {
 	const std::string path =CMultSec::Path(&tg) 	 ;
-	for (  tg.goFirstSec()   ; tg.NotEndSec()   ;   tg.goNextSec() )  // recorre todos los targets
+	for (  tg.goFirstSec()   ; tg.NotEndSec()   ;   tg.goNextSec() )  /// recorre todos los targets
 	{	
         CSec &t = *tg.CurSec() ;
 		if(! t.Selected())
 			continue;		
-		if(	t.Degeneracy() > MAxGrDegTg ) 									// No analiza las target deg...por ahora.Facil de ampliar
+		if(	t.Degeneracy() > MAxGrDegTg ) 							/// No analiza las target deg...por ahora.Facil de ampliar
 		{
 			t.Selected(false) ;
 			continue;		

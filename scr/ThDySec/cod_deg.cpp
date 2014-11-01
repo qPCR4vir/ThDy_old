@@ -4,31 +4,31 @@
 namespace DegCod
 {
  
- Base		is_base		[UCHAR_MAX],		// <> 0  si base. =base, pero para U, =T 
-			is_degbase	[UCHAR_MAX],		// <> 0  si letra valida (cualquiera del cod deg,may o minuscula
-											//+ insercion '-').=base, pero para U, =T 
-			c_degbase	[UCHAR_MAX],		// devuelve base complementaria, tambien para codigo deg. 
-											// El resto no lo modifica.
-			grad_deg	[UCHAR_MAX];		// grado de degeneracion: 0- no permitido, 1-base, 
-											//						  2-Y,R,K....,     4-N.
- Code		is_GC		[UCHAR_MAX],		// 1-G or C, 0-lo demas.
-			bk2nu		[UCHAR_MAX],		// codigo corto de Kadelari
-			bk2c_nu		[UCHAR_MAX],		// codigo corto de Kadelari complementario a la base
-			bkn2c_nu	[n_basek],			// codigo corto de Kadelari complementario
-			ba2nu		[UCHAR_MAX],		// codigo corto
-			ba2c_nu		[UCHAR_MAX],		// codigo corto complementario a la base
-			ban2c_nu	[n_ba],				// codigo corto complementario
-			dbn2c_nu	[n_dgba],			// cod numerico complementario a la base deg
-			db2c_nu		[UCHAR_MAX],		// cod numerico complementario a la base deg
-			db2nu		[UCHAR_MAX];		// dada la letra devuelve el cod numerico; lo contrario 
-											// de degcod[]; 0- no validos, pero tambien el '-'.
-											// si las bases a y b pueden match se comprueba: 
-											// if (base2bin[a] & base2bin[b]) ...   : ejemplo - si match 
-											// R y G, R y K, ...
-											// (base2bin[a] & base2bin[b]) da el cod de la min letra comun:
-											// R y G = G, R y K = G
-											// para calcular consenso: degcod[base2bin[a] | base2bin[b])]
- Base		dg2ba		[n_dgba][n_ba],		// para generar todas las variantes de una base deg
+ Base		is_base		[UCHAR_MAX],		///< <> 0  si base. =base, pero para U, =T 
+			is_degbase	[UCHAR_MAX],		///< <> 0  si letra valida (cualquiera del cod deg,may o minuscula
+											///< + insercion '-').=base, pero para U, =T 
+			c_degbase	[UCHAR_MAX],		///<  devuelve base complementaria, tambien para codigo deg. 
+											///< El resto no lo modifica.
+			grad_deg	[UCHAR_MAX];		///< grado de degeneracion: 0- no permitido, 1-base, 
+											///<						  2-Y,R,K....,     4-N.
+ Code		is_GC		[UCHAR_MAX],		///< 1-G or C, 0-lo demas.
+			bk2nu		[UCHAR_MAX],		///< codigo corto de Kadelari
+			bk2c_nu		[UCHAR_MAX],		///< codigo corto de Kadelari complementario a la base
+			bkn2c_nu	[n_basek],			///< codigo corto de Kadelari complementario
+			ba2nu		[UCHAR_MAX],		///< codigo corto
+			ba2c_nu		[UCHAR_MAX],		///< codigo corto complementario a la base
+			ban2c_nu	[n_ba],				///< codigo corto complementario
+			dbn2c_nu	[n_dgba],			///< cod numerico complementario a la base deg
+			db2c_nu		[UCHAR_MAX],		///< cod numerico complementario a la base deg
+			db2nu		[UCHAR_MAX];		///< dada la letra devuelve el cod numerico; lo contrario 
+											///< de degcod[]; 0- no validos, pero tambien el '-'.
+											///< si las bases a y b pueden match se comprueba: 
+											///< if (base2bin[a] & base2bin[b]) ...   : ejemplo - si match 
+											///< R y G, R y K, ...
+											///< (base2bin[a] & base2bin[b]) da el cod de la min letra comun:
+											///< R y G = G, R y K = G
+											///< para calcular consenso: degcod[base2bin[a] | base2bin[b])]
+ Base		dg2ba		[n_dgba][n_ba],		///< para generar todas las variantes de una base deg
 			dg2ban		[n_dgba][n_ba],
 			dg2bkn		[n_dgba][n_ba];
 

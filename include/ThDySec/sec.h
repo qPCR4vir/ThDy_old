@@ -425,16 +425,16 @@ class CSecAl : public CLink // destinado a formar parte de una lista en un aline
   // CUIDADO :  se aduena de las sec y las borra en su destructor:Usar Remove() or Free() para evitarlo
 class CMultSec	 : public CLink	// --------------------------------------------------------------------- 	CMultSec    -------------------
 {	public:
-		std::string			_name ;						// nombre unico?  
-        int					_ID       {NewMS_ID()};		// num original?? en total??, num unico?
-        LonSecPosRang       _SecLim   {1,0};			// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
-        SecPosRang          _SecLenLim{0,0};            // TODO: NumRang<LonSecPos> _SecRange{1,0};// def-unlimited: the range used, not the limits
-		float				_MaxTgId  {100};			// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
-		std::shared_ptr<CSaltCorrNN>	_NNPar ;		// TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
-		CMultSec			*_parentMS {nullptr};								//std::weak_ptr<CMultSec> _parentMS	;
+		std::string			_name ;						///< 
+        int					_ID       {NewMS_ID()};		///< Unique ID in each programm run
+        LonSecPosRang       _SecLim   {1,0};			///< TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
+        SecPosRang          _SecLenLim{0,0};            ///< TODO: NumRang<LonSecPos> _SecRange{1,0};// def-unlimited: the range used, not the limits
+		float				_MaxTgId  {100};			///< TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
+		std::shared_ptr<CSaltCorrNN>	_NNPar ;		///< TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
+		CMultSec			*_parentMS {nullptr};		///< std::weak_ptr<CMultSec> _parentMS	;
         CSec				*_Consenso {nullptr};
         bool                 _selected { true };
-		std::string			 _Path ;						// nombre unico?  
+		std::string			 _Path ;				///< file path of the original sequence source
 
 
 //explicit CMultSec (const std::string &Name  )                 : _name		(trim_string(Name))  {	}
@@ -468,8 +468,8 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name =
 
 
 
-	bool		Selected(bool select)	{return _selected=select;} 			//< make protected: ??
-	bool		Selected(		) const {return _selected ;}					 //< User-editable
+	bool		Selected(bool select)	{return _selected=select;} 			///< make protected: ??
+	bool		Selected(		) const {return _selected ;}					 ///< User-editable
 		//std::string Path(const std::string& path_sep="/")
 		//{
 		//	std::string path /*= _name*/;			// anadir o no un sep al final del path?????
@@ -479,7 +479,7 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name =
 		//}
 		static std::string	Path(CMultSec *ms, const std::string& path_sep="/")
 		{
-			std::string path /*= _name*/;			// anadir o no un sep al final del path?????
+			std::string path /*= _name*/;			/// anadir o no un sep al final del path?????
 			for (CMultSec *parent=ms; parent;parent=parent->_parentMS)
 				path = parent->_name + path_sep + path;
 			return path;
