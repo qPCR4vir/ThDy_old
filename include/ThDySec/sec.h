@@ -62,10 +62,17 @@ class CSecBasInfo : public ISec
 		CSecBasInfo()  {}
 		CSecBasInfo ( long l)    {_c.reserve(l+2);}   ///   ????????????????????
 public:
-    void ExportFASTA(ofstream& ofile)
+    void ExportFASTA(ofstream& ofile, int line_len=80)
     {
-        ofile << std::endl << ">" << _name << " " << _description << std::endl << charSequence() << std::endl  ;
-    }
+        ofile << std::endl 
+              << ">" << _name << " " << Description ()  << std::endl ;
+        for (int i=1 ; i< Len()-1 ; ++i )
+        {
+            if (!i % line_len) ofile << std::endl;
+            ofile << charSequence()[i];
+        }
+        ofile << std::endl;
+     }
 	//CSecBasInfo			*CopyFirstBases	(long pos)	;			 // copia parcialmente hasta la pos
     ~CSecBasInfo() override;
     std::string Name		()const		{return _name;}              ///< User-editable
