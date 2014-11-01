@@ -82,7 +82,7 @@ class CSaltCorrNN : public COriNN
 	float			_ConcSd, _ConcTg ; ///< \todo pasar a ori?????
 	float			_ConcSalt;
 	float			_GCp ;		// cambiar para que acepte CSec ???, o solo que acepte el GCp ya calculado 
-								///  \todo para calcular Owczarzy SaltCorrection  // TODO
+								///  \todo para calcular Owczarzy SaltCorrection  // todo
 
 	void	InitSaltNNMatriz() ; ///< inicial ?
 	void	InitStLuciaSaltNNMatriz ();///< llamarla al cambiar conc de sal o DNA(este posible parcial)

@@ -35,7 +35,7 @@ namespace ThDy_DNAHybridWF {
 		{
 			InitializeComponent();
 			//
-			//TODO: Add the constructor code here
+			///\todo: Add the constructor code here
 			//
             treeV_Seq->CheckBoxes = true;
 			SecChecked= gcnew System::Windows::Forms::ItemCheckedEventHandler(this, &SeqExpl::listV_Seq_ItemChecked);

@@ -39,17 +39,17 @@ class ISec				// Pure virtual class ?
 class CSecBasInfo : public ISec
 { protected:	
 	bool			_selected{true}, _filtered{false};
-	int				_ID{NewS_ID()} ;			                    //< num de la sec en file original?? en total??, num unico?
-	std::string     _name ;			                                //< nombre unico? FASTA id	// char			*_name ;
+	int				_ID{NewS_ID()} ;			                    ///< num de la sec en file original?? en total??, num unico?
+	std::string     _name ;			                                ///< nombre unico? FASTA id	// char			*_name ;
 	std::string		_description;
-	//long			_len ;			                                //< longitud corregida, sin los '$'
-	long			_GrDeg {1} ;		                            //< Grado de degeneracion. Cantidad total de diferentes molec, dependiendo de deg
+	//long			_len ;			                                ///< longitud corregida, sin los '$'
+	long			_GrDeg {1} ;		                            ///< Grado de degeneracion. Cantidad total de diferentes molec, dependiendo de deg
 	float			_GCp   {} ;		
-	long			_Count[DegCod::n_dgba];	                        //< An array of counters for each deg base - inicializar!!
-	long			_NDB   {};			                            //< cantidad de bases deg
-	std::string     _Clas ;		                                    //< clasificacion
-	sequence	    _c/*{2,DegCod::basek[DegCod::n_basek]}*/;			//< sec char, comienzan y terminan con '$'0
-	CMultSec		*_NonDegSet{nullptr} ;                          /// TODO: std::unique_ptr<>
+	long			_Count[DegCod::n_dgba];	                        ///< An array of counters for each deg base - inicializar!!
+	long			_NDB   {};			                            ///< cantidad de bases deg
+	std::string     _Clas ;		                                    ///< clasificacion
+	sequence	    _c/*{2,DegCod::basek[DegCod::n_basek]}*/;		///< sec char, comienzan y terminan con '$'0
+	CMultSec		*_NonDegSet{nullptr} ;                          /// \todo: std::unique_ptr<>
 	static int	NewS_ID     ()	{static int last_ID{};	return ++last_ID;	}
 
 		CSecBasInfo (int id,     const std::string& nam    , const std::string& clas) 						
@@ -68,12 +68,12 @@ public:
     }
 	//CSecBasInfo			*CopyFirstBases	(long pos)	;			 // copia parcialmente hasta la pos
     ~CSecBasInfo() override;
-    std::string Name		()const		{return _name;}              //< User-editable
-	int			ID			()const		{return _ID;}	             //< Run-time-sistem define, non-editable
-	bool		Filtered(bool filter)	{return _filtered=filter;}   //< User-editable ?????
+    std::string Name		()const		{return _name;}              ///< User-editable
+	int			ID			()const		{return _ID;}	             ///< Run-time-sistem define, non-editable
+	bool		Filtered(bool filter)	{return _filtered=filter;}   ///< User-editable ?????
 	bool		Filtered(		) const {return _filtered;}
-	bool		Selected(bool select)	{return _selected=select;} 		  	 //< make protected: ??
-	bool		Selected(		) const {return _selected;}					 //< User-editable
+	bool		Selected(bool select)	{return _selected=select;} 		  	 ///< make protected: ??
+	bool		Selected(		) const {return _selected;}					 ///< User-editable
 	void	    Description (std::string	description)		{ _description=description;}
 	virtual std::string	Description ()const	{return !_description.empty() ? _description : Name() ; }
 
@@ -97,12 +97,12 @@ public:
 
 class CSec : public CLink, public CSecBasInfo	// ---------------------------------------   CSec	---------------------------------------------------
 {public:
-	    int                     x;				//<  ????
-		NumRang<float>	        _Tm ;			//< float		_Tm, _minTm, _maxTm ;				//  
+	    int                     x;				///<  ????
+		NumRang<float>	        _Tm ;			///< float		_Tm, _minTm, _maxTm ;				//  
 		std::shared_ptr<CSaltCorrNN>  _NNpar ;
-		float			        _Conc ;			//< conc de esta molec. Si igual al resto -1 y la toma de NNParam
-		std::vector<Code>	    _b;			//< sec cod, inicialmente basek
-		std::vector<Entropy>    _SdS ;			//< dS acumulada. Calcular Delta S sera solo restar la final menos la inicial	
+		float			        _Conc ;			///< conc de esta molec. Si igual al resto -1 y la toma de NNParam
+		std::vector<Code>	    _b;			///< sec cod, inicialmente basek
+		std::vector<Entropy>    _SdS ;			///< dS acumulada. Calcular Delta S sera solo restar la final menos la inicial	
 		std::vector<Energy>		_SdH ;			// 
 		CMultSec	           *_parentMS{nullptr}	;   //std::weak_ptr<CMultSec> _parentMS	;
 
@@ -110,7 +110,7 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
 		    int                 id,
             const std::string&  nam,     // char*
             std::shared_ptr<CSaltCorrNN>  NNpar, 
-            long                lmax=0, //< limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
+            long                lmax=0, ///< limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
             long                secBeg=1, 
             const std::string&  clas="" , 
             float               conc=-1         );
@@ -119,10 +119,10 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
 
 	long		Len			()const		{return _SdS.size();} //
 	void		 CorrectSaltOwczarzy    () ;
-	CMultSec	*CreateNonDegSet		()			;   //< crea todo el set si no existia, solo si existen bases deg: _NDB>0
-	CMultSec	*ForceNonDegSet			();				//< lo crea siempre, incluso para =1??
+	CMultSec	*CreateNonDegSet		()			;   ///< crea todo el set si no existia, solo si existen bases deg: _NDB>0
+	CMultSec	*ForceNonDegSet			();				///< lo crea siempre, incluso para =1??
 	CSec		*GenerateNonDegVariant	(CSec *s, long pos, Base ndb)   ; //< recursiva
-	CSec		*CopyFirstBases			(long pos)	;			//< copia parcialmente hasta la pos
+	CSec		*CopyFirstBases			(long pos)	;			///< copia parcialmente hasta la pos
 	void		 CorrectSalt			() { if ( _NNpar->UseOwczarzy () ) CorrectSaltOwczarzy();};
 	CSec		*Clone   	(DNAStrand strnd=direct	 ) const override; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 
@@ -133,14 +133,14 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
     bool		Selected(bool select)	{ _selected = select; return Selected(); } 			//< make protected: ?????????????????????????????????????????????????
 
 	Base		operator()		(int i)const{return _b[i];}
-	Temperature	Tm	(long pi, long pf	)const;				        //< Tm de la sonda con sec desde pi hasta pf, inclusive ambas!! 
-	Temperature	Tm	(long pi			)const	{return Tm(pi,Len())   ;}   //< Tm de la sonda con sec desde pi hasta el final, inclusive ambos!!
-	Energy		G	(long pi, long pf, float Ta)const;				//< G de la sonda con sec desde pi hasta pf, inclusive ambas!! 
-	Energy		G	(long pi, float Ta	)const	{return G(pi,Len(), Ta);}   //< G de la sonda con sec desde pi hasta el final, inclusive ambos!!
-	Energy		G	(float Ta			)const	{return G(1 ,Len(), Ta);}   //< G de la sonda con sec desde inicio hasta el final, inclusive ambos!!
-	Energy		G	(long pi, long pf	)const;				//< G de la sonda con sec desde pi hasta pf, inclusive ambas!! 
-	Energy		G	(long pi			)const	{return G(pi,Len())    ;}   //< G de la sonda con sec desde pi hasta el final, inclusive ambos!!
-	Energy		G	(					)const	{return G(1,Len())     ;}   //< G de la sonda con sec desde inicio hasta el final, inclusive ambos!!
+	Temperature	Tm	(long pi, long pf	)const;				        ///< Tm de la sonda con sec desde pi hasta pf, inclusive ambas!! 
+	Temperature	Tm	(long pi			)const	{return Tm(pi,Len())   ;}   ///< Tm de la sonda con sec desde pi hasta el final, inclusive ambos!!
+	Energy		G	(long pi, long pf, float Ta)const;				///< G de la sonda con sec desde pi hasta pf, inclusive ambas!! 
+	Energy		G	(long pi, float Ta	)const	{return G(pi,Len(), Ta);}   ///< G de la sonda con sec desde pi hasta el final, inclusive ambos!!
+	Energy		G	(float Ta			)const	{return G(1 ,Len(), Ta);}   ///< G de la sonda con sec desde inicio hasta el final, inclusive ambos!!
+	Energy		G	(long pi, long pf	)const;				///< G de la sonda con sec desde pi hasta pf, inclusive ambas!! 
+	Energy		G	(long pi			)const	{return G(pi,Len())    ;}   ///< G de la sonda con sec desde pi hasta el final, inclusive ambos!!
+	Energy		G	(					)const	{return G(1,Len())     ;}   ///< G de la sonda con sec desde inicio hasta el final, inclusive ambos!!
 
 	 ~CSec() override  ;   // decidir si vale la pena que sea virtual. Cual es el efecto??
 	virtual bool NotIdem(CSec *sec) {return false;}
@@ -427,10 +427,10 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 {	public:
 		std::string			_name ;						///< 
         int					_ID       {NewMS_ID()};		///< Unique ID in each programm run
-        LonSecPosRang       _SecLim   {1,0};			///< TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
-        SecPosRang          _SecLenLim{0,0};            ///< TODO: NumRang<LonSecPos> _SecRange{1,0};// def-unlimited: the range used, not the limits
-		float				_MaxTgId  {100};			///< TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
-		std::shared_ptr<CSaltCorrNN>	_NNPar ;		///< TODO: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
+        LonSecPosRang       _SecLim   {1,0};			///< \todo: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
+        SecPosRang          _SecLenLim{0,0};            ///< \todo: NumRang<LonSecPos> _SecRange{1,0};// def-unlimited: the range used, not the limits
+		float				_MaxTgId  {100};			///< \todo: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
+		std::shared_ptr<CSaltCorrNN>	_NNPar ;		///< \todo: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
 		CMultSec			*_parentMS {nullptr};		///< std::weak_ptr<CMultSec> _parentMS	;
         CSec				*_Consenso {nullptr};
         bool                 _selected { true };
@@ -456,13 +456,13 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name =
                                                                 _SecLenLim  (SecLenLim),
 	                                                            _MaxTgId    (MaxTgId), 
 	                                                            _NNPar      (NNpar)              { AddFromFile(file); }
-		 CMultSec (	const std::string &file	,                   //< The name of the file or directory to be loaded 
+		 CMultSec (	const std::string &file	,                   ///< The name of the file or directory to be loaded 
 					std::shared_ptr<CSaltCorrNN>  NNpar	, 
-					bool           all_dir  = false,        //< Load all files and directories recursiverly? 
-					float		   MaxTgId	= 100,          //< Sec. with more % of idem are marked as "filtered" and not selected
-					LonSecPosRang  SecLim	= LonSecPosRang {1,0},	//< Filtre, using only this region. Will take into account alignment coordenates.
-                    SecPosRang     SecLenLim= SecPosRang    {0,0},  //< Limit the length. tiny sec: not created, large: get trunkated
-					bool           loadSec  = true     //< Get the sec? False: get only the dir/file structure
+					bool           all_dir  = false,        ///< Load all files and directories recursiverly? 
+					float		   MaxTgId	= 100,          ///< Sec. with more % of idem are marked as "filtered" and not selected
+					LonSecPosRang  SecLim	= LonSecPosRang {1,0},	///< Filtre, using only this region. Will take into account alignment coordenates.
+                    SecPosRang     SecLenLim= SecPosRang    {0,0},  ///< Limit the length. tiny sec: not created, large: get trunkated
+					bool           loadSec  = true     ///< Get the sec? False: get only the dir/file structure
 				 ) ;
 
 

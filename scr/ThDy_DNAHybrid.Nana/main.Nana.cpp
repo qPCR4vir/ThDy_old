@@ -500,7 +500,7 @@ void  SetupPage::LoadProject(nana::string file)
 
             CMultSec *ms = tn.value<CMultSec*>();
             CMultSec *pms = ms->_parentMS; // tn->owner.value<CMultSec*>();
-            ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
+            ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// \todo: higth level MoveMSec !! (actualize globals)
             auto own = tn->owner();
 
             _tree.auto_draw(false);
@@ -656,7 +656,7 @@ void  SetupPage::LoadProject(nana::string file)
             CMultSec *pms = ms->_parentMS;  
             _Pr._cp._pSeqNoUsed->AddMultiSec(ms);
             _dragMSec.push_back(ms);
-            //ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
+            //ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// \todo: higth level MoveMSec !! (actualize globals)
             auto own = tn->owner();
 
             _tree.auto_draw(false);
@@ -680,7 +680,7 @@ void  SetupPage::LoadProject(nana::string file)
             }
             CMultSec *ms = tn.value<CMultSec*>();
             CMultSec *pms = ms->_parentMS;           
-            _Pr._cp._pSeqNoUsed->AddMultiSec(ms); //ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// TODO: higth level MoveMSec !! (actualize globals)
+            _Pr._cp._pSeqNoUsed->AddMultiSec(ms); //ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// \todo: higth level MoveMSec !! (actualize globals)
             auto own = tn->owner();
 
             _tree.auto_draw(false);

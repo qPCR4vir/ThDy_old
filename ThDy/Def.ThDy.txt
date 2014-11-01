@@ -14,7 +14,7 @@ MaxTgIdent:	99	%	.	Filtre Seq Target with more %id
 MinSecuLen:	20	nt	.	Limits of the length of the seq. to be useful. Minimal length
 NonTargetF:	
 						.	Imput file for non-Targets
-OutputFile:	res1
+OutputFile:	..\..\ThDyResults\res1
 						.	Results output file
 PCRftrFile:	
 						.	Imput file with primers for filtering

@@ -328,8 +328,8 @@ CSec *	CSec::CopyFirstBases(long pos)
 	return sec ;
 }
 
-CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) // crear variante que inserte las variantes en la lista dada.????
-{	Base pre ; Base b_or,  cur ;									// para eso anadir ultimo parametro CMultiSec &ndg=_nds
+CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) /// \todo: crear variante que inserte las variantes en la lista dada.????
+{	Base pre ; Base b_or,  cur ;								   /// para eso anadir ultimo parametro CMultiSec &ndg=_nds
 	CSec *sec ;
 	if (pos==0) 
 	{	sec = s->CopyFirstBases(0);   // caso esp: ni pos -1, ni muto a ndb
@@ -617,7 +617,7 @@ int		CMultSec::AddFromFile (const std::string& file)		// return la cantidad de s
 	    throw std::ios_base::failure(string("Could not open the sequence file: ")+ file );
 	}
 
-	return AddFromFile(ifile); // TODO: retrow anadiendo el nombre del file
+	return AddFromFile(ifile); /// \todo: retrow anadiendo el nombre del file
 }
 
 int		CMultSec::AddFromFile (ifstream& ifile)		// return la cantidad de sec add --------------------  AddFromFile   -------------------
@@ -676,7 +676,7 @@ int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // -------------------    Add
                                             Fasta_NAME , 
                                             _NNPar,
                                             _SecLim.Max() ? _SecLim.Max()-_SecLim.Min()+1 : 0 ,
-                                            _SecLim.Min()                                       /// TODO: cambiar constr de CSec ????
+                                            _SecLim.Min()                                       /// \todo: cambiar constr de CSec ????
                                          )) ;                  assert(sec);
 						
 		if ( sec->Len() >= _SecLenLim.Min()   )		

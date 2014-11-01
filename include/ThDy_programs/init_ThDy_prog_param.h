@@ -13,7 +13,7 @@ class CParamSondeLimits: public IBParam  /// \todo Use delegating constructor to
     CParamNumMinMax<Energy> G; 
     CParamNumMinMax<Temperature> T; 
     CParamNumMinMax<SecPos> L; 
-	 // Acepta un parametro y por tanto no usa _v. Por compatibilidad.
+	 /// Acepta un parametro y por tanto no usa _v. Por compatibilidad.
     CParamSondeLimits (IProg *pp, const std::string& titel, SondeLimits &parRef, 
 		             const std::string& etiqGmin, Energy minGmin,        Energy maxGmin,         Energy defValueGmin,
 		             const std::string& etiqGmax, Energy minGmax,        Energy maxGmax,         Energy defValueGmax,
@@ -38,7 +38,7 @@ class CParamSondeLimits: public IBParam  /// \todo Use delegating constructor to
 						    UnitL)
 	          { 
 	          } 
-	        // Num &parRef,   usa _v y por tanto no necesita un parametro externo
+	        /// Num &parRef,   usa _v y por tanto no necesita un parametro externo
     CParamSondeLimits (IProg *pp, const std::string& titel, //SondeLimits &parRef, 
 		             const std::string& etiqGmin, Energy minGmin,        Energy maxGmin,         Energy defValueGmin,
 		             const std::string& etiqGmax, Energy minGmax,        Energy maxGmax,         Energy defValueGmax,
@@ -481,7 +481,7 @@ class CProgParam_TmCalc : public CProgParam_MultiplexPCR
 };
 
 
-class ThDyProject : public CProject // Permite manejar todo el projecto: con un miembro para los parametros comunes y otro para los de cada programa
+class ThDyProject : public CProject /// Permite manejar todo el projecto: con un miembro para los parametros comunes y otro para los de cada programa
 {public:
 		ThDyCommProgParam		_cp   {"Common parametrs for all functions",this}  ;
 		CProgParam_microArray   _uArr {"Virtual microarray experiment"     ,_cp }  ;

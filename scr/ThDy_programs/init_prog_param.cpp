@@ -55,7 +55,7 @@ bool	CProject::load()
 	if (!isPr) 
 		throw std::ios_base::failure(string("Could not open project file: ")+_ProjetFileName );
 		
-	//	return false;	 //  \todo: en realidad hay que trabajar con las exepciones aqui !!!!!!!!!!!!!!!!!
+	//	return false;	 ///  \todo: en realidad hay que trabajar con las exepciones aqui !!!!!!!!!!!!!!!!!
    // isPr.exceptions(ifstream::failbit | ifstream::badbit);   // no eofbit: http://www.cplusplus.com/reference/iostream/ios/exceptions/
 	isPr >> skipws ;
 

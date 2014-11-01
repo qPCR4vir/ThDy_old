@@ -42,7 +42,7 @@ namespace ThDy_DNAHybridWF {
 			InitializeTagBindings();
            
 			//
-			//TODO: Add the constructor code here
+			//todo: Add the constructor code here
 			//
             try{ 
 				    if (Environment::GetCommandLineArgs()->Length   > 1    )
