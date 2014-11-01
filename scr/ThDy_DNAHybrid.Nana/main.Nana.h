@@ -419,7 +419,7 @@ class SeqExpl : public CompoWidget
     {
         nana::string decode(size_t col, const pSec &sec) const override
         {
-            static const int    blen{ 50 }, slen{ 1000 };
+            static const long    blen{ 50 }, slen{ 1000 };
             nana::char_t val[blen];
 
             switch (col)
@@ -433,8 +433,7 @@ class SeqExpl : public CompoWidget
             case 3: swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());
                     return val;  
             case 4: return nana::charset( sec->Description());
-			case 5: return nana::charset( sec->Len()<slen ? sec->charSequence() 
-				                                          : (char *)(sec->Sequence().substr (0,slen)).c_str()  );
+            case 5: return nana::charset(  (char *)(  sec->Sequence().substr (1, std::min( sec->Len()-2, slen)).c_str()    )) ;
 
             default:
                 return nana::string{};
