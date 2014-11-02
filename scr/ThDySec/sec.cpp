@@ -161,10 +161,10 @@ CSec::CSec (    const std::string&  sec,
 		register Base a_1, a;
 		for (a=0; a<n_dgba; a++)	_Count[a]=0 ;
 
-		_c  .push_back( basek[n_basek-1] ); // '$' principio y fin de Kadelari.=" TGCA$"   in fp=0
-		_b  .push_back( n_basek-1) ; 	  	
-		_SdS.push_back( _NNpar->GetInitialEntropy()); // Solo dep de las conc, no de la sec. Ajustar primero la conc del target, y despues volverla a poner,?? 
-		_SdH.push_back(  0 );						  // y comprobar que se hacen los calculos necesarios
+		//_c  .push_back( basek[n_basek-1] ); // '$' principio y fin de Kadelari.=" TGCA$"   in fp=0
+		//_b  .push_back( n_basek-1) ; 	  	
+		//_SdS.push_back( _NNpar->GetInitialEntropy()); // Solo dep de las conc, no de la sec. Ajustar primero la conc del target, y despues volverla a poner,?? 
+		//_SdH.push_back(  0 );						  // y comprobar que se hacen los calculos necesarios
 
 	    a_1=is_degbase	[ sec[sb] ] ; 		// in fp=1 when sp=sb
 		_GCp	+= is_GC	[a_1] ;
@@ -312,19 +312,24 @@ CSec *	CSec::CopyFirstBases(long pos)
 	sec->_GrDeg	= _GrDeg ;
 	for (Base b=0	  ; b<n_dgba   ; b++)	sec->_Count[b]= _Count[b] ;
 	sec->_NDB = _NDB ;
+    if (pos)
+    {
+        sec->_c   .assign(_c  .begin(), _c  .begin()+pos+1);
+	    sec->_b   .assign(_b  .begin(), _b  .begin()+pos+1); 
+	    sec->_SdS .assign(_SdS.begin(), _SdS.begin()+pos); /// To calculate current value we need next base ??
+	    sec->_SdH .assign(_SdH.begin(), _SdH.begin()+pos); /// Responsabilty passed to calling
+    }
+    //long i=1;
+	//for (; i<pos; i++)
+	//{	
+	//	sec->_c  .push_back(_c[i]);
+	//	sec->_b  .push_back(_b[i]);
+	//	sec->_SdS.push_back(_SdS[i]);
+	//	sec->_SdH.push_back(_SdH[i]);
+	//}
+	//sec->_c  .push_back(_c[i]);
+	//sec->_b  .push_back(_b[i]);
 
- //   sec->_c .assign(_c,0,pos);
-	//sec->_b .assign(_b,0,pos); 
-	long i=0;
-	for (; i<pos; i++)
-	{	
-		sec->_c  .push_back(_c[i]);
-		sec->_b  .push_back(_b[i]);
-		sec->_SdS.push_back(_SdS[i] );
-		sec->_SdH.push_back(_SdH[i]);
-	}
-	sec->_c  .push_back(_c[i]);
-	sec->_b  .push_back(_b[i]);
 	return sec ;
 }
 
@@ -334,9 +339,8 @@ CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) /// \todo: cre
 	if (pos==0) 
 	{	sec = s->CopyFirstBases(0);   // caso esp: ni pos -1, ni muto a ndb
 		pre = sec->_b[0];
-		sec->_SdS.push_back(_SdS[0] );
-		sec->_SdH.push_back(_SdH[0]);
-
+		//sec->_SdS.push_back(_SdS[0]);
+		//sec->_SdH.push_back(_SdH[0]);
 	}
 	else 
 	{
@@ -344,9 +348,9 @@ CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) /// \todo: cre
 		sec = s->CopyFirstBases(pos-1);     // anadirle algo al nombre ??
 
 		// cambia la base deg en la 'pos' a 'ndb' - no deg base --> MUTACION  !!
+			  pre = sec->_b[pos-1];
 		Base b_or = _c[pos], 
 			  cur = bk2nu[ndb];	
-			  pre = sec->_b[pos-1];
 			  
 		sec->_c.push_back(	ndb );
 		sec->_b.push_back(	cur );
@@ -354,10 +358,17 @@ CSec *	CSec::GenerateNonDegVariant ( CSec *s, long pos, Base ndb) /// \todo: cre
 		sec->_NDB-- ;
 		sec->_GrDeg *= (grad_deg[ndb] / ( grad_deg[b_or] ? grad_deg[b_or] : 1) ) ;	
 		
-		if ( pos > 1 ) 	
-		{	sec->_SdS.push_back(  sec->_SdS.back() + _NNpar->GetSelfEntr (	pre  ,	cur) );
-			sec->_SdH.push_back(  sec->_SdH.back() + _NNpar->GetSelfEnth (	pre  ,	cur) );
-		}
+/*		if ( pos > 1 ) 	
+		{	*/
+        sec->_SdS.push_back(  sec->_SdS.back() + _NNpar->GetSelfEntr (	pre  ,	cur) );
+		sec->_SdH.push_back(  sec->_SdH.back() + _NNpar->GetSelfEnth (	pre  ,	cur) );
+		//}
+  //      else 
+  //      {
+		//    sec->_SdS.push_back(_SdS[0]);
+		//    sec->_SdH.push_back(_SdH[0]);
+	 //   }
+
 		_Count[db2nu[ ndb]]++ ;
 		_Count[db2nu[b_or]]-- ;
 

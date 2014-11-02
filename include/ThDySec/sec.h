@@ -39,17 +39,17 @@ class ISec				// Pure virtual class ?
 class CSecBasInfo : public ISec
 { protected:	
 	bool			_selected{true}, _filtered{false};
-	int				_ID{NewS_ID()} ;			                    ///< num de la sec en file original?? en total??, num unico?
-	std::string     _name ;			                                ///< nombre unico? FASTA id	// char			*_name ;
+	int				_ID{NewS_ID()} ;			          ///< num de la sec en file original?? en total??, num unico?
+	std::string     _name ;			                      ///< nombre unico? FASTA id	// char			*_name ;
 	std::string		_description;
-	//long			_len ;			                                ///< longitud corregida, sin los '$'
-	long			_GrDeg {1} ;		                            ///< Grado de degeneracion. Cantidad total de diferentes molec, dependiendo de deg
+	//long			_len ;			                      ///< longitud corregida, sin los '$'
+	long			_GrDeg {1} ;		                  ///< Grado de degeneracion. Cantidad total de diferentes molec, dependiendo de deg
 	float			_GCp   {} ;		
-	long			_Count[DegCod::n_dgba];	                        ///< An array of counters for each deg base - inicializar!!
-	long			_NDB   {};			                            ///< cantidad de bases deg
-	std::string     _Clas ;		                                    ///< clasificacion
-	sequence	    _c/*{2,DegCod::basek[DegCod::n_basek]}*/;		///< sec char, comienzan y terminan con '$'0
-	CMultSec		*_NonDegSet{nullptr} ;                          /// \todo: std::unique_ptr<>
+	long			_Count[DegCod::n_dgba];	              ///< An array of counters for each deg base - inicializar!!
+	long			_NDB   {};			                  ///< cantidad de bases deg
+	std::string     _Clas ;		                          ///< clasificacion
+    sequence	    _c=sequence{ basek[n_basek-1]};		  ///< sec char, comienzan y terminan con '$'0
+	CMultSec		*_NonDegSet{nullptr} ;                /// \todo: std::unique_ptr<>
 	static int	NewS_ID     ()	{static int last_ID{};	return ++last_ID;	}
 
 		CSecBasInfo (int id,     const std::string& nam    , const std::string& clas) 						
@@ -108,9 +108,9 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
 		NumRang<float>	        _Tm ;			///< float		_Tm, _minTm, _maxTm ;				//  
 		std::shared_ptr<CSaltCorrNN>  _NNpar ;
 		float			        _Conc ;			///< conc de esta molec. Si igual al resto -1 y la toma de NNParam
-		std::vector<Code>	    _b;			///< sec cod, inicialmente basek
-		std::vector<Entropy>    _SdS ;			///< dS acumulada. Calcular Delta S sera solo restar la final menos la inicial	
-		std::vector<Energy>		_SdH ;			// 
+        std::vector<Code>	    _b=   std::vector<Code>{n_basek-1};			///< sec cod, inicialmente basek
+        std::vector<Entropy>    _SdS= std::vector<Entropy>{ _NNpar->GetInitialEntropy()};		///< dS acumulada. Calcular Delta S sera solo restar la final menos la inicial	
+        std::vector<Energy>		_SdH= std::vector<Energy> {  Energy{} };			// 
 		CMultSec	           *_parentMS{nullptr}	;   //std::weak_ptr<CMultSec> _parentMS	;
 
 	CSec (  const std::string&  sec, 
