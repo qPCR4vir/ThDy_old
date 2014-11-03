@@ -87,12 +87,12 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr,
 
     string of{ IPrgPar_uArr->_cp._OutputFile.get() + of_x }, f;
 
-	f=of+".uArr.Tm.csv" ;	ofstream osTm;		if (IPrgPar_uArr->_cp.st_savTm .get()	)	{ osTm.open		(f.c_str()	);	assert(osTm		);}
-	f=of+".uArr.G.csv"  ;	ofstream osG ;		if (IPrgPar_uArr->_cp.st_savG  .get()	)	{ osG.open		(f.c_str()	);	assert(osG		);}
-	f=of+".uArr.Pos.csv";	ofstream osPos;		if (IPrgPar_uArr->_cp.st_savPos.get()	)	{ osPos.open	(f.c_str()	);	assert(osPos	);}
-	f=of+".Plasm_Tm.csv";	ofstream osPl_Tm;	if (IPrgPar_uArr->_cp.st_savTm_Plasm.get()) { osPl_Tm.open	(f.c_str()	);	assert(osPl_Tm	);}
-	f=of+".Plasm_G.csv";	ofstream osPl_G;	if (IPrgPar_uArr->_cp.st_savG_Plasm.get())	{ osPl_G.open	(f.c_str()	);	assert(osPl_G	);}
-	f=of+".uArr.Al.csv";	ofstream osAl;		if (IPrgPar_uArr->_cp.st_savAlign.get())	{ osAl.open		(f.c_str()	);	assert(osAl		);}
+	f=of+".uArr.Tm.csv" ;	ofstream osTm;		if (IPrgPar_uArr->_cp.st_savTm .get()	)	{ osTm.open		(f.c_str()	);	if (!osTm)   throw std::runtime_error(string("Error trying to open ")+f);}
+	f=of+".uArr.G.csv"  ;	ofstream osG ;		if (IPrgPar_uArr->_cp.st_savG  .get()	)	{ osG.open		(f.c_str()	);	if (!osG)    throw std::runtime_error(string("Error trying to open ")+f);}
+	f=of+".uArr.Pos.csv";	ofstream osPos;		if (IPrgPar_uArr->_cp.st_savPos.get()	)	{ osPos.open	(f.c_str()	);	if (!osPos)  throw std::runtime_error(string("Error trying to open ")+f);}
+	f=of+".Plasm_Tm.csv";	ofstream osPl_Tm;	if (IPrgPar_uArr->_cp.st_savTm_Plasm.get()) { osPl_Tm.open	(f.c_str()	);	if (!osPl_Tm)throw std::runtime_error(string("Error trying to open ")+f);}
+	f=of+".Plasm_G.csv";	ofstream osPl_G;	if (IPrgPar_uArr->_cp.st_savG_Plasm.get())	{ osPl_G.open	(f.c_str()	);	if (!osPl_G) throw std::runtime_error(string("Error trying to open ")+f);}
+	f=of+".uArr.Al.csv";	ofstream osAl;		if (IPrgPar_uArr->_cp.st_savAlign.get())	{ osAl.open		(f.c_str()	);	if (!osAl)   throw std::runtime_error(string("Error trying to open ")+f);}
 
     std::shared_ptr<CSaltCorrNN>  NNpar {  pr._NNPar };
 
