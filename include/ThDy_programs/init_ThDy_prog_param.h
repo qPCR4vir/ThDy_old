@@ -4,6 +4,7 @@
 #include "init_prog_param.h" 
 #include <memory>
 #include "ThDySec/sec.h"
+#include <filesystem>
 
 const SecPos MAX_SEQ_LEN_ALIGN{ 2001 };
 
@@ -502,6 +503,11 @@ class ThDyProject : public CProject /// Permite manejar todo el projecto: con un
             _mPCR.LoadSequences();
             _TmCal.LoadSequences();
         }
+        void ExportFASTA(CMultSec* ms, bool only_selected)
+        {
+            if (ms) ms->Export_from   (*_cp._pSeqTree,  only_selected);
+        }
+
 
  explicit	ThDyProject():	CProject("ThDy DNA Hybrid Project.","Def.ThDy.txt","Def.ThDy.txt")
 					{}

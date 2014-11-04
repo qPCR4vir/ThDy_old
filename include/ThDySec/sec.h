@@ -7,6 +7,8 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <filesystem>
+namespace filesystem = std::tr2::sys; //std::experimental::filesystem
 
 
 using namespace std;
@@ -73,6 +75,7 @@ public:
         }
         ofile << std::endl;
      }
+
 	//CSecBasInfo			*CopyFirstBases	(long pos)	;			 // copia parcialmente hasta la pos
     ~CSecBasInfo() override;
     std::string Name		()const		{return _name;}              ///< User-editable
@@ -473,23 +476,18 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name =
 				 ) ;
 
 
-
-
-	bool		Selected(bool select)	{return _selected=select;} 			///< make protected: ??
-	bool		Selected(		) const {return _selected ;}					 ///< User-editable
-		//std::string Path(const std::string& path_sep="/")
-		//{
-		//	std::string path /*= _name*/;			// anadir o no un sep al final del path?????
-		//	for (CMultSec *parent=this; parent;parent=parent->_parentMS)
-		//		path = parent->_name + path_sep + path;
-		//	return path;
-		//}
+	    bool	Selected(bool select)	{return _selected=select;} 			///< make protected: ??
+	    bool	Selected(		) const {return _selected ;}				///< User-editable
 		static std::string	Path(CMultSec *ms, const std::string& path_sep="/")
-		{
-			std::string path /*= _name*/;			/// anadir o no un sep al final del path?????
+        {
+			std::string path  ;			 
 			for (CMultSec *parent=ms; parent;parent=parent->_parentMS)
 				path = parent->_name + path_sep + path;
 			return path;
+        }
+		std::string	path(const std::string& path_sep="/")
+		{
+            return Path(this,path_sep);
 		}
 		static int			NewMS_ID()
 		{
@@ -592,36 +590,77 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name =
 		//void setGloExtreme(const CMultSec *ms){return _Tm.isExtrem (ms->_TTm) || _Len.isExtrem (ms->_TLen );}
 
 		//int			AddFromDir		(const std::string& dir , bool  recurs  /*= false*/)
-		int			AddFromFile		(const std::string& file);
-		int			AddFromFile     (ifstream& ifile);	
-		int			CMultSec::AddFromFileFASTA	(ifstream &ifileFASTA);
-		int			CMultSec::AddFromFileBLAST	(ifstream &ifileBLAST);
-		int			CMultSec::AddFromFileGB		(ifstream &ifileGB);
-		int			CMultSec::AddFromFileGBtxt	(ifstream &ifileGB);
-		int			CMultSec::AddFromFileODT	(ifstream &ifileODT);
-		int			CMultSec::AddFromFileODS	(ifstream &ifileODS);
-        void        ExportFASTA(std::string filename, bool only_selected)
-        {
+		int		AddFromFile		(const std::string& file);
+		int		AddFromFile     (ifstream& ifile);	
+		int		AddFromFileFASTA(ifstream &ifileFASTA);
+		int		AddFromFileBLAST(ifstream &ifileBLAST);
+		int		AddFromFileGB	(ifstream &ifileGB);
+		int		AddFromFileGBtxt(ifstream &ifileGB);
+		int		AddFromFileODT	(ifstream &ifileODT);
+		int		AddFromFileODS	(ifstream &ifileODS);
 
+        /// will try all child of base to set the base dir and export
+        bool    Export_from   ( CMultSec& base, bool only_selected)
+        {
+             filesystem::path dir, file;
+            
+            auto sep=std::string(1,tr2::sys::slash<decltype (dir)>().value);
+            auto s= path(sep);
+
+            for (  base.goFirstMSec()   ; base.NotEndMSec() ;   base.goNextMSec())		// recorre todos las msec
+            {    
+                auto b= base.CurMSec()->path(sep);
+                if ( b.empty() || s.find(b))  continue;    // finded OK only if s beging with p
+
+                file = dir = s.replace(0, b.length()-1, base.CurMSec()->_Path);
+                file.replace_extension("fasta");
+                dir.remove_filename();
+
+                filesystem::create_directories(dir);
+                Export_as(file, only_selected);
+                return true;
+            }
+            return false;
         }
-        void        ExportFASTAas(std::string filename, bool only_selected)
+
+
+        bool    Export_if   ( CMultSec& base, bool only_selected)
+        {
+            //assert(ms);
+            filesystem::path dir, file;
+            
+            auto sep=std::string(1,tr2::sys::slash<decltype (dir)>().value);
+            auto s= path(sep);
+            auto b= base.path(sep);
+            if ( s.find(b))  return false;            // finded OK only if s beging with p
+            file = dir = s.replace(0, b.length(), base._Path);
+            file.replace_extension("fasta");
+            dir.remove_filename();
+
+            filesystem::create_directories(dir);
+            Export_as(file, only_selected);
+        }
+
+        void   Export_as(std::string filename, bool only_selected)
         {
         	ofstream ofile( filename ); 
 	        if ( ! ofile ) 
 	        {
 	            throw std::ios_base::failure(string("Could not create the sequence file: ")+ filename );
 	        }
-            FASTA( ofile, only_selected);
+            Export( ofile, only_selected);
         }
-        void   FASTA(ofstream& ofile, bool only_selected)
+        void   Export(ofstream& ofile, bool only_selected)
         {
         	for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las sec locales
 				if (CurSec()->Selected() || !only_selected)
                     CurSec()->ExportFASTA(ofile) ; 
 
             for (  goFirstMSec()   ; NotEndMSec() ;   goNextMSec())		// recorre todos las msec
-			    CurMSec()->FASTA(ofile, only_selected);
+			    CurMSec()->Export(ofile, only_selected);
         }
+
+
 		CSec		*Idem			(CSec &sec);  //		CConsParam	_ConsPar ;
 		CSec		*AddSec			( CSec *sec );
 		CSec		*InsertSec		( CSec *sec ) ;

@@ -550,10 +550,10 @@ void  SetupPage::LoadProject(nana::string file)
         auto  indxFASTA = menu.append(STR("Export FASTA . . ."          ),[&](nana::menu::item_proxy& ip)            {  /*_tree.selected().value<CMultSec*>()->ExportFASTA();*/  }).index();
         auto& menuFASTA = *menu.create_sub_menu(indxFASTA);
         menuFASTA.append(STR("Only current sequences"     ),[&](nana::menu::item_proxy& ip)            {  ;  });
-        menuFASTA.append(STR("Selected sequences in group"),[&](nana::menu::item_proxy& ip)            { _tree.selected().value<CMultSec*>()->ExportFASTAas("export.fasta", true );  });
-        menuFASTA.append(STR("All sequences in group"     ),[&](nana::menu::item_proxy& ip)            { _tree.selected().value<CMultSec*>()->ExportFASTAas("export.fasta", false);  });
-        menuFASTA.append(STR("All selected sequences"     ),[&](nana::menu::item_proxy& ip)            { _Pr._cp._pSeqTargets->ExportFASTAas("export.fasta", true )  ;  });
-        menuFASTA.append(STR("All sequences"              ),[&](nana::menu::item_proxy& ip)            { _Pr._cp._pSeqTargets->ExportFASTAas("export.fasta", false)  ;  });
+        menuFASTA.append(STR("Selected sequences in group"),[&](nana::menu::item_proxy& ip)            { _Pr.ExportFASTA(_tree.selected().value<CMultSec*>(), true );  });
+        menuFASTA.append(STR("All sequences in group"     ),[&](nana::menu::item_proxy& ip)            { _Pr.ExportFASTA(_tree.selected().value<CMultSec*>(), false);  });
+        menuFASTA.append(STR("All selected sequences"     ),[&](nana::menu::item_proxy& ip)            { _Pr._cp._pSeqTargets->Export_as("export.fasta", true )  ;  });
+        menuFASTA.append(STR("All sequences"              ),[&](nana::menu::item_proxy& ip)            { _Pr._cp._pSeqTargets->Export_as("export.fasta", false)  ;  });
 
     }
     void SeqExpl::MakeResponive()

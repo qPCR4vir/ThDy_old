@@ -10,8 +10,6 @@
 #include <math.h>
 #include <list>
 #include <stack>
-#include <filesystem>
-namespace filesys = std::tr2::sys;
 
 using namespace std ; 
 
@@ -562,33 +560,37 @@ CMultSec::CMultSec (	const std::string &file	,
 	    _NNPar      (NNpar)/*,
         _Path       (file)*/
 {
-	filesys::path  itf(file);
+	filesystem::path  itf(file);
 
 	if (all_dir)
     {
-        filesys::directory_iterator rdi{filesys::is_directory(itf) ? itf : itf.remove_filename() }, end;
+        if (filesystem::is_regular_file(itf)) itf.remove_filename();
+
 	    _name = itf.filename ();     /// The new MSec take the name of the dir.
+        _Path = itf;                 /// and the _Path point to it.
+
+        filesystem::directory_iterator rdi{ itf }, end;
 
         for (; rdi != end; ++ rdi)
             AddMultiSec(  new CMultSec(  rdi->path().string().c_str() , 
                                          NNpar,
-                                         filesys::is_directory(rdi->status()), 
+                                         filesystem::is_directory(rdi->status()), 
                                          MaxTgId, 
                                          SecLim,   
                                          SecLenLim,
                                          loadSec) );
-  //      else 
-  //          itf.remove_filename();
-  //      _name = itf.   .basename();
-		//AddFromDir(file);
+          //      else 
+          //          itf.remove_filename();
+          //      _name = itf.   .basename();
+		        //AddFromDir(file);
 	}
 	else
 	    if (itf.has_filename())
 	    {
 		    _name = itf.filename ();     /// The new MSec take the name of the file.
-            _Path = itf;
+            _Path = itf;                 /// and the _Path point directly to the file.
             if (loadSec)
-		       AddFromFile(file);
+		       AddFromFile(file);  /// will throw if not a file
 	    }
 }
 
