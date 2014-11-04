@@ -602,6 +602,10 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name =
 		int			CMultSec::AddFromFileODS	(ifstream &ifileODS);
         void        ExportFASTA(std::string filename, bool only_selected)
         {
+
+        }
+        void        ExportFASTAas(std::string filename, bool only_selected)
+        {
         	ofstream ofile( filename ); 
 	        if ( ! ofile ) 
 	        {
@@ -612,7 +616,9 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name =
         void   FASTA(ofstream& ofile, bool only_selected)
         {
         	for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las sec locales
-				CurSec()->ExportFASTA(ofile) ; 
+				if (CurSec()->Selected() || !only_selected)
+                    CurSec()->ExportFASTA(ofile) ; 
+
             for (  goFirstMSec()   ; NotEndMSec() ;   goNextMSec())		// recorre todos las msec
 			    CurMSec()->FASTA(ofile, only_selected);
         }

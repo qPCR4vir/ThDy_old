@@ -330,7 +330,7 @@ void  SetupPage::LoadProject(nana::string file)
         : _Pr        (tdForm), 
           CompoWidget(tdForm, STR("Find probes"), STR("FindSonden.lay.txt"))
     {
-                background (0xAAAAAA);
+                background (0xAAAAAA);  ///\todo: use codigo
 
         chkBx_showFindedProbes.check(true);
         InitMyLayout();
@@ -550,10 +550,10 @@ void  SetupPage::LoadProject(nana::string file)
         auto  indxFASTA = menu.append(STR("Export FASTA . . ."          ),[&](nana::menu::item_proxy& ip)            {  /*_tree.selected().value<CMultSec*>()->ExportFASTA();*/  }).index();
         auto& menuFASTA = *menu.create_sub_menu(indxFASTA);
         menuFASTA.append(STR("Only current sequences"     ),[&](nana::menu::item_proxy& ip)            {  ;  });
-        menuFASTA.append(STR("Selected sequences in group"),[&](nana::menu::item_proxy& ip)            { _tree.selected().value<CMultSec*>()->ExportFASTA("export.fasta", true );  });
-        menuFASTA.append(STR("All sequences in group"     ),[&](nana::menu::item_proxy& ip)            { _tree.selected().value<CMultSec*>()->ExportFASTA("export.fasta", false);  });
-        menuFASTA.append(STR("All selected sequences"     ),[&](nana::menu::item_proxy& ip)            { _Pr._cp._pSeqTargets->ExportFASTA("export.fasta", true )  ;  });
-        menuFASTA.append(STR("All sequences"              ),[&](nana::menu::item_proxy& ip)            { _Pr._cp._pSeqTargets->ExportFASTA("export.fasta", false)  ;  });
+        menuFASTA.append(STR("Selected sequences in group"),[&](nana::menu::item_proxy& ip)            { _tree.selected().value<CMultSec*>()->ExportFASTAas("export.fasta", true );  });
+        menuFASTA.append(STR("All sequences in group"     ),[&](nana::menu::item_proxy& ip)            { _tree.selected().value<CMultSec*>()->ExportFASTAas("export.fasta", false);  });
+        menuFASTA.append(STR("All selected sequences"     ),[&](nana::menu::item_proxy& ip)            { _Pr._cp._pSeqTargets->ExportFASTAas("export.fasta", true )  ;  });
+        menuFASTA.append(STR("All sequences"              ),[&](nana::menu::item_proxy& ip)            { _Pr._cp._pSeqTargets->ExportFASTAas("export.fasta", false)  ;  });
 
     }
     void SeqExpl::MakeResponive()

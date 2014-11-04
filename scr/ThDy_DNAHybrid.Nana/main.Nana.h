@@ -534,7 +534,7 @@ class SeqExpl : public CompoWidget
     {
         return _list.at(0).append(s).value  ( s             )
                                     .check  ( s->Selected() )
-                                    .fgcolor( s->Filtered()     ?   0xFF00FF 
+                                    .fgcolor( s->Filtered()     ?   0xFF00FF   ///\todo: use codigo
                                                                 :   0x0     );//nana::color::gray_border );
     }
 
@@ -961,7 +961,7 @@ class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
         //nana::pixel_rgb_t bk;
         //bk.u.color = background ();
         //bk.u.element.blue =0; 
-        //background (0xEEEEEE);
+        //background (0xEEEEEE);  ///\todo: use codigo
         //foreground(1);
        
         add_page( setup_    ); // 0
