@@ -613,8 +613,8 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name =
                 if ( b.empty() || s.find(b))  continue;    // finded OK only if s beging with p
 
                 file = dir = s.replace(0, b.length()-1, base.CurMSec()->_Path);
-                file.replace_extension("fasta");
-                dir.remove_filename();
+                file.remove_filename().replace_extension("fasta");
+                dir.remove_filename().remove_filename();
 
                 filesystem::create_directories(dir);
                 Export_as(file, only_selected);
