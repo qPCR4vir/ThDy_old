@@ -70,7 +70,7 @@ public:
               << ">" << _name << " " << Description ()  << std::endl ;
         for (int i=1 ; i< Len()-1 ; ++i )
         {
-            if (!i % line_len) ofile << std::endl;
+            if (!(i % line_len)) ofile << std::endl;
             ofile << charSequence()[i];
         }
         ofile << std::endl;
