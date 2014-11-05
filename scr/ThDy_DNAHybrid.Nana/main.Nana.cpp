@@ -419,13 +419,14 @@ void  SetupPage::LoadProject(nana::string file)
    SeqExpl::Node SeqExpl::Replace      (Tree::item_proxy& tn, CMultSec *ms, const std::string& Path, bool all_in_dir)
     {        
     try{ 
-         auto      own = tn->owner();
-         CMultSec *pms = ms->_parentMS;  
+         Tree::item_proxy   own = tn->owner();
+         CMultSec          *pms = ms->_parentMS;  
+
+		 CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(Path), all_in_dir	);
 
          _Pr._cp._pSeqNoUsed->AddMultiSec(ms); 
          _tree.erase(tn);
-
-		 CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(Path), all_in_dir	);
+         populate(_tree.find( nana::charset(_Pr._cp._pSeqNoUsed->_name)));
          return appendNewNode(own, newms).expend(true).select(true) ;
 		}
 		catch ( std::exception& e)
