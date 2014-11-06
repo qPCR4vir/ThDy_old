@@ -495,7 +495,7 @@ class SeqExpl : public CompoWidget
             _tree.auto_draw(false);
 
             populate(node);
-            node.expend(true);
+            node.expand(true);
             RefreshList(node);
 
             _tree.auto_draw(true);
@@ -575,7 +575,7 @@ class SeqExpl : public CompoWidget
                 ReloadDir(ntn);
             return tn;
         }
-        else return Refresh(Replace(tn, ms, ms->_Path,true)).expend(true).select(true);//true
+        else return Refresh(Replace(tn, ms, ms->_Path,true)).expand(true).select(true);//true
     }
     Node ReloadFile   (Tree::item_proxy& tn)
     {            

@@ -394,7 +394,7 @@ void  SetupPage::LoadProject(nana::string file)
     }
    SeqExpl::Node SeqExpl::AddNewSeqGr  (Tree::item_proxy& node) 
 		{	try{    
-					return appendNewNode(node, _Pr._cp.AddSeqGroup(node.value<CMultSec*>(),"New group")).expend(true);
+					return appendNewNode(node, _Pr._cp.AddSeqGroup(node.value<CMultSec*>(),"New group")).expand(true);
 		        }
 				catch ( std::exception& e)
 		        { 
@@ -427,7 +427,7 @@ void  SetupPage::LoadProject(nana::string file)
          _Pr._cp._pSeqNoUsed->AddMultiSec(ms); 
          _tree.erase(tn);
          populate(_tree.find( nana::charset(_Pr._cp._pSeqNoUsed->_name)));
-         return appendNewNode(own, newms).expend(true).select(true) ;
+         return appendNewNode(own, newms).expand(true).select(true) ;
 		}
 		catch ( std::exception& e)
 		{ 
@@ -447,7 +447,7 @@ void  SetupPage::LoadProject(nana::string file)
     void SeqExpl::RefreshProbes_mPCR(bool show_/*=true*/)
     {
         auto probNode = _tree.find(nana::charset(_Pr._mPCR._probesMS->_name));
-        Refresh(probNode).expend(true).select(true);
+        Refresh(probNode).expand(true).select(true);
         if (show_) 
             _Pr.ShowExpl();
     }
@@ -510,7 +510,7 @@ void  SetupPage::LoadProject(nana::string file)
 			CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(fb.file()), true	);
             _tree.erase(tn);
             populate(appendNewNode  (own, newms) );
-            own.expend(true);
+            own.expand(true);
 
             _list.clear();
             populate_list_recur(pms);
@@ -612,7 +612,7 @@ void  SetupPage::LoadProject(nana::string file)
                             CMultSec* newms = _Pr._cp.CopyStructFromDir	( ms, nana::charset(fb.file())	);
                             _tree.auto_draw(false);
 			                populate(  appendNewNode  (tn, newms) );
-                            tn.expend(true);
+                            tn.expand(true);
                             _tree.auto_draw(true);
                         });
         _paste      .tooltip(STR("Paste sequences"))
@@ -636,7 +636,7 @@ void  SetupPage::LoadProject(nana::string file)
             populate(_tree.find(STR("Dont use") ));
             _list.clear();
             populate_list_recur(tn);
-            tn.select(true).expend(true);
+            tn.select(true).expand(true);
 
             _tree.auto_draw(false);
             _list.auto_draw(false);
@@ -665,7 +665,7 @@ void  SetupPage::LoadProject(nana::string file)
 
             _tree.erase(tn);
             populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
-            own.select(true).expend(true);
+            own.select(true).expand(true);
         });
         _del        .tooltip(STR("Delete a group of sequences "))
                     .events().click([this]()
@@ -690,7 +690,7 @@ void  SetupPage::LoadProject(nana::string file)
             _tree.erase(tn);
             populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
 
-            own.select(true).expend(true);
+            own.select(true).expand(true);
 
         });
         _cutSec     .tooltip(STR("Cut selected sequences from list"))
