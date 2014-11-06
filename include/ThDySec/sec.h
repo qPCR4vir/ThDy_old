@@ -127,7 +127,7 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
 	CSec ( long l, std::shared_ptr<CSaltCorrNN>  NNpar) ;
 
 
-	long		Len			()const		{return _SdS.size();} //
+	//long		Len			()const		{return _SdS.size();} //
 	void		 CorrectSaltOwczarzy    () ;
 	CMultSec	*CreateNonDegSet		()			;   ///< crea todo el set si no existia, solo si existen bases deg: _NDB>0
 	CMultSec	*ForceNonDegSet			();				///< lo crea siempre, incluso para =1??
