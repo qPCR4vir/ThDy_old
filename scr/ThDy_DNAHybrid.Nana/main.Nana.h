@@ -649,9 +649,9 @@ public:
       _DefLayout=  
 	"vertical      gap=2                 	\n\t"
 	"	    <weight=10     >       	\n\t"
-	"	     <weight=235 gap=8 <weight=5><weight=350 vertical <weight=100 <weight=320 Sonde  grid[3,4]>> 	\n\t"
+	"	     <weight=235 gap=8 <weight=5><weight=350 vertical <weight=100 <weight=320 Sonde  grid=[3,4]>> 	\n\t"
 	"                                                                                                         <weight=10>	\n\t"
-	"	                                                                                                     <TargCov    grid[2,2]     weight=45                     >    	\n\t"
+	"	                                                                                                     <TargCov    grid=[2,2]     weight=45                     >    	\n\t"
 	"                                                                                                        <weight=10> 	\n\t"
 	"	                                                                                                     <weight=40 <   <><weight=300   gap=20 Run>       > >    	\n\t"
 	"	                                                                                                     <weight=10>                                 	\n\t"
@@ -693,7 +693,7 @@ public:
 
             ;
         
-        /// Use room (wd,w,h) in combination with a <Table grid[W,H]>
+        /// Use room (wd,w,h) in combination with a <Table grid=[W,H]>
 	    _place.field("Sonde" )     << "Probes" << "Min."         << "   Max."   
                                    <<    _place.room(_Gmin ,2,1) <<   _Gmax
                                    <<    _place.room(_Tmmin,2,1) <<   _Tmmax
@@ -797,9 +797,9 @@ public:
     void SetDefLayout   () override
     {
         _DefLayout= "vertical      gap=2  min=150           \n\t"
-            "       < weight=50  <vertical min=100 gap=2 InputSec>   < weight=50 gap=1 CopyBut grid[2,2]>  >       \n\t "
+            "       < weight=50  <vertical min=100 gap=2 InputSec>   < weight=50 gap=1 CopyBut grid=[2,2]>  >       \n\t "
             "       < weight=25 <weight=20><error min=50> <rev_compl weight=80>>         \n\t  "
-            "       < weight=80 gap=2  <vertical weight=80 gap=2 Left>   < Table min=280 grid[7,4]>  >       \n\t "
+            "       < weight=80 gap=2  <vertical weight=80 gap=2 Left>   < Table min=280 grid=[7,4]>  >       \n\t "
             "       < vertical weight=50  ResAlign>    "
 	                 //"       <weight=1>                \n\t"
 
@@ -1036,15 +1036,15 @@ class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
     void SetDefLayout   () override
     {
         _DefLayout=
-                "vertical      gap=2                   \n\t "
-	            "vertical      gap=2                   	\n\t"
-	            "	        <weight=25>                   	\n\t"
-	            "	        <PagesTag    weight=23 >      	\n\t"
-	            "	        <Pages       min=255   >      	\n\t"
+	        "vertical      gap=2                   	\n\t"
+	        "	 vertical      gap=2                   		\n\t"
+	        "		        <weight=25>                   		\n\t"
+	        "		        <PagesTag    weight=23 >      		\n\t"
+	        "		        <Pages       min=255   >      		\n\t"
 	            "	        < <weight=30><TargetsOptions><weight=10> weight=23>      	\n\t"
-	            "	        <weight=1 >                   	\n\t"
-	            "	        < weight=23 <><Firma weight=280><> >                   	\n\t"
-	            "	 	\n\t"
+	        "		        <weight=1 >                   		\n\t"
+	        "		        < weight=23 <><Firma weight=280><> >                   		\n\t"
+	        "		 		\n\t"
             ;
 
         numUpDwMaxTgId .ResetLayout (60,40,30 );  
