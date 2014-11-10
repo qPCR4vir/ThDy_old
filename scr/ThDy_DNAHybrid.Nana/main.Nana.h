@@ -1041,10 +1041,11 @@ class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
 	        "		        <weight=25>                   		\n\t"
 	        "		        <PagesTag    weight=23 >      		\n\t"
 	        "		        <Pages       min=255   >      		\n\t"
-	            "	        < <weight=30><TargetsOptions><weight=10> weight=23>      	\n\t"
+	        "		        < <weight=30><TargetsOptions min=640 max=1000><weight=10> weight=23>      		\n\t"
 	        "		        <weight=1 >                   		\n\t"
 	        "		        < weight=23 <><Firma weight=280><> >                   		\n\t"
 	        "		 		\n\t"
+	        "		\n\t"
             ;
 
         numUpDwMaxTgId .ResetLayout (60,40,30 );  
