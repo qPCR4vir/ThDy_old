@@ -694,10 +694,11 @@ public:
             ;
         
         /// Use room (wd,w,h) in combination with a <Table grid=[W,H]>
-	    _place.field("Sonde" )     << "Probes" << "Min."         << "   Max."   
-                                   <<    _place.room(_Gmin ,2,1) <<   _Gmax
-                                   <<    _place.room(_Tmmin,2,1) <<   _Tmmax
-                                   << _place.room(_Lengthmin,2,1)<<   _Lengthmax  ;
+
+	                _place["Sonde"]<< "Probes" << "Min."         << "   Max."   
+                                   <<    _place.room(_Gmin  ,nana::size(2,1)) <<   _Gmax
+                                   <<    _place.room(_Tmmin ,nana::size(2,1)) <<   _Tmmax
+                                   << _place.room(_Lengthmin,nana::size(2,1)) <<   _Lengthmax  ;
         _place.field("TargCov" )   << chkBx_unique << numUpDw_MinTargCov       
                                    << chkBx_common << numUpDw_MaxTargCov     	;
         _place.field("Run"     )   << _design	<< _compare	;
@@ -811,7 +812,7 @@ public:
 	    _place.field("InputSec" )<< sec_ << sec2align_ ;
 	    _place.field("error"    )<< error_ ;
 	    _place.field("Left"     )<< run_  << chkBx_align;
-	    _place.field("CopyBut"  )<< nana::vplace::room (copy_f_s_2, 1, 2)<< copy_s << copy_s_a ;
+	    _place.field("CopyBut"  )<< nana::vplace::room (copy_f_s_2, nana::size(1,2))<< copy_s << copy_s_a ;
 	    _place.field("Table"    )<< ""          << "   min-" << "Tm(°C)"   << "-max" << "   min-"  << "G(kJ)"   << "-max   "  ;
 	    _place.field("Table"    )<< "Up"        << Tm_min_Up << Tm_Up      << Tm_max_Up<<G_min_Up  <<  G_Up     <<  G_max_Up  ;
 	    _place.field("Table"    )<< "Down"      << Tm_min_Dw << Tm_Dw      << Tm_max_Dw<<G_min_Dw  <<  G_Dw     <<  G_max_Dw  ;
