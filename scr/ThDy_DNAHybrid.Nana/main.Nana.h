@@ -647,17 +647,21 @@ public:
     void SetDefLayout   () override
     {
       _DefLayout=  
-	"vertical      gap=2                 	\n\t"
-	"	    <weight=10     >       	\n\t"
-	"	     <weight=235 gap=8 <weight=5><weight=350 vertical <weight=100 <weight=320 Sonde  grid=[3,4]>> 	\n\t"
-	"                                                                                                         <weight=10>	\n\t"
-	"	                                                                                                     <TargCov    grid=[2,2]     weight=45                     >    	\n\t"
-	"                                                                                                        <weight=10> 	\n\t"
-	"	                                                                                                     <weight=40 <   <><weight=300   gap=20 Run>       > >    	\n\t"
-	"	                                                                                                     <weight=10>                                 	\n\t"
-	"	                                                              >   <><weight=230 gap=1 vertical  options>    >   	\n\t"
-	"	     <weight=23   <weight=140><Output>   <> >       	\n\t"
-	"	 	\n\t"
+	"vertical      gap=2                 		\n\t"
+	"		    <weight=10     >       		\n\t"
+	"		     <weight=235 gap=8 <weight=5><weight=350 vertical <weight=100 <weight=320 Sonde  grid=[3,4] collapse(0,1,2,1)	\n\t"
+	"																																															 collapse(0,2,2,1)		\n\t"
+	"																																															 collapse(0,3,2,1)		\n\t"
+	"	>> 		\n\t"
+	"	                                                                                                         <weight=10>		\n\t"
+	"		                                                                                                     <TargCov    grid=[2,2]     weight=45                     >    		\n\t"
+	"	                                                                                                        <weight=10> 		\n\t"
+	"		                                                                                                     <weight=40 <   <><weight=300   gap=20 Run>       > >    		\n\t"
+	"		                                                                                                     <weight=10>                                 		\n\t"
+	"		                                                              >   <><weight=230 gap=1 vertical  options>    >   		\n\t"
+	"		     <weight=23   <weight=140><Output>   <> >       		\n\t"
+	"		 		\n\t"
+	"		\n\t"
         ;
 
 
@@ -694,10 +698,10 @@ public:
             ;
         
         /// Use room (wd,w,h) in combination with a <Table grid=[W,H]>
-	    _place.field("Sonde" )     << "Probes" << "Min."         << "   Max."   
-                                   <<    _place.room(_Gmin ,2,1) <<   _Gmax
-                                   <<    _place.room(_Tmmin,2,1) <<   _Tmmax
-                                   << _place.room(_Lengthmin,2,1)<<   _Lengthmax  ;
+	            _place["Sonde"]    << "Probes" << "Min."         << "   Max."   
+                                   <<    _place.room(_Gmin , nana::size(2,1)) <<   _Gmax
+                                   <<    _place.room(_Tmmin, nana::size(2,1)) <<   _Tmmax
+                                   << _place.room(_Lengthmin,nana::size(2,1))<<   _Lengthmax  ;
         _place.field("TargCov" )   << chkBx_unique << numUpDw_MinTargCov       
                                    << chkBx_common << numUpDw_MaxTargCov     	;
         _place.field("Run"     )   << _design	<< _compare	;
@@ -797,7 +801,7 @@ public:
     void SetDefLayout   () override
     {
         _DefLayout= "vertical      gap=2  min=150           \n\t"
-            "       < weight=50  <vertical min=100 gap=2 InputSec>   < weight=50 gap=1 CopyBut grid=[2,2]>  >       \n\t "
+            "       < weight=50  <vertical min=100 gap=2 InputSec>   < weight=50 gap=1 CopyBut grid=[2,2]  collapse(0,0,1,2)>  >       \n\t "
             "       < weight=25 <weight=20><error min=50> <rev_compl weight=80>>         \n\t  "
             "       < weight=80 gap=2  <vertical weight=80 gap=2 Left>   < Table min=280 grid=[7,4]>  >       \n\t "
             "       < vertical weight=50  ResAlign>    "
@@ -811,7 +815,7 @@ public:
 	    _place.field("InputSec" )<< sec_ << sec2align_ ;
 	    _place.field("error"    )<< error_ ;
 	    _place.field("Left"     )<< run_  << chkBx_align;
-	    _place.field("CopyBut"  )<< nana::vplace::room (copy_f_s_2, 1, 2)<< copy_s << copy_s_a ;
+	    _place.field("CopyBut"  )<< nana::vplace::room (copy_f_s_2, nana::size(1, 2))<< copy_s << copy_s_a ;
 	    _place.field("Table"    )<< ""          << "   min-" << "Tm(°C)"   << "-max" << "   min-"  << "G(kJ)"   << "-max   "  ;
 	    _place.field("Table"    )<< "Up"        << Tm_min_Up << Tm_Up      << Tm_max_Up<<G_min_Up  <<  G_Up     <<  G_max_Up  ;
 	    _place.field("Table"    )<< "Down"      << Tm_min_Dw << Tm_Dw      << Tm_max_Dw<<G_min_Dw  <<  G_Dw     <<  G_max_Dw  ;
