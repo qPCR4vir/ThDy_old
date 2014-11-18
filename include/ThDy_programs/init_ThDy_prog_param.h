@@ -71,7 +71,7 @@ class CSaltCorrNN;
 /// concreta los parametros comunes. Mantiene lista de los prog Espec que los usan
 class ThDyCommProgParam : public CCommProgParam 
 {public:	
-    CParamString     _OutputFile      {this, "Results output file",                                  "OutputFile",     "" } ;
+    CParamString     _OutputFile      {this, "Results output file",                                  "OutputFile",     "" } ;///\todo make it a std::path
 
     CParamString     _InputTargetFile {this, "Imput file for Targets",				                 "TargetFile",     "" } ;
     CParamBool       _TRecurDir       {this, "Recursively add all Target seq-files from all dir",    "TRecursDir",    false} ;
@@ -507,6 +507,33 @@ class ThDyProject : public CProject /// Permite manejar todo el projecto: con un
         {
             if (ms) ms->Export_from   (*_cp._pSeqTree,  only_selected);
         }
+	    int	Run	(IProg &prog ) override
+        {
+           try
+           {
+               filesystem::path dir(_cp._OutputFile.get());
+               dir.remove_filename();
+               filesystem::create_directories(dir);
+
+               return CProject::Run(prog);
+           }
+        catch(std::exception& e)
+        {
+             //(nana::msgbox(*_EdWd_owner, STR("std::exception during EditableWidget ReCollocation: "))
+             //       .icon(nana::msgbox::icon_error)
+             //                    <<STR("\n   in form: ") << nana::API::window_caption(*_EdWd_owner)
+             //                    <<STR("\n   exception : ") << e.what() 
+             //).show();
+        }
+		catch(...)
+		{
+             //(nana::msgbox(*_EdWd_owner, STR("An uncaptured exception during EditableWidget ReCollocation: "))
+             //       .icon(nana::msgbox::icon_error)
+             //                    <<STR("\n   in form: ") << nana::API::window_caption(*_EdWd_owner)
+             //).show();
+	    }
+           return -1;
+        }       //  ???????
 
 
  explicit	ThDyProject():	CProject("ThDy DNA Hybrid Project.","Def.ThDy.txt","Def.ThDy.txt")
