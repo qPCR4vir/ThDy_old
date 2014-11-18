@@ -93,13 +93,13 @@ public:
     }
     nanaWidgetBind (CompoWidget & CW, nana::widget& resp_w): _w(CW)
     {
-        std::wcerr<< _w.caption() <<STR(" Setting add_validate")<< std::endl;
+        //std::wcerr<< _w.caption() <<STR(" Setting add_validate")<< std::endl;
         
         CW.add_validate ([&]()->bool
         {  
-            assert((  std::cerr<< "\nBefore validated: , nanaWidgetBind-duo, CompoWidget: " , true  ));;
-            assert((  std::wcerr<< CW._Titel  << std::endl , true  ));;
-            UpDateProg ();
+            //assert((  std::cerr<< "\nBefore validated: , nanaWidgetBind-duo, CompoWidget: " , true  ));;
+            //assert((  std::wcerr<< CW._Titel  << std::endl , true  ));;
+            UpDateProg ();/// \todo REVISE here or in validated ????? ------------!!!!!!
             return true;
         });
         //resp_w.make_event <nana::events::focus>([&](const nana::eventinfo& ei)
@@ -111,10 +111,10 @@ public:
         //        }); 
         resp_w.events().focus([&](const nana::arg_focus& ei)
         {  
-                    assert((  std::cerr<< "\n" << (ei.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind-duo: " , true  ));;
-                    assert((  std::wcerr<< _w.caption() << std::endl , true  ));;
+                    //assert((  std::cerr<< "\n" << (ei.getting ? "geting ":"lossing ") << "Focus: , nanaWidgetBind-duo: " , true  ));;
+                    //assert((  std::wcerr<< _w.caption() << std::endl , true  ));;
             
-            if (!ei.getting) 
+            if (!ei.getting)    /// \ add a try ?????----!!!!! An exeption here go to message pumping and CRASH !!
                 UpDateProg ();  // debiera ser:  CW.validate_only ???
         });
         //resp_w.make_event <nana::events::focus>([&](const nana::eventinfo& ei)
