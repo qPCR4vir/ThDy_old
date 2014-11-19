@@ -509,30 +509,30 @@ class ThDyProject : public CProject /// Permite manejar todo el projecto: con un
         }
 	    int	Run	(IProg &prog ) override
         {
-           try
-           {
+           //try
+           //{
                filesystem::path dir(_cp._OutputFile.get());
                dir.remove_filename();
                filesystem::create_directories(dir);
 
                return CProject::Run(prog);
-           }
-        catch(std::exception& e)
-        {
+        //   }
+        //catch(std::exception& e)
+        //{
              //(nana::msgbox(*_EdWd_owner, STR("std::exception during EditableWidget ReCollocation: "))
              //       .icon(nana::msgbox::icon_error)
              //                    <<STR("\n   in form: ") << nana::API::window_caption(*_EdWd_owner)
              //                    <<STR("\n   exception : ") << e.what() 
              //).show();
-        }
-		catch(...)
-		{
+  //      }
+		//catch(...)
+		//{
              //(nana::msgbox(*_EdWd_owner, STR("An uncaptured exception during EditableWidget ReCollocation: "))
              //       .icon(nana::msgbox::icon_error)
              //                    <<STR("\n   in form: ") << nana::API::window_caption(*_EdWd_owner)
              //).show();
-	    }
-           return -1;
+	    //}
+     //      return -1;
         }       //  ???????
 
 

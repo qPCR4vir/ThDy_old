@@ -70,10 +70,10 @@ class TableRes  : public nana::form, public EditableForm
     std::shared_ptr<Table> _table;
     List                   _list { *this };
 
-    nana::button      _bTm {*this,STR("Tm")},       //nana::toolbar     _tbar { *this };
-                           _bG  {*this,STR("G" )},   
+    nana::button           _bTm  {*this,STR("Tm" )},       //nana::toolbar     _tbar { *this };
+                           _bG   {*this,STR("G"  )},   
                            _bPos {*this,STR("Pos")},
-                           _mix{*this, STR("Consolide")}; 
+                           _mix  {*this, STR("Consolide")}; 
 
     int                    n_dec{ 1 },   n_len{ 6 };
     
@@ -647,21 +647,22 @@ public:
     void SetDefLayout   () override
     {
       _DefLayout=  
-	"vertical      gap=2                 		\n\t"
-	"		    <weight=10     >       		\n\t"
-	"		     <weight=235 gap=8 <weight=5><weight=350 vertical <weight=100 <weight=320 Sonde  grid=[3,4] collapse(0,1,2,1)	\n\t"
-	"																																															 collapse(0,2,2,1)		\n\t"
-	"																																															 collapse(0,3,2,1)		\n\t"
-	"	>> 		\n\t"
-	"	                                                                                                         <weight=10>		\n\t"
-	"		                                                                                                     <TargCov    grid=[2,2]     weight=45                     >    		\n\t"
-	"	                                                                                                        <weight=10> 		\n\t"
-	"		                                                                                                     <weight=40 <   <><weight=300   gap=20 Run>       > >    		\n\t"
-	"		                                                                                                     <weight=10>                                 		\n\t"
-	"		                                                              >   <><weight=230 gap=1 vertical  options>    >   		\n\t"
-	"		     <weight=23   <weight=140><Output>   <> >       		\n\t"
+	"vertical   gap=2                 		\n\t"
+	"	<weight=10     >       		\n\t"
+	"   <weight=235 gap=8 <weight=5> <weight=350 vertical   		                      \n\t"
+    "                                              <weight=100 <weight=320 Sonde grid=[3,4] collapse(0,1,2,1)	    \n\t"
+	"																				        collapse(0,2,2,1)		\n\t"
+	"																				        collapse(0,3,2,1)  >	\n\t"
+	"	                                           > 		             \n\t"
+	"	                                           <weight=10>		\n\t"
+	"		                                       <weight=45 TargCov    grid=[2,2]                          >    		\n\t"
+	"	                                           <weight=10> 		\n\t"
+	"		                                       <weight=40 <   <> <weight=300   gap=20 Run>       > >    		\n\t"
+	"		                                       <weight=10>                                 		\n\t"
+	"		                         >   <> <weight=230 gap=1 vertical  options>                           		\n\t"   
+    "   >   		\n\t"
+	"	<weight=23   <weight=140> <Output>   <> >       		          \n\t"
 	"		 		\n\t"
-	"		\n\t"
         ;
 
 

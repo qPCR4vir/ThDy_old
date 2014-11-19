@@ -431,9 +431,17 @@ void  SetupPage::LoadProject(nana::string file)
 		}
 		catch ( std::exception& e)
 		{ 
-			(nana::msgbox ( STR("Error replacing sequences" ) )<< e.what()).show() ;
-                  return tn;
- 		}		 
+			(nana::msgbox ( STR("Error replacing sequences: " ) ).icon(nana::msgbox::icon_error)
+                    <<"\n"<< e.what()
+            ).show() ;
+ 		}		
+		catch(...)
+		{
+             (nana::msgbox(STR("An uncaptured exception during replacing sequences: "))
+                    .icon(nana::msgbox::icon_error) << nana::charset(tn.key())                                 
+             ).show();
+	    }
+        return tn;
     }
     void SeqExpl::ShowFindedProbes_in_mPCR(bool show_/*=true*/)
     {
