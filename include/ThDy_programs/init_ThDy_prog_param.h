@@ -109,8 +109,8 @@ class ThDyCommProgParam : public CCommProgParam
 													"End",							"SecuencEnd", 0, std::numeric_limits<LonSecPos>::max(), 0 ,		"nt" } ;	
 	SecPosRang			       _SecLenLim {1,0 } ;			
     CParamNumMinMax<SecPos>     SecLenLim {this, "Limits of the length of the seq. to be useful",_SecLenLim ,
-													"Minimal length",				"MinSecuLen", 20, MAX_SEQ_LEN_ALIGN, 20 ,
-													"Maximal length",				"MaxSecuLen", 20, MAX_SEQ_LEN_ALIGN, MAX_SEQ_LEN_ALIGN ,		"nt" } ;	
+													"Minimal length",				"MinSecuLen", 15, MAX_SEQ_LEN_ALIGN, 20 ,
+													"Maximal length",				"MaxSecuLen", 15, MAX_SEQ_LEN_ALIGN, MAX_SEQ_LEN_ALIGN ,		"nt" } ;	
 	///  Programm setup bool parametrs
     CParamBool       loadNNPar  {this, "Programm option- Load NN parametr",		"LoadNNPara",    false } ,	     
                      saveNNPar  {this, "Programm option- save NN parametr",		"SaveNNPara",    false }  ; 

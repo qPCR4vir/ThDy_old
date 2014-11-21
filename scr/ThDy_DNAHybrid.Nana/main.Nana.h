@@ -925,7 +925,7 @@ class RenameFrom : public nana::form, public EditableForm
     std::string Name(){return _name;}
     void SetDefLayout   () override
     {
-        _DefLayout= "vertical gap=2 <Edit weigth=24> <weigth=24 <free_left><Buttons gap=10>>                   \n\t ";
+        _DefLayout= "vertical gap=2 <Edit weight=24> <weight=24 <free_left><Buttons gap=10>>                   \n\t ";
     }
     void AsignWidgetToFields() override
     {
