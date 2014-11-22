@@ -433,7 +433,7 @@ class SeqExpl : public CompoWidget
             case 3: swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());
                     return val;  
             case 4: return nana::charset( sec->Description());
-            case 5: return nana::charset(  (char *)(  sec->Sequence().substr (1, std::min( sec->Len()-2, slen)).c_str()    )) ;
+            case 5: return nana::charset(  (char *)(  sec->Sequence().substr (1, std::min( sec->Len(), slen)).c_str()    )) ;
 
             default:
                 return nana::string{};
@@ -550,7 +550,7 @@ class SeqExpl : public CompoWidget
  static Node appendNewNode(Node &node, CMultSec*ms) /// Add a new node to the child of node.
     {
         nana::string name = nana::charset(ms->_name);
-        return node->append(name, name).value(ms).check(ms->Selected());
+        return node->append(name, name, ms).check(ms->Selected());
     }
     Node &populate     (Node &node)  /// crea y add to the child of node un nodo nuevo por cada seq in ms. Asume el nodo estaba vacio
     {
