@@ -67,11 +67,11 @@ public:
     void ExportFASTA(ofstream& ofile, int line_len=80)
     {
         ofile << std::endl 
-              << ">" << _name << " " << Description ()  << std::endl ;
-        for (int i=1 ; i< Len()-1 ; ++i )
+              << ">" << _name << " " << Description ()   ;
+        for (int i=0 ; i< Len() ; ++i )
         {
             if (!(i % line_len)) ofile << std::endl;
-            ofile << charSequence()[i];
+            ofile << charSequence()[i+1];
         }
         ofile << std::endl;
      }
