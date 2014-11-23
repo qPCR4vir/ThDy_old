@@ -478,12 +478,12 @@ class SeqExpl : public CompoWidget
     }
     void AsignWidgetToFields() override
     {
- 	    _place.field("toolbar") << "   Files:"  << _loadFile << _re_loadFile   
-                                << 10           << _paste           
-                                << "      Dir:" << _loadDir  << _re_loadDir  << _scanDir  
-                                << 10           << _cut      << _del      
-                                << "      Seq:" << _show_locals_s  << _show_filt_s 
-								<< 10           << _cutSec   << _delSec
+ 	    _place.field("toolbar") << L"   Files:"  << _loadFile << _re_loadFile   
+                               /* << 10  */         << _paste           
+                                << L"      Dir:" << _loadDir  << _re_loadDir  << _scanDir  
+                               /* << 10 */          << _cut      << _del      
+                                << L"      Seq:" << _show_locals_s  << _show_filt_s 
+								/*<< 10*/           << _cutSec   << _delSec
                                 ;
         _place.field("Tree"   ) << _tree;
         _place.field("List"   ) << _list;
@@ -699,17 +699,17 @@ public:
             ;
         
         /// Use room (wd,w,h) in combination with a <Table grid=[W,H]>
-	            _place["Sonde"]    << "Probes" << "Min."         << "   Max."   
-                                   <<    _place.room(_Gmin , nana::size(2,1)) <<   _Gmax
-                                   <<    _place.room(_Tmmin, nana::size(2,1)) <<   _Tmmax
-                                   << _place.room(_Lengthmin,nana::size(2,1))<<   _Lengthmax  ;
+	            _place["Sonde"]    << L"Probes" << L"Min."         << L"   Max."   
+                                   <<    /*_place.room(*/_Gmin /*, nana::size(2,1))*/ <<   _Gmax
+                                   <<    /*_place.room(*/_Tmmin/*, nana::size(2,1))*/ <<   _Tmmax
+                                   << /*_place.room(*/_Lengthmin/*,nana::size(2,1))*/<<   _Lengthmax  ;
         _place.field("TargCov" )   << chkBx_unique << numUpDw_MinTargCov       
                                    << chkBx_common << numUpDw_MaxTargCov     	;
         _place.field("Run"     )   << _design	<< _compare	;
                  
-	    _place.field("options" )   << "Probe-target"    <<  _MaxG     << _MinTm
-                                   << "Probe-non-target"<<  _MinG     << _MaxTm
-                                   << "Probe-self"      <<  _MinSelfG << _MaxSelfTm  
+	    _place.field("options" )   << L"Probe-target"    <<  _MaxG     << _MinTm
+                                   << L"Probe-non-target"<<  _MinG     << _MaxTm
+                                   << L"Probe-self"      <<  _MinSelfG << _MaxSelfTm  
                                     ;    
         _place.field("Output"  )   << chkBx_showFindedProbes;
 
@@ -816,11 +816,11 @@ public:
 	    _place.field("InputSec" )<< sec_ << sec2align_ ;
 	    _place.field("error"    )<< error_ ;
 	    _place.field("Left"     )<< run_  << chkBx_align;
-	    _place.field("CopyBut"  )<< nana::vplace::room (copy_f_s_2, nana::size(1, 2))<< copy_s << copy_s_a ;
-	    _place.field("Table"    )<< ""          << "   min-" << "Tm(°C)"   << "-max" << "   min-"  << "G(kJ)"   << "-max   "  ;
-	    _place.field("Table"    )<< "Up"        << Tm_min_Up << Tm_Up      << Tm_max_Up<<G_min_Up  <<  G_Up     <<  G_max_Up  ;
-	    _place.field("Table"    )<< "Down"      << Tm_min_Dw << Tm_Dw      << Tm_max_Dw<<G_min_Dw  <<  G_Dw     <<  G_max_Dw  ;
-	    _place.field("Table"    )<< "Interact"  << Tm_min_In << Tm_In      << Tm_max_In<<G_min_In  <<  G_In     <<  G_max_In  ;
+	    _place.field("CopyBut"  )<< /*nana::vplace::room (*/copy_f_s_2/*, nana::size(1, 2))*/<< copy_s << copy_s_a ;
+	    _place.field("Table"    )<< L""          << L"   min-" << L"Tm(°C)"   << L"-max" << L"   min-"  << L"G(kJ)"   << L"-max   "  ;
+	    _place.field("Table"    )<< L"Up"        << Tm_min_Up << Tm_Up      << Tm_max_Up<<G_min_Up  <<  G_Up     <<  G_max_Up  ;
+	    _place.field("Table"    )<< L"Down"      << Tm_min_Dw << Tm_Dw      << Tm_max_Dw<<G_min_Dw  <<  G_Dw     <<  G_max_Dw  ;
+	    _place.field("Table"    )<< L"Interact"  << Tm_min_In << Tm_In      << Tm_max_In<<G_min_In  <<  G_In     <<  G_max_In  ;
 
 
 	    _place.field("ResAlign" )<< txtBx_ResultSec << txtBx_ResultSec2Align ;
@@ -1068,7 +1068,7 @@ class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
  
 	    _place.field("PagesTag")        << tabbar_  ;
 	    _place.field("TargetsOptions" ) << numUpDwMaxTgId<<   numUpDw_TgBeg << numUpDw_TgEnd << numUpDw_SLenMin << numUpDw_SLenMax;
-	    _place.field("Firma"  )         <<  "INNT - FLI :       ArielVina.Rodriguez@fli.bund.de"
+	    _place.field("Firma"  )         << L"INNT - FLI :       ArielVina.Rodriguez@fli.bund.de"
                                 ;
     }                                        
     void add_page(widget& w)

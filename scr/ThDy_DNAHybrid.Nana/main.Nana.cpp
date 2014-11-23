@@ -120,7 +120,7 @@ void  SetupPage::AsignWidgetToFields ()
         _place.field("_Prob_uArrOpt"  )    << _chkProbRecDir  << _chkProbOnlyStruct ;
 	    _place.field("NN_param" )    << _NNParamFile  ;
 	    _place.field("buttons"  )    <<  _set_def_proj << _load_def_proj;
-	    _place.field("checks"   )    << "save result" << ckBx_savTm    << ckBx_savPos     <<ckBx_savG         << ckBx_savAlign 
+	    _place.field("checks"   )    << L"save result" << ckBx_savTm    << ckBx_savPos     <<ckBx_savG         << ckBx_savAlign 
                                                       << ckBx_savProj  << ckBx_savG_Plasm << ckBx_savTm_Plasm << ckBx_savLog
                                                       << ckBx_savExportSond << ckBx_savExportTarg<< ckBx_savNNParam<< ckBx_loadNNParam;
 
@@ -128,8 +128,8 @@ void  SetupPage::AsignWidgetToFields ()
                                         << numUpDowTgConc ;
 	    _place.field("ConcSaltTa"  )    << numUpDowSalConc 
                                         << numUpDowTa ;
-	    _place.field("SMeth"  )         << " Salt Correct. Method:"	   <<  comBoxSalMeth;
-	    _place.field("AMeth"  )         << " ThDy Align. Method"       <<  comBoxTAMeth ;
+	    _place.field("SMeth"  )         << L" Salt Correct. Method:"	   <<  comBoxSalMeth;
+	    _place.field("AMeth"  )         << L" ThDy Align. Method"       <<  comBoxTAMeth ;
     }
 void  SetupPage::MakeResponive()
     {

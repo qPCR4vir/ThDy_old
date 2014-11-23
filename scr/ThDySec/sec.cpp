@@ -259,7 +259,7 @@ float	CSec::G	(long pi, long pf) const
 void	CSec::CorrectSaltOwczarzy() 
 {	
 	auto len=_SdS.size() ;
-	for (long j=2; j< len ; j++)
+	for (decltype(len) j=2; j< len ; j++)
 		_SdS[j-1] = _SdS[j-2] + _NNpar->GetCorrectSaltOwczarzySelfEntr ( _b[j-1] , _b[j] , _GCp );
 
 	_Tm.Set( _NNpar->CalcTM( _SdS.back(), _SdH.back()) ) ; //_maxTm = _minTm =	_Tm  = _maxTm = _minTm =  ;
