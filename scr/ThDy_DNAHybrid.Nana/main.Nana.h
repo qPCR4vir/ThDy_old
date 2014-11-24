@@ -106,11 +106,11 @@ class TableRes  : public nana::form, public EditableForm
         int     &n_dec,   &n_len;
         value   **val  ;
 
-       nana::string decode(size_t col, const index &row) const override
+       List::cell decode(size_t col, const index &row) const override
         {
            if (col)        return print ( (**val)  (row,index(col-1) ));
 
-           return nana::charset(  (**val) .table->TitRow(row)  );
+           return nana::string(nana::charset(  (**val) .table->TitRow(row)  ));
         }
         void encode(index&, std::size_t col, const nana::string& txt) const override
         {
@@ -417,23 +417,37 @@ class SeqExpl : public CompoWidget
     using pSec = CSec*;
     class ListSeqMaker : public List::resolver_interface <pSec>
     {
-        nana::string decode(size_t col, const pSec &sec) const override
+        List::cell decode(size_t col, const pSec &sec) const override
         {
             static const long    blen{ 50 }, slen{ 1000 };
             nana::char_t val[blen];
 
             switch (col)
             {
-            case 0: return nana::charset(sec->Name());
+                case 0: return nana::string(nana::charset(sec->Name()));
             case 1: swprintf(val,blen,     STR("%*d")  , 6,           sec->Len()       );
                     return val;
-			case 2: {Temperature t= sec->NonDegSet() ? sec->NonDegSet()->_Local._Tm.Ave() : sec->_Tm.Ave();
-				     swprintf(val,blen, STR("% *.*f °C"), 6, 1,  KtoC( t ) );}
-                    return val;
+			case 2: { Temperature t=KtoC( sec->NonDegSet() ? sec->NonDegSet()->_Local._Tm.Ave() : sec->_Tm.Ave());
+				      swprintf(val,blen, STR("% *.*f °C"), 6, 1,   t );
+
+                      nana::pixel_rgb_t tc, bc; 
+                      tc.u.color=nana::color::white;
+                      Temperature min=57, max=63;
+                      //tc.u.element.red=  t<min? 0xFF : t>max? 0x00 : (1-(t-min)/(max-min))* 0xFF;;
+                      //tc.u.element.green=0x00;
+                      //tc.u.element.blue=   t<min? 0    : t>max? 0xFF : (t-min)/(max-min)* 0xFF;
+                       
+                      bc.u.color=0;
+                      bc.u.element.blue=  t<min? 0xFF : t>max? 0x00 : (1-(t-min)/(max-min))* 0xFF;;
+                      bc.u.element.green=0x00;
+                      bc.u.element.red=   t<min? 0    : t>max? 0xFF : (t-min)/(max-min)* 0xFF;
+
+                      return {val, bc.u.color , tc.u.color  };
+                    }
             case 3: swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());
                     return val;  
-            case 4: return nana::charset( sec->Description());
-            case 5: return nana::charset(  (char *)(  sec->Sequence().substr (1, std::min( sec->Len(), slen)).c_str()    )) ;
+            case 4: return nana::string(nana::charset( sec->Description()));
+            case 5: return nana::string(nana::charset(  (char *)(  sec->Sequence().substr (1, std::min( sec->Len(), slen)).c_str()    ))) ;
 
             default:
                 return nana::string{};
