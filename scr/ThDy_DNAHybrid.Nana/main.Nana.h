@@ -430,17 +430,19 @@ class SeqExpl : public CompoWidget
 			case 2: { Temperature t=KtoC( sec->NonDegSet() ? sec->NonDegSet()->_Local._Tm.Ave() : sec->_Tm.Ave());
 				      swprintf(val,blen, STR("% *.*f °C"), 6, 1,   t );
 
+                      Temperature min=57.0, max=63.0;
+                      double fade_rate=  t<min? 0.0 : t>max? 1.0 : (t-min)/(max-min);
                       nana::pixel_rgb_t tc, bc; 
-                      tc.u.color=nana::color::white;
-                      Temperature min=57, max=63;
+
+                      tc.u.color= 0xFFFFFFFF; //nana::color::white;
                       //tc.u.element.red=  t<min? 0xFF : t>max? 0x00 : (1-(t-min)/(max-min))* 0xFF;;
                       //tc.u.element.green=0x00;
                       //tc.u.element.blue=   t<min? 0    : t>max? 0xFF : (t-min)/(max-min)* 0xFF;
                        
-                      bc.u.color=0;
-                      bc.u.element.blue=  t<min? 0xFF : t>max? 0x00 : (1-(t-min)/(max-min))* 0xFF;;
-                      bc.u.element.green=0x00;
-                      bc.u.element.red=   t<min? 0    : t>max? 0xFF : (t-min)/(max-min)* 0xFF;
+                      bc.u.color= nana::color::mix(nana::color::blue, nana::color::red, fade_rate);//0
+                      // bc.u.element.blue=  t<min? 0xFF : t>max? 0x00 : (1-(t-min)/(max-min))* 0xFF;;
+                      // bc.u.element.green=0x00;
+                      // bc.u.element.red=   t<min? 0    : t>max? 0xFF : (t-min)/(max-min)* 0xFF;
 
                       return {val, bc.u.color , tc.u.color  };
                     }
