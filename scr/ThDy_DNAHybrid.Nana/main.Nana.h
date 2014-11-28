@@ -433,7 +433,7 @@ class SeqExpl : public CompoWidget
                       Temperature min=57.0, max=63.0;
                       double fade_rate=  t<min? 0.0 : t>max? 1.0 : (t-min)/(max-min);
                       nana::color_t tc = 0xFFFFFFFF, 
-                                    bc = nana::color::mix(nana::color::blue, nana::color::red, fade_rate); 
+                                    bc = nana::color::mix(nana::color::Red, nana::color::Blue, fade_rate); 
                       return {val, bc , tc};
                     }
             case 3: swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());

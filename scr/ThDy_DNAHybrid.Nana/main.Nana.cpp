@@ -46,6 +46,12 @@ int main(int argc, char *argv[])
 
     //std::cin.rdbuf(cinbuf);   //reset to standard input again
 
+  nana::color::current_schema[nana::color::schema::list_header_border]=nana::color::Red;
+  nana::color::current_schema[nana::color::schema::list_header_bg]=nana::color::Yellow;    // 0xF1F2F4 
+  nana::color::current_schema[nana::color::schema::list_header_highlighted_bg]=nana::color::Rose;    // 0xFFFFFF 
+  nana::color::current_schema[nana::color::schema::list_header_pressed_bg]=nana::color::AliceBlue;  
+  nana::color::current_schema[nana::color::schema::list_header_grabed_bg]=nana::color::Ash_Gray;    // 0x8BD6F6 
+  nana::color::current_schema[nana::color::schema::list_header_floated_bg]=nana::color::Aztech_Purple;	   // 0xBABBBC 
 
   try	
   {
