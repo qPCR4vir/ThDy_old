@@ -38,9 +38,12 @@ class TableRes  : public nana::form, public EditableForm
     struct value
     {
         Table  *table;
+        virtual ~value(){}
         value (Table &t) :table {&t}{};
         virtual float _value(index row,  index col)const =0 ;
         float operator()(index row,  index col){return _value(row,col);}
+        virtual bool return_bg(){return false;}
+        virtual nana::color_t bg_color(index row,  index col){return nana::color::current_schema[nana::color::schema::list_header_bg];}
     }   ;
     struct Tm : value
     {
@@ -49,6 +52,16 @@ class TableRes  : public nana::form, public EditableForm
             return table->at(row,col )._Tm;
         }
         Tm(Table &t) :value {t}{};
+        bool return_bg() override {return true;}
+        nana::color_t bg_color(index row,  index col) override 
+        {
+            Temperature t=_value(row,col);
+
+            Temperature min=20.0, max=63.0;
+            double fade_rate=  t<min? 0.0 : t>max? 1.0 : (t-min)/(max-min);
+            nana::color_t bc = nana::color::mix(nana::color::Red, nana::color::Blue, fade_rate); 
+            return bc ;
+        }
     };
     struct G : value
     {
@@ -108,7 +121,12 @@ class TableRes  : public nana::form, public EditableForm
 
        List::cell decode(size_t col, const index &row) const override
         {
-           if (col)        return print ( (**val)  (row,index(col-1) ));
+            if (col)        
+                if ((*val)->return_bg() )
+                    return {print ( (**val)  (row,index(col-1) )),
+                            (*val)->bg_color(row,index(col-1) ),
+                            nana::color::White};
+                else return print ((**val)  (row,index(col-1) )); 
 
            return nana::string(nana::charset(  (**val) .table->TitRow(row)  ));
         }
