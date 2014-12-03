@@ -438,13 +438,16 @@ void  SetupPage::LoadProject(nana::string file)
 		catch ( std::exception& e)
 		{ 
 			(nana::msgbox ( STR("Error replacing sequences: " ) ).icon(nana::msgbox::icon_error)
-                    <<"\n"<< e.what()
+               << "into "<< nana::charset(tn.key())                                 
+               << "from " << (all_in_dir?"directory ":"file ") << Path     <<"\n"<< e.what()
             ).show() ;
  		}		
 		catch(...)
 		{
              (nana::msgbox(STR("An uncaptured exception during replacing sequences: "))
-                    .icon(nana::msgbox::icon_error) << nana::charset(tn.key())                                 
+                    .icon(nana::msgbox::icon_error) 
+               << "into "<< nana::charset(tn.key())                                 
+               << "from " << (all_in_dir?"directory ":"file ") << Path    
              ).show();
 	    }
         return tn;
@@ -764,7 +767,7 @@ void  SetupPage::LoadProject(nana::string file)
 		        _Pr._SdDes._cp.Actualice_NNp();  
                 _Pr.Run(_Pr._SdDes);	 //     _Pr._SdDes.Run ();	
 
-                if (chkBx_showFindedProbes.checked()) 
+                 if (chkBx_showFindedProbes.checked()) 
                     ( dynamic_cast<ThDyNanaForm&>(_Pr)).mExpl_.ShowFindedProbes_in_mPCR();
  		}
 		catch ( std::exception& e)

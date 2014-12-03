@@ -624,7 +624,8 @@ CMultSec::CMultSec (	const std::string &file	,
 //	    }
 //}
 int		CMultSec::AddFromFile (const std::string& file)		// return la cantidad de sec add --------------------  AddFromFile   -------------------
-{	ifstream ifile( file ); 
+{	
+    ifstream ifile( file ); 
 	if ( ! ifile ) 
 	{
 	    throw std::ios_base::failure(string("Could not open the sequence file: ")+ file );
