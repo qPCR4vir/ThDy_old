@@ -323,7 +323,7 @@ void  SetupPage::LoadProject(nana::string file)
         _list.append_header(STR("Deg")   , 50);
         _list.append_header(STR("Description")   , 220);
         _list.append_header(STR("Seq")   , 420);
-        _list.resolver(ListSeqMaker());
+        //_list.resolver(ListSeqMaker());
 
 
         AddMenuItems(_menuProgram);
@@ -843,3 +843,7 @@ void  SetupPage::LoadProject(nana::string file)
    ////else
    ////  { ;}                                                 // not found, still use idx.i if you want to return a non_value.
 
+//List::oresolver operator<<(List::oresolver& ores, const TableRes::Index& i)
+//{
+//    ores<<   (*i.table.val) .table->TitRow(i.row); 
+//}

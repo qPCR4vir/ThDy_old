@@ -30,19 +30,22 @@ using namespace ParamGUIBind;
 
 class ThDyNanaForm ;
  
+using List = nana::listbox;
+
 class TableRes  : public nana::form, public EditableForm
 {   
-    using List  = nana::listbox;
     using Table = CTable<TmGPos> ;
     using index = Table::index;
     struct value
     {
         Table  *table;
-        virtual ~value(){}
-        value (Table &t) :table {&t}{};
-        virtual float _value(index row,  index col)const =0 ;
-        float operator()(index row,  index col){return _value(row,col);}
-        virtual bool return_bg(){return false;}
+        virtual ~value(        ){}
+                 value (Table &t) :table {&t}{};
+
+        virtual float _value  (index row,  index col)const =0 ;
+                float operator()(index row,  index col){return _value(row,col);}
+
+        virtual bool         return_bg(){return false;}
         virtual nana::color_t bg_color(index row,  index col){return nana::color::current_schema[nana::color::schema::list_header_bg];}
     }   ;
     struct Tm : value
@@ -112,70 +115,44 @@ class TableRes  : public nana::form, public EditableForm
     void Repopulate()
     {
         for (auto &i : _list.at(0))
-            i.resolve_from(i.value<index>());
+            i.resolve_from(i.value<Index>());
     }
-    class ListTableMaker : public List::resolver_interface <index>
-    {
-        int     &n_dec,   &n_len;
-        value   **val  ;
-
-       List::cell decode(size_t col, const index &row) const override
-        {
-            if (col)        
-                if ((*val)->return_bg() )
-                    return {print ( (**val)  (row,index(col-1) )),
-                            (*val)->bg_color(row,index(col-1) ),
-                            nana::color::White};
-                else return print ((**val)  (row,index(col-1) )); 
-
-           return nana::string(nana::charset(  (**val) .table->TitRow(row)  ));
-        }
-        void encode(index&, std::size_t col, const nana::string& txt) const override
-        {
-           //if (col)
-           //    (*table)(row,col-1)._Tm= CtoK(wstr_f(txt   ));
-           //table->TitRow(row)=nana::charset(txt );
-        }
-  
-        nana::string print(float n) const
-        {
-            static const int    blen{ 50 } ;
-            static nana::char_t val_[blen]  ;
-
-            swprintf(val_, blen, STR("% *.*f"), n_len, n_dec, n );
-            return val_;
-        }
-     public:
-        ListTableMaker( value *&val_, int &dec , int &len) : val{&val_},  n_len{len}, n_dec{dec}{}
-        //void SetValType(value *&val_){ val = &val_;};
-        //void SetFormat(int dec=1 , int len=6){ n_len=len; n_dec=dec;}
-    };
 
     bool comp(index col, nana::any* row1_, nana::any*row2_, bool reverse)
     {
-                float  v1{ (*val)(*row1_->get<index> (),col-1) }, 
-                       v2{ (*val)(*row2_->get<index> (),col-1) };
+                float  v1{ (*val)(row1_->get<Index> ()->row,col-1) }, 
+                       v2{ (*val)(row2_->get<Index> ()->row,col-1) };
                 return reverse?  v2<v1 : v1<v2 ;
     }
     void SetDefLayout   () override
     {
         _DefLayout= 
-	"vertical                  	\n\t"
-	"	  <weight=25 <toolbar weight=200 ><>>       	\n\t"
-	"	   <_list  >       	\n\t"
-	"	 	\n\t"
+	        "vertical                  	\n\t"
+	        "	  <weight=25 <toolbar weight=200 ><>>       	\n\t"
+	        "	   <_list  >       	\n\t"
+	        "	 	\n\t"
  
-            ;
+                    ;
     }
     void AsignWidgetToFields() override
     {
  	    _place.field("toolbar"       ) <<_bTm << _bG << _bPos ;
  	    _place.field("_list"         ) <<_list;
      }
+    nana::string print(float n) const
+    {
+        static const int    blen{ 50 } ;
+        static nana::char_t val_[blen]  ;
+
+        swprintf(val_, blen, STR("% *.*f"), n_len, n_dec, n );
+        return val_;
+    }
  public:
-     TableRes    (std::shared_ptr<CTable<TmGPos>> table)  : _table(table), _Tm{*table.get()}, _G{*table.get()}, _Pos{*table.get()},  
-                nana::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
-                EditableForm    (nullptr, *this, nana::charset( table->TitTable() ), STR("TableTm.lay.txt")) 
+     TableRes    (std::shared_ptr<CTable<TmGPos>> table)  : 
+                            _table(table), 
+                            _Tm{*table.get()}, _G{*table.get()}, _Pos{*table.get()},  
+                            nana::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
+                            EditableForm    (nullptr, *this, nana::charset( table->TitTable() ), STR("TableTm.lay.txt")) 
    {
         //nana::API::zoom_window(*this, true);
         caption( nana::string(STR("Table Tm: ") +  _Titel));
@@ -189,8 +166,6 @@ class TableRes  : public nana::form, public EditableForm
 
         _list.auto_draw(false);
                 
-        _list.resolver(ListTableMaker (val,n_dec,n_len));
-
         _list.append_header(STR("Seq")  , 120);
         for (index col = 1; col <= table->totalCol(); ++col)
         {    
@@ -202,7 +177,7 @@ class TableRes  : public nana::form, public EditableForm
         }
 
         for (index row = 0; row < table->totalRow(); ++row)
-            _list.at(0).append(row).value  ( row );
+            _list.at(0).append(row).value  ( Index{this,row} );
 
         _list.auto_draw(true);
 
@@ -257,8 +232,70 @@ class TableRes  : public nana::form, public EditableForm
                         .check_style( nana::menu::checks::option)
                         .index();
     }
-        void SetFormat(int dec=1 , int len=6){  n_len=len; n_dec=dec; }
+    void SetFormat(int dec=1 , int len=6)
+    {  
+        n_len=len; n_dec=dec;
+    }
+
+    friend struct Index;
+
+    struct Index
+    {
+        TableRes* table;
+        index       row;
+
+        friend List::oresolver& operator<<(List::oresolver& ores, const TableRes::Index& i)
+        {
+            auto &t = *i.table->_table.get();
+            ores<< t.TitRow(i.row)   ;
+                
+            if  (i.table->val->return_bg() )
+                for (int col=0; col< t.totalCol() ; ++col)
+                    ores<< i.table->print( (*i.table->val)(i.row,col)  );
+            else 
+                for (int col=0; col< t.totalCol() ; ++col)
+                    ores<< List::cell{ i.table->print( (*i.table->val)(i.row,col)  ),
+                                       i.table->val->bg_color(i.row,col),
+                                       nana::color::White};
+
+            return ores;
+        }
+    };
+    friend List::oresolver& operator<<(List::oresolver& ores, const TableRes::Index& i);
+
 };
+       
+//// _list.resolver(ListTableMaker (val,n_dec,n_len));
+//
+//
+//    class ListTableMaker : public List::resolver_interface <index>
+//    {
+//        int     &n_dec,   &n_len;
+//        value   **val  ;
+//
+//       List::cell decode(size_t col, const index &row) const override
+//        {
+//            if (col)        
+//                if ((*val)->return_bg() )
+//                    return {print ( (**val)  (row,index(col-1) )),
+//                            (*val)->bg_color(row,index(col-1) ),
+//                            nana::color::White};
+//                else return print ((**val)  (row,index(col-1) )); 
+//
+//           return nana::string(nana::charset(   ));
+//        }
+//        void encode(index&, std::size_t col, const nana::string& txt) const override
+//        {
+//           //if (col)
+//           //    (*table)(row,col-1)._Tm= CtoK(wstr_f(txt   ));
+//           //table->TitRow(row)=nana::charset(txt );
+//        }
+//  
+//     public:
+//        ListTableMaker( value *&val_, int &dec , int &len) : val{&val_},  n_len{len}, n_dec{dec}{}
+//        //void SetValType(value *&val_){ val = &val_;};
+//        //void SetFormat(int dec=1 , int len=6){ n_len=len; n_dec=dec;}
+//    };
 
 class SetupPage : public CompoWidget
 {
@@ -406,7 +443,6 @@ class SeqExpl : public CompoWidget
 {
     using Tree = nana::treebox;
     using Node = Tree::item_proxy;
-    using List = nana::listbox;
 
     ThDyNanaForm       &_Pr;
     Tree                _tree{ *this };
@@ -433,61 +469,6 @@ class SeqExpl : public CompoWidget
 ;  
 
     using pSec = CSec*;
-    class ListSeqMaker : public List::resolver_interface <pSec>
-    {
-        List::cell decode(size_t col, const pSec &sec) const override
-        {
-            static const long    blen{ 50 }, slen{ 1000 };
-            nana::char_t val[blen];
-
-            switch (col)
-            {
-                case 0: return nana::string(nana::charset(sec->Name()));
-            case 1: swprintf(val,blen,     STR("%*d")  , 6,           sec->Len()       );
-                    return val;
-			case 2: { Temperature t=KtoC( sec->NonDegSet() ? sec->NonDegSet()->_Local._Tm.Ave() : sec->_Tm.Ave());
-				      swprintf(val,blen, STR("% *.*f °C"), 6, 1,   t );
-
-                      Temperature min=57.0, max=63.0;
-                      double fade_rate=  t<min? 0.0 : t>max? 1.0 : (t-min)/(max-min);
-                      nana::color_t tc = 0xFFFFFFFF, 
-                                    bc = nana::color::mix(nana::color::Red, nana::color::Blue, fade_rate); 
-                      return {val, bc , tc};
-                    }
-            case 3: swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());
-                    return val;  
-            case 4: return nana::string(nana::charset( sec->Description()));
-            case 5: return nana::string(nana::charset(  (char *)(  sec->Sequence().substr (1, std::min( sec->Len(), slen)).c_str()    ))) ;
-
-            default:
-                return nana::string{};
-            }
-        }
-        void encode(pSec&, std::size_t col, const nana::string& txt) const override
-        {
-            switch (col)
-            {
-            case 0:  /*sec->Name(nana::charset(txt));*/                        break;
-                //case 1:  nana::charset(std::to_string(sec->Len()));          break;
-                //case 2:  nana::charset(std::to_string(sec->_Tm.Ave() ));       break;
-                //case 3:  nana::charset(std::to_string(sec->Degeneracy()));       break;
-                //case 4:  nana::charset( sec->Description() );                break;
-                //case 5:  nana::charset( sec->Get_charSec()  );                break;
-
-            default:
-                break;
-            }
-        }
-    };
-    //BindGroup          _mExpl;
-    //static const CMultSec* msec(Tree::item_proxy& node)
-    //{
-    //    return (node.value<CMultSec*>());
-    //}
-    //static const CSec*      sec(List::item_proxy& item)
-    //{
-    //    return (item.value<CSec*>());
-    //}
     void SetDefLayout() override
     {
         _DefLayout = 
@@ -636,6 +617,29 @@ public:
     void AddMenuItems(nana::menu& menu);
     void InitTree();
 };
+
+List::oresolver& operator<<(List::oresolver & ores, CSec * const sec )
+{
+    static const long    blen{ 50 }, slen{ 1000 };
+    nana::char_t val[blen];
+
+    swprintf(val,blen,     STR("%*d")  , 6,           sec->Len()       );
+    ores <<  sec->Name()  <<  val  ;                                    // col 0: name     // col 1: len
+
+	Temperature t=KtoC( sec->NonDegSet() ? sec->NonDegSet()->_Local._Tm.Ave() : sec->_Tm.Ave());
+	swprintf(val,blen, STR("% *.*f °C"), 6, 1,   t );
+    Temperature min=57.0, max=63.0;
+    double fade_rate=  t<min? 0.0 : t>max? 1.0 : (t-min)/(max-min);
+    nana::color_t tc = 0xFFFFFFFF, 
+                  bc = nana::color::mix(nana::color::Red, nana::color::Blue, fade_rate); 
+    ores <<  List::cell {val, bc , tc};                                                 //case 2: Tm 
+
+    swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());            // case 3: deg     // case 4: descr   // sec
+    ores <<  val  << sec->Description() <<  (char *)(  sec->Sequence().substr (1, std::min( sec->Len(), slen)).c_str()    );                                                          
+
+    return ores;
+}
+
 
 class FindSondenPage : public CompoWidget
 {    
