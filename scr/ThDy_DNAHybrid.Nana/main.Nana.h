@@ -39,18 +39,30 @@ class TableRes  : public nana::form, public EditableForm
     struct value
     {
         Table  *table;
-        virtual ~value(        ){}
-                 value (Table &t) :table {&t}{};
+        int      n_len{ 6 }, n_dec{ 1 }  ;
 
-        virtual float _value  (index row,  index col)const =0 ;
-                float operator()(index row,  index col){return _value(row,col);}
+        virtual ~value(        ){}
+        value (Table &t) :table {&t}{}
+
+        virtual float val  (index row,  index col)const =0 ;
+                float operator()(index row,  index col){return val(row,col);}
+        
+        virtual nana::string str(index row,  index col) const
+        {
+            nana::string s (n_len, 0);
+
+            auto l=swprintf((wchar_t*)s.data(), n_len+1 , STR("% *.*f"), n_len, n_dec, val(row,col) );
+            //s.resize(l);
+            return s;
+        }
 
         virtual bool         return_bg(){return false;}
-        virtual nana::color_t bg_color(index row,  index col){return nana::color::current_schema[nana::color::schema::list_header_bg];}
+        virtual nana::color_t bg_color(index row,  index col)
+        {return nana::color::current_schema[nana::color::schema::list_header_bg];}
     }   ;
     struct Tm : value
     {
-        float _value(index row,  index col) const override
+        float val(index row,  index col) const override
         {
             return table->at(row,col )._Tm;
         }
@@ -58,7 +70,7 @@ class TableRes  : public nana::form, public EditableForm
         bool return_bg() override {return true;}
         nana::color_t bg_color(index row,  index col) override 
         {
-            Temperature t=_value(row,col);
+            Temperature t=val(row,col);
 
             Temperature min=20.0, max=63.0;
             double fade_rate=  t<min? 0.0 : t>max? 1.0 : (t-min)/(max-min);
@@ -68,7 +80,7 @@ class TableRes  : public nana::form, public EditableForm
     };
     struct G : value
     {
-        float _value(index row,  index col) const override
+        float val(index row,  index col) const override
         {
             return table->at(row,col )._G;
         }
@@ -76,11 +88,11 @@ class TableRes  : public nana::form, public EditableForm
     };
     struct Pos : value
     {
-        float _value(index row,  index col)const override
+        float val(index row,  index col)const override
         {
             return table->at(row,col )._Pos;
         }
-         Pos(Table &t) :value {t}{};
+        Pos(Table &t) :value {t} {n_dec=0;};
    };
 
     std::shared_ptr<Table> _table;
@@ -91,8 +103,6 @@ class TableRes  : public nana::form, public EditableForm
                            _bPos {*this,STR("Pos")},
                            _mix  {*this, STR("Consolide")}; 
 
-    int                    n_dec{ 1 },   n_len{ 6 };
-    
     Tm                     _Tm;
     G                      _G;
     Pos                    _Pos;
@@ -120,8 +130,8 @@ class TableRes  : public nana::form, public EditableForm
 
     bool comp(index col, nana::any* row1_, nana::any*row2_, bool reverse)
     {
-                float  v1{ (*val)(row1_->get<Index> ()->row,col-1) }, 
-                       v2{ (*val)(row2_->get<Index> ()->row,col-1) };
+                float  v1{ val->val( row1_->get<Index>()->row , col-1) }, 
+                       v2{ val->val( row2_->get<Index>()->row , col-1) };
                 return reverse?  v2<v1 : v1<v2 ;
     }
     void SetDefLayout   () override
@@ -139,14 +149,6 @@ class TableRes  : public nana::form, public EditableForm
  	    _place.field("toolbar"       ) <<_bTm << _bG << _bPos ;
  	    _place.field("_list"         ) <<_list;
      }
-    nana::string print(float n) const
-    {
-        static const int    blen{ 50 } ;
-        static nana::char_t val_[blen]  ;
-
-        swprintf(val_, blen, STR("% *.*f"), n_len, n_dec, n );
-        return val_;
-    }
  public:
      TableRes    (std::shared_ptr<CTable<TmGPos>> table)  : 
                             _table(table), 
@@ -177,7 +179,7 @@ class TableRes  : public nana::form, public EditableForm
         }
 
         for (index row = 0; row < table->totalRow(); ++row)
-            _list.at(0).append(row).value  ( Index{this,row} );
+            _list.at(0).append( Index{this,row}, true );
 
         _list.auto_draw(true);
 
@@ -232,9 +234,9 @@ class TableRes  : public nana::form, public EditableForm
                         .check_style( nana::menu::checks::option)
                         .index();
     }
-    void SetFormat(int dec=1 , int len=6)
+    void SetFormat(int dec=1 , int len=6)  // ??
     {  
-        n_len=len; n_dec=dec;
+        _Tm.n_len=_G.n_len=len; _Tm.n_dec=_G.n_dec=dec;
     }
 
     friend struct Index;
@@ -247,16 +249,17 @@ class TableRes  : public nana::form, public EditableForm
         friend List::oresolver& operator<<(List::oresolver& ores, const TableRes::Index& i)
         {
             auto &t = *i.table->_table.get();
+            auto &v = *i.table->val;
             ores<< t.TitRow(i.row)   ;
                 
-            if  (i.table->val->return_bg() )
+            if  (v.return_bg() )
                 for (int col=0; col< t.totalCol() ; ++col)
-                    ores<< i.table->print( (*i.table->val)(i.row,col)  );
+                    ores<< List::cell{ v.str     (i.row, col),
+                                       v.bg_color(i.row, col),
+                                       nana::color::White};
             else 
                 for (int col=0; col< t.totalCol() ; ++col)
-                    ores<< List::cell{ i.table->print( (*i.table->val)(i.row,col)  ),
-                                       i.table->val->bg_color(i.row,col),
-                                       nana::color::White};
+                    ores<< v.str(i.row, col)  ;
 
             return ores;
         }
@@ -265,38 +268,6 @@ class TableRes  : public nana::form, public EditableForm
 
 };
        
-//// _list.resolver(ListTableMaker (val,n_dec,n_len));
-//
-//
-//    class ListTableMaker : public List::resolver_interface <index>
-//    {
-//        int     &n_dec,   &n_len;
-//        value   **val  ;
-//
-//       List::cell decode(size_t col, const index &row) const override
-//        {
-//            if (col)        
-//                if ((*val)->return_bg() )
-//                    return {print ( (**val)  (row,index(col-1) )),
-//                            (*val)->bg_color(row,index(col-1) ),
-//                            nana::color::White};
-//                else return print ((**val)  (row,index(col-1) )); 
-//
-//           return nana::string(nana::charset(   ));
-//        }
-//        void encode(index&, std::size_t col, const nana::string& txt) const override
-//        {
-//           //if (col)
-//           //    (*table)(row,col-1)._Tm= CtoK(wstr_f(txt   ));
-//           //table->TitRow(row)=nana::charset(txt );
-//        }
-//  
-//     public:
-//        ListTableMaker( value *&val_, int &dec , int &len) : val{&val_},  n_len{len}, n_dec{dec}{}
-//        //void SetValType(value *&val_){ val = &val_;};
-//        //void SetFormat(int dec=1 , int len=6){ n_len=len; n_dec=dec;}
-//    };
-
 class SetupPage : public CompoWidget
 {
     ThDyNanaForm       &_Pr;
