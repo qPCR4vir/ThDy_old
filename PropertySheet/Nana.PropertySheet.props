@@ -8,8 +8,7 @@
     <NANA_src_dir>..\..\scr</NANA_src_dir>
   </PropertyGroup>
   <PropertyGroup>
-    <OutDir>..\$(OutDir)</OutDir>
-    <IntDir>..\$(IntDir)</IntDir>
+    <IncludePath>..\..\ExtLib\Nana\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup />
   <ItemGroup>

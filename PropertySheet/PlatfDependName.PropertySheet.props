@@ -6,7 +6,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <TargetName>$(ProjectName)$(PlatfDependNameMod)</TargetName>
-    <IntDir>..\..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
+    <IntDir>..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
     <OutDir>
     </OutDir>
     <IncludePath>..\..\include;$(IncludePath)</IncludePath>
