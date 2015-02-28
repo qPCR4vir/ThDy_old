@@ -5,7 +5,7 @@
 
 #include "init_ThDy_prog_param.h"
 #include "..\ThDySec\th_dy_align.h"
-#include "..\ThDySec\matrix.h"
+#include "..\..\ProgParam\include\matrix.h"
 
 
 //unique_ptr<CSaltCorrNN> Create_NNpar    (ThDyCommProgParam& _cp);
