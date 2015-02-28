@@ -9,7 +9,7 @@
     <IntDir>..\..\temp\$(ProjectName)\$(Configuration)\$(Platform)\</IntDir>
     <OutDir>
     </OutDir>
-    <IncludePath>..\..\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\include;$(IncludePath)</IncludePath>
     <SourcePath>..\..\scr;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup />
