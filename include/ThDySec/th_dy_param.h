@@ -8,7 +8,7 @@
 //#include <iosfwd>
 
 #include "cod_deg.h"
-#include "common_basics.h" 
+#include "common.h" 
 using namespace std;
 using namespace DegCod ;
 	///  \todo empezar por poner nombre a cosas como forbidden_enthalpy, iloop_entropy, bloop_entropy, bloop_enthalpy

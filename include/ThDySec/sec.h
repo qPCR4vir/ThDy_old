@@ -16,7 +16,7 @@ using namespace std;
 #include "link.h"
 #include "cod_deg.h"
 #include "th_dy_param.h"   // crear un nuevo par de fuente cpp con las cosas que nec los dos .h + sec.h
-#include "common_basics.h" 
+#include "common.h" 
 
 // separar CSec de la ThermDy y crear derivada CThDySec que incluye SdH,S,Tm  ?????????
 // anadir funcion de compactar cod (eliminar los gap y bases deg?). SdH y S se recalculan.

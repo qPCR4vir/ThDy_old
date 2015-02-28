@@ -15,6 +15,9 @@
     <ClCompile Include="..\scr\ThDySec\link.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\scr\ThDySec\reaction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\scr\ThDySec\sec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -29,7 +32,13 @@
     <ClInclude Include="..\include\ThDySec\cod_deg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\ThDySec\common_basics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\include\ThDySec\link.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ThDySec\matrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\ThDySec\oligo.h">
@@ -42,9 +51,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\ThDySec\th_dy_param.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\ThDySec\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

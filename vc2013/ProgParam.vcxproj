@@ -51,23 +51,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\scr\ThDySec\cod_deg.cpp" />
-    <ClCompile Include="..\scr\ThDySec\link.cpp" />
-    <ClCompile Include="..\scr\ThDySec\sec.cpp" />
-    <ClCompile Include="..\scr\ThDySec\th_dy_align.cpp" />
-    <ClCompile Include="..\scr\ThDySec\th_dy_param.cpp" />
+    <ClCompile Include="..\..\ProgParam\scr\init_prog_param.cpp" />
+    <ClCompile Include="..\..\ProgParam\scr\ParamGUIBind.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\ThDySec\cod_deg.h" />
-    <ClInclude Include="..\include\ThDySec\common.h" />
-    <ClInclude Include="..\include\ThDySec\link.h" />
-    <ClInclude Include="..\include\ThDySec\oligo.h" />
-    <ClInclude Include="..\include\ThDySec\sec.h" />
-    <ClInclude Include="..\include\ThDySec\th_dy_align.h" />
-    <ClInclude Include="..\include\ThDySec\th_dy_param.h" />
+    <ClInclude Include="..\..\ProgParam\include\common_basics.h" />
+    <ClInclude Include="..\..\ProgParam\include\init_prog_param.h" />
+    <ClInclude Include="..\..\ProgParam\include\init_prog_param_impl.h" />
+    <ClInclude Include="..\..\ProgParam\include\matrix.h" />
+    <ClInclude Include="..\..\ProgParam\include\ParamGUIBind.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1532F784-AF0D-4435-86F4-BFA6D130F890}</ProjectGuid>
+    <ProjectGuid>{E6558FE8-B362-4655-BB01-9F3CE2224A7C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>nana</RootNamespace>
   </PropertyGroup>
@@ -204,45 +199,45 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>../bin/vc2013/</OutDir>
-    <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTd|Win32'">
     <OutDir>../bin/vc2013/</OutDir>
-    <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDd|Win32'">
     <OutDir>../bin/vc2013/</OutDir>
-    <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTd|x64'">
-    <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDd|x64'">
-    <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>../bin/vc2013/</OutDir>
-    <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTr|Win32'">
     <OutDir>../bin/vc2013/</OutDir>
-    <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDr|Win32'">
     <OutDir>../bin/vc2013/</OutDir>
-    <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTr|x64'">
-    <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDr|x64'">
-    <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

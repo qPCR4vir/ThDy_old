@@ -14,7 +14,7 @@
 using namespace std ; 
 
 #include "ThDySec/sec.h"
-#include "ThDySec/common_basics.h" 
+#include "ThDySec/common.h" 
 using namespace DegCod;
 
 #define SEQUENCES_MAX_SIZE 100000
