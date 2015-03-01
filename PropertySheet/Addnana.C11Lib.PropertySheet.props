@@ -3,13 +3,13 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IncludePath>..\..\..\ExtLib\Nana\Nana.Cpp11\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\ExtLib\Nana\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\ExtLib\Nana\lib;$(LibraryPath)</LibraryPath>
-    <SourcePath>..\..\..\ExtLib\Nana\Nana.Cpp11\source;$(SourcePath)</SourcePath>
+    <SourcePath>..\..\ExtLib\Nana\source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>nana.C11$(PlatfDependNameMod).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nana$(PlatfDependNameMod).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

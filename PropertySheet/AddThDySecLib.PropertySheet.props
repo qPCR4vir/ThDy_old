@@ -8,7 +8,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>ThDySec$(PlatfDependNameMod).lib;ThDy_programs$(PlatfDependNameMod).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ThDySec$(PlatfDependNameMod).lib;ProgParam$(PlatfDependNameMod).lib;ThDy_programs$(PlatfDependNameMod).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
