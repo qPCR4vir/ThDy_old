@@ -10,10 +10,34 @@
     <Filter Include="Resource Files">
       <UniqueIdentifier>{f7f17b2a-000c-4ddd-889f-1deb4be95b2b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\nana.ext">
+      <UniqueIdentifier>{9b98498b-a3f3-4163-9836-3870fc538b1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\nana.ext">
+      <UniqueIdentifier>{4ddf2969-7587-4c06-9e60-8f02de5a55f2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\main.Nana.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ExtLib\nana.ext\src\CompoWidget.cpp">
+      <Filter>Source Files\nana.ext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ExtLib\nana.ext\src\EditableForm.cpp">
+      <Filter>Source Files\nana.ext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ExtLib\nana.ext\src\EditLayot_Form_Demo.cpp">
+      <Filter>Source Files\nana.ext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ExtLib\nana.ext\src\Numer.cpp">
+      <Filter>Source Files\nana.ext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ExtLib\nana.ext\src\place-vplace_Demo.cpp">
+      <Filter>Source Files\nana.ext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ExtLib\nana.ext\src\vplace.cpp">
+      <Filter>Source Files\nana.ext</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -25,5 +49,19 @@
     <Image Include="..\scr\ThDy_DNAHybrid.Nana\ThDy.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\ExtLib\nana.ext\include\EditableForm.hpp">
+      <Filter>Header Files\nana.ext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ExtLib\nana.ext\include\Numer.hpp">
+      <Filter>Header Files\nana.ext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ExtLib\nana.ext\include\vplace.hpp">
+      <Filter>Header Files\nana.ext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\main.Nana.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

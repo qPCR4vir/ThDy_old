@@ -17,12 +17,12 @@
 #include <nana/gui/tooltip.hpp>
 #include <nana/gui/widgets/progress.hpp>
 
-#include <../temp/EditableForm.hpp>
-#include <../temp/Numer.hpp>
+#include <../../nana.ext/include/EditableForm.hpp>
+#include <../../nana.ext/include/Numer.hpp>
 
 #include "thdy_programs\init_thdy_prog_param.h"
-#include "ThDySec\matrix.h" 
-#include "ThDySec\common_basics.h" 
+#include "matrix.h" 
+#include "common_basics.h" 
 
 
 #include "nanaBind.hpp"
