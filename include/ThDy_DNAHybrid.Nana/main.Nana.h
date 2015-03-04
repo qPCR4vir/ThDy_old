@@ -57,8 +57,8 @@ class TableRes  : public nana::form, public EditableForm
         }
 
         virtual bool         return_bg(){return false;}
-        virtual nana::color_t bg_color(index row,  index col)
-        {return nana::color::current_schema[nana::color::schema::list_header_bg];}
+        virtual nana::color bg_color(index row,  index col)
+        {return List::scheme_type().header_bgcolor.get_color(); }
     }   ;
     struct Tm : value
     {
@@ -68,14 +68,14 @@ class TableRes  : public nana::form, public EditableForm
         }
         Tm(Table &t) :value {t}{};
         bool return_bg() override {return true;}
-        nana::color_t bg_color(index row,  index col) override 
+        nana::color bg_color(index row,  index col) override 
         {
             Temperature t=val(row,col);
 
             Temperature min=20.0, max=63.0;
             double fade_rate=  t<min? 0.0 : t>max? 1.0 : (t-min)/(max-min);
-            nana::color_t bc = nana::color::mix(nana::color::Red, nana::color::Blue, fade_rate); 
-            return bc ;
+            nana::color bgc(nana::colors::red);
+            return bgc.blend(nana::colors::blue, fade_rate) ;
         }
     };
     struct G : value
@@ -256,7 +256,7 @@ class TableRes  : public nana::form, public EditableForm
                 for (int col=0; col< t.totalCol() ; ++col)
                     ores<< List::cell{ v.str     (i.row, col),
                                        v.bg_color(i.row, col),
-                                       nana::color::White};
+                                       nana::colors::white};
             else 
                 for (int col=0; col< t.totalCol() ; ++col)
                     ores<< v.str(i.row, col)  ;
@@ -510,8 +510,9 @@ class SeqExpl : public CompoWidget
     {
         return _list.at(0).append(s).value  ( s             )
                                     .check  ( s->Selected() )
-                                    .fgcolor( s->Filtered()     ?   0xFF00FF   ///\todo: use codigo
-                                                                :   0x0     );//nana::color::gray_border );
+                                    .fgcolor( static_cast<nana::color_rgb>(
+                                              (s->Filtered()     ?   0xFF00FF   ///\todo: use codigo
+                                                                :   0x0   )  ));//nana::color::gray_border );
     }
 
     Node AddRoot          (CMultSec*ms)  
@@ -601,8 +602,8 @@ List::oresolver& operator<<(List::oresolver & ores, CSec * const sec )
 	swprintf(val,blen, STR("% *.*f °C"), 6, 1,   t );
     Temperature min=57.0, max=63.0;
     double fade_rate=  t<min? 0.0 : t>max? 1.0 : (t-min)/(max-min);
-    nana::color_t tc = 0xFFFFFFFF, 
-                  bc = nana::color::mix(nana::color::Red, nana::color::Blue, fade_rate); 
+    nana::color tc{static_cast<nana::color_rgb>(0xFFFFFFFF)} , 
+                bc = nana::color(nana::colors::red).blend( nana::colors::blue, fade_rate); 
     ores <<  List::cell {val, bc , tc};                                                 //case 2: Tm 
 
     swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());            // case 3: deg     // case 4: descr   // sec

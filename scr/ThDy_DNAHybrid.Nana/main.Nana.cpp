@@ -53,12 +53,12 @@ int main(int argc, char *argv[])
 
     //std::cin.rdbuf(cinbuf);   //reset to standard input again
 
-  nana::color::current_schema[nana::color::schema::list_header_border]=nana::color::Red;
-  nana::color::current_schema[nana::color::schema::list_header_bg]=nana::color::Yellow;    // 0xF1F2F4 
-  nana::color::current_schema[nana::color::schema::list_header_highlighted_bg]=nana::color::Rose;    // 0xFFFFFF 
-  nana::color::current_schema[nana::color::schema::list_header_pressed_bg]=nana::color::AliceBlue;  
-  nana::color::current_schema[nana::color::schema::list_header_grabed_bg]=nana::color::Ash_Gray;    // 0x8BD6F6 
-  nana::color::current_schema[nana::color::schema::list_header_floated_bg]=nana::color::Aztech_Purple;	   // 0xBABBBC 
+  //nana::color::current_schema[nana::color::schema::list_header_border]=nana::color::Red;
+  //nana::color::current_schema[nana::color::schema::list_header_bg]=nana::color::Yellow;    // 0xF1F2F4 
+  //nana::color::current_schema[nana::color::schema::list_header_highlighted_bg]=nana::color::Rose;    // 0xFFFFFF 
+  //nana::color::current_schema[nana::color::schema::list_header_pressed_bg]=nana::color::AliceBlue;  
+  //nana::color::current_schema[nana::color::schema::list_header_grabed_bg]=nana::color::Ash_Gray;    // 0x8BD6F6 
+  //nana::color::current_schema[nana::color::schema::list_header_floated_bg]=nana::color::Aztech_Purple;	   // 0xBABBBC 
 
   try	
   {
@@ -343,7 +343,7 @@ void  SetupPage::LoadProject(nana::string file)
         : _Pr        (tdForm), 
           CompoWidget(tdForm, STR("Find probes"), STR("FindSonden.lay.txt"))
     {
-                background (0xAAAAAA);  ///\todo: use codigo
+                bgcolor (static_cast<nana::color_rgb>(0xAAAAAA));  ///\todo: use codigo
 
         chkBx_showFindedProbes.check(true);
         InitMyLayout();
