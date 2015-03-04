@@ -203,15 +203,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>../bin/vc2013/</OutDir>
     <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTd|Win32'">
-    <OutDir>../bin/vc2013/</OutDir>
     <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDd|Win32'">
-    <OutDir>../bin/vc2013/</OutDir>
     <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -224,15 +221,12 @@
     <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>../bin/vc2013/</OutDir>
     <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTr|Win32'">
-    <OutDir>../bin/vc2013/</OutDir>
     <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDr|Win32'">
-    <OutDir>../bin/vc2013/</OutDir>
     <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

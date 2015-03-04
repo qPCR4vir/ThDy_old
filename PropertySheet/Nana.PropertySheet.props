@@ -9,6 +9,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <IncludePath>..\..\ExtLib\Nana\include;$(IncludePath)</IncludePath>
+    <OutDir>..\..\ExtLib\Nana\lib\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup />
   <ItemGroup>

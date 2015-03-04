@@ -27,13 +27,7 @@
     <ClCompile Include="..\..\ExtLib\nana.ext\src\EditableForm.cpp">
       <Filter>Source Files\nana.ext</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ExtLib\nana.ext\src\EditLayot_Form_Demo.cpp">
-      <Filter>Source Files\nana.ext</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ExtLib\nana.ext\src\Numer.cpp">
-      <Filter>Source Files\nana.ext</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ExtLib\nana.ext\src\place-vplace_Demo.cpp">
       <Filter>Source Files\nana.ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ExtLib\nana.ext\src\vplace.cpp">

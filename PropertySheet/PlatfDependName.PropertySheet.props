@@ -10,7 +10,7 @@
     <OutDir>
     </OutDir>
     <IncludePath>..\include;$(IncludePath)</IncludePath>
-    <SourcePath>..\..\scr;$(SourcePath)</SourcePath>
+    <SourcePath>..\scr;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup />
   <ItemGroup>

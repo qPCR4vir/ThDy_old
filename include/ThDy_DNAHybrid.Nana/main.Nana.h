@@ -19,13 +19,13 @@
 
 #include <../../nana.ext/include/EditableForm.hpp>
 #include <../../nana.ext/include/Numer.hpp>
+#include "../../nana.ext/include/nanaBind.hpp"
 
 #include "thdy_programs\init_thdy_prog_param.h"
 #include "matrix.h" 
 #include "common_basics.h" 
 
 
-#include "nanaBind.hpp"
 using namespace ParamGUIBind;
 
 class ThDyNanaForm ;

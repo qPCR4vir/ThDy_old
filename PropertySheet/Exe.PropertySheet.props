@@ -5,7 +5,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <OutDir>..\..\bin\</OutDir>
+    <OutDir>..\bin\</OutDir>
+    <SourcePath>..\scr;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup />
   <ItemGroup />

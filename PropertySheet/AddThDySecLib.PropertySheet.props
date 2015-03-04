@@ -3,8 +3,9 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <LibraryPath>..\..\lib;$(LibraryPath)</LibraryPath>
-    <SourcePath>..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)</SourcePath>
+    <LibraryPath>..\..\ProgParam\lib;..\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\scr\ThDySec;..\scr\ThDy_programs;$(SourcePath)</SourcePath>
+    <IncludePath>..\..\ProgParam\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>

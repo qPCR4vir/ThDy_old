@@ -13,17 +13,24 @@
 #include <nana/gui/tooltip.hpp>
 #include <nana/gui/widgets/progress.hpp>
 
-#include <../../nana.ext/include/EditableForm.hpp>
-#include <../../nana.ext/include/Numer.hpp>
-#include "../../nana.ext/nanaBind.hpp"
-
 #include "thdy_programs\init_thdy_prog_param.h"
 #include "matrix.h" 
 #include "common_basics.h" 
 
 
 
-#include "main.Nana.h"
+#include "ThDy_DNAHybrid.Nana\main.Nana.h"
+//#include <../../nana.ext/include/EditableForm.hpp>
+//#include <../../nana.ext/include/Numer.hpp>
+//#include "../../nana.ext/include/nanaBind.hpp"
+
+//if you want to keep the Windows subsystem you can just hint at what your entry point is, 
+//because you haven't defined ___tmainCRTStartup. You can do this by adding the following 
+//to Properties -> Linker -> Command line:
+//
+//    /ENTRY:"mainCRTStartup"
+//
+//This way you get rid of the console window.
 
 
 int main(int argc, char *argv[]) 
