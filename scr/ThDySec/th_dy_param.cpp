@@ -11,6 +11,12 @@
 #include "ThDySec/th_dy_param.h"
 
 using namespace std;
+const 	EnergyRang		G_def (-5,-1) ;	//  G_def , 
+const 	TemperatureRang	Tm_def (57,63);	//  Tm_def ;
+const 	SecPosRang		L_def  (20,35);	//  L_def  ;
+
+
+
 
 void	CSaltCorrNN::InitSaltNNMatriz()
 {	

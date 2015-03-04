@@ -157,7 +157,7 @@ class TableRes  : public nana::form, public EditableForm
                             EditableForm    (nullptr, *this, nana::charset( table->TitTable() ), STR("TableTm.lay.txt")) 
    {
         //nana::API::zoom_window(*this, true);
-        caption( nana::string(STR("Table Tm: ") +  _Titel));
+        caption( nana::string(STR("Table Tm: ")) +  _Titel);
         //_tbar.append(STR("Tm"));
         //_tbar.append(STR("G"));
         //_tbar.append(STR("Pos"));
@@ -188,7 +188,7 @@ class TableRes  : public nana::form, public EditableForm
                         {
                             SetFormat(1);
                             SetValType(_Tm);
-                            caption( nana::string(STR("Table Tm: ") +  _Titel));
+                            caption( nana::string(STR("Table Tm: ")) +  _Titel);
                             _bTm .pushed(true);
                             _bG  .pushed(false);
                             _bPos.pushed(false);
@@ -198,7 +198,7 @@ class TableRes  : public nana::form, public EditableForm
                         {
                             SetFormat(1);
                             SetValType(_G);
-                            caption( nana::string(STR("Table G: ") +  _Titel));
+                            caption( nana::string(STR("Table G: ")) +  _Titel);
                             _bTm .pushed(false);
                             _bG  .pushed(true);
                             _bPos.pushed(false);
@@ -208,7 +208,7 @@ class TableRes  : public nana::form, public EditableForm
                         {
                             SetFormat(0);
                             SetValType(_Pos);
-                            caption( nana::string(STR("Table Pos: ") +  _Titel));
+                            caption( nana::string(STR("Table Pos: ")) +  _Titel);
                             _bTm .pushed(false);
                             _bG  .pushed(false);
                             _bPos.pushed(true );
@@ -837,8 +837,8 @@ public:
             (nana::msgbox(*this,STR("Error during Tm calculation !"), nana::msgbox::button_t::ok)<<e.what()) (  ) ;
 		    return;
 		}	 	        		 
-        txtBx_ResultSec      .caption (nana::charset (_Pr._TmCal._AlignedSec        ));
-        txtBx_ResultSec2Align.caption (nana::charset (_Pr._TmCal._AlignedSec2Align  ));
+        txtBx_ResultSec      .caption (nana::string(nana::charset(_Pr._TmCal._AlignedSec )       ));
+        txtBx_ResultSec2Align.caption (nana::string(nana::charset(_Pr._TmCal._AlignedSec2Align  )));
         Tm_min_Up.Value( _Pr._TmCal._TmS.Min ());
         Tm_Up    .Value( _Pr._TmCal._TmS.Ave ());  
         Tm_max_Up.Value( _Pr._TmCal._TmS.Max ()); 
@@ -909,7 +909,7 @@ class RenameFrom : public nana::form, public EditableForm
              nana::form  (nana::rectangle( nana::point(150,500), nana::size(300,50) )),
              EditableForm(owner, *this, STR("Rename") )     
         {
-            edit.caption(nana::charset(_name) );
+            edit.caption(nana::string(nana::charset(_name) ));
             InitMyLayout();
             OK.events().click([this]()
             {

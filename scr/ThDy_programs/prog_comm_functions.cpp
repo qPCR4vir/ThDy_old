@@ -6,9 +6,9 @@
 
 
 
-auto_ptr<ThDyAlign> Create_ThDyAlign(ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar)
+unique_ptr<ThDyAlign> Create_ThDyAlign(ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar)
 {
-	auto_ptr<ThDyAlign>	apAl;
+	unique_ptr<ThDyAlign>	apAl;
 	switch (	_cp._TAMeth )
 	{	case TAMeth_Tm: default:	apAl.reset(new ThDyAlign_Tm( MaxLenSond ,  MaxLenTarg, NNpar) );   break;
 		case TAMeth_Fract:			apAl.reset(new FracTDAlign ( MaxLenSond ,  MaxLenTarg, NNpar) );   break;
