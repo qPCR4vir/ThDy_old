@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
   {
     IParBind::SetDef(PriorizeDefault::Parametr );
     ThDyNanaForm tdForm(  argc,  argv);
+    //tdForm.ReCollocate();
 	tdForm.show();
 	nana::exec();
 	return 0;

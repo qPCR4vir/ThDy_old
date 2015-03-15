@@ -24,6 +24,7 @@
 #include "thdy_programs\init_thdy_prog_param.h"
 #include "matrix.h" 
 #include "common_basics.h" 
+#include "../../nana.ext/include/group.h"
 
 
 using namespace ParamGUIBind;
@@ -617,12 +618,16 @@ class FindSondenPage : public CompoWidget
 {    
     ThDyProject &_Pr;
     BindGroup   _findSond;
-    nana::NumUnitUpDown _Gmin     {*this, STR("G :"    ), -5, -10 , 10,"kcal/mol"},   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
-                        _Tmmin    {*this, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {*this, STR(""), 63,  45, 75, "°C"      }, 
-                        _Lengthmin{*this, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{*this, STR(""), 35,  15, 40, "nt"      },
-                        _MaxG     {*this, STR("Max G" ), 10, -10, 30, "kcal/mol" },  _MinTm   {*this, STR("Tm :"  ), 30,  10 , 60,"°C"}, 
-                        _MinG     {*this, STR("Min G" ), 15, -10 , 30,"kcal/mol" }, _MaxTm    {*this, STR("Max Tm"), 10, -10, 75, "°C"}, 
-                        _MinSelfG {*this, STR("Min G" ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{*this, STR("Max Tm"), 10, -10, 75, "°C"}, 	
+    nana::group         _gr_probes  {*this, STR("Probes")},
+                        _gr_prob_tg {*this, STR("Probe-target")},
+                        _gr_prob_ntg{*this, STR("Probe-non-target")},
+                        _gr_probself{*this, STR("Probe-self")};
+    nana::NumUnitUpDown _Gmin     {_gr_probes, STR("G :"    ), -5, -10 , 10,"kcal/mol"},   _Gmax   {_gr_probes, STR(""), -1, -10, 10, "kcal/mol"}, 
+                        _Tmmin    {_gr_probes, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {_gr_probes, STR(""), 63,  45, 75, "°C"      }, 
+                        _Lengthmin{_gr_probes, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{_gr_probes, STR(""), 35,  15, 40, "nt"      },
+                        _MaxG     {_gr_prob_tg, STR("Max G" ), 10, -10, 30, "kcal/mol" },  _MinTm   {_gr_prob_tg, STR("Tm :"  ), 30,  10 , 60,"°C"}, 
+                        _MinG     {_gr_prob_ntg, STR("Min G" ), 15, -10 , 30,"kcal/mol" }, _MaxTm   {_gr_prob_ntg, STR("Max Tm"), 10, -10, 75, "°C"}, 
+                        _MinSelfG {_gr_probself, STR("Min G" ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{_gr_probself, STR("Max Tm"), 10, -10, 75, "°C"}, 	
                         numUpDw_MinTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" }, 
                         numUpDw_MaxTargCov{ *this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%" } ;
     nana::tooltip _Gmintt     {_Gmin, STR("Only probes with stronger interaction with target (smaller G by selected Ta) will be included"    ) }/*,   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
@@ -647,13 +652,10 @@ public:
     void SetDefLayout   () override
     {
       _DefLayout=  
-	"vertical   gap=2                 		\n\t"
+	"vertical   gap=2    margin=5                    		\n\t"
 	"	<weight=10     >       		\n\t"
 	"   <weight=235 gap=8 <weight=5> <weight=350 vertical   		                      \n\t"
-    "                                              <weight=100 <weight=320 Sonde grid=[3,4] collapse(0,1,2,1)	    \n\t"
-	"																				        collapse(0,2,2,1)		\n\t"
-	"																				        collapse(0,3,2,1)  >	\n\t"
-	"	                                           > 		             \n\t"
+    "                                              <weight=100 <weight=320 Sonde  > >		             \n\t"
 	"	                                           <weight=10>		\n\t"
 	"		                                       <weight=45 TargCov    grid=[2,2]                          >    		\n\t"
 	"	                                           <weight=10> 		\n\t"
@@ -665,6 +667,15 @@ public:
 	"		 		\n\t"
         ;
 
+
+    _gr_probes.fmt += "< Sonde grid=[3,4] collapse(0,1,2,1)	    \n\t"
+	"					                  collapse(0,2,2,1)		\n\t"
+	"						              collapse(0,3,2,1)  >	\n\t";
+    _gr_probes .plc.div(_gr_probes.fmt.c_str());
+
+    _gr_prob_tg .fmt += "< gap=1 vertical  options>"; _gr_prob_tg .plc.div(_gr_prob_tg.fmt.c_str());
+    _gr_prob_ntg.fmt += "< gap=1 vertical  options>"; _gr_prob_ntg.plc.div(_gr_prob_ntg.fmt.c_str());
+    _gr_probself.fmt += "< gap=1 vertical  options>"; _gr_probself.plc.div(_gr_probself.fmt.c_str());
 
          _Gmin.ResetLayout     (60,45,55 );   _Gmax.ResetLayout     (1,40,50 );
         _Tmmin.ResetLayout     (60,45,55 );  _Tmmax.ResetLayout     (1,40,50 );
@@ -699,7 +710,8 @@ public:
             ;
         
         /// Use room (wd,w,h) in combination with a <Table grid=[W,H]>
-	            _place["Sonde"]    << L"Probes" << L"Min."         << L"   Max."   
+	            _place["Sonde"]    << _gr_probes ;
+          _gr_probes.plc["Sonde"]  <<  STR("") << STR("Min."   )      << STR("   Max."  ) 
                                    <<    /*_place.room(*/_Gmin /*, nana::size(2,1))*/ <<   _Gmax
                                    <<    /*_place.room(*/_Tmmin/*, nana::size(2,1))*/ <<   _Tmmax
                                    << /*_place.room(*/_Lengthmin/*,nana::size(2,1))*/<<   _Lengthmax  ;
@@ -707,10 +719,10 @@ public:
                                    << chkBx_common << numUpDw_MaxTargCov     	;
         _place.field("Run"     )   << _design	<< _compare	;
                  
-	    _place.field("options" )   << L"Probe-target"    <<  _MaxG     << _MinTm
-                                   << L"Probe-non-target"<<  _MinG     << _MaxTm
-                                   << L"Probe-self"      <<  _MinSelfG << _MaxSelfTm  
-                                    ;    
+	    _place.field("options" )   << _gr_prob_tg    <<  _gr_prob_ntg     << _gr_probself;
+	    _gr_prob_tg .plc["options"] <<   _MaxG     << _MinTm;
+        _gr_prob_ntg.plc["options"] <<   _MinG     << _MaxTm;
+        _gr_probself.plc["options"] <<   _MinSelfG << _MaxSelfTm    ;    
         _place.field("Output"  )   << chkBx_showFindedProbes;
 
     }
@@ -971,12 +983,12 @@ class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
         //background (0xEEEEEE);  ///\todo: use codigo
         //foreground(1);
        
-        add_page( setup_    ); // 0
-        add_page( mExpl_    ); // 1
-        add_page( findSond_ ); // 2
-        add_page( mPCR_     ); // 3
-        add_page( uArr_     ); // 4
-        add_page( tmCalc_   ); // 5
+        add_page( setup_    );// setup_.ReCollocate(); // 0 
+        add_page( mExpl_    ); //mExpl_.ReCollocate();// 1
+        add_page( findSond_ );// findSond_.ReCollocate();// 2
+        add_page( mPCR_     ); //mPCR_.ReCollocate();// 3
+        add_page( uArr_     );// uArr_.ReCollocate();// 4
+        add_page( tmCalc_   );// tmCalc_.ReCollocate();// 5
 
         tabbar_.activate (1);
 
