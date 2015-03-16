@@ -618,10 +618,10 @@ class FindSondenPage : public CompoWidget
 {    
     ThDyProject &_Pr;
     BindGroup   _findSond;
-    nana::group         _gr_probes  {*this, STR("Probes")},
-                        _gr_prob_tg {*this, STR("Probe-target")},
-                        _gr_prob_ntg{*this, STR("Probe-non-target")},
-                        _gr_probself{*this, STR("Probe-self")};
+    nana::group         _gr_probes  {*this, STR("<bold=true>Probes:</>"), true},
+                        _gr_prob_tg {*this, STR("<bold=true>Probe-target:</>"), true},
+                        _gr_prob_ntg{*this, STR("<bold=true>Probe-non-target:</>"), true},
+                        _gr_probself{*this, STR("<bold=true>Probe-self:</>"), true};
     nana::NumUnitUpDown _Gmin     {_gr_probes, STR("G :"    ), -5, -10 , 10,"kcal/mol"},   _Gmax   {_gr_probes, STR(""), -1, -10, 10, "kcal/mol"}, 
                         _Tmmin    {_gr_probes, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {_gr_probes, STR(""), 63,  45, 75, "°C"      }, 
                         _Lengthmin{_gr_probes, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{_gr_probes, STR(""), 35,  15, 40, "nt"      },
@@ -640,11 +640,11 @@ class FindSondenPage : public CompoWidget
                              numUpDw_MaxTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" }*/ ;
 
     nana::button        _design{*this, STR("Design !" )}, 
-                            _compare{*this, STR("Compare !")};
+                        _compare{*this, STR("Compare !")};
 
     nana::checkbox      chkBx_unique{*this, STR("Report unique probes, ")}, 
-                             chkBx_common{*this, STR("Report common probes, ")}, 
-                             chkBx_showFindedProbes{*this, STR("Show Finded Probes")};
+                        chkBx_common{*this, STR("Report common probes, ")}, 
+                        chkBx_showFindedProbes{*this, STR("Show Finded Probes")};
 	nana::tooltip       chkBx_uniqueTT{chkBx_unique, STR("For each target seq, probes with hybrid on it, AND maximum on a given percent of the OTHER targets will be reported")};
 	nana::tooltip       chkBx_commonTT{chkBx_common, STR("All probes with hybrid on at laest the given percent of targets will be reported")};
 public: 
@@ -655,7 +655,7 @@ public:
 	"vertical   gap=2    margin=5                    		\n\t"
 	"	<weight=10     >       		\n\t"
 	"   <weight=235 gap=8 <weight=5> <weight=350 vertical   		                      \n\t"
-    "                                              <weight=100 <weight=320 Sonde  > >		             \n\t"
+    "                                              <weight=115 <weight=320 Sonde  > >		             \n\t"
 	"	                                           <weight=10>		\n\t"
 	"		                                       <weight=45 TargCov    grid=[2,2]                          >    		\n\t"
 	"	                                           <weight=10> 		\n\t"
@@ -668,14 +668,14 @@ public:
         ;
 
 
-    _gr_probes.fmt += "< Sonde grid=[3,4] collapse(0,1,2,1)	    \n\t"
-	"					                  collapse(0,2,2,1)		\n\t"
-	"						              collapse(0,3,2,1)  >	\n\t";
+    _gr_probes.fmt += "< Sonde  margin=2 gap= 2 grid=[3,4] collapse(0,1,2,1)	    \n\t"
+	"					                                   collapse(0,2,2,1)		\n\t"
+	"						                               collapse(0,3,2,1)  >	\n\t";
     _gr_probes .plc.div(_gr_probes.fmt.c_str());
 
-    _gr_prob_tg .fmt += "< gap=1 vertical  options>"; _gr_prob_tg .plc.div(_gr_prob_tg.fmt.c_str());
-    _gr_prob_ntg.fmt += "< gap=1 vertical  options>"; _gr_prob_ntg.plc.div(_gr_prob_ntg.fmt.c_str());
-    _gr_probself.fmt += "< gap=1 vertical  options>"; _gr_probself.plc.div(_gr_probself.fmt.c_str());
+    _gr_prob_tg .fmt += "<  margin=2 gap= 2 vertical  options>"; _gr_prob_tg .plc.div(_gr_prob_tg.fmt.c_str());
+    _gr_prob_ntg.fmt += "<  margin=2 gap= 2 vertical  options>"; _gr_prob_ntg.plc.div(_gr_prob_ntg.fmt.c_str());
+    _gr_probself.fmt += "<  margin=2 gap= 2 vertical  options>"; _gr_probself.plc.div(_gr_probself.fmt.c_str());
 
          _Gmin.ResetLayout     (60,45,55 );   _Gmax.ResetLayout     (1,40,50 );
         _Tmmin.ResetLayout     (60,45,55 );  _Tmmax.ResetLayout     (1,40,50 );
