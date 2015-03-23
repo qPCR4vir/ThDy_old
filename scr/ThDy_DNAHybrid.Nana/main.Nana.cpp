@@ -59,7 +59,8 @@ int main(int argc, char *argv[])
   //nana::color::current_schema[nana::color::schema::list_header_pressed_bg]=nana::color::AliceBlue;  
   //nana::color::current_schema[nana::color::schema::list_header_grabed_bg]=nana::color::Ash_Gray;    // 0x8BD6F6 
   //nana::color::current_schema[nana::color::schema::list_header_floated_bg]=nana::color::Aztech_Purple;	   // 0xBABBBC 
-
+  //nana::widget_colors::background ;   ::current_schema[nana::color::schema::list_header_floated_bg]=nana::color::Aztech_Purple;	   // 0xBABBBC 
+  //nana::form::scheme_type().background = nana::colors::light_sky_blue;
   try	
   {
     IParBind::SetDef(PriorizeDefault::Parametr );
@@ -121,29 +122,45 @@ void  SetupPage::AsignWidgetToFields ()
             << link( _Pr._cp.loadNNPar    , ckBx_loadNNParam    )        
           ;
             
-        _place.field("Project"  )    <<  _proj        ;
-	    _place.field("Results" )     <<  _results   ;
-        _place.field("_targets" )    <<  _targets ;
-        _place.field("TargOpt"  )    << _chkTargRecDir  << _chkTargOnlyStruct ;
-        _place.field("_nTsec"   )    <<  _nTsec   ;
-        _place.field("nTargOpt" )    << _chk_nTgRecDir <<  _chk_nTgOnlyStruct          ;
-        _place.field("_PCRfiltre")    <<  _PCRfiltre   ;
-        _place.field("_PrimersFilePCR" )    <<  _PrimersFilePCR ;
-        _place.field("_PrimersFilePCROpt"  )    << _chkPrimRecDir  << _chkPrOnlyStruct ;
-        _place.field("_Prob_uArr" )    <<  _Prob_uArr ;
-        _place.field("_Prob_uArrOpt"  )    << _chkProbRecDir  << _chkProbOnlyStruct ;
-	    _place.field("NN_param" )    << _NNParamFile  ;
+        _place.field("Project"  )    <<  _proj      ;
+        _place.field("dir"      )    <<  _gr_dir    ;
 	    _place.field("buttons"  )    <<  _set_def_proj << _load_def_proj;
-	    _place.field("checks"   )    << L"save result" << ckBx_savTm    << ckBx_savPos     <<ckBx_savG         << ckBx_savAlign 
-                                                      << ckBx_savProj  << ckBx_savG_Plasm << ckBx_savTm_Plasm << ckBx_savLog
-                                                      << ckBx_savExportSond << ckBx_savExportTarg<< ckBx_savNNParam<< ckBx_loadNNParam;
+	    _place.field("checks"   )    <<  _gr_checks ;
+	    _place.field("salt"     )    <<  _gr_salt   ;
 
-	    _place.field("ConcST"  )        << numUpDowSdConc   
-                                        << numUpDowTgConc ;
-	    _place.field("ConcSaltTa"  )    << numUpDowSalConc 
-                                        << numUpDowTa ;
-	    _place.field("SMeth"  )         << L" Salt Correct. Method:"	   <<  comBoxSalMeth;
-	    _place.field("AMeth"  )         << L" ThDy Align. Method"       <<  comBoxTAMeth ;
+        _gr_dir .plc["Results"  ]    <<  _results   ;
+        _gr_dir .plc["seq"      ]    <<  _gr_seq    ;
+	    _gr_dir .plc["NN_param" ]    << _NNParamFile  ;
+
+        _gr_seq .plc["_targets"        ]    <<   _gr_targ  ;
+        _gr_seq .plc["_nTsec"          ]    <<   _gr_ntarg  ;
+        _gr_seq .plc["_PCRfiltre"      ]    <<   _gr_PCRfiltre  ;
+        _gr_seq .plc["_PrimersFilePCR" ]    <<   _gr_PrimersFilePCR  ;
+        _gr_seq .plc["_Prob_uArr"      ]    <<   _gr_uArr  ;
+
+        _gr_targ .plc["dir"  ]    <<   _targets  ;
+        _gr_targ .plc["Opt"  ]    <<   _chkTargRecDir  << _chkTargOnlyStruct ;
+
+        _gr_ntarg .plc["dir"  ]    <<   _nTsec  ;
+        _gr_ntarg .plc["Opt"  ]    <<   _chk_nTgRecDir <<  _chk_nTgOnlyStruct          ;
+
+        _gr_PCRfiltre .plc["dir"  ]    <<   _PCRfiltre  ;
+        //_gr_PCRfiltre .plc["Opt"  ]    << _chkTargRecDir  << _chkTargOnlyStruct ;
+
+        _gr_PrimersFilePCR .plc["dir"  ]    <<   _PrimersFilePCR  ;
+        _gr_PrimersFilePCR .plc["Opt"  ]    <<   _chkPrimRecDir  << _chkPrOnlyStruct ;
+
+        _gr_uArr .plc["dir"  ]    <<   _Prob_uArr  ;
+        _gr_uArr .plc["Opt"  ]    <<   _chkProbRecDir  << _chkProbOnlyStruct ;
+
+	    _gr_checks.plc["checks"  ]   << ckBx_savTm    << ckBx_savPos     <<ckBx_savG         << ckBx_savAlign 
+                                     << ckBx_savProj  << ckBx_savG_Plasm << ckBx_savTm_Plasm << ckBx_savLog
+                                     << ckBx_savExportSond << ckBx_savExportTarg<< ckBx_savNNParam<< ckBx_loadNNParam;
+
+	    _gr_salt.plc["ConcST"     ]   << numUpDowSdConc       << numUpDowTgConc ;
+	    _gr_salt.plc["ConcSaltTa" ]   << numUpDowSalConc      << numUpDowTa ;
+	    _gr_salt.plc["SMeth"      ]   << L" Salt Correct. Method:"	   <<  comBoxSalMeth;
+	    _gr_salt.plc["AMeth"      ]   << L" ThDy Align. Method"       <<  comBoxTAMeth ;
     }
 void  SetupPage::MakeResponive()
     {

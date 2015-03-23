@@ -272,49 +272,59 @@ class TableRes  : public nana::form, public EditableForm
 class SetupPage : public CompoWidget
 {
     ThDyNanaForm       &_Pr;
-    FilePickBox         _results            { *this, STR("Results:") } ;
+    nana::group         _gr_dir  {*this, STR(" <bold=true> Directories: </>"          ), true};
+    FilePickBox         _results            { _gr_dir, STR("Results: ") } ;
 
-    FilePickBox         _targets            { *this, STR("Targets:") }  ;
-    nana::checkbox      _chkTargRecDir      { *this, STR("Targets - Recur Dir") },
-                        _chkTargOnlyStruct  { *this, STR("Only reproduce Dir Structure") };
+    nana::group         _gr_seq  {_gr_dir, STR(" <bold=true> Sequences </>File or Directory"      ), true};
+    nana::group         _gr_targ {_gr_seq, STR(""                                                 ), true};
+    FilePickBox         _targets            { _gr_targ, STR("Targets: ") }  ;
+    nana::checkbox      _chkTargRecDir      { _gr_targ, STR("Targets - Recur Dir") },
+                        _chkTargOnlyStruct  { _gr_targ, STR("Only reproduce Dir Structure") };
 
-    FilePickBox         _nTsec              { *this, STR("Non template seq:"),STR("FindSonden-OSB.NonTarg.lay.txt")};
-    nana::checkbox      _chk_nTgRecDir      { *this, STR("Non Targets - Recur Dir") },
-                        _chk_nTgOnlyStruct  { *this, STR("Only reproduce Dir Structure") };
+    nana::group         _gr_ntarg {_gr_seq, STR(""                                                 ), true};
+    FilePickBox         _nTsec              { _gr_ntarg, STR("Non targets: "),STR("FindSonden-OSB.NonTarg.lay.txt")};
+    nana::checkbox      _chk_nTgRecDir      { _gr_ntarg, STR("Non Targets - Recur Dir") },
+                        _chk_nTgOnlyStruct  { _gr_ntarg, STR("Only reproduce Dir Structure") };
 
-    FilePickBox         _PCRfiltre          { *this, STR("PCR-filtre:")};
+    nana::group         _gr_PCRfiltre {_gr_seq, STR(""                                                 ), true};
+    FilePickBox         _PCRfiltre          { _gr_PCRfiltre, STR("PCR-filtre: ")};
 
-    FilePickBox         _PrimersFilePCR     { *this, STR("Primers seq. file:") };
-    nana::checkbox      _chkPrimRecDir      { *this, STR("Primers - Recur Dir") },
-                        _chkPrOnlyStruct    { *this, STR("Only reproduce Dir Structure") };
+    nana::group         _gr_PrimersFilePCR {_gr_seq, STR(""                                                 ), true};
+    FilePickBox         _PrimersFilePCR     { _gr_PrimersFilePCR, STR("Primers: ") };
+    nana::checkbox      _chkPrimRecDir      { _gr_PrimersFilePCR, STR("Primers - Recur Dir") },
+                        _chkPrOnlyStruct    { _gr_PrimersFilePCR, STR("Only reproduce Dir Structure") };
 
-    FilePickBox         _Prob_uArr          { *this, STR("Probes seq. file:") };
-    nana::checkbox      _chkProbRecDir      { *this, STR("Probes - Recur Dir") },
-                        _chkProbOnlyStruct  { *this, STR("Only reproduce Dir Structure") };
+    nana::group         _gr_uArr {_gr_seq, STR(""                                                 ), true};
+    FilePickBox         _Prob_uArr          { _gr_uArr, STR("Probes: ") };
+    nana::checkbox      _chkProbRecDir      { _gr_uArr, STR("Probes - Recur Dir") },
+                        _chkProbOnlyStruct  { _gr_uArr, STR("Only reproduce Dir Structure") };
 
-    OpenSaveBox         _NNParamFile        { *this, STR("NN param:")};
+    OpenSaveBox         _NNParamFile        { _gr_dir, STR("NN param: ")};
 
-    nana::combox        comBoxSalMeth       { *this}, 
-                        comBoxTAMeth        { *this};
-    nana::NumUnitUpDown numUpDowTgConc      { *this, STR("Target Conctr:"      ), 50, 0.1    , 1000000,  "nM"}, 
-                        numUpDowSalConc     { *this, STR("Salt Conc [Cations]:"), 50, 0.0001 , 10000,    "mM"} , 
-                        numUpDowTa          { *this, STR("Temp. Anneling:"     ), 55, 40     , 75,       "°C"},  
-                        numUpDowSdConc      { *this, STR("Sonde Conctr:"       ), 0.8, 0.001 , 1000,     "µM"}  ;
+    nana::group         _gr_salt {*this, STR(" <bold=true> Input & analisis parameters: </>"                 ), true};
+    nana::combox        comBoxSalMeth       { _gr_salt}, 
+                        comBoxTAMeth        { _gr_salt};
+    nana::NumUnitUpDown numUpDowTgConc      { _gr_salt, STR("Target Conctr:"      ), 50, 0.1    , 1000000,  "nM"}, 
+                        numUpDowSalConc     { _gr_salt, STR("Salt Conc [Cations]:"), 50, 0.0001 , 10000,    "mM"} , 
+                        numUpDowTa          { _gr_salt, STR("Temp. Anneling:"     ), 55, 40     , 75,       "°C"},  
+                        numUpDowSdConc      { _gr_salt, STR("Sonde Conctr:"       ), 0.8, 0.001 , 1000,     "µM"}  ;
+
     nana::button        _set_def_proj       { *this,STR("Set as Def. project") },
-                       _load_def_proj       { *this,STR("ReLoad Def. project") };
+                        _load_def_proj      { *this,STR("ReLoad Def. project") };
 
-    nana::checkbox      ckBx_savTm          { *this, STR("Tm"    ) },
-                        ckBx_savPos         { *this, STR("Pos"   ) },
-                        ckBx_savG           { *this, STR("G"     ) },
-                        ckBx_savAlign       { *this, STR("Align" ) },
-                        ckBx_savProj        { *this, STR("Proj"  ) },
-                        ckBx_savG_Plasm     { *this, STR("G->Plasmid") },
-                        ckBx_savTm_Plasm    { *this, STR("Tm->Plasmid") },
-                        ckBx_savLog         { *this, STR("log"     ) },
-                        ckBx_savExportSond  { *this, STR("Exp. probes" ) },
-                        ckBx_savExportTarg  { *this, STR("Exp. targets") },
-                        ckBx_savNNParam     { *this, STR("load NNparam") },
-                        ckBx_loadNNParam    { *this, STR("save NNparam") }/*,*/
+    nana::group         _gr_checks {*this, STR(" <bold=true> Save in results: </>"                 ), true};
+    nana::checkbox      ckBx_savTm          { _gr_checks, STR("Tm"    ) },
+                        ckBx_savPos         { _gr_checks, STR("Pos"   ) },
+                        ckBx_savG           { _gr_checks, STR("G"     ) },
+                        ckBx_savAlign       { _gr_checks, STR("Align" ) },
+                        ckBx_savProj        { _gr_checks, STR("Proj"  ) },
+                        ckBx_savG_Plasm     { _gr_checks, STR("G->Plasmid") },
+                        ckBx_savTm_Plasm    { _gr_checks, STR("Tm->Plasmid") },
+                        ckBx_savLog         { _gr_checks, STR("log"     ) },
+                        ckBx_savExportSond  { _gr_checks, STR("Exp. probes" ) },
+                        ckBx_savExportTarg  { _gr_checks, STR("Exp. targets") },
+                        ckBx_savNNParam     { _gr_checks, STR("load NNparam") },
+                        ckBx_loadNNParam    { _gr_checks, STR("save NNparam") }/*,*/
                         ;
 
     BindGroup          _setup;
@@ -322,45 +332,86 @@ class SetupPage : public CompoWidget
     void  SetDefLayout   () override
     {
         _DefLayout =
-	"vertical      gap=3        			\n\t"
-	"		   < weight=400     gap=5     <weight=2><  vertical min=50    max=800 gap=2 			\n\t"
-	"		               		             <  <Project>      weight=23 >      				\n\t"
-	"				                         <  <Results>      weight=23 >      				\n\t"
-	"			                             <    <     weight=22 _targets>               weight=50       vertical <gap=10  weight=23  <weight=10%><TargOpt   ><weight=10%>    >   <>>       			\n\t"
-	"			                             <    <     weight=22 _nTsec  >              weight=50       vertical <gap=10  weight=23  <weight=10%>< nTargOpt ><weight=10%>    >   <>>       	\n\t"
-	"			                             <    <     weight=22 _PCRfiltre  >         weight=50       vertical <gap=10  weight=23  <weight=10%><_PCRfiltreOpt ><weight=10%>    >   <>>       	\n\t"
-	"			                             <    <     weight=22 _PrimersFilePCR>weight=50       vertical <gap=10  weight=23  <weight=10%><_PrimersFilePCROpt ><weight=10%>    >   <>>       	\n\t"
-	"			                             <    <     weight=22 _Prob_uArr   >    weight=50         vertical <gap=10  weight=23  <weight=10%><_Prob_uArrOpt ><weight=10%>    >   <>>       	\n\t"
-	" 		                             <  <NN_param >     weight=23 >      				\n\t"
-	"				                         <min=50 <weight=2>  <vertical min=50 max=200 gap=2 buttons>  <>  >			\n\t"
-	"		                            >                                                                             	\n\t"
-	"	                              <  vertical weight=120 <vertical weight=210 checks> <>  >   	                          	\n\t"
-	"	       >			\n\t"
-	"							\n\t"
-	"		   < weight=46  gap=2  <>  <vertical ConcST   weight=200  gap=2>  			\n\t"
-	"		                                         <>  <vertical ConcSaltTa   weight=230  gap=2>   			\n\t"
-	"		                                         <>  <vertical   weight=250 <SMeth gap=2>          				\n\t"
-	"				                                                                                <AMeth gap=2>   > 			\n\t"
-	"		                                         <>  >      				\n\t"
-	"					\n\t"
-	"				\n\t"
-	"			\n\t"
-	"		\n\t"
-	"	\n\t"
+	"vertical      gap=3    margin=5    			\n\t"
+	"  < min=430  horizontal    gap=5   			\n\t "
+    "                  <weight=5>   		                	\n\t"
+    "                  <min=450   vertical   gap=5 	    \n\t"
+	"		                      <weight=26  Project       >       \n\t"
+	"			                  <weight=400 dir>       \n\t"
+	"			                  <weight=30 horizontal  	            \n\t"
+	"			                            <weight=20>             	    \n\t"  
+	"			                            <min=280 max=700  gap=5 buttons>   \n\t"
+	"			                            <>       	                    \n\t"              
+	"		                             >	   \n\t"
+	"	                         >                                      \n\t"
+    "                  <weight=5>   		                	\n\t"
+    "	               <weight=120 vertical   <weight=235  checks > <>  >    	\n\t"
+	"	              >			                                \n\t"
+	"  < weight=70  salt    >      				\n\t" ;
 
-    
-            ;
-        _nTsec        .ResetLayout(105);
-        _PCRfiltre    .ResetLayout (60 );
-        _PrimersFilePCR.ResetLayout (90 );
-        _Prob_uArr    .ResetLayout (90 );
-        _NNParamFile  .ResetLayout (90 );
+        _results      .ResetLayout (70);
+        _targets      .ResetLayout (70);
+        _nTsec        .ResetLayout (70);
+        _PCRfiltre    .ResetLayout (70 );
+        _PrimersFilePCR.ResetLayout(70 );
+        _Prob_uArr    .ResetLayout (70 );
+        _NNParamFile  .ResetLayout (70 );
 
         numUpDowSdConc.ResetLayout (80 );  
         numUpDowTa.    ResetLayout (90 );  
         numUpDowTgConc.ResetLayout (80 );
         numUpDowSalConc.ResetLayout (110 );
 
+        _gr_dir .fmt += "  <weight=26  Results  >       \n\t"
+				        "  <min=280 margin=5 seq>    	    \n\t"
+	 		            "  <weight=26  NN_param >       \n\t"   ;
+        _gr_dir .plc.div(_gr_dir.fmt.c_str());
+
+        _gr_seq .fmt += "  <weight=62  margin=[0,5,0,5] _targets       >    		         \n\t"
+				        "  <weight=62  margin=[0,5,0,5] _nTsec         >    		         \n\t"
+				        "  <weight=50  margin=[0,5,0,5] _PCRfiltre     >    		         \n\t"
+				        "  <weight=62  margin=[0,5,0,5] _PrimersFilePCR>    		         \n\t"
+				        "  <weight=67  margin=[0,5,5,5] _Prob_uArr     >    		         \n\t";
+        _gr_seq .plc.div(_gr_seq.fmt.c_str());
+
+        _gr_targ .fmt += "<weight=22 dir>                                           \n\t"
+                         "<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
+                         "<>                                                        \n\t";
+        _gr_targ .plc.div(_gr_targ.fmt.c_str());
+
+        _gr_ntarg .fmt += "<weight=22 dir>                                           \n\t"
+                         "<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
+                         "<>                                                        \n\t";
+        _gr_ntarg .plc.div(_gr_ntarg.fmt.c_str());
+
+        _gr_PCRfiltre .fmt += "<weight=22 dir>                                           \n\t"
+                         "<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
+                         "<>                                                        \n\t";
+        _gr_PCRfiltre .plc.div(_gr_PCRfiltre.fmt.c_str());
+
+        _gr_PrimersFilePCR .fmt += "<weight=22 dir>                                           \n\t"
+                         "<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
+                         "<>                                                        \n\t";
+        _gr_PrimersFilePCR .plc.div(_gr_PrimersFilePCR.fmt.c_str());
+
+        _gr_uArr .fmt += "<weight=22 dir>                                           \n\t"
+                         "<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
+                         "<>                                                        \n\t";
+        _gr_uArr .plc.div(_gr_uArr.fmt.c_str());
+
+        _gr_checks .fmt += 	" <vertical weight=210 checks>     				\n\t";
+        _gr_checks .plc.div(_gr_checks.fmt.c_str());
+
+        _gr_salt .fmt +=
+            "     <horizontal <> 		                                    \n\t" 
+	        "                 <weight=200 vertical ConcST        gap=2>     \n\t"
+	        "                 <> 		                                    \n\t" 
+	        "		          <weight=230 vertical ConcSaltTa    gap=2>     \n\t"
+	        "                 <> 		                                    \n\t" 
+            "		          <weight=250 vertical gap=5  <weight=23 SMeth >        	\n\t"
+            "				                              <weight=23 AMeth >  >       \n\t"
+	        "                 <>  		 >                                  \n\t" ;
+        _gr_salt .plc.div(_gr_salt.fmt.c_str());
     }
     virtual void  AsignWidgetToFields () final  override;
     void  MakeResponive();
@@ -618,18 +669,19 @@ class FindSondenPage : public CompoWidget
 {    
     ThDyProject &_Pr;
     BindGroup   _findSond;
-    nana::group         _gr_probes  {*this, STR("<bold=true>Probes:</>"), true},
-                        _gr_prob_tg {*this, STR("<bold=true>Probe-target:</>"), true},
-                        _gr_prob_ntg{*this, STR("<bold=true>Probe-non-target:</>"), true},
-                        _gr_probself{*this, STR("<bold=true>Probe-self:</>"), true};
-    nana::NumUnitUpDown _Gmin     {_gr_probes, STR("G :"    ), -5, -10 , 10,"kcal/mol"},   _Gmax   {_gr_probes, STR(""), -1, -10, 10, "kcal/mol"}, 
-                        _Tmmin    {_gr_probes, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {_gr_probes, STR(""), 63,  45, 75, "°C"      }, 
-                        _Lengthmin{_gr_probes, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{_gr_probes, STR(""), 35,  15, 40, "nt"      },
-                        _MaxG     {_gr_prob_tg, STR("Max G" ), 10, -10, 30, "kcal/mol" },  _MinTm   {_gr_prob_tg, STR("Tm :"  ), 30,  10 , 60,"°C"}, 
-                        _MinG     {_gr_prob_ntg, STR("Min G" ), 15, -10 , 30,"kcal/mol" }, _MaxTm   {_gr_prob_ntg, STR("Max Tm"), 10, -10, 75, "°C"}, 
-                        _MinSelfG {_gr_probself, STR("Min G" ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{_gr_probself, STR("Max Tm"), 10, -10, 75, "°C"}, 	
-                        numUpDw_MinTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" }, 
-                        numUpDw_MaxTargCov{ *this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%" } ;
+    nana::group         _gr_probes  {*this, STR("<bold=true> Probes: </>"          ), true},
+                        _gr_prob_tg {*this, STR("<bold=true> Probe-target: </>"    ), true},
+                        _gr_prob_ntg{*this, STR("<bold=true> Probe-non-target: </>"), true},
+                        _gr_find_prb{*this, STR(           " Find Probes "         ), true},
+                        _gr_probself{*this, STR("<bold=true> Probe-self: </>"      ), true};
+    nana::NumUnitUpDown _Gmin     {_gr_probes, STR("G : "    ), -5, -10 , 10,"kcal/mol"},   _Gmax   {_gr_probes, STR(""), -1, -10, 10, "kcal/mol"}, 
+                        _Tmmin    {_gr_probes, STR("Tm : "   ), 57,  40 , 60,"°C"      },  _Tmmax   {_gr_probes, STR(""), 63,  45, 75, "°C"      }, 
+                        _Lengthmin{_gr_probes, STR("Length: "), 20,  15 , 35,"nt"      }, _Lengthmax{_gr_probes, STR(""), 35,  15, 40, "nt"      },
+                        _MaxG     {_gr_prob_tg, STR("Max G: " ), 10, -10, 30, "kcal/mol" },  _MinTm   {_gr_prob_tg, STR("Tm: "  ), 30,  10 , 60,"°C"}, 
+                        _MinG     {_gr_prob_ntg, STR("Min G: " ), 15, -10 , 30,"kcal/mol" }, _MaxTm   {_gr_prob_ntg, STR("Max Tm: "), 10, -10, 75, "°C"}, 
+                        _MinSelfG {_gr_probself, STR("Min G: " ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{_gr_probself, STR("Max Tm: "), 10, -10, 75, "°C"}, 	
+                        numUpDw_MinTargCov{ _gr_find_prb, STR("max."),   0.0, 0.0 , 100.0,"%" }, 
+                        numUpDw_MaxTargCov{ _gr_find_prb, STR("min."), 100.0, 0.0 , 100.0,"%" } ;
     nana::tooltip _Gmintt     {_Gmin, STR("Only probes with stronger interaction with target (smaller G by selected Ta) will be included"    ) }/*,   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
                              _Tmmin    {*this, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {*this, STR(""), 63,  45, 75, "°C"      }, 
                              _Lengthmin{*this, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{*this, STR(""), 35,  15, 40, "nt"      },
@@ -639,11 +691,11 @@ class FindSondenPage : public CompoWidget
                              numUpDw_MinTargCov{ *this, STR("Min. target coverage:"), 100.0, 0.0 , 100.0,"%" }, 
                              numUpDw_MaxTargCov{ *this, STR("Max. target coverage:"),   0.0, 0.0 , 100.0,"%" }*/ ;
 
-    nana::button        _design{*this, STR("Design !" )}, 
+    nana::button        _design {*this, STR("Design !" )}, 
                         _compare{*this, STR("Compare !")};
 
-    nana::checkbox      chkBx_unique{*this, STR("Report unique probes, ")}, 
-                        chkBx_common{*this, STR("Report common probes, ")}, 
+    nana::checkbox      chkBx_unique{_gr_find_prb, STR("Unique, with target coverage ")}, 
+                        chkBx_common{_gr_find_prb, STR("Common, with target coverage ")}, 
                         chkBx_showFindedProbes{*this, STR("Show Finded Probes")};
 	nana::tooltip       chkBx_uniqueTT{chkBx_unique, STR("For each target seq, probes with hybrid on it, AND maximum on a given percent of the OTHER targets will be reported")};
 	nana::tooltip       chkBx_commonTT{chkBx_common, STR("All probes with hybrid on at laest the given percent of targets will be reported")};
@@ -652,45 +704,48 @@ public:
     void SetDefLayout   () override
     {
       _DefLayout=  
-	"vertical   gap=2    margin=5                    		\n\t"
-	"	<weight=10     >       		\n\t"
-	"   <weight=235 gap=8 <weight=5> <weight=350 vertical   		                      \n\t"
-    "                                              <weight=115 <weight=320 Sonde  > >		             \n\t"
-	"	                                           <weight=10>		\n\t"
-	"		                                       <weight=45 TargCov    grid=[2,2]                          >    		\n\t"
-	"	                                           <weight=10> 		\n\t"
-	"		                                       <weight=40 <   <> <weight=300   gap=20 Run>       > >    		\n\t"
-	"		                                       <weight=10>                                 		\n\t"
-	"		                         >   <> <weight=230 gap=1 vertical  options>                           		\n\t"   
-    "   >   		\n\t"
-	"	<weight=23   <weight=140> <Output>   <> >       		          \n\t"
-	"		 		\n\t"
+	"vertical   gap=2    margin=5                    			\n\t"
+	"		<weight=10     >       			\n\t"
+	"	   <weight=260 gap=8 <weight=5> <weight=388 vertical   		                      	\n\t"
+	"	                                              <weight=115 <weight=388 Sonde  > >		             	\n\t"
+	"		                                           <weight=10>			\n\t"
+	"			                                       <weight=72 TargCov        >    			\n\t"
+	"		                                           <weight=10> 			\n\t"
+	"			                                       <weight=40 <   <> <weight=300   gap=20 Run>  <>     > >    			\n\t"
+	"			                                       <weight=10>                                 			\n\t"
+	"			                         >   <> <weight=230 gap=1 vertical  options> <weight=5>                          			\n\t"
+	"	   >   			\n\t"
+	"		<weight=23   <weight=140> <Output>   <> >       		          	\n\t"
+	"			 			\n\t"
+	"		\n\t"
         ;
 
 
-    _gr_probes.fmt += "< Sonde  margin=2 gap= 2 grid=[3,4] collapse(0,1,2,1)	    \n\t"
-	"					                                   collapse(0,2,2,1)		\n\t"
-	"						                               collapse(0,3,2,1)  >	\n\t";
+    _gr_probes.fmt += "< Sonde  margin=2 gap= 2 grid=[2,4]  	    \n\t"
+	"					                                    		\n\t"
+	"						                                  >	\n\t";
     _gr_probes .plc.div(_gr_probes.fmt.c_str());
 
-    _gr_prob_tg .fmt += "<  margin=2 gap= 2 vertical  options>"; _gr_prob_tg .plc.div(_gr_prob_tg.fmt.c_str());
-    _gr_prob_ntg.fmt += "<  margin=2 gap= 2 vertical  options>"; _gr_prob_ntg.plc.div(_gr_prob_ntg.fmt.c_str());
-    _gr_probself.fmt += "<  margin=2 gap= 2 vertical  options>"; _gr_probself.plc.div(_gr_probself.fmt.c_str());
+    _gr_prob_tg .fmt += "<  margin=2 gap= 2 vertical   options>"; _gr_prob_tg .plc.div(_gr_prob_tg.fmt.c_str());
+    _gr_prob_ntg.fmt += "<  margin=2 gap= 2 vertical   options>"; _gr_prob_ntg.plc.div(_gr_prob_ntg.fmt.c_str());
+    _gr_probself.fmt += "<  margin=2 gap= 2 vertical   options>"; _gr_probself.plc.div(_gr_probself.fmt.c_str());
+    _gr_find_prb.fmt += "<  margin=5 gap= 2 TargCov grid=[2,2]>"; _gr_find_prb.plc.div(_gr_find_prb.fmt.c_str());
 
-         _Gmin.ResetLayout     (60,45,55 );   _Gmax.ResetLayout     (1,40,50 );
-        _Tmmin.ResetLayout     (60,45,55 );  _Tmmax.ResetLayout     (1,40,50 );
-        _Lengthmin.ResetLayout (60,45,55 );  _Lengthmax.ResetLayout (1,40,50 );
+         _Gmin.ResetLayout     (45,40,55 );   _Gmax.ResetLayout     (1,40,75 );
+        _Tmmin.ResetLayout     (45,40,55 );  _Tmmax.ResetLayout     (1,40,75 );
+        _Lengthmin.ResetLayout (45,40,55 );  _Lengthmax.ResetLayout (1,40,75 );
  
         _MaxG.ResetLayout     (110,45,50 );   
-        _MinTm.ResetLayout    (110,45,50 );   
-        _MinG.ResetLayout     (110,45,50 );   
+        _MinTm.ResetLayout    (110,45,50 );  
 
-        _MaxTm.ResetLayout     (110,45,50 );   
+        _MinG.ResetLayout     (110,45,50 );   
+        _MaxTm.ResetLayout    (110,45,50 );   
+
         _MinSelfG.ResetLayout  (110,45,50);   
         _MaxSelfTm.ResetLayout (110,45,50 );  
 
-        numUpDw_MinTargCov.ResetLayout (115,45,20 );  
-        numUpDw_MaxTargCov.ResetLayout (115,45,20 );  
+        numUpDw_MinTargCov.ResetLayout (30,40,40 );  
+        numUpDw_MaxTargCov.ResetLayout (30,40,40 );  
     }
     void AsignWidgetToFields() override
     {
@@ -711,19 +766,23 @@ public:
         
         /// Use room (wd,w,h) in combination with a <Table grid=[W,H]>
 	            _place["Sonde"]    << _gr_probes ;
-          _gr_probes.plc["Sonde"]  <<  STR("") << STR("Min."   )      << STR("   Max."  ) 
-                                   <<    /*_place.room(*/_Gmin /*, nana::size(2,1))*/ <<   _Gmax
-                                   <<    /*_place.room(*/_Tmmin/*, nana::size(2,1))*/ <<   _Tmmax
-                                   << /*_place.room(*/_Lengthmin/*,nana::size(2,1))*/<<   _Lengthmax  ;
-        _place.field("TargCov" )   << chkBx_unique << numUpDw_MinTargCov       
-                                   << chkBx_common << numUpDw_MaxTargCov     	;
+                _place["TargCov"]  << _gr_find_prb ;     
         _place.field("Run"     )   << _design	<< _compare	;
+	    _place.field ("options" )  << _gr_prob_tg <<  _gr_prob_ntg     << _gr_probself;
+        _place.field("Output"  )   << chkBx_showFindedProbes;
+
+          _gr_probes.plc["Sonde"]  << STR("                               Min." )<< STR("           Max."  ) 
+                                   <<   _Gmin     <<   _Gmax  
+                                   <<   _Tmmin    <<   _Tmmax  
+                                   << _Lengthmin  <<   _Lengthmax  ; 
+
+        _gr_find_prb.plc["TargCov"]<< chkBx_unique << numUpDw_MinTargCov       
+                                   << chkBx_common << numUpDw_MaxTargCov     	;
                  
-	    _place.field("options" )   << _gr_prob_tg    <<  _gr_prob_ntg     << _gr_probself;
 	    _gr_prob_tg .plc["options"] <<   _MaxG     << _MinTm;
         _gr_prob_ntg.plc["options"] <<   _MinG     << _MaxTm;
-        _gr_probself.plc["options"] <<   _MinSelfG << _MaxSelfTm    ;    
-        _place.field("Output"  )   << chkBx_showFindedProbes;
+        _gr_probself.plc["options"] <<   _MinSelfG << _MaxSelfTm    ;
+
 
     }
 
@@ -980,9 +1039,10 @@ class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
         //nana::pixel_rgb_t bk;
         //bk.u.color = background ();
         //bk.u.element.blue =0; 
-        //background (0xEEEEEE);  ///\todo: use codigo
+        //bgcolor (nana::color_rgb( 0xEEEEEE));  ///\todo: use codigo
         //foreground(1);
-       
+       //this->scheme().background(col)
+        //this->b
         add_page( setup_    );// setup_.ReCollocate(); // 0 
         add_page( mExpl_    ); //mExpl_.ReCollocate();// 1
         add_page( findSond_ );// findSond_.ReCollocate();// 2
