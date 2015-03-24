@@ -332,22 +332,22 @@ class SetupPage : public CompoWidget
     void  SetDefLayout   () override
     {
         _DefLayout =
-	"vertical      gap=3    margin=5    			\n\t"
-	"  < min=430  horizontal    gap=5   			\n\t "
-    "                  <weight=5>   		                	\n\t"
-    "                  <min=450   vertical   gap=5 	    \n\t"
-	"		                      <weight=26  Project       >       \n\t"
-	"			                  <weight=400 dir>       \n\t"
-	"			                  <weight=30 horizontal  	            \n\t"
-	"			                            <weight=20>             	    \n\t"  
-	"			                            <min=280 max=700  gap=5 buttons>   \n\t"
-	"			                            <>       	                    \n\t"              
-	"		                             >	   \n\t"
-	"	                         >                                      \n\t"
-    "                  <weight=5>   		                	\n\t"
-    "	               <weight=120 vertical   <weight=235  checks > <>  >    	\n\t"
-	"	              >			                                \n\t"
-	"  < weight=70  salt    >      				\n\t" ;
+	    "vertical      gap=3    margin=5    			\n\t"
+	    "  < min=430  horizontal    gap=5   			\n\t "
+        "                  <weight=5>   		                	\n\t"
+        "                  <min=450   vertical   gap=5 	    \n\t"
+	    "		                      <weight=26  Project       >       \n\t"
+	    "			                  <weight=400 dir>       \n\t"
+	    "			                  <weight=30 horizontal  	            \n\t"
+	    "			                            <weight=20>             	    \n\t"  
+	    "			                            <min=280 max=700  gap=5 buttons>   \n\t"
+	    "			                            <>       	                    \n\t"              
+	    "		                             >	   \n\t"
+	    "	                         >                                      \n\t"
+        "                  <weight=5>   		                	\n\t"
+        "	               <weight=120 vertical   <weight=235  checks > <>  >    	\n\t"
+	    "	              >			                                \n\t"
+	    "  < weight=70  salt    >      				\n\t" ;
 
         _results      .ResetLayout (70);
         _targets      .ResetLayout (70);
@@ -846,25 +846,28 @@ class MplexPCR : public CompoWidget
 class TmCalcPage : public CompoWidget
 {
     ThDyProject             &_Pr;
-    nana::textbox           sec_                {*this},  
-                            sec2align_          {*this},  
-                            txtBx_ResultSec     {*this},  
-                            txtBx_ResultSec2Align{*this};
+    nana::group             primers             {*this, STR("<bold=true> Primers: </>" ), true}, 
+                            interaction         {*this, STR("<bold=true> Interaction: </>" ), true},
+                            align               {*this, STR("<bold=true> Alignment: </>" ), true}; 
+    nana::textbox           sec_                {primers},  
+                            sec2align_          {primers},  
+                            txtBx_ResultSec     {align},  
+                            txtBx_ResultSec2Align{align};
     nana::checkbox          chkBx_Tm_save_asPCR {*this, STR("save")},   
                             chkBx_align         {*this, STR("align")},
-                            chkBx_copy_rev      {*this, STR("rev")},    
-                            chkBx_copy_compl    {*this, STR("cpl")};
+                            chkBx_copy_rev      {primers, STR("rev")},    
+                            chkBx_copy_compl    {primers, STR("cpl")};
     nana::button            run_                {*this, STR("Tm !")},
-                            copy_f_s_2          {*this, STR("copy")},   
-                            copy_s              {*this, STR("c")},
-                            copy_s_a            {*this, STR("c")};      
-    nana::label             error_              {*this, STR("no error")};
-    nana::NumberBox         Tm_min_Up{*this}, Tm_Up{*this}, Tm_max_Up{*this} ,
-                            Tm_min_Dw{*this}, Tm_Dw{*this}, Tm_max_Dw{*this} ,
-                            Tm_min_In{*this}, Tm_In{*this}, Tm_max_In{*this} ,
-                            G_min_Up{*this},   G_Up{*this},  G_max_Up{*this} ,
-                            G_min_Dw{*this},   G_Dw{*this},  G_max_Dw{*this} ,
-                            G_min_In{*this},   G_In{*this},  G_max_In{*this} ;
+                            copy_f_s_2          {primers, STR("copy")},   
+                            copy_s              {primers, STR("c")},
+                            copy_s_a            {primers, STR("c")};      
+    nana::label             error_              {primers, STR("no error")};
+    nana::NumberBox         Tm_min_Up{interaction}, Tm_Up{interaction}, Tm_max_Up{interaction} ,
+                            Tm_min_Dw{interaction}, Tm_Dw{interaction}, Tm_max_Dw{interaction} ,
+                            Tm_min_In{interaction}, Tm_In{interaction}, Tm_max_In{interaction} ,
+                            G_min_Up {interaction},  G_Up{interaction},  G_max_Up{interaction} ,
+                            G_min_Dw {interaction},  G_Dw{interaction},  G_max_Dw{interaction} ,
+                            G_min_In {interaction},  G_In{interaction},  G_max_In{interaction} ;
 
     BindGroup              _TmCalc;
 public:     
@@ -872,29 +875,49 @@ public:
 
     void SetDefLayout   () override
     {
-        _DefLayout= "vertical      gap=2  min=150           \n\t"
-            "       < weight=50  <vertical min=100 gap=2 InputSec>   < weight=50 gap=1 CopyBut grid=[2,2]  collapse(0,0,1,2)>  >       \n\t "
-            "       < weight=25 <weight=20><error min=50> <rev_compl weight=80>>         \n\t  "
-            "       < weight=80 gap=2  <vertical weight=80 gap=2 Left>   < Table min=280 grid=[7,4]>  >       \n\t "
-            "       < vertical weight=50  ResAlign>    "
-	                 //"       <weight=1>                \n\t"
-
+        _DefLayout= 	
+	"vertical      gap=8  min=150    margin=5                              		\n\t"
+	"		       < weight=95  primers  >                                               		\n\t"
+	"		        < weight=95 horizontal gap=2  <weight=120 vertical gap=2  margin=[15,45,0,15]   Left  >              	\n\t"
+	"                                                                       <weight=320   Table     >  >           		\n\t"
+	"		        < weight=70 vertical  ResAlign>    		\n\t"
+	"		\n\t"
             ;
+
+         primers.fmt += "<weight=50 horizontal margin=[0,5,0,5] <min=100 vertical gap=2 InputSec>                            "  
+                        "                                       <weight=50 gap=1 CopyBut grid=[2,2]  collapse(0,0,1,2)> > \n\t "
+                        "<weight=23 horizontal  <weight=20>"
+                        "                       <min=50    error     > "
+                        "                       <weight=80 rev_compl >     >         \n\t  "; 
+         primers.plc.div(primers.fmt.c_str());
+
+         interaction.fmt += "<min=280    margin=[0,5,5,5] Table    grid=[7,4]    >                            "  ;
+         interaction.plc.div(interaction.fmt.c_str());
+
+         align.fmt += "< weight=50 vertical margin=[0,5,0,5]  ResAlign  >                            "  ;
+         align.plc.div(align.fmt.c_str());
+
+
     }
     void AsignWidgetToFields() override
     {
-	    _place.field("rev_compl")<< chkBx_copy_rev << chkBx_copy_compl ;
-	    _place.field("InputSec" )<< sec_ << sec2align_ ;
-	    _place.field("error"    )<< error_ ;
-	    _place.field("Left"     )<< run_  << chkBx_align;
-	    _place.field("CopyBut"  )<< /*nana::vplace::room (*/copy_f_s_2/*, nana::size(1, 2))*/<< copy_s << copy_s_a ;
-	    _place.field("Table"    )<< L""          << L"   min-" << L"Tm(°C)"   << L"-max" << L"   min-"  << L"G(kJ)"   << L"-max   "  ;
-	    _place.field("Table"    )<< L"Up"        << Tm_min_Up << Tm_Up      << Tm_max_Up<<G_min_Up  <<  G_Up     <<  G_max_Up  ;
-	    _place.field("Table"    )<< L"Down"      << Tm_min_Dw << Tm_Dw      << Tm_max_Dw<<G_min_Dw  <<  G_Dw     <<  G_max_Dw  ;
-	    _place.field("Table"    )<< L"Interact"  << Tm_min_In << Tm_In      << Tm_max_In<<G_min_In  <<  G_In     <<  G_max_In  ;
+	    _place.field("primers"  )<< primers    ;
+	    _place.field("Left"     )<< run_        << chkBx_align;
+	    _place.field("Table"    )<< interaction;
+	    _place.field("ResAlign" )<< align      ;
+
+	    primers.plc["InputSec" ]<< sec_          << sec2align_ ;
+	    primers.plc["CopyBut"  ]<<  copy_f_s_2   << copy_s      << copy_s_a ;
+	    primers.plc["error"    ]<< error_        ;
+	    primers.plc["rev_compl"]<< chkBx_copy_rev << chkBx_copy_compl ;
+
+	    interaction.plc["Table" ]<< L""          << L"   min-" << L"Tm(°C)"   << L"-max" << L"   min-"  << L"G(kJ)"   << L"-max   "   
+	                             << L"Up"        << Tm_min_Up << Tm_Up        << Tm_max_Up<<G_min_Up   <<  G_Up      <<  G_max_Up   
+	                             << L"Down"      << Tm_min_Dw << Tm_Dw        << Tm_max_Dw<<G_min_Dw   <<  G_Dw      <<  G_max_Dw   
+	                             << L"Interact"  << Tm_min_In << Tm_In        << Tm_max_In<<G_min_In   <<  G_In      <<  G_max_In  ;
 
 
-	    _place.field("ResAlign" )<< txtBx_ResultSec << txtBx_ResultSec2Align ;
+        align.plc["ResAlign" ]  << txtBx_ResultSec << txtBx_ResultSec2Align ;
     }
     void Run()
     {
