@@ -47,5 +47,8 @@
     <ClInclude Include="..\include\ThDySec\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\ThDySec\multsec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

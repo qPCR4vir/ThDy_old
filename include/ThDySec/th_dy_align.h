@@ -11,7 +11,7 @@
 #define _TH_DY_ALIGN_H
 //#define _CRT_SECURE_NO_WARNINGS
 #include <assert.h>
-#include "sec.h"
+#include "multsec.h"
 #include "common.h" 
 
 //  OJO !!! La primera sec a alinear es la sonda - "simple cadena", mientras que la seg sec es el Target - de doble cadena

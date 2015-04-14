@@ -61,6 +61,7 @@
     <ClInclude Include="..\include\ThDySec\cod_deg.h" />
     <ClInclude Include="..\include\ThDySec\common.h" />
     <ClInclude Include="..\include\ThDySec\link.h" />
+    <ClInclude Include="..\include\ThDySec\multsec.h" />
     <ClInclude Include="..\include\ThDySec\oligo.h" />
     <ClInclude Include="..\include\ThDySec\sec.h" />
     <ClInclude Include="..\include\ThDySec\th_dy_align.h" />

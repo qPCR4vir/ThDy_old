@@ -24,7 +24,7 @@
 
 using namespace std ; 
 
-#include "ThDySec/sec.h"
+#include "ThDySec/multsec.h"
 #include "ThDySec/common.h" 
 using namespace DegCod;
 
