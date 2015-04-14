@@ -1,3 +1,12 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\include\ThDySec\th_dy_param.h
+*
+* @brief 
+*/
+
 #ifndef _TH_DY_PARAM_H
 #define _TH_DY_PARAM_H
 

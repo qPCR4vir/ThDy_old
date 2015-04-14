@@ -1,3 +1,11 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\include\ThDySec\cod_deg.h
+*
+* @brief 
+*/
 
 #ifndef _COD_DEG_H
 #define _COD_DEG_H
@@ -11,9 +19,9 @@ using Base = unsigned char ;
 using Code = Base;
 inline Base base(char b){return static_cast<Base>(b);}
 
-/// Introducir Letter->UCHAR_MAX , Base -> "ACGT<>-" , DegBase -> "-GCSTKYBARMVWDHN"
-/// las 4 bases en el orden complementario de Kadelari. Cambiar a algo asi "-TGCA." o "GCTA-." o "GCTAx-." Calcular si no es mejor "-GCSTKYBARMVWDHN"
-/// usar basek[]=".ACGT$"   or basek[]="-ACGT$"  --- efecto del '-' ????
+///\todo ? Introducir Letter->UCHAR_MAX , Base -> "ACGT<>-" , DegBase -> "-GCSTKYBARMVWDHN"
+///\todo ?  las 4 bases en el orden complementario de Kadelari. Cambiar a algo asi "-TGCA." o "GCTA-." o "GCTAx-." Calcular si no es mejor "-GCSTKYBARMVWDHN"
+///\todo ?  usar basek[]=".ACGT$"   or basek[]="-ACGT$"  --- efecto del '-' ????
 
 const Base	nu2ba		[]="GCTA"				,  ///< las 4 bases, cod corto. de "numero a base".
 			nu2c_ba		[]="CGAT"				,  // 

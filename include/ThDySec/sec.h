@@ -1,4 +1,14 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\include\ThDySec\sec.h
+*
+* @brief 
+*/
+
 #pragma unmanaged	
+
 #ifndef _SEC_H
 #define _SEC_H
 #include <stdlib.h>

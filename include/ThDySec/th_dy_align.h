@@ -1,3 +1,11 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\include\ThDySec\th_dy_align.h
+*
+* @brief 
+*/
 #pragma unmanaged	
 #ifndef _TH_DY_ALIGN_H
 #define _TH_DY_ALIGN_H

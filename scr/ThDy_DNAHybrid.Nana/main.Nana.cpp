@@ -1,3 +1,13 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\scr\ThDy_DNAHybrid.Nana\main.Nana.cpp
+*
+* @brief 
+*/
+
+
 #include <iostream>    // temp, for debugging
 #include <fstream>     // temp, for debugging
 #include <filesystem>

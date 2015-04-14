@@ -1,3 +1,12 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\include\ThDy_programs\prog_comm_functions.h
+*
+* @brief 
+*/
+
 #ifndef _PROG_COMM_FUNTIONS_H
 #define _PROG_COMM_FUNTIONS_H
 #pragma unmanaged

@@ -1,5 +1,16 @@
-//#include "stdafx.h"
-//#pragma unmanaged
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\scr\ThDySec\sec.cpp
+*
+* @brief 
+*/
+
+#ifdef WINDOWS_FORM_GUI
+#include "stdafx.h"
+#pragma unmanaged
+#endif
 
 #include <stdio.h>
 #include <string.h>

@@ -1,4 +1,13 @@
-// Definiciones y declaraciones basicas. A usar por todos, user interface and programs. Primaria?, no depende? de nadie?.
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  C:\Prog\ThDySec\include\ThDySec\common.h
+*
+* @brief Definiciones y declaraciones basicas. 
+* A usar por todos, user interface and programs. Primaria?, no depende? de nadie?.
+*/
+
 #ifndef _COMMON_H
 #define _COMMON_H
 

@@ -1,6 +1,17 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\scr\ThDySec\th_dy_align.cpp
+*
+* @brief 
+*/
 
-//#include "stdafx.h"
-//#pragma unmanaged	
+#ifdef WINDOWS_FORM_GUI
+#include "stdafx.h"
+#pragma unmanaged
+#endif
+
 #include "ThDySec/th_dy_align.h"
 #include <set>
 
