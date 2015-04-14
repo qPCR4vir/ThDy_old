@@ -442,6 +442,7 @@
     <ClCompile Include="..\..\ExtLib\Nana\source\gui\widgets\float_listbox.cpp" />
     <ClCompile Include="..\..\ExtLib\Nana\source\gui\widgets\form.cpp" />
     <ClCompile Include="..\..\ExtLib\Nana\source\gui\widgets\frame.cpp" />
+    <ClCompile Include="..\..\ExtLib\nana\source\gui\widgets\group.cpp" />
     <ClCompile Include="..\..\ExtLib\Nana\source\gui\widgets\label.cpp" />
     <ClCompile Include="..\..\ExtLib\Nana\source\gui\widgets\listbox.cpp" />
     <ClCompile Include="..\..\ExtLib\Nana\source\gui\widgets\menu.cpp" />
@@ -548,6 +549,7 @@
     <ClInclude Include="..\..\ExtLib\Nana\include\nana\gui\widgets\float_listbox.hpp" />
     <ClInclude Include="..\..\ExtLib\Nana\include\nana\gui\widgets\form.hpp" />
     <ClInclude Include="..\..\ExtLib\Nana\include\nana\gui\widgets\frame.hpp" />
+    <ClInclude Include="..\..\ExtLib\nana\include\nana\gui\widgets\group.hpp" />
     <ClInclude Include="..\..\ExtLib\Nana\include\nana\gui\widgets\label.hpp" />
     <ClInclude Include="..\..\ExtLib\Nana\include\nana\gui\widgets\listbox.hpp" />
     <ClInclude Include="..\..\ExtLib\Nana\include\nana\gui\widgets\menu.hpp" />

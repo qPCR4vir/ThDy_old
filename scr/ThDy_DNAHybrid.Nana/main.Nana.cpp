@@ -128,39 +128,39 @@ void  SetupPage::AsignWidgetToFields ()
 	    _place.field("checks"   )    <<  _gr_checks ;
 	    _place.field("salt"     )    <<  _gr_salt   ;
 
-        _gr_dir .plc["Results"  ]    <<  _results   ;
-        _gr_dir .plc["seq"      ]    <<  _gr_seq    ;
-	    _gr_dir .plc["NN_param" ]    << _NNParamFile  ;
+        _gr_dir .plc()["Results"  ]    <<  _results   ;
+        _gr_dir .plc()["seq"      ]    <<  _gr_seq    ;
+	    _gr_dir .plc()["NN_param" ]    << _NNParamFile  ;
+	    _gr_dir .plc()["ckBx_loadNNParam"]    <<   ckBx_loadNNParam ;
+        _gr_seq .plc()["_targets"        ]    <<   _gr_targ  ;
+        _gr_seq .plc()["_nTsec"          ]    <<   _gr_ntarg  ;
+        _gr_seq .plc()["_PCRfiltre"      ]    <<   _gr_PCRfiltre  ;
+        _gr_seq .plc()["_PrimersFilePCR" ]    <<   _gr_PrimersFilePCR  ;
+        _gr_seq .plc()["_Prob_uArr"      ]    <<   _gr_uArr  ;
 
-        _gr_seq .plc["_targets"        ]    <<   _gr_targ  ;
-        _gr_seq .plc["_nTsec"          ]    <<   _gr_ntarg  ;
-        _gr_seq .plc["_PCRfiltre"      ]    <<   _gr_PCRfiltre  ;
-        _gr_seq .plc["_PrimersFilePCR" ]    <<   _gr_PrimersFilePCR  ;
-        _gr_seq .plc["_Prob_uArr"      ]    <<   _gr_uArr  ;
+        _gr_targ .plc()["dir"  ]    <<   _targets  ;
+        _gr_targ .plc()["Opt"  ]    <<   _chkTargRecDir  << _chkTargOnlyStruct ;
 
-        _gr_targ .plc["dir"  ]    <<   _targets  ;
-        _gr_targ .plc["Opt"  ]    <<   _chkTargRecDir  << _chkTargOnlyStruct ;
+        _gr_ntarg .plc()["dir"  ]    <<   _nTsec  ;
+        _gr_ntarg .plc()["Opt"  ]    <<   _chk_nTgRecDir <<  _chk_nTgOnlyStruct          ;
 
-        _gr_ntarg .plc["dir"  ]    <<   _nTsec  ;
-        _gr_ntarg .plc["Opt"  ]    <<   _chk_nTgRecDir <<  _chk_nTgOnlyStruct          ;
-
-        _gr_PCRfiltre .plc["dir"  ]    <<   _PCRfiltre  ;
+        _gr_PCRfiltre .plc()["dir"  ]    <<   _PCRfiltre  ;
         //_gr_PCRfiltre .plc["Opt"  ]    << _chkTargRecDir  << _chkTargOnlyStruct ;
 
-        _gr_PrimersFilePCR .plc["dir"  ]    <<   _PrimersFilePCR  ;
-        _gr_PrimersFilePCR .plc["Opt"  ]    <<   _chkPrimRecDir  << _chkPrOnlyStruct ;
+        _gr_PrimersFilePCR .plc()["dir"  ]    <<   _PrimersFilePCR  ;
+        _gr_PrimersFilePCR .plc()["Opt"  ]    <<   _chkPrimRecDir  << _chkPrOnlyStruct ;
 
-        _gr_uArr .plc["dir"  ]    <<   _Prob_uArr  ;
-        _gr_uArr .plc["Opt"  ]    <<   _chkProbRecDir  << _chkProbOnlyStruct ;
+        _gr_uArr .plc()["dir"  ]    <<   _Prob_uArr  ;
+        _gr_uArr .plc()["Opt"  ]    <<   _chkProbRecDir  << _chkProbOnlyStruct ;
 
-	    _gr_checks.plc["checks"  ]   << ckBx_savTm    << ckBx_savPos     <<ckBx_savG         << ckBx_savAlign 
+	    _gr_checks.plc()["checks"  ]   << ckBx_savTm    << ckBx_savPos     <<ckBx_savG         << ckBx_savAlign 
                                      << ckBx_savProj  << ckBx_savG_Plasm << ckBx_savTm_Plasm << ckBx_savLog
-                                     << ckBx_savExportSond << ckBx_savExportTarg<< ckBx_savNNParam<< ckBx_loadNNParam;
+                                     << ckBx_savExportSond << ckBx_savExportTarg<< ckBx_savNNParam;
 
-	    _gr_salt.plc["ConcST"     ]   << numUpDowSdConc       << numUpDowTgConc ;
-	    _gr_salt.plc["ConcSaltTa" ]   << numUpDowSalConc      << numUpDowTa ;
-	    _gr_salt.plc["SMeth"      ]   << L" Salt Correct. Method:"	   <<  comBoxSalMeth;
-	    _gr_salt.plc["AMeth"      ]   << L" ThDy Align. Method"       <<  comBoxTAMeth ;
+	    _gr_salt.plc()["ConcST"     ]   << numUpDowSdConc       << numUpDowTgConc ;
+	    _gr_salt.plc()["ConcSaltTa" ]   << numUpDowSalConc      << numUpDowTa ;
+	    _gr_salt.plc()["SMeth"      ]   << L" Salt Correct. Method:"	   <<  comBoxSalMeth;
+	    _gr_salt.plc()["AMeth"      ]   << L" ThDy Align. Method"       <<  comBoxTAMeth ;
     }
 void  SetupPage::MakeResponive()
     {
@@ -582,7 +582,7 @@ void  SetupPage::LoadProject(nana::string file)
         menu.append(STR("Rename the selected group of sequences"),[&](nana::menu::item_proxy& ip) 
         {
             
-            RenameFrom rnm(&_tree, nana::charset(_tree.selected().text()));
+            RenameFrom rnm(_tree, nana::charset(_tree.selected().text()));
             nana::API::modal_window( rnm );
             _tree.selected().text(nana::charset(rnm.Name()));
             _tree.selected().value<CMultSec*>()->_name = rnm.Name() ;

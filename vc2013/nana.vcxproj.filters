@@ -351,6 +351,9 @@
     <ClCompile Include="..\..\ExtLib\Nana\source\unicode_bidi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ExtLib\nana\source\gui\widgets\group.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ExtLib\Nana\include\nana\any.hpp">
@@ -709,6 +712,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ExtLib\Nana\include\nana\threads\pool.hpp">
       <Filter>Header Files\threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ExtLib\nana\include\nana\gui\widgets\group.hpp">
+      <Filter>Header Files\GUI\widgets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

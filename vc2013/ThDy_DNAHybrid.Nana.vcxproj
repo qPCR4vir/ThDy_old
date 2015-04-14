@@ -65,7 +65,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ExtLib\nana.ext\include\EditableForm.hpp" />
-    <ClInclude Include="..\..\ExtLib\nana.ext\include\group.h" />
     <ClInclude Include="..\..\ExtLib\nana.ext\include\Numer.hpp" />
     <ClInclude Include="..\..\ExtLib\nana.ext\include\vplace.hpp" />
     <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\main.Nana.h" />

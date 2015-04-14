@@ -57,8 +57,5 @@
     <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\main.Nana.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ExtLib\nana.ext\include\group.h">
-      <Filter>Header Files\nana.ext</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
