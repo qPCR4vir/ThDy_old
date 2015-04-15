@@ -29,6 +29,15 @@ using namespace std ;
 #include "ThDySec/common.h" 
 using namespace DegCod;
 
+CSecAl::CSecAl(CSec &sec, long LenAlign)
+		: _Sec(sec), 
+		  _inAlp_B(sec.Len()), 
+		  _inBp_Al(LenAlign)
+	   {}
+CSecAl::CSecAl(CSec &sec) 
+		: _Sec(sec), 
+		  _inAlp_B(sec.Len())
+	  {}
 
 //!  Inicializa array de posibles cand en esta sec. ;---------------------  CSec------------>  CSecCand  ---------------------
 		CSecCand::CSecCand(CSec &sec, 	SondeLimits sL)		  	

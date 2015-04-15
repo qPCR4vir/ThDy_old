@@ -182,15 +182,8 @@ class CSecAl : public CLink
 	std::vector<long> _inAlp_B ; ///< array que dice que base de la sec va en esa pos del Al (len=Al)
 	std::vector<long> _inBp_Al ; ///< array que dice en que pos del Al va esa base de la sec (len=sec)
 
-	CSecAl(CSec &sec, long LenAlign)
-		: _Sec(sec), 
-		  _inAlp_B(sec.Len()), 
-		  _inBp_Al(LenAlign)
-	   {}
-	CSecAl(CSec &sec) 
-		: _Sec(sec), 
-		  _inAlp_B(sec.Len())
-	  {}
+	CSecAl(CSec &sec, long LenAlign); 
+	CSecAl(CSec &sec) ;
 
 	char *CopyAlignedSecChar(long Al_pBeg, long Al_pEnd, char *CharSec)	;///< CUIDADO !! asume suficiente espacio !!  \todo REVISE!! 
 	char *GetAlignedSecChar (long Al_pBeg, long Al_pEnd) ;               ///< "regala" esta memoria, no olvide delete ! \todo REVISE!! 

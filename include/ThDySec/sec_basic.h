@@ -20,6 +20,7 @@
 
 
 #include "cod_deg.h"
+#include "sec_rang.h"
 //#include "th_dy_param.h"   // crear un nuevo par de fuente cpp con las cosas que nec los dos .h + sec.h
 #include "common.h" 
 
@@ -63,6 +64,7 @@ class CSecBasInfo : public ISec
     sequence	    _c=sequence{ DegCod::basek[DegCod::n_basek-1]};		  ///< sec char, comienzan y terminan con '$'0
 	CMultSec		*_NonDegSet{nullptr} ;                /// \todo: std::unique_ptr<>
 	static int	NewS_ID     ()	{static int last_ID{};	return ++last_ID;	}
+    std::unique_ptr<Aligned_fragment> _aln_fragment;
 
 		CSecBasInfo (int id,     const std::string& nam    , const std::string& clas) 						
 			           :	_ID	 ( id ), 								
