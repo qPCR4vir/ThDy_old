@@ -208,9 +208,9 @@ class CSecGB : public CSec // ---------------------------------------   CSecGB	-
 	std::string 	_Seqdesc_title		 ;
 	long			_Seq_inst_length	 ;	    
 	
-	CSecGB(			std::string&&	Textseq_id_accession ,	
-					std::string&&	Org_ref_taxname	 ,
-					std::string&&	Seqdesc_title	,
+	CSecGB(			std::string	    Textseq_id_accession ,	
+					std::string	    Org_ref_taxname	 ,
+					std::string     Seqdesc_title	,
 					long			Seq_inst_length	 ,    
 					const char	*	sec	,	
 					int				id,						//	char		*	nam,	Seqdesc_title	,	
@@ -236,11 +236,11 @@ class CSecGBtxt : public CSec // ---------------------------------------   CSecG
 	std::string	_DEFINITION      ;
 	std::string	_ACCESSION       ;
 	std::string	_ORGANISM        ;			// ORIGIN      
-	CSecGBtxt(		std::string&&	LOCUS       ,
+	CSecGBtxt(		std::string	    LOCUS       ,
 					long		    Seq_inst_length,	
-					std::string&&	DEFINITION     ,
-					std::string&&	ACCESSION      ,
-					std::string&&	ORGANISM       ,
+					std::string	    DEFINITION     ,
+					std::string	    ACCESSION      ,
+					std::string	    ORGANISM       ,
 					const char	*	sec	,	
 					int				id,						//	char		*	nam,	DEFINITION	,	
 					std::shared_ptr<CSaltCorrNN>  NNpar,  				//	long			l=0,		Seq_inst_length
