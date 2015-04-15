@@ -35,16 +35,21 @@ class CMultSec	;
 class ISec				// Pure virtual class ?
 {public:			
 	using sequence = std::basic_string<Base> ;
-	virtual const sequence& Sequence(													)	const=0 ;
-	const char*          charSequence()	const {return (char*) (  Sequence().c_str()  );}
-	virtual ISec        *Clone   	(DNAStrand strnd=direct								)	const=0 ; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+
+	const char*          charSequence()	const 
+       {return (char*) (  Sequence().c_str()  );} 
+
+	virtual const sequence& Sequence(							  )	const=0 ;
+	virtual ISec        *Clone   	(DNAStrand strnd=direct		  )	const=0 ; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+	virtual std::string& Copy_Seq   (std::string     &SecHier, 
+                                       DNAStrand strnd=direct)	    const=0  ;
 	virtual std::string& Copy_Seq   (std::string &SecHier,  
                                             long InicBase, 
                                             long  EndBase, 
-                                        DNAStrand   strnd =direct )	const=0  ;
-	virtual std::string& Copy_Seq   (std::string     &SecHier, 
-                                       DNAStrand strnd=direct)	const=0  ;
-	virtual				~ISec			(){}
+                                        DNAStrand  strnd =direct )	const=0  ;
+
+	virtual				~ISec			()
+       { }
 };
 
 
@@ -95,12 +100,15 @@ public:
 	bool		Selected(bool select)	{return _selected=select;} 		  	 ///< make protected: ??
 	bool		Selected(		) const {return _selected;}					 ///< User-editable
 	void	    Description (std::string	description)		{ _description=description;}
-	virtual std::string	Description ()const	{return !_description.empty() ? _description : Name() ; }
+	virtual std::string	Description ()const	
+        {
+            return _description.empty() ? Name()  : _description ; 
+        }
 
-	virtual const sequence& Sequence	(						)	const override   /// ver esto !!!
-								{	 
-									return _c ;
-								}
+	const sequence& Sequence	(						)	const override   /// ver esto !!!
+		{	 
+			return _c ;
+		}
 	 std::string& Copy_Seq  	(std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd=direct)	const override ;
 	 std::string& Copy_Seq  	(std::string &SecHier,  DNAStrand strnd=direct)	const override {return Copy_Seq ( SecHier, 1, Len(), strnd ) ;}
 	 bool		 NotIdem		(CSecBasInfo *sec) {return false;}
