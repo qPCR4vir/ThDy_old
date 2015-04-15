@@ -47,7 +47,7 @@ class ISec				// Pure virtual class ?
        { }
 };
 
-
+/// Have a letter sequence but no code sequence and no thermodyinamics
 class CSecBasInfo : public ISec
 { protected:	
 	bool			_selected{true}, _filtered{false};

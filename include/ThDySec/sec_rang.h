@@ -52,10 +52,15 @@ struct fragment:  NumRang<long>
     }
 };
 
+class CSecBasInfo;
+/// to at least aproximately compare positions
 struct Aligned_fragment
 {
-    fragment<CSecBasInfo> sq, bio, sq_ref, bio_ref, aln;
-    
+    fragment<CSecBasInfo> sq,    ///< from self: fragment of the original (posible partial) seq, probably not available 
+                         bio,    ///< from self, but relatively to the presumible complete genome
+                      sq_ref,    ///< from some reference: (posible partial) seq, maybe the first seq of an alignment
+                     bio_ref,    ///< from some reference, but relatively to the presumible complete genome 
+                         aln;    ///< from a reference sequence from the aligment: a consensus
 };
 
 class CRangBase : public NumRang<long> // ---------------------------------------   CRang	: AMPLIAR y mejorar !!!  ---------------------------------------

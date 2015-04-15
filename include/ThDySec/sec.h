@@ -43,7 +43,7 @@ class CMultSec	;
 class CSec : public CLink, public CSecBasInfo	// ---------------------------------------   CSec	---------------------------------------------------
 {public:
 	    int                     x;				///<  ????
-		NumRang<float>	        _Tm ;			///< float		_Tm, _minTm, _maxTm ;				//  
+		TemperatureRang	        _Tm ;			///< float		_Tm, _minTm, _maxTm ;				//  
 		std::shared_ptr<CSaltCorrNN>  _NNpar ;
 		float			        _Conc ;			///< conc de esta molec. Si igual al resto -1 y la toma de NNParam
         std::vector<Code>	    _b=   std::vector<Code>{n_basek-1};			///< sec cod, inicialmente basek
