@@ -23,20 +23,15 @@ namespace filesystem = std::tr2::sys; //std::experimental::filesystem
 
 
 using namespace std;
-
-#include "link.h"
-#include "cod_deg.h"
-#include "sec_basic.h"
+#include "sec_basic.h" 
 #include "th_dy_param.h"   // crear un nuevo par de fuente cpp con las cosas que nec los dos .h + sec.h
 #include "common.h" 
 
-// separar CSec de la ThermDy y crear derivada CThDySec que incluye SdH,S,Tm  ?????????
+ 
 // anadir funcion de compactar cod (eliminar los gap y bases deg?). SdH y S se recalculan.
 // anadir funcion para regenerar cod no compactado, recordar estado comp/no comp
 // crear (adaptar) clase primer derivada de CSec, con pos y Tm en cada sec Target
-// pensar mejor la relacion con NNPar
-// anadir static member PNNParams NNpar??
-
+ 
 class CMultSec	;
 
 
@@ -87,7 +82,7 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
 	Energy		G	(long pi			)const	{return G(pi,Len())    ;}   ///< G de la sonda con sec desde pi hasta el final, inclusive ambos!!
 	Energy		G	(					)const	{return G(1,Len())     ;}   ///< G de la sonda con sec desde inicio hasta el final, inclusive ambos!!
 
-	 ~CSec() override  ;   // decidir si vale la pena que sea virtual. Cual es el efecto??
+	 ~CSec() override  ;    
 	virtual bool NotIdem(CSec *sec) {return false;}
 };
 
