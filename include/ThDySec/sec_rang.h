@@ -7,40 +7,27 @@
 * @brief 
 */
 
+#pragma unmanaged	
+
 #ifndef _SEC_RANG_H
 #define _SEC_RANG_H
 
-#pragma unmanaged	
-
-#include <stdlib.h>
-#include <fstream>
-#include <cassert>
-#include <string>
 #include <memory>
 #include <vector>
-#include <filesystem>
-namespace filesystem = std::tr2::sys; //std::experimental::filesystem
-
-
-using namespace std;
 
 #include "link.h"
-#include "cod_deg.h"
-#include "sec.h"
-
-#include "th_dy_param.h"   // crear un nuevo par de fuente cpp con las cosas que nec los dos .h + sec.h
 #include "common.h" 
 
 template <class SQ>
 struct fragment:  NumRang<long>
 {
     SQ *sq{};
-    Sec_fragment (SQ &s, long beg = 0, long end = 0)
+    fragment (SQ &s, long beg = 0, long end = 0)
         : NumRang<long>(beg, end),
         sq{&s}
     { }
 
-    Sec_fragment (long beg = 0, long end = 0)
+    fragment (long beg = 0, long end = 0)
         : NumRang<long>(beg, end)
     { }
 
@@ -57,11 +44,17 @@ struct fragment:  NumRang<long>
                 return sq.Len();
         return 0;
     }
+
+    void set (SQ &s, long beg = 0, long end = 0)
+    { 
+        Set(beg, end);
+        sq=&s;
+    }
 };
 
 struct Aligned_fragment
 {
-    fragment<CSecBasInfo> sq, bio, sq_ref, bio_ref;
+    fragment<CSecBasInfo> sq, bio, sq_ref, bio_ref, aln;
     
 };
 
@@ -158,6 +151,7 @@ class CRang : public CRangBase// ---------------------------------------   CRang
 } ; 
 
 
+class CSec;
 //! -------------------------   CSecCand	-------------------------------
 /// destinado a formar parte de una lista en un busq de sondas.
 class CSecCand : public CLink 
