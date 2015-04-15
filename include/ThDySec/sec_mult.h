@@ -2,7 +2,7 @@
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2015
 *
-* @file  ThDySec\include\ThDySec\multsec.h
+* @file  ThDySec\include\ThDySec\sec_mult.h
 *
 * @brief 
 */
@@ -11,6 +11,7 @@
 
 #ifndef _MULTSEC_H
 #define _MULTSEC_H
+
 #include <stdlib.h>
 #include <fstream>
 #include <cassert>
@@ -24,6 +25,7 @@ namespace filesystem = std::tr2::sys; //std::experimental::filesystem
 using namespace std;
 
 #include "sec.h" 
+#include "sec_rang.h" 
 
   /// @brief permite hacer grupos de sec o de MultiSec para analisis por "especies"
   /// anadir posibilidad de construir sec concenso 

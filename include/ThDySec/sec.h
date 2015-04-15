@@ -11,6 +11,7 @@
 
 #ifndef _SEC_H
 #define _SEC_H
+
 #include <stdlib.h>
 #include <fstream>
 #include <cassert>
@@ -25,6 +26,7 @@ using namespace std;
 
 #include "link.h"
 #include "cod_deg.h"
+#include "sec_basic.h"
 #include "th_dy_param.h"   // crear un nuevo par de fuente cpp con las cosas que nec los dos .h + sec.h
 #include "common.h" 
 
@@ -36,87 +38,6 @@ using namespace std;
 // anadir static member PNNParams NNpar??
 
 class CMultSec	;
-class ISec				// Pure virtual class ?
-{public:			
-	using sequence = std::basic_string<Base> ;
-	virtual const sequence& Sequence(													)	const=0 ;
-	const char*          charSequence()	const {return (char*) (  Sequence().c_str()  );}
-	virtual ISec        *Clone   	(DNAStrand strnd=direct								)	const=0 ; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
-	virtual std::string& Copy_Seq   (std::string &SecHier,  
-                                            long InicBase, 
-                                            long  EndBase, 
-                                        DNAStrand   strnd =direct )	const=0  ;
-	virtual std::string& Copy_Seq   (std::string     &SecHier, 
-                                       DNAStrand strnd=direct)	const=0  ;
-	virtual				~ISec			(){}
-};
-
-
-class CSecBasInfo : public ISec
-{ protected:	
-	bool			_selected{true}, _filtered{false};
-	int				_ID{NewS_ID()} ;			          ///< num de la sec en file original?? en total??, num unico?
-	std::string     _name ;			                      ///< nombre unico? FASTA id	// char			*_name ;
-	std::string		_description;
-	//long			_len ;			                      ///< longitud corregida, sin los '$'
-	long			_GrDeg {1} ;		                  ///< Grado de degeneracion. Cantidad total de diferentes molec, dependiendo de deg
-	float			_GCp   {} ;		
-	long			_Count[DegCod::n_dgba];	              ///< An array of counters for each deg base - inicializar!!
-	long			_NDB   {};			                  ///< cantidad de bases deg
-	std::string     _Clas ;		                          ///< clasificacion
-    sequence	    _c=sequence{ basek[n_basek-1]};		  ///< sec char, comienzan y terminan con '$'0
-	CMultSec		*_NonDegSet{nullptr} ;                /// \todo: std::unique_ptr<>
-	static int	NewS_ID     ()	{static int last_ID{};	return ++last_ID;	}
-
-		CSecBasInfo (int id,     const std::string& nam    , const std::string& clas) 						
-			           :	_ID	 ( id ), 								
-							_name( trim_string	(nam )),	
-						    _Clas(clas )/*,
-							_c{2,DegCod::basek[DegCod::n_basek]}*/
-                       {} 
-
-		CSecBasInfo()  {}
-		CSecBasInfo ( long l)    {_c.reserve(l+2);}   ///   ????????????????????
-public:
-    void ExportFASTA(ofstream& ofile, int line_len=80)
-    {
-        ofile << std::endl 
-              << ">" << _name << " " << Description ()   ;
-        for (int i=0 ; i< Len() ; ++i )
-        {
-            if (!(i % line_len)) ofile << std::endl;
-            ofile << charSequence()[i+1];
-        }
-        ofile << std::endl;
-     }
-
-	//CSecBasInfo			*CopyFirstBases	(long pos)	;			 // copia parcialmente hasta la pos
-    ~CSecBasInfo() override;
-    std::string Name		()const		{return _name;}              ///< User-editable
-	int			ID			()const		{return _ID;}	             ///< Run-time-sistem define, non-editable
-	bool		Filtered(bool filter)	{return _filtered=filter;}   ///< User-editable ?????
-	bool		Filtered(		) const {return _filtered;}
-	bool		Selected(bool select)	{return _selected=select;} 		  	 ///< make protected: ??
-	bool		Selected(		) const {return _selected;}					 ///< User-editable
-	void	    Description (std::string	description)		{ _description=description;}
-	virtual std::string	Description ()const	{return !_description.empty() ? _description : Name() ; }
-
-	virtual const sequence& Sequence	(						)	const override   /// ver esto !!!
-								{	 
-									return _c ;
-								}
-	 std::string& Copy_Seq  	(std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd=direct)	const override ;
-	 std::string& Copy_Seq  	(std::string &SecHier,  DNAStrand strnd=direct)	const override {return Copy_Seq ( SecHier, 1, Len(), strnd ) ;}
-	 bool		 NotIdem		(CSecBasInfo *sec) {return false;}
-	Base		operator[]	(int i)const{return _c[i];}  /// i+1 ????
-
-	long		Len			()const		{return _c.length()-2;} //
-	long		Degeneracy	()const		{return _GrDeg;}
-	long		*BaseCount	()			{return _Count;}
-	long		BaseCount	(Base b)	{ return  DegCod::is_degbase[b] ?  _Count[DegCod::db2nu[b]] : 0;}
-	CMultSec	*NonDegSet	()			{return _NonDegSet;}
-	float		GCpercent	()const		{return	_GCp ;}		
-};
 
 
 class CSec : public CLink, public CSecBasInfo	// ---------------------------------------   CSec	---------------------------------------------------
@@ -336,117 +257,8 @@ class CSecGBtxt : public CSec // ---------------------------------------   CSecG
 	virtual ~CSecGBtxt() {				}	
 };
 
-
-class CRangBase : public NumRang<long> // ---------------------------------------   CRang	: AMPLIAR y mejorar !!!  ---------------------------------------
-{public:	
-	CRangBase (long i,long f) : NumRang<long>(i,f), _c(   f+1, i-1   )  { /* open();*/} 		// NumRang<long> _p;
-
-public:
-	CRangBase MatchRange() {return CRangBase( _c.Min(), _c.Max() );} // NO ME GUSTA ASI  !!!!!! pensar algo mas eficiente
-	void open(void){  _c.Set(   Max()+1, Min()-1   )     ;}
-						//    pi      pf                fi
-											//----|++++++++|-----------------|--------			El rango inicial, y como va quedando
-											// pfcur                        fi					El rango para calculo ("cur"), antes del comienzo	
-											//---|----------|----------------|--------			Asi se queda si no hibridan entre si las sec en esta zona,
-											//             picur            fi					y entonces "colapsa" el rango
-											//            pfcur             fi					En este caso encontro 5 "cand" comunes	
-											//--------|+++|------------------|--------			
-											//       picur                  fi					
-	//NumRang<long>	_p, _pcur ;
-	void adjustCur(long p){ _c.Expand(p); } //if( _c.Min()>p ) 	_c.Min()=p;		if( _c.Max()<p )	_c.Max()=p;}
-	bool isOpen  ()const{ return _c.Min() > _c.Max() ;}
-	bool hasMatch()const{ return !isOpen   ()    ;}
-	long NumMatch()const{ return _c.length() + 1;}
-	void SchrinkToMatch(){Set(_c);}					// scheck if open????  
-	//long length()const  { return Max() - Min() ;}
-	void schift(int s) { Min()+=s;Max()+=s;_c.Min()+=s;_c.Max()+=s;}   //{ _pf+=s;_pi+=s;_pfcur+=s;_picur+=s;}
-	bool addMatch(long i){ if (inRang(i)) {adjustCur(i);return true;} else return false;}
-
- protected:
-	NumRang<long> _c;		//	long			_pi,_picur, _pf,_pfcur; //  _picur= _pf+1; _pfcur= _pi-1;}	
-} ; 
-class CRangBaseSchift /*: public CRangBase */
-{	CRangBase &_R;
-	long _sch;
-public:
-	CRangBaseSchift	(CRangBase& r, long sch) : _R(r), _sch(sch)
-				{
-					_R.schift(_sch);
-				}
-	void AddSchift	(int sch)
-				{
-					_sch+=sch;
-					_R.schift(sch);
-				}
-	void ResetSchift()
-				{
-					_R.schift(-_sch);
-					_sch=0;
-				}
-		~CRangBaseSchift()
-				{
-					ResetSchift();
-				}
-};
-
-
-
-class CRang : public CRangBase// ---------------------------------------   CRang	: AMPLIAR y mejorar !!!  ---------------------------------------
-{public:		//NumRang<long>	_p, _pcur ;
-
-	       CRang (long i,long f) : CRangBase ( i, f),	 matchs(new int[length()+1])    { for (int i=0 ; i<= length() ; ++i) matchs[i]=0;} 
-		   CRang (CRangBase  &R) : CRangBase ( R ),	     matchs(new int[length()+1])    { for (int i=0 ; i<= length() ; ++i) matchs[i]=0;} 
-	int	   *matchs;
-	      ~CRang  ( )  { delete []matchs; }
-    void  IncrMatchs() { 	for (int pi_pos=_c.Min()    ; pi_pos <= _c.Max() ; pi_pos++ ) 	matchs[pi_pos - Min() ]++;		}
-
-} ; typedef CRang *pCRang ;
-
-
-//! destinado a formar parte de una lista en un busq de sondas.-------------------------   CSecCand	-------------------------------
-class CSecCand : public CLink 
-{public:						
-	long _NumPosCand, _NumCand  , _NumPosCandIn, _NumCandIn  ,_NumCandExact ;	
-	CSec &_Sec ;	// ref a la sec, que ni se modifica ni se cambia de lugar
-	pCRang *_rg;
-
-	//CSecCand(CSec &sec, float Tm_min, float Tm_max, int L_min, int L_max);
-	CSecCand(CSec &sec, 	SondeLimits sL		);
-							//float	G_min	, float G_max ,					// en kcal ...
-							//float	Tm_min	, float Tm_max ,  
-							//int		L_min	, int L_max 
-
-	long ColapseRangs(bool colapse=true);
-
-	virtual ~CSecCand(){ for (long i=0; i<=_Sec.Len(); i++)	delete _rg[i]; 	delete _rg;}
-};
-
-
-class CSecAl : public CLink // destinado a formar parte de una lista en un alineamieto.
-{public:
-	CSec &_Sec ;	// ref a la sec, que ni se modifica ni se cambia de lugar
-	long *_inAlp_B ;// array que dice que base de la sec va en esa pos del Al (len=Al)
-	long *_inBp_Al ;// array que dice en que pos del Al va esa base de la sec (len=sec)
-
-	CSecAl(CSec &sec, long LenAlign)
-		: _Sec(sec), 
-		  _inAlp_B(new long[sec.Len()]), 
-		  _inBp_Al(new long[LenAlign])
-	   {}
-	CSecAl(CSec &sec) 
-		: _Sec(sec), 
-		  _inAlp_B(new long[sec.Len()]), 
-		  _inBp_Al(0)
-	  {}
-	virtual ~CSecAl(){ delete []_inAlp_B; delete []_inBp_Al;}
-
-	char *CopyAlignedSecChar(long Al_pBeg, long Al_pEnd, char *CharSec)	;// CUIDADO !! asume suficiente espacio !!
-	char *GetAlignedSecChar (long Al_pBeg, long Al_pEnd);  // "regala" esta memoria, no olvide delete !
-};
-
-    // ahora estos seran solo para mantener "copias" (punteros) de sec o msec en otras listas. 
-    // Cada sec o msec sabe en que lista esta
-
+/// ahora estos seran solo para mantener "copias" (punteros) de sec o msec en otras listas. 
+/// Cada sec o msec sabe en que lista esta
 class CSecLink   : public CLink    // NO es dueno de la sec, no la borra, no delete
 {	public:
 		CSecLink (CSec *s, CSecLink *p, CSecLink *n=nullptr) : _sec(s), CLink (n, p) {} ;

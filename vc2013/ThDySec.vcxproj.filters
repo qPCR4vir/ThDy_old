@@ -24,6 +24,15 @@
     <ClCompile Include="..\scr\ThDySec\th_dy_param.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\scr\ThDySec\sec_mult.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scr\ThDySec\sec_basic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scr\ThDySec\sec_rang.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\ThDySec\cod_deg.h">
@@ -47,7 +56,13 @@
     <ClInclude Include="..\include\ThDySec\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\ThDySec\multsec.h">
+    <ClInclude Include="..\include\ThDySec\sec_basic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ThDySec\sec_mult.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ThDySec\sec_rang.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

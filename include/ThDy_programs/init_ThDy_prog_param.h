@@ -12,7 +12,7 @@
 
 #include "init_prog_param.h" 
 #include <memory>
-#include "ThDySec/multsec.h"
+#include "ThDySec/sec_mult.h"
 #include <filesystem>
 
 const SecPos MAX_SEQ_LEN_ALIGN{ 2001 };
