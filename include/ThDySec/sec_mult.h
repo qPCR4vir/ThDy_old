@@ -341,6 +341,13 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name =
 
 		virtual ~CMultSec ()  ;	
 
+        long Len()
+           {
+               if (_Consenso)
+                   return _Consenso->Len();
+               else 0;
+           }
+
 	private:
         CList			_LSec, _LMSec;    
         //std::list<std::shared_ptr<CSec    >> _LSec;

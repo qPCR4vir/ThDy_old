@@ -31,6 +31,39 @@ using namespace std;
 #include "th_dy_param.h"   // crear un nuevo par de fuente cpp con las cosas que nec los dos .h + sec.h
 #include "common.h" 
 
+template <class SQ>
+struct fragment:  NumRang<long>
+{
+    SQ *sq{};
+    Sec_fragment (SQ &s, long beg = 0, long end = 0)
+        : NumRang<long>(beg, end),
+        sq{&s}
+    { }
+
+    Sec_fragment (long beg = 0, long end = 0)
+        : NumRang<long>(beg, end)
+    { }
+
+    long lenght()
+    { 
+        if ( Min() && Max() )
+            return Max()-Min()+1;
+        if ( Max() )
+            return Max();
+        if (sq)
+            if ( Min() )
+                return sq.Len()-Min()+1;
+            else
+                return sq.Len();
+        return 0;
+    }
+};
+
+struct Aligned_fragment
+{
+    fragment<CSecBasInfo> sq, bio, sq_ref, bio_ref;
+    
+};
 
 class CRangBase : public NumRang<long> // ---------------------------------------   CRang	: AMPLIAR y mejorar !!!  ---------------------------------------
 {
