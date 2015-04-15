@@ -29,8 +29,8 @@ using namespace std ;
 using namespace DegCod;
 
 //#define SEQUENCES_MAX_SIZE 100000
-char *DNAStrandName[]=	{""		, "(c)", ""		, "(r)"	, "(i)", "(c)"		} ;
-// enum DNAStrand		{plus	, minus, direct	, rev	, compl, rev_compl	} ;
+char *DNAstrandName[]=	{""		, "(c)", ""		, "(r)"	, "(i)", "(c)"		} ;
+// enum DNAstrand		{plus	, minus, direct	, rev	, compl, rev_compl	} ;
 
 
 CSecBasInfo::~CSecBasInfo()
@@ -41,7 +41,7 @@ CSecBasInfo::~CSecBasInfo()
 	// en otro caso, donde borrar _NonDegSet ????. Lo borra la lista en la que esta insertado
 }
 	 
-std::string& CSecBasInfo::Copy_Seq  	(std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd) const
+std::string& CSecBasInfo::Copy_Seq  	(std::string &SecHier,  long InicBase, long EndBase, DNAstrand strnd) const
 {	
 	if ( EndBase< 1 || Len() <EndBase ) EndBase= Len(); 
 	long l=EndBase-InicBase+1 ;  
@@ -50,39 +50,39 @@ std::string& CSecBasInfo::Copy_Seq  	(std::string &SecHier,  long InicBase, long
 		SecHier.clear();
 		SecHier.reserve(l);
 		switch (strnd)
-		{	case DNAStrand::plus :
-			case DNAStrand::direct:		for(long p=InicBase;  p<=EndBase;    p++) 	SecHier.push_back ( _c[p] );  				    break;
-			case DNAStrand::compl:		for(long p=InicBase;  p<=EndBase;    p++) 	SecHier.push_back ( c_degbase[_c[p]]);      	break;
-			case DNAStrand::rev:		for(long p=EndBase ;  p>=InicBase;   p--)	SecHier.push_back ( _c[p] );  				    break;
-			case DNAStrand::minus:
-			case DNAStrand::rev_compl:	for(long p=EndBase ;  p>=InicBase;   p--)	SecHier.push_back ( c_degbase[_c[p]]);      	break;
+		{	case DNAstrand::plus :
+			case DNAstrand::direct:		for(long p=InicBase;  p<=EndBase;    p++) 	SecHier.push_back ( _c[p] );  				    break;
+			case DNAstrand::compl:		for(long p=InicBase;  p<=EndBase;    p++) 	SecHier.push_back ( c_degbase[_c[p]]);      	break;
+			case DNAstrand::rev:		for(long p=EndBase ;  p>=InicBase;   p--)	SecHier.push_back ( _c[p] );  				    break;
+			case DNAstrand::minus:
+			case DNAstrand::rev_compl:	for(long p=EndBase ;  p>=InicBase;   p--)	SecHier.push_back ( c_degbase[_c[p]]);      	break;
  		}
 	}
 	return  SecHier ;
 }
 
 /// Best just return sequence
-//Base  *	CSecBasInfo::Copy_charSec(Base *charSecHier,long InicBase, long EndBase, DNAStrand strnd)//DNAStrand strnd=direct)
+//Base  *	CSecBasInfo::Copy_charSec(Base *charSecHier,long InicBase, long EndBase, DNAstrand strnd)//DNAstrand strnd=direct)
 //{	if ( EndBase< 1 || Len() <EndBase ) EndBase= Len(); 
 //	long l=EndBase-InicBase+1 ; charSecHier[l]=0 ;
 //	if (l>=0) 
 //	//assert(l>=0);
 //	switch (strnd)
-//	{	case DNAStrand::plus :
-//		case DNAStrand::direct:		for(long i=0,   p=InicBase;  p<=EndBase;    i++, p++) 	charSecHier[i]=_c[p];				break;
-//		case DNAStrand::compl:		for(long i=0,   p=InicBase;  p<=EndBase;    i++, p++) 	charSecHier[i]=c_degbase[_c[p]];	break;
-//		case DNAStrand::rev:		for(long i=l-1, p=InicBase;  p<=EndBase;    i--, p++)	charSecHier[i]=_c[p];				break;
-//		case DNAStrand::minus:
-//		case DNAStrand::rev_compl:	for(long i=l-1, p=InicBase;  p<=EndBase;    i--, p++)	charSecHier[i]=c_degbase[_c[p]];	break;
+//	{	case DNAstrand::plus :
+//		case DNAstrand::direct:		for(long i=0,   p=InicBase;  p<=EndBase;    i++, p++) 	charSecHier[i]=_c[p];				break;
+//		case DNAstrand::compl:		for(long i=0,   p=InicBase;  p<=EndBase;    i++, p++) 	charSecHier[i]=c_degbase[_c[p]];	break;
+//		case DNAstrand::rev:		for(long i=l-1, p=InicBase;  p<=EndBase;    i--, p++)	charSecHier[i]=_c[p];				break;
+//		case DNAstrand::minus:
+//		case DNAstrand::rev_compl:	for(long i=l-1, p=InicBase;  p<=EndBase;    i--, p++)	charSecHier[i]=c_degbase[_c[p]];	break;
 //
 //		default : return 0;
 //	}
 //	return charSecHier ;
 //}
-//Base  *	CSecBasInfo::GetCopy_charSec(DNAStrand strnd)
+//Base  *	CSecBasInfo::GetCopy_charSec(DNAstrand strnd)
 //{	return GetCopy_charSec(1, Len(), strnd);
 //}
-//Base  *	CSecBasInfo::GetCopy_charSec(long InicBase, long EndBase, DNAStrand strnd)       // recuerde los $...$, aqui se cuentan, 
+//Base  *	CSecBasInfo::GetCopy_charSec(long InicBase, long EndBase, DNAstrand strnd)       // recuerde los $...$, aqui se cuentan, 
 //{	if ( InicBase< 1 )					InicBase=1;
 //	if ( EndBase< 1 || Len() <EndBase )	EndBase=Len();
 //	long l=EndBase-InicBase+1 ;

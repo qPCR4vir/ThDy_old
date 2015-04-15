@@ -13,40 +13,35 @@
 #pragma unmanaged	
 
 
-#include <stdlib.h>
 #include <fstream>
-#include <cassert>
+//#include <cassert>
 #include <string>
 #include <memory>
-#include <vector>
-#include <filesystem>
-namespace filesystem = std::tr2::sys; //std::experimental::filesystem
 
 
-using namespace std;
-
-#include "link.h"
 #include "cod_deg.h"
-#include "th_dy_param.h"   // crear un nuevo par de fuente cpp con las cosas que nec los dos .h + sec.h
+//#include "th_dy_param.h"   // crear un nuevo par de fuente cpp con las cosas que nec los dos .h + sec.h
 #include "common.h" 
 
 
 class CMultSec	;
 class ISec				// Pure virtual class ?
 {public:			
-	using sequence = std::basic_string<Base> ;
+	using sequence = std::basic_string<DegCod::Base> ;
 
 	const char*          charSequence()	const 
        {return (char*) (  Sequence().c_str()  );} 
 
 	virtual const sequence& Sequence(							  )	const=0 ;
-	virtual ISec        *Clone   	(DNAStrand strnd=direct		  )	const=0 ; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
-	virtual std::string& Copy_Seq   (std::string     &SecHier, 
-                                       DNAStrand strnd=direct)	    const=0  ;
-	virtual std::string& Copy_Seq   (std::string &SecHier,  
+	virtual ISec        *Clone   	(DNAstrand   strnd = DNAstrand::direct )	const=0 ; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+	
+    virtual std::string& Copy_Seq   (std::string     &SecHier, 
+                                     DNAstrand   strnd = DNAstrand::direct)	    const=0  ;
+	
+    virtual std::string& Copy_Seq   (std::string &SecHier,  
                                             long InicBase, 
                                             long  EndBase, 
-                                        DNAStrand  strnd =direct )	const=0  ;
+                                     DNAstrand   strnd = DNAstrand::direct)	    const=0  ;
 
 	virtual				~ISec			()
        { }
@@ -65,7 +60,7 @@ class CSecBasInfo : public ISec
 	long			_Count[DegCod::n_dgba];	              ///< An array of counters for each deg base - inicializar!!
 	long			_NDB   {};			                  ///< cantidad de bases deg
 	std::string     _Clas ;		                          ///< clasificacion
-    sequence	    _c=sequence{ basek[n_basek-1]};		  ///< sec char, comienzan y terminan con '$'0
+    sequence	    _c=sequence{ DegCod::basek[DegCod::n_basek-1]};		  ///< sec char, comienzan y terminan con '$'0
 	CMultSec		*_NonDegSet{nullptr} ;                /// \todo: std::unique_ptr<>
 	static int	NewS_ID     ()	{static int last_ID{};	return ++last_ID;	}
 
@@ -109,15 +104,24 @@ public:
 		{	 
 			return _c ;
 		}
-	 std::string& Copy_Seq  	(std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd=direct)	const override ;
-	 std::string& Copy_Seq  	(std::string &SecHier,  DNAStrand strnd=direct)	const override {return Copy_Seq ( SecHier, 1, Len(), strnd ) ;}
-	 bool		 NotIdem		(CSecBasInfo *sec) {return false;}
-	Base		operator[]	(int i)const{return _c[i];}  /// i+1 ????
+	 std::string& Copy_Seq  	(std::string &SecHier,  
+                                  long       InicBase, 
+                                  long        EndBase, 
+                                  DNAstrand   strnd = DNAstrand::direct)	const override ;
+
+     std::string& Copy_Seq  	(std::string &SecHier,  
+                                  DNAstrand   strnd = DNAstrand::direct)	const override  
+     {
+         return Copy_Seq ( SecHier, 1, Len(), strnd ) ;
+     }
+
+	bool		 NotIdem		(CSecBasInfo *sec) {return false;}
+	DegCod::Base operator[]	(int i)const{return _c[i];}  /// i+1 ????
 
 	long		Len			()const		{return _c.length()-2;} //
 	long		Degeneracy	()const		{return _GrDeg;}
 	long		*BaseCount	()			{return _Count;}
-	long		BaseCount	(Base b)	{ return  DegCod::is_degbase[b] ?  _Count[DegCod::db2nu[b]] : 0;}
+	long		BaseCount	(DegCod::Base b)	{ return  DegCod::is_degbase[b] ?  _Count[DegCod::db2nu[b]] : 0;}
 	CMultSec	*NonDegSet	()			{return _NonDegSet;}
 	float		GCpercent	()const		{return	_GCp ;}		
 };

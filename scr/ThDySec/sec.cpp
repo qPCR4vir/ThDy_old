@@ -138,12 +138,12 @@ CSec::CSec (    const std::string&  sec,
 
 }
 
-//CSec  * CSec::CreateCopy(DNAStrand strnd) // strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+//CSec  * CSec::CreateCopy(DNAstrand strnd) // strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 //{	Base *s=GetCopy_charSec(strnd); 
 //	//char *n; 
 //	CSec *newS=new CSec( (char*)s, 
 //						NewS_ID(),				
-//						_name + DNAStrandName[strnd],
+//						_name + DNAstrandName[strnd],
 //						_NNpar	,
 //						0,1,
 //						_Clas,
@@ -155,13 +155,13 @@ CSec::CSec (    const std::string&  sec,
 //	return newS;
 //}
     
-CSec* CSec::Clone   	(DNAStrand strnd 	 ) const  /// unique_ptr<ISec>   strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+CSec* CSec::Clone   	(DNAstrand strnd 	 ) const  /// unique_ptr<ISec>   strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 {	
 	
 	string s; 
 	unique_ptr<CSec> newS {new CSec( Copy_Seq(s,strnd), 
 						             NewS_ID(),				
-									_name + DNAStrandName[strnd],
+									_name + DNAstrandName[(int)strnd],
 									_NNpar	,
 									0,1,
 									_Clas,

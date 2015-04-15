@@ -69,9 +69,9 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
 	CSec		*GenerateNonDegVariant	(CSec *s, long pos, Base ndb)   ; //< recursiva
 	CSec		*CopyFirstBases			(long pos)	;			///< copia parcialmente hasta la pos
 	void		 CorrectSalt			() { if ( _NNpar->UseOwczarzy () ) CorrectSaltOwczarzy();};
-	CSec		*Clone   	(DNAStrand strnd=direct	 ) const override; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+	CSec		*Clone   	(DNAstrand strnd=DNAstrand::direct	 ) const override; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 
-	//virtual CSec*CreateCopy		(DNAStrand strnd=direct) override;//< crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+	//virtual CSec*CreateCopy		(DNAstrand strnd=direct) override;//< crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 	//const char	*Get_charSec			()const{return (const char*)_c.c_str();}  ///   ???????????
 
     bool		Selected() const;				 //< User-editable    ???????????????????????????????????????????????????????????????????????????
@@ -272,9 +272,9 @@ class CSecLink   : public CLink    // NO es dueno de la sec, no la borra, no del
 //{	public:
 //		double _min ;
 //};
-//enum DNAStrand						{plus	, minus, direct	, rev	, compl, rev_compl	} ;
-//// extern char *DNAStrandName[]=	{""		, "(c)", ""		, "(r)"	, "(i)", "(c)"		} ;
-//extern char *DNAStrandName[];
+//enum DNAstrand						{plus	, minus, direct	, rev	, compl, rev_compl	} ;
+//// extern char *DNAstrandName[]=	{""		, "(c)", ""		, "(r)"	, "(i)", "(c)"		} ;
+//extern char *DNAstrandName[];
 //enum fileFormat {fasta=1 , csv=1<<1, f2=1<<2, f3=1<<3} ; // se pueden "OR" los formatos : OUTPUT !!!!!!
 //
 //char *AttachToCharStr       (const char *CharStr, const char *Attach)	;

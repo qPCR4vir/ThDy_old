@@ -26,18 +26,19 @@ inline bool IsEq (Num f1, Num f2, float prec= 0.01f )	// ; bool	IsEq (float f1, 
 {	float fm = float( abs(f1) + abs(f2) )/ 2.0f ;		if (fm == 0) return true ;
 	return abs(float(f1-f2)) / fm  < prec 	;
 }
-typedef float	Energy  ;		// ----------------------  typedef : 	Energy	--	Entropy	--	Temperature	--	SecPos --	LonSecPos and Rangs
-typedef Energy	Entropy ;
-typedef float	Temperature  ;
-typedef int		SecPos ;
-typedef long	LonSecPos ;
+
+using Energy        = float	  ;	// ------------  typedef : 	Energy	--	Entropy	--	Temperature	--	SecPos --	LonSecPos and Rangs
+using Entropy       = Energy  ;
+using Temperature   = float	  ;
+using SecPos        = int	  ;
+using LonSecPos     = long	  ;
 
 
-using EnergyRang = NumRang<Energy> ;
-typedef NumRang<Entropy>		EntropyRang	 ;
-typedef NumRang<Temperature>	TemperatureRang	  ;
-typedef NumRang<SecPos>			SecPosRang		 ;
-typedef NumRang<LonSecPos>		LonSecPosRang	 ;
+using  EnergyRang       = NumRang<Energy>       ;
+using  EntropyRang      = NumRang<Entropy>		;
+using  TemperatureRang  = NumRang<Temperature>  ;
+using  SecPosRang       = NumRang<SecPos>		;
+using  LonSecPosRang    = NumRang<LonSecPos>	;
 
 
 
@@ -47,16 +48,25 @@ enum SaltCorrecP	{NoSMSelect=-1 , SMStLucia=0 , SMOwczarzy=1 }; // Unificar !!
 
 enum AlignMeth		{TAMeth_Tm =0  , TAMeth_G    , TAMeth_Fract };
 
-enum		 DNAStrand										{plus	, minus, direct	, rev	, compl, rev_compl	} ;
-extern char *DNAStrandName[];	// char *DNAStrandName[]=	{""		, "(c)", ""		, "(r)"	, "(i)", "(c)"		} ; //defined in : sec.cpp: 
+enum class	 DNAstrand		{plus	, minus, direct	, rev	, compl, rev_compl	} ;
+extern char *DNAstrandName[];//	{""		, "(c)", ""		, "(r)"	, "(i)", "(c)"		} ; //defined in : sec.cpp: 
 
-enum fileFormat {fasta =1 , csv =1<<1, f2 =1<<2, f3 =1<<3} ; // se pueden "OR" los formatos : OUTPUT !!!!!!
+enum  fileFormat   {fasta =1 , csv =1<<1, f2 =1<<2, f3 =1<<3} ; // se pueden "OR" los formatos : OUTPUT !!!!!!
 
 
-struct TmGPos {Temperature _Tm; Energy _G; SecPos _Pos; 
-				TmGPos(Temperature Tm, Energy G, SecPos Pos):_Tm(Tm), _G(G), _Pos(Pos) {} 
-				TmGPos() {} 
-			  };
+struct TmGPos 
+{
+    Temperature _Tm; 
+    Energy      _G; 
+    SecPos      _Pos;
+
+	TmGPos(Temperature Tm, Energy G, SecPos Pos)
+        :_Tm(Tm), _G(G), _Pos(Pos) 
+    {}
+
+	TmGPos() 
+    {} 
+};
 
 extern const 	EnergyRang		G_def  ;	//  G_def (-5,-1), 
 extern const 	TemperatureRang	Tm_def ;	//  Tm_def(57,63) ;

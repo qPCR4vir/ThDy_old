@@ -144,7 +144,7 @@ class CHit : public CLink // Hit dentro de la Matriz de prog dinamica
 {	
 public: 	
 	LonSecPos		_i,_j, _i0, _j0, _l;
-	DNAStrand		_strnd;
+	DNAstrand		_strnd;
 	ThDyAlign::Step _Step ;
 	Energy			_H,  _G ;
 	Entropy			_S ;
@@ -262,7 +262,7 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 	void		FindCommon	(CSecCand  &cand1, CSecCand &cand2, bool design=true)	;
 	CSecCand	*CompNext	();
 
-	void		ExportCommonSonden(const std::string &fileName, bool colpased, NumRang<float> ExtrCovPerc, int format);
+	void		ExportCommonSonden(const std::string &fileName, bool colpased, NumRang<float> ExtrCovPerc, fileFormat format);
 	virtual ~CMSecCand(){	 
 							_LSecCand.Destroy() ; 
 							_LMSecCand.Destroy() ; }
