@@ -58,7 +58,13 @@
     <ClCompile Include="..\..\ExtLib\nana.ext\src\EditableForm.cpp" />
     <ClCompile Include="..\..\ExtLib\nana.ext\src\Numer.cpp" />
     <ClCompile Include="..\..\ExtLib\nana.ext\src\vplace.cpp" />
+    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\FindSondenPage.cpp" />
     <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\main.Nana.cpp" />
+    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\SeqExpl.cpp" />
+    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\SetupPage.cpp" />
+    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\TableResults.cpp" />
+    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\TmCalcPage.cpp" />
+    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\uArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\scr\ThDy_DNAHybrid.Nana\ThDy.ico" />
@@ -67,7 +73,13 @@
     <ClInclude Include="..\..\ExtLib\nana.ext\include\EditableForm.hpp" />
     <ClInclude Include="..\..\ExtLib\nana.ext\include\Numer.hpp" />
     <ClInclude Include="..\..\ExtLib\nana.ext\include\vplace.hpp" />
+    <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\FindSondenPage.h" />
     <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\main.Nana.h" />
+    <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\SeqExpl.h" />
+    <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\SetupPage.h" />
+    <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\TableResults.h" />
+    <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\TmCalcPage.h" />
+    <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\uArray.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C08F6343-E59C-4BE6-B8FA-A8FDE68ACA9F}</ProjectGuid>

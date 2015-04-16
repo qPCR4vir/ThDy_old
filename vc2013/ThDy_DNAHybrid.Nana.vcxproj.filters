@@ -33,6 +33,24 @@
     <ClCompile Include="..\..\ExtLib\nana.ext\src\vplace.cpp">
       <Filter>Source Files\nana.ext</Filter>
     </ClCompile>
+    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\SetupPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\SeqExpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\FindSondenPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\uArray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\TmCalcPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\TableResults.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\scr\ThDy_DNAHybrid.Nana\ico.rc">
@@ -55,6 +73,24 @@
       <Filter>Header Files\nana.ext</Filter>
     </ClInclude>
     <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\main.Nana.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\SetupPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\SeqExpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\FindSondenPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\uArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\TmCalcPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\TableResults.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
