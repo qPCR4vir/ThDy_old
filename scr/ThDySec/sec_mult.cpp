@@ -256,36 +256,40 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 			//if ( (_SecBeg		<= _Hsp_query_to) && ( (!_SecEnd)		 || _SecEnd		  >=_Hsp_query_from) ) // _SecEnd=0 significa no recortar la sec.
 
 			if ( (_SecLim.Min() <= _Hsp_query_to) && ( (!_SecLim.Max())  || _SecLim.Max() >=_Hsp_query_from) ) // _SecLim.Max()=0 significa no recortar la sec.
-			{	CSecBLASTHit *secH=  new CSecBLASTHit(      _BlastOutput_query_len ,
-														// para cada hit
-														_Hit_num ,
-														std::move(_Hit_id) ,				
-														std::move(_Hit_def) ,				
-														std::move(_Hit_accession)	,
-														_Hit_len ,				
-														_Hsp_bit_score ,
-														_Hsp_score ,
-														_Hsp_evalue ,
-														_Hsp_query_from ,
-														_Hsp_query_to ,
-														_Hsp_hit_from ,
-														_Hsp_hit_to ,
-														_Hsp_query_frame ,
-														_Hsp_hit_frame ,
-														_Hsp_identity ,
-														_Hsp_positive ,
-														_Hsp_gaps ,
-														_Hsp_align_len ,
-														std::move(_Hsp_midline) ,
-														_FormatOK ,
-														std::move(sec)		,_SecLim,                         // _SecBeg, _SecEnd,
-														id,			                    //Hit_num   ???		//	char	*	nam,	Hit_def
-														_NNPar               /*,  //long l=0,(Hit_len ---> NO ) !!!  -->_Hsp_align_len -OK clas,	conc*/
-														);
+			{	
+                std::unique_ptr<CSecBLASTHit> secH
+                    { new CSecBLASTHit(      _BlastOutput_query_len ,
+											// para cada hit
+											_Hit_num ,
+											std::move(_Hit_id) ,				
+											std::move(_Hit_def) ,				
+											std::move(_Hit_accession)	,
+											_Hit_len ,				
+											_Hsp_bit_score ,
+											_Hsp_score ,
+											_Hsp_evalue ,
+											_Hsp_query_from ,
+											_Hsp_query_to ,
+											_Hsp_hit_from ,
+											_Hsp_hit_to ,
+											_Hsp_query_frame ,
+											_Hsp_hit_frame ,
+											_Hsp_identity ,
+											_Hsp_positive ,
+											_Hsp_gaps ,
+											_Hsp_align_len ,
+											std::move(_Hsp_midline) ,
+											_FormatOK ,
+											std::move(sec)		,_SecLim,                         // _SecBeg, _SecEnd,
+											id,			                    //Hit_num   ???		//	char	*	nam,	Hit_def
+											_NNPar               /*,  //long l=0,(Hit_len ---> NO ) !!!  -->_Hsp_align_len -OK clas,	conc*/
+											)
+                    };
+
 				if ( secH->Len() >= _SecLenLim.Min()  )		
 				{	
 					CSec *idem=Idem(*secH);
-					InsertSecAfter (secH  , idem) ;	
+					InsertSecAfter (secH.release()  , idem) ;	
 					if (idem) 
 					{
 						secH->Selected(false);
@@ -293,7 +297,6 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 					}
 					id++;		
 				}
-				else delete secH;
 			}
 		}
 	while (fi.good() ); 
@@ -615,7 +618,7 @@ void	    CMultSec::UpdateTotalsAdding ( CMultSec *msec )
 		CMultSec::~CMultSec ()				// funciona bien solo si la lista es "lineal"
 {	_LSec.Destroy  ()	;
 	_LMSec.Destroy ()	;
-	Remove();
+	Remove(); //? in ~CLink !
 	// CSec		*_Consenso ;
 }    
 

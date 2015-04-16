@@ -48,7 +48,7 @@ class ISec				// Pure virtual class ?
        { }
 };
 
-/// Have a letter sequence but no code sequence and no thermodyinamics
+/// Have a letter sequence but no code sequence and no thermodyinamics - abstract because of clone ?!-fix?
 class CSecBasInfo : public ISec
 { protected:	
 	bool			_selected{true}, _filtered{false};
@@ -123,7 +123,7 @@ public:
 	long		Len			()const		{return _c.length()-2;} //
 	long		Degeneracy	()const		{return _GrDeg;}
 	long		*BaseCount	()			{return _Count;}
-	long		BaseCount	(DegCod::Base b)	{ return  DegCod::is_degbase[b] ?  _Count[DegCod::db2nu[b]] : 0;}
+	long		BaseCount	(DegCod::Base b) const{ return  DegCod::is_degbase[b] ?  _Count[DegCod::db2nu[b]] : 0;}
 	CMultSec	*NonDegSet	()			{return _NonDegSet;}
 	float		GCpercent	()const		{return	_GCp ;}		
 };

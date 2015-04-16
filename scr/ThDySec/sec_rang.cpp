@@ -12,15 +12,15 @@
 #pragma unmanaged
 #endif
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include <iostream>
-#include <iomanip>
-#include <memory>
-#include <math.h>
-#include <list>
-#include <stack>
+//#include <stdio.h>
+//#include <string.h>
+//#include <assert.h>
+//#include <iostream>
+//#include <iomanip>
+//#include <memory>
+//#include <math.h>
+//#include <list>
+//#include <stack>
 
 using namespace std ; 
 
@@ -48,15 +48,15 @@ CSecAl::CSecAl(CSec &sec)
 						_NumCandExact(0)							
 
 {	
-	long fi, i0;										//	assert (_rg);	trow exeption !!
-	for (fi=0; fi< sL._L.Min() ; fi++)   ;		/// \todo REVISE!!         // se salta las primeras pos
+	//	assert (_rg);	trow exeption !!
+	//for (fi=0; fi< sL._L.Min() ; fi++)   ;		/// \todo REVISE!!         // se salta las primeras pos
 														// al comienzo fi = L_min	
-	for (	; fi<=sec.Len(); fi++)						// fi - final base of candidate, recorre toda la sec
+	for (long fi=sL._L.Min()	; fi<=sec.Len(); fi++) // fi - final base of candidate, recorre toda la sec
 	{	
 		long        pi = fi - sL._L.Max() +1	; if (pi < 1 ) pi=1;
 		CRangBase R(pi	,fi - sL._L.Min() +1 )  ;				assert( fi>R.Max() );		assert( pi<=R.Max() );
 
-		for (i0=R.Min() ; i0<=R.Max() ; ++i0 )
+		for (long i0=R.Min() ; i0<=R.Max() ; ++i0 )
 		{	if ( sL._Tm.inRang( sec.Tm(i0,fi) )    &&    sL._G.inRang( sec.G(i0,fi) ) ) 	// usa calculos de Tm basados en NNpar
 			{	 R.adjustCur(i0);
 				 _NumCandExact++;	//	Seria lo correcto, pero da problemas cuando existe una "burbuja" de Tm, 

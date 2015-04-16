@@ -39,9 +39,9 @@ struct fragment:  NumRang<long>
             return Max();
         if (sq)
             if ( Min() )
-                return sq.Len()-Min()+1;
+                return sq->Len()-Min()+1;
             else
-                return sq.Len();
+                return sq->Len();
         return 0;
     }
 
@@ -61,6 +61,16 @@ struct Aligned_fragment
                       sq_ref,    ///< from some reference: (posible partial) seq, maybe the first seq of an alignment
                      bio_ref,    ///< from some reference, but relatively to the presumible complete genome 
                          aln;    ///< from a reference sequence from the aligment: a consensus
+    long lenght()
+    {
+        long len ;
+        if ( len=sq.     lenght()) return len;
+        if ( len=bio.    lenght()) return len;
+        if ( len=sq_ref. lenght()) return len;
+        if ( len=bio_ref.lenght()) return len;
+        if ( len=aln.    lenght()) return len;
+        return 0;
+     }
 };
 
 class CRangBase : public NumRang<long> // ---------------------------------------   CRang	: AMPLIAR y mejorar !!!  ---------------------------------------
@@ -175,7 +185,7 @@ class CSecCand : public CLink
 };
 
 
-/// destinado a formar parte de una lista en un alineamieto.  \todo REVISE!! 
+/// destinado a formar parte de una lista en un alineamieto.  \todo REVISE!! EXPERIMENTAL
 class CSecAl : public CLink 
 {public:
 	CSec                 &_Sec     ; ///< ref a la sec, que ni se modifica ni se cambia de lugar
