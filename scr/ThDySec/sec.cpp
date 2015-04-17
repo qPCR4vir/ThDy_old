@@ -84,10 +84,12 @@ CSec::CSec (    const std::string&  sec,
 			for (         ; sec_pos<sLen   ; sec_pos++) 
                 if( is_degbase	[Base (sec[sec_pos])] ) 
                 {   
-                    ++op ;
-                    if ( op == oe )
+                    ++orig_pos ;
+                    if ( orig_pos == orig_end )
+                    {
+                        lmax=0;   /// the lmax was not used becouse the seq is too short
                         break;
-                }  
+                    }
                 }     /// the lmax was used 
 		}else
 		{	 
@@ -139,6 +141,12 @@ CSec::CSec (    const std::string&  sec,
 		_b.push_back(       n_basek-1  ); 	  	
 		_GCp	= _GCp*100/len ;	
 		_Tm.Set( NNpar->CalcTM( _SdS.back(), _SdH.back()) ) ;      //_maxTm = _minTm =
+
+        if(orig_beging !=1 || lmax )
+        {
+            _aln_fragment.reset(new Aligned_fragment);
+            _aln_fragment->sq.Set(orig_beging, orig_end);
+        }
 
 }
 
