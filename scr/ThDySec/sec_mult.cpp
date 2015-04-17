@@ -289,12 +289,12 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 				if ( secH->Len() >= _SecLenLim.Min()  )		
 				{	
 					CSec *idem=Idem(*secH);
-					InsertSecAfter (secH.release()  , idem) ;	
 					if (idem) 
 					{
 						secH->Selected(false);
 						secH->Filtered(true);
 					}
+					InsertSecAfter (secH.release()  , idem) ;	
 					id++;		
 				}
 			}
