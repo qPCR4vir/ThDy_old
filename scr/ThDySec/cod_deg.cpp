@@ -17,7 +17,7 @@ namespace DegCod
 {
  
  Base		is_base		[UCHAR_MAX],		///< <> 0  si base. =base, pero para U, =T 
-			is_degbase	[UCHAR_MAX],		///< <> 0  si letra valida (cualquiera del cod deg,may o minuscula
+			is_degbase	[UCHAR_MAX],		///< <> 0  si letra valida (cualquiera del cod deg, mayuscula o minuscula
 											///< + insercion '-').=base, pero para U, =T 
 			c_degbase	[UCHAR_MAX],		///<  devuelve base complementaria, tambien para codigo deg. 
 											///< El resto no lo modifica.
@@ -131,18 +131,6 @@ CInit_Cod_Deg::CInit_Cod_Deg()
 					dg2bkn[b][d++]= bk2nu [ nu2ba [ c ] ] ; // cod K del caracter intercepcion
 				}
 			}
-// se usa asi: 
-			//for (Base b=0; b <  n_dgba				; b++)			// recorre las bas deg, aqui solo para
-			//														// mostrar todas las variante
-
-			//for (Base c=0; c <= grad_deg[ nu2dgba[b] ]  ; c++)	// recorre las bas no deg de la base deg b
-			//{		dg2ban[b][c]  ;    					// cod corto de cada caracter a generar
-			//		dg2ba [b][c]  ;						// caracter a generar
-	  //        db2nu[dg2ba [b][c]] ;						// cod deg (largo) de cada caracter a generar				
-	  //    b & db2nu[dg2ba [b][c]] ;	
-			//		dg2bkn[b][c]  ;						// cod K de cada caracter a generar
-			//}
-			
 }
 
 

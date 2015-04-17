@@ -5,6 +5,18 @@
 * @file  ThDySec\include\ThDySec\cod_deg.h
 *
 * @brief 
+* se usa asi: 
+* for (Base b=0; b <  n_dgba				; b++)			// recorre las bas deg, aqui solo para
+*				                                        	// mostrar todas las variante
+*
+*     for (Base c=0; c <= grad_deg[ nu2dgba[b] ]  ; c++)	// recorre las bas no deg de la base deg b
+*     {		dg2ban[b][c]  ;    					            // cod corto de cada caracter a generar
+*   		dg2ba [b][c]  ;						            // caracter a generar
+*           db2nu[dg2ba [b][c]] ;						    // cod deg (largo) de cada caracter a generar				
+*           b & db2nu[dg2ba [b][c]] ;	
+*   		dg2bkn[b][c]  ;						            // cod K de cada caracter a generar
+*     }
+*
 */
 
 #ifndef _COD_DEG_H
@@ -15,7 +27,7 @@
 
 namespace DegCod
 {
-using Base = unsigned char ;
+using Base = unsigned char ;///< A simple char can be neagtive which can be a problem when using as index for an array.
 using Code = Base;
 inline Base base(char b){return static_cast<Base>(b);}
 
@@ -41,7 +53,7 @@ const Base	nu2ba		[]="GCTA"				,  ///< las 4 bases, cod corto. de "numero a base
 
 
 extern Base is_base		[UCHAR_MAX],		///< <> 0  si base. =base, pero para U, =T 
-			is_degbase	[UCHAR_MAX],		///< <> 0  si letra valida (cualquiera del cod deg,may o minuscula
+			is_degbase	[UCHAR_MAX],		///< <> 0  si letra valida (cualquiera del cod deg, mayuscula o minuscula
 											///< + insercion '-').=base, pero para U, =T 
 			c_degbase	[UCHAR_MAX],		///< devuelve base complementaria, tambien para codigo deg. 
 											///< El resto no lo modifica.

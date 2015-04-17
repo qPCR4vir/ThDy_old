@@ -45,15 +45,18 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
         std::vector<Entropy>    _SdS= std::vector<Entropy>{ _NNpar->GetInitialEntropy()};		///< dS acumulada. Calcular Delta S sera solo restar la final menos la inicial	
         std::vector<Energy>		_SdH= std::vector<Energy> {  Energy{} };			// 
 		CMultSec	           *_parentMS{nullptr}	;   //std::weak_ptr<CMultSec> _parentMS	;
-
+    /// Some variables have index base [1] while others have [0] in sec. We need to clean the sec, 
+    /// which can contain non bases letter, like tabs, end of line, blancs, etc, but we take into account "-".
 	CSec (  const std::string&  sec, 
 		    int                 id,
-            const std::string&  nam,     // char*
+            const std::string&  nam,     
             std::shared_ptr<CSaltCorrNN>  NNpar, 
             long                lmax=0, ///< limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
             long                secBeg=1, 
             const std::string&  clas="" , 
             float               conc=-1         );
+
+    /// Dummi sequence withow actual sequence, but with NNpar and reserved space
 	CSec ( long l, std::shared_ptr<CSaltCorrNN>  NNpar) ;
 
 
@@ -134,10 +137,10 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 					std::string	    clas="", 
 					float			conc=-1
 				)  :
-						CSec (  std::move(sec),   
-                                id,   
-                                std::move(Hit_accession),   
-                                NNpar, 
+						CSec (  std::move(sec),             // sec
+                                id,                         // 
+                                std::move(Hit_accession),   // name 
+                                NNpar,                      //  . maxlen . secBeg .
 								(SecLim.Max() && long(Hsp_query_to) > SecLim.Max()   ) ? SecLim.Max()       - SecLim.Min() +1 
                                                                                        : long(Hsp_query_to) - SecLim.Min() +1	,	//Hsp_align_len,  --  Long
 								SecLim.Min() - long(Hsp_query_from+1) ,                 //     SecBeg
