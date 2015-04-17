@@ -63,42 +63,68 @@ CInit_Cod_Deg::CInit_Cod_Deg()
 			}
 
 
-			for (Base b=0; b<n_ba  ; b++)		
-			{	is_base	[ nu2ba[b] ]= is_base	[ tolower(nu2ba[b]) ] =	nu2ba[b] ;
-				ba2nu	[ nu2ba[b] ]= ba2nu		[ tolower(nu2ba[b]) ] =	b ;
+			for (Base nu=0; nu < n_ba  ; nu++)		
+			{	
+                Base ba  { nu2ba[nu] },
+                    u_ba {base(toupper(ba))},
+                    l_ba {base(tolower(ba))};
+
+                is_base	[ u_ba ] = 
+                is_base	[ l_ba ] =	ba ;
+
+				ba2nu	[ u_ba ] = 
+                ba2nu	[ l_ba ] =	nu ;
 			}
 
-			for (Base b=0; b<n_basek  ; b++)		
-				bk2nu[ basek[b] ]= bk2nu[ tolower(basek[b]) ] = b ;	
+			for (Base nu=0; nu<n_basek  ; nu++)		
+            {
+                Base ba  { basek[nu] },
+                    u_ba {base(toupper(ba))},
+                    l_ba {base(tolower(ba))};
+
+				bk2nu[ u_ba ] = 
+                bk2nu[ l_ba ] = nu ;	
+            }
 				
 
-			for (Base b=0; b<n_dgba; b++)		
-			{	Base db=nu2dgba[b], ldg=Base(tolower(db));
+			for (Base nu=0; nu<n_dgba; nu++)		
+			{	
+                Base ba  {nu2dgba[nu]},
+                    u_ba {base(toupper(ba))},
+                    l_ba {base(tolower(ba))};
 
-				is_degbase	[ db ]	= is_degbase[ ldg ]	= nu2dgba[b] ;
-				c_degbase	[ db ]	= c_degbase	[ ldg ]	= nu2c_dgba[b]   ; // '.' y '$' y tambien '-' quedan igual
-				db2nu		[ db ]	= db2nu		[ ldg ]	= b   ;
+				is_degbase	[ u_ba ]	= 
+                is_degbase  [ l_ba ]	= ba ;
+
+				c_degbase	[ u_ba ]	= 
+                c_degbase	[ l_ba ]	= nu2c_dgba[nu]   ; // '.' y '$' y tambien '-' quedan igual
+
+				db2nu		[ u_ba ]	= 
+                db2nu		[ l_ba ]	= nu   ;
 			}
 		
 			
 			for (Base bd=0; bd<n_dgba; bd++)
 			for (Base b =0; b <n_ba  ; b++)
-			{	grad_deg	[         nu2dgba[bd]  ] += (0!=(bd &  db2nu	[nu2ba[b]]));	
-				grad_deg	[ tolower(nu2dgba[bd]) ] += (0!=(bd &  db2nu	[nu2ba[b]]));	
+			{	grad_deg	[ base(toupper(nu2dgba[bd])) ] += (0!=(bd &  db2nu	[nu2ba[b]]));	
+				grad_deg	[ base(tolower(nu2dgba[bd])) ] += (0!=(bd &  db2nu	[nu2ba[b]]));	
 			}
 
-			is_GC['G']=
-			is_GC['C']=1 ;
+            Base G{'G'}, g{'g'}, C{'C'}, c{'c'}, U{'U'}, u{'u'}, T{'T'}, t{'t'}, A{'A'}, a{'a'};
 
-			is_base		[ 'U' ]		= is_base		[ 'u' ]		=			// repetido ???
-			is_base		[ 'U' ]		= is_base		[ 'u' ]		= 
-			is_degbase	[ 'U' ]		= is_degbase	[ 'u' ]		='T' ;
+            is_GC [G]=
+            is_GC [g]=
+            is_GC [C]=
+            is_GC [c]=1 ;
 
-			c_degbase	[ 'U' ]		= c_degbase		[ 'u' ]		='A' ;
-			grad_deg	[ 'U' ]		= grad_deg		[ 'u' ]		= 1  ;
-			bk2nu		[ 'U' ]		= bk2nu			[ 'u' ]		= bk2nu [ 'A' ] ;
-			db2nu		[ 'U' ]		= db2nu			[ 'u' ]		= db2nu [ 'A' ] ;
-			ba2nu		[ 'U' ]		= ba2nu			[ 'u' ]		= ba2nu [ 'A' ] ;
+            is_base     [ U ]       = is_base       [ u ]       = 
+			is_degbase	[ U ]		= is_degbase	[ u ]		=  T  ;
+
+			c_degbase	[ U ]		= c_degbase		[ u ]		= c_degbase		[ A ]  ;
+			grad_deg	[ U ]		= grad_deg		[ u ]		= 1  ;
+			bk2nu		[ U ]		= bk2nu			[ u ]		= bk2nu [ A ] ;
+			db2nu		[ U ]		= db2nu			[ u ]		= db2nu [ A ] ;
+			ba2nu		[ U ]		= ba2nu			[ u ]		= ba2nu [ A ] ;
 
 			for (Base b=0; b<UCHAR_MAX; b++)	
 			{	bk2c_nu		[b]	= bk2nu		[ c_degbase [b] ] ;			
