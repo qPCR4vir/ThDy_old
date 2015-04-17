@@ -19,16 +19,16 @@
 #include "common.h" 
 
 template <class SQ>
-struct fragment:  NumRang<long>
+struct fragment:  NumRang<LonSecPos>
 {
     SQ *sq{};
-    fragment (SQ &s, long beg = 0, long end = 0)
-        : NumRang<long>(beg, end),
+    fragment (SQ &s, LonSecPos beg = 0, LonSecPos end = 0)
+        : NumRang<LonSecPos>(beg, end),
         sq{&s}
     { }
 
-    fragment (long beg = 0, long end = 0)
-        : NumRang<long>(beg, end)
+    fragment (LonSecPos beg = 0, LonSecPos end = 0)
+        : NumRang<LonSecPos>(beg, end)
     { }
 
     long lenght()
@@ -45,7 +45,7 @@ struct fragment:  NumRang<long>
         return 0;
     }
 
-    void set (SQ &s, long beg = 0, long end = 0)
+    void set (SQ &s, LonSecPos beg = 0, LonSecPos end = 0)
     { 
         Set(beg, end);
         sq=&s;

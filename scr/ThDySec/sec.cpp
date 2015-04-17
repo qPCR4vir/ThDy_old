@@ -48,8 +48,8 @@ CSec::CSec (    const std::string&  sec,
                 int                 id, 
                 const std::string&  nam, 
                 std::shared_ptr<CSaltCorrNN> NNpar, 
-                long                lmax,   /// lamx - limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
-                long                secBeg,  
+                LonSecPos           lmax,   ///< lamx - limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
+                LonSecPos           secBeg, ///< base [1] in sec. The first letter in sec to be read. 
                 const std::string&  clas, 
                 float               conc        ) 
 :	CSecBasInfo ( id, nam, clas) ,		

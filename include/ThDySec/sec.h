@@ -51,8 +51,8 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
 		    int                 id,
             const std::string&  nam,     
             std::shared_ptr<CSaltCorrNN>  NNpar, 
-            long                lmax=0, ///< limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
-            long                secBeg=1, 
+            LonSecPos           lmax=0,    ///< limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
+            LonSecPos           secBeg=1,  ///< base [1] in sec. The first letter in sec to be read. 
             const std::string&  clas="" , 
             float               conc=-1         );
 
