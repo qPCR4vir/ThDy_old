@@ -10,27 +10,30 @@
 #ifndef main_nana_H
 #define main_nana_H
 
-#include <nana/gui/wvl.hpp>
-#include <nana/gui/widgets/tabbar.hpp>
-
-//#include <nana/gui/tooltip.hpp>
-//#include <nana/gui/widgets/toolbar.hpp>
-//#include <nana/gui/widgets/progress.hpp>
-//#include <nana/gui/widgets/group.hpp>
-
-//#include <../../nana.ext/include/EditableForm.hpp>
-//#include <../../nana.ext/include/Numer.hpp>
-
-#include "thdy_programs\init_thdy_prog_param.h"
-//#include "matrix.h" 
-//#include "common_basics.h" 
-
 #include "SetupPage.h"
 #include "SeqExpl.h"
 #include "FindSondenPage.h"
 //#include "MplexPCR.h"
 #include "uArray.h"
 #include "TmCalcPage.h"
+
+#include "thdy_programs\init_thdy_prog_param.h"
+//#include "matrix.h" 
+//#include "common_basics.h" 
+
+//#include <../../nana.ext/include/EditableForm.hpp>
+//#include <../../nana.ext/include/Numer.hpp>
+
+#include <nana/gui/widgets/tabbar.hpp>
+//#include <nana/gui/tooltip.hpp>
+//#include <nana/gui/widgets/toolbar.hpp>
+//#include <nana/gui/widgets/progress.hpp>
+//#include <nana/gui/widgets/group.hpp>
+
+
+
+#include <nana/gui/wvl.hpp>
+
 
 
 class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject

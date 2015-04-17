@@ -10,29 +10,28 @@
 #ifndef SetupPage_H
 #define SetupPage_H
 
-//
-//#include <iostream>    // temp, for debugging
-//#include <fstream>     // temp, for debugging
-//#include <filesystem>
+//#include "thdy_programs\init_thdy_prog_param.h"
+//#include "matrix.h" 
+//#include "common_basics.h" 
 
-//#include <nana/gui/wvl.hpp>
+#include <../../nana.ext/include/EditableForm.hpp>
+#include <../../nana.ext/include/Numer.hpp>
+#include "../../nana.ext/include/nanaBind.hpp"
+
+#include <nana/gui/widgets/group.hpp>
+//#include <nana/gui/widgets/progress.hpp>
 //#include <nana/gui/widgets/tabbar.hpp>
 //#include <nana/gui/widgets/checkbox.hpp>
 //#include <nana/gui/widgets/treebox.hpp>
 //#include <nana/gui/widgets/listbox.hpp>
 //#include <nana/gui/widgets/toolbar.hpp>
 //#include <nana/gui/tooltip.hpp>
+//#include <nana/gui/wvl.hpp>
 
-//#include <nana/gui/widgets/progress.hpp>
-#include <nana/gui/widgets/group.hpp>
+//#include <iostream>    // temp, for debugging
+//#include <fstream>     // temp, for debugging
+//#include <filesystem>
 
-#include <../../nana.ext/include/EditableForm.hpp>
-#include <../../nana.ext/include/Numer.hpp>
-#include "../../nana.ext/include/nanaBind.hpp"
-
-//#include "thdy_programs\init_thdy_prog_param.h"
-//#include "matrix.h" 
-//#include "common_basics.h" 
 
 
 class ThDyNanaForm ;

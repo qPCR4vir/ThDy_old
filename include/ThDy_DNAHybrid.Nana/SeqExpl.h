@@ -10,14 +10,13 @@
 #ifndef SeqExpl_H
 #define SeqExpl_H
 
+#include "thdy_programs\init_thdy_prog_param.h"
+#include "../../nana.ext/include/nanaBind.hpp"
+#include <../../nana.ext/include/EditableForm.hpp>
+
 #include <nana/gui/widgets/treebox.hpp>
 #include <nana/gui/widgets/listbox.hpp>
 #include <nana/gui/tooltip.hpp>
-
-#include <../../nana.ext/include/EditableForm.hpp>
-
-//#include "thdy_programs\init_thdy_prog_param.h"
-
 
 
 //#include <iostream>    // temp, for debugging
@@ -33,7 +32,6 @@
 //#include <nana/gui/widgets/group.hpp>
 
 //#include <../../nana.ext/include/Numer.hpp>
-//#include "../../nana.ext/include/nanaBind.hpp"
 
 //#include "matrix.h" 
 //#include "common_basics.h" 
@@ -41,12 +39,9 @@
 
 //using namespace ParamGUIBind;
 
-//class ThDyNanaForm ;
+class ThDyNanaForm ;
  
-
-
 using List = nana::listbox;
-
 
 class SeqExpl : public CompoWidget
 {

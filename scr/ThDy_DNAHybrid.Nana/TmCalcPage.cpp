@@ -7,8 +7,8 @@
 * @brief 
 */
 
+#include "ThDy_DNAHybrid.Nana\TmCalcPage.h"
 #include "ThDy_DNAHybrid.Nana\main.Nana.h"
-//#include "ThDy_DNAHybrid.Nana\TmCalcPage.h"
 
 //#include <iostream>    // temp, for debugging
 //#include <fstream>     // temp, for debugging

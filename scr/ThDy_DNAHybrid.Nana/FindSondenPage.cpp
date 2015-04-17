@@ -7,6 +7,8 @@
 * @brief 
 */
 
+#include "ThDy_DNAHybrid.Nana\FindSondenPage.h"
+#include "ThDy_DNAHybrid.Nana\main.Nana.h"
 //
 //#include <iostream>    // temp, for debugging
 //#include <fstream>     // temp, for debugging
@@ -28,8 +30,6 @@
 //#include "common_basics.h" 
 //
 
-#include "ThDy_DNAHybrid.Nana\main.Nana.h"
-//#include "ThDy_DNAHybrid.Nana\FindSondenPage.h"
 
 //#include <../../nana.ext/include/EditableForm.hpp>
 //#include <../../nana.ext/include/Numer.hpp>

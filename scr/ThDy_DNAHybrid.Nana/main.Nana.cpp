@@ -7,6 +7,8 @@
 * @brief 
 */
 
+#include "ThDy_DNAHybrid.Nana\main.Nana.h"
+
 //#include "../../nana.ext/include/nanaBind.hpp"
 
 //#include <iostream>    // temp, for debugging
@@ -30,7 +32,6 @@
 
 
 
-#include "ThDy_DNAHybrid.Nana\main.Nana.h"
 
 //#include <../../nana.ext/include/EditableForm.hpp>
 //#include <../../nana.ext/include/Numer.hpp>

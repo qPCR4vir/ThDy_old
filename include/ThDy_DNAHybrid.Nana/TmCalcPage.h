@@ -2,7 +2,7 @@
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2015
 *
-* @file  ThDySec\include\ThDy_DNAHybrid.Nana\main.Nana.h
+* @file  ThDySec\include\ThDy_DNAHybrid.Nana\TmCalcPage.h
 *
 * @brief 
 */
@@ -10,16 +10,16 @@
 #ifndef TmCalcPage_H
 #define TmCalcPage_H
 
-//#include <nana/gui/widgets/group.hpp>
-//#include <nana/gui/widgets/checkbox.hpp>
+#include "thdy_programs\init_thdy_prog_param.h"
+#include "../../nana.ext/include/nanaBind.hpp"
+#include <../../nana.ext/include/EditableForm.hpp>
+#include <../../nana.ext/include/Numer.hpp>
+#include <nana/gui/widgets/group.hpp>
+#include <nana/gui/widgets/checkbox.hpp>
 //#include <nana/gui/tooltip.hpp>
 //#include <nana/gui/widgets/progress.hpp>
 
-//#include <../../nana.ext/include/EditableForm.hpp>
-//#include "../../nana.ext/include/nanaBind.hpp"
-//#include <../../nana.ext/include/Numer.hpp>
 
-//#include "thdy_programs\init_thdy_prog_param.h"
 
 
 
@@ -41,7 +41,7 @@
 //
 //using namespace ParamGUIBind;
 //
-//class ThDyNanaForm ;
+class ThDyNanaForm ;
 // 
 //using List = nana::listbox;
 

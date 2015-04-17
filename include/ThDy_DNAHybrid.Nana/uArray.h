@@ -10,6 +10,8 @@
 #ifndef uArray_H
 #define uArray_H
 
+#include <../../nana.ext/include/EditableForm.hpp>
+#include "../../nana.ext/include/nanaBind.hpp"
 //
 //#include <iostream>    // temp, for debugging
 //#include <fstream>     // temp, for debugging
@@ -27,9 +29,7 @@
 //#include <nana/gui/widgets/progress.hpp>
 //#include <nana/gui/widgets/group.hpp>
 //
-//#include <../../nana.ext/include/EditableForm.hpp>
 //#include <../../nana.ext/include/Numer.hpp>
-//#include "../../nana.ext/include/nanaBind.hpp"
 //
 //#include "thdy_programs\init_thdy_prog_param.h"
 //#include "matrix.h" 
@@ -38,7 +38,7 @@
 //
 //using namespace ParamGUIBind;
 //
-//class ThDyNanaForm ;
+class ThDyNanaForm ;
 // 
 //using List = nana::listbox;
 

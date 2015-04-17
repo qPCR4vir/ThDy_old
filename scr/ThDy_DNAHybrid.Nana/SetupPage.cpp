@@ -7,6 +7,8 @@
 * @brief 
 */
 
+#include "ThDy_DNAHybrid.Nana\SetupPage.h"
+#include "ThDy_DNAHybrid.Nana\main.Nana.h"
 
 //#include <iostream>    // temp, for debugging
 //#include <fstream>     // temp, for debugging
@@ -27,14 +29,9 @@
 //#include "matrix.h" 
 //#include "common_basics.h" 
 
-
-#include "ThDy_DNAHybrid.Nana\main.Nana.h"
-//#include "ThDy_DNAHybrid.Nana\SetupPage.h"
-
 //#include <../../nana.ext/include/EditableForm.hpp>
 //#include <../../nana.ext/include/Numer.hpp>
 //#include "../../nana.ext/include/nanaBind.hpp"
-
 
 using namespace ParamGUIBind;
 

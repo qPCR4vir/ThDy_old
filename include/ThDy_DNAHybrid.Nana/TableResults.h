@@ -10,16 +10,16 @@
 #ifndef TableResults_H
 #define TableResults_H
 
+#include "thdy_programs\init_thdy_prog_param.h"
+#include "matrix.h" 
+#include <../../nana.ext/include/EditableForm.hpp>
 #include <nana/gui/widgets/listbox.hpp>
 //#include <nana/gui/tooltip.hpp>
 
 //#include <nana/gui/widgets/checkbox.hpp>
 //#include <nana/gui/widgets/toolbar.hpp>
 
-#include <../../nana.ext/include/EditableForm.hpp>
 
-#include "thdy_programs\init_thdy_prog_param.h"
-#include "matrix.h" 
 
 using List = nana::listbox;
 

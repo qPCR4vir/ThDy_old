@@ -7,6 +7,8 @@
 * @brief 
 */
 
+#include "ThDy_DNAHybrid.Nana\SeqExpl.h"
+#include "ThDy_DNAHybrid.Nana\main.Nana.h"
 
 //#include <iostream>    // temp, for debugging
 //#include <fstream>     // temp, for debugging
@@ -29,8 +31,6 @@
 //
 
 
-#include "ThDy_DNAHybrid.Nana\main.Nana.h"
-//#include "ThDy_DNAHybrid.Nana\SeqExpl.h"
 
 //#include <../../nana.ext/include/EditableForm.hpp>
 //#include <../../nana.ext/include/Numer.hpp>

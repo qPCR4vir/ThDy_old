@@ -10,17 +10,17 @@
 #ifndef FindSondenPage_H
 #define FindSondenPage_H
 
+#include "thdy_programs\init_thdy_prog_param.h"
+#include "../../nana.ext/include/nanaBind.hpp"
+#include <../../nana.ext/include/EditableForm.hpp>
 
 #include <nana/gui/tooltip.hpp>
-#include <../../nana.ext/include/EditableForm.hpp>
 #include <nana/gui/widgets/checkbox.hpp>
-//#include <nana/gui/widgets/group.hpp>
+#include <nana/gui/widgets/group.hpp>
 //#include <../../nana.ext/include/Numer.hpp>
 //#include <nana/gui/tooltip.hpp>
 
-//#include "../../nana.ext/include/nanaBind.hpp"
 
-//#include "thdy_programs\init_thdy_prog_param.h"
 
 
 
@@ -43,7 +43,7 @@
 //
 
 //
-//class ThDyNanaForm ;
+class ThDyNanaForm ;
 // 
 //using List = nana::listbox;
 

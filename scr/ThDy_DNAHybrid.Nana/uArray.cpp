@@ -8,6 +8,10 @@
 */
 
 
+#include "ThDy_DNAHybrid.Nana\uArray.h"
+#include "ThDy_DNAHybrid.Nana\TableResults.h"
+#include "ThDy_DNAHybrid.Nana\main.Nana.h"
+
 //#include <iostream>    // temp, for debugging
 //#include <fstream>     // temp, for debugging
 //#include <filesystem>
@@ -29,10 +33,6 @@
 //
 //
 //
-#include "ThDy_DNAHybrid.Nana\main.Nana.h"
-#include "ThDy_DNAHybrid.Nana\TableResults.h"
-
-//#include "ThDy_DNAHybrid.Nana\uArray.h"
 
 //#include <../../nana.ext/include/EditableForm.hpp>
 //#include <../../nana.ext/include/Numer.hpp>
