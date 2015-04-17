@@ -64,7 +64,6 @@ class CSecBasInfo : public ISec
     sequence	    _c=sequence{ DegCod::basek[DegCod::n_basek-1]};		  ///< sec char, comienzan y terminan con '$'0
 	CMultSec		*_NonDegSet{nullptr} ;                /// \todo: std::unique_ptr<>
 	static int	NewS_ID     ()	{static int last_ID{};	return ++last_ID;	}
-    std::unique_ptr<Aligned_fragment> _aln_fragment;
 
 		CSecBasInfo (int id,     const std::string& nam    , const std::string& clas) 						
 			           :	_ID	 ( id ), 								
@@ -76,6 +75,7 @@ class CSecBasInfo : public ISec
 		CSecBasInfo()  {}
 		CSecBasInfo ( long l)    {_c.reserve(l+2);}   ///   ????????????????????
 public:
+    std::unique_ptr<Aligned_fragment> _aln_fragment;
     void ExportFASTA(ofstream& ofile, int line_len=80)
     {
         ofile << std::endl 

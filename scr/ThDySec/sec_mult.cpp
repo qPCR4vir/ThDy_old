@@ -288,7 +288,13 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 
 				if ( secH->Len() >= _SecLenLim.Min()  )		
 				{	
-					CSec *idem=Idem(*secH);
+					if (! secH->_aln_fragment)
+                        secH->_aln_fragment.reset(new Aligned_fragment);
+
+                    secH->_aln_fragment->sq_ref.Set(_Hsp_query_from, _Hsp_query_to);
+                    secH->_aln_fragment->sq    .Set(_Hsp_hit_from,   _Hsp_hit_to  );
+
+                    CSec *idem=Idem(*secH);
 					if (idem) 
 					{
 						secH->Selected(false);
