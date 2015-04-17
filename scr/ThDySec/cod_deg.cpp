@@ -66,8 +66,8 @@ CInit_Cod_Deg::CInit_Cod_Deg()
 			for (Base nu=0; nu < n_ba  ; nu++)		
 			{	
                 Base ba  { nu2ba[nu] },
-                    u_ba {base(toupper(ba))},
-                    l_ba {base(tolower(ba))};
+                    u_ba {Base(toupper(ba))},
+                    l_ba {Base(tolower(ba))};
 
                 is_base	[ u_ba ] = 
                 is_base	[ l_ba ] =	ba ;
@@ -79,8 +79,8 @@ CInit_Cod_Deg::CInit_Cod_Deg()
 			for (Base nu=0; nu<n_basek  ; nu++)		
             {
                 Base ba  { basek[nu] },
-                    u_ba {base(toupper(ba))},
-                    l_ba {base(tolower(ba))};
+                    u_ba {Base(toupper(ba))},
+                    l_ba {Base(tolower(ba))};
 
 				bk2nu[ u_ba ] = 
                 bk2nu[ l_ba ] = nu ;	
@@ -90,8 +90,8 @@ CInit_Cod_Deg::CInit_Cod_Deg()
 			for (Base nu=0; nu<n_dgba; nu++)		
 			{	
                 Base ba  {nu2dgba[nu]},
-                    u_ba {base(toupper(ba))},
-                    l_ba {base(tolower(ba))};
+                    u_ba {Base(toupper(ba))},
+                    l_ba {Base(tolower(ba))};
 
 				is_degbase	[ u_ba ]	= 
                 is_degbase  [ l_ba ]	= ba ;
@@ -106,8 +106,8 @@ CInit_Cod_Deg::CInit_Cod_Deg()
 			
 			for (Base bd=0; bd<n_dgba; bd++)
 			for (Base b =0; b <n_ba  ; b++)
-			{	grad_deg	[ base(toupper(nu2dgba[bd])) ] += (0!=(bd &  db2nu	[nu2ba[b]]));	
-				grad_deg	[ base(tolower(nu2dgba[bd])) ] += (0!=(bd &  db2nu	[nu2ba[b]]));	
+			{	grad_deg	[ Base(toupper(nu2dgba[bd])) ] += (0!=(bd &  db2nu	[nu2ba[b]]));	
+				grad_deg	[ Base(tolower(nu2dgba[bd])) ] += (0!=(bd &  db2nu	[nu2ba[b]]));	
 			}
 
             Base G{'G'}, g{'g'}, C{'C'}, c{'c'}, U{'U'}, u{'u'}, T{'T'}, t{'t'}, A{'A'}, a{'a'};

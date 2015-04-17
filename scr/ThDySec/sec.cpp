@@ -43,6 +43,7 @@ bool		CSec::Selected(		) const //< User-editable  ??
 	return CSecBasInfo::Selected() && (_parentMS ? _parentMS->Selected(): true)  ;
 }					 
 
+/// Some variables have index base [1] while others have [0] in sec. 
 CSec::CSec (    const std::string&  sec, 
                 int                 id, 
                 const std::string&  nam, 
@@ -55,44 +56,47 @@ CSec::CSec (    const std::string&  sec,
 	_NNpar	    ( NNpar),
 	_Conc	    ( conc )
 {		
-		if (secBeg<1) secBeg=1;
+		if (secBeg<1) 
+              secBeg=1; // from the very begginig
 
-        LonSecPos sb,       /* se,*/  sp,      /// s - string seq. Original string text of the seq.  (index in sec[])
-                  ob=secBeg, oe,  op,      /// o - original "abstract" seq for with s intent to be the representation
-                 /* fb,*/        /*fe,*/  fp;      /// f - filtred seq, or what will be the resulting seq   (index in _c[], _b, etc.)
-               //  beg ,      end, position  
+        //              beg ,            end,   current position  
+        LonSecPos sec_beging,        /*   se,*/  sec_pos,   /// s - string seq. Original string text of the seq.  (index in sec[])
+                  orig_beging=secBeg, orig_end,  orig_pos,  /// o - original "abstract" seq for with s intent to be the representation
+                  /* fb,*/           /*fe,*/     fltr_pos;  /// f - filtred seq, or what will be the resulting seq   (index in _c[], _b, etc.)
 
         const LonSecPos sLen=sec.length();
 			
-        for (sp= 0, op= 0 ; sp<sLen   ; sp++) 	// salta no-bases y las primeras secBeg-1 bases 
-            if( is_degbase	[Base (sec[sp])] ) 
+        for (sec_pos= 0, orig_pos= 0 ; sec_pos<sLen   ; sec_pos++) 
+            if( is_degbase	[Base (sec[sec_pos])] ) 	             // salta no-bases pero no "-"
             {   
-                if ( op == ob-1 )
+                if ( orig_pos == orig_beging-1 )                     // y las primeras secBeg-1 bases 
                     break;
-                ++op ;
+                ++orig_pos ;
             }  
-        if ( sp >= sLen-1 )   /// return if only 0 or 1 base to analize
+        if ( sec_pos >= sLen-1 )   /// return if only 0 or 1 base to analize
             return;
-        sb=sp; 
 
+        sec_beging=sec_pos; /// Now we are at the position were we beging to read the bases of the sequence
+                            /// but first we want to know how many bases are there making a pre - read.
  		if (lmax)			
 		{	
-            oe=ob+lmax-1 ;
-			for (         ; sp<sLen   ; sp++) 
-                if( is_degbase	[Base (sec[sp])] ) 
+            orig_end=orig_beging+lmax -1 ;
+			for (         ; sec_pos<sLen   ; sec_pos++) 
+                if( is_degbase	[Base (sec[sec_pos])] ) 
                 {   
                     ++op ;
                     if ( op == oe )
                         break;
                 }  
+                }     /// the lmax was used 
 		}else
 		{	 
-			for (         ; sp<sLen            ; sp++) 
-                if( is_degbase	[Base (sec[sp])] ) 
-                    ++op ;	// salta no-bases 
+			for (         ; sec_pos<sLen            ; sec_pos++) 
+                if( is_degbase	[Base (sec[sec_pos])] ) 
+                    ++orig_pos ;	// salta no-bases 
 		}
-        oe=op ;
-        LonSecPos len = oe-ob+1;   /// _len is the numer of "bases" to be readed (posible including gaps and deg-bases)
+        orig_end=orig_pos ;
+        LonSecPos len = orig_end-orig_beging+1;   /// _len is the numer of "bases" to be readed (posible including gaps and deg-bases)
 			              /// as in:" TGCA$" . Dont count the 2 '$' - principio y fin de Kadelari and the final '\0'
         if ( sLen < 2 )   /// return if only 0 or 1 base to analize
             return;
@@ -104,12 +108,12 @@ CSec::CSec (    const std::string&  sec,
 		register Base a_1, a;
 		for (a=0; a<n_dgba; a++)	_Count[a]=0 ;
 
-		//_c  .push_back( basek[n_basek-1] ); // '$' principio y fin de Kadelari.=" TGCA$"   in fp=0
+		//_c  .push_back( basek[n_basek-1] ); // '$' principio y fin de Kadelari.=" TGCA$"   in fltr_pos=0
 		//_b  .push_back( n_basek-1) ; 	  	
 		//_SdS.push_back( _NNpar->GetInitialEntropy()); // Solo dep de las conc, no de la sec. Ajustar primero la conc del target, y despues volverla a poner,?? 
 		//_SdH.push_back(  0 );						  // y comprobar que se hacen los calculos necesarios
 
-	    a_1=is_degbase	[ sec[sb] ] ; 		// in fp=1 when sp=sb
+	    a_1=is_degbase	[ base(sec[sec_beging]) ] ; 		// in fltr_pos=1 when sec_pos=sec_beging
 		_GCp	+= is_GC	[a_1] ;
 		_GrDeg	*= grad_deg	[a_1] ;
 		_Count  [  db2nu	[a_1]]++ ;
@@ -117,8 +121,8 @@ CSec::CSec (    const std::string&  sec,
 		_c.push_back( a_1  );
 		_b.push_back( a_1 =bk2nu[is_base[a_1]]) ;						// que hacer si en la sec hay bases deg que Kadelari no considera?
 
-		for (sp=sb+1, fp= 2; fp <= len /*&& sp<se*/ ; ++sp)						// suficiente    curPos <= _len   ???
-			if ( a=is_degbase	[ sec[sp] ] ) 	
+		for (sec_pos=sec_beging+1, fltr_pos= 2; fltr_pos <= len /*&& sec_pos<se*/ ; ++sec_pos)						// suficiente    curPos <= _len   ???
+			if ( a=is_degbase	[ Base(sec[sec_pos] )] ) 	
 			{	
 				_GCp	+= is_GC		[a] ;						// 1-G or C, 0-lo demas.      Y que con las bases deg ??????????????????
 				_GrDeg	*= grad_deg		[a] ;
@@ -129,7 +133,7 @@ CSec::CSec (    const std::string&  sec,
 				_SdS.push_back( _SdS.back() + NNpar->GetSelfEntr (	a_1 , a)  );
 				_SdH.push_back( _SdH.back() + NNpar->GetSelfEnth (	a_1 , a)  );
 				a_1 = a ;
-                fp++ ;
+                fltr_pos++ ;
 			}	
 		_c.push_back( basek[n_basek-1] ); // '$' principio y fin de Kadelari.=" TGCA$", + '\0'
 		_b.push_back(       n_basek-1  ); 	  	
