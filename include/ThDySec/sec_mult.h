@@ -27,10 +27,10 @@ using namespace std;
 #include "sec.h" 
 #include "sec_rang.h" 
 
-  /// @brief permite hacer grupos de sec o de MultiSec para analisis por "especies"
-  /// anadir posibilidad de construir sec concenso 
-  /// CUIDADO :  se aduena de las sec y las borra en su destructor:Usar Remove() or Free() para evitarlo
-class CMultSec	 : public CLink	// --------------------------------------------------------------------- 	CMultSec    -------------------
+  /// @brief permite hacer grupos de sec o de MultiSec (para analisis por "especies"?)
+  /// \todo anadir posibilidad de construir sec concenso 
+  /// CUIDADO :  It owns the sequences y las borra en su destructor: Usar Remove() or Free() para evitarlo
+class CMultSec	 : public CLink	// ---------------------------------------------------------- 	CMultSec    -------------------
 {	public:
 		std::string			_name ;						///< 
         int					_ID       {NewMS_ID()};		///< Unique ID in each programm run
@@ -44,37 +44,48 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 		std::string			 _Path ;				///< file path of the original sequence source
 
 
-//explicit CMultSec (const std::string &Name  )                 : _name		(trim_string(Name))  {	}
-explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name = "")        
+     //explicit CMultSec (const std::string &Name  )                 : _name		(trim_string(Name))  {	}
+
+   explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name = "")        
                       : _NNPar      (NNpar            ), 
 					    _name       (trim_string(Name))            
-                 {  }
+                  {  }
+
          CMultSec(CMultSec	*ms, const std::string &Name = ""): _name       (trim_string(Name)),
                                                                 _SecLim     (ms->_SecLim),
                                                                 _SecLenLim  (ms->_SecLenLim),
                                                                 _MaxTgId    (ms->_MaxTgId), 
-                                                                _NNPar      (ms->_NNPar)         {  }
-		 CMultSec (	ifstream &	 file	,	 
+                                                                _NNPar      (ms->_NNPar)         
+                  {  }
+
+		 CMultSec (	ifstream &	    file	,	 
 					std::shared_ptr<CSaltCorrNN>  NNpar	, 
 					float		  MaxTgId	= 100, 
 					LonSecPosRang  SecLim	= LonSecPosRang {1,0}, 
-                    SecPosRang     SecLenLim= SecPosRang{0,0})  : /*_name(trim_string(file)),	*/
-	                                                            _SecLim     (SecLim),
-                                                                _SecLenLim  (SecLenLim),
-	                                                            _MaxTgId    (MaxTgId), 
-	                                                            _NNPar      (NNpar)              { AddFromFile(file); }
-		 CMultSec (	const std::string &file	,                   ///< The name of the file or directory to be loaded 
+                    SecPosRang     SecLenLim= SecPosRang{0,0})  /*_name(trim_string(file)),	*/
+                  : 
+	                    _SecLim     (SecLim),
+                        _SecLenLim  (SecLenLim),
+	                    _MaxTgId    (MaxTgId), 
+	                    _NNPar      (NNpar)              
+                  { AddFromFile(file); }
+
+         /// The new MSec take the name of the dir, and remember the rest of the path
+         CMultSec (	const std::string &path	,                     ///< The name of the file or directory to be loaded 
 					std::shared_ptr<CSaltCorrNN>  NNpar	, 
-					bool           all_dir  = false,        ///< Load all files and directories recursiverly? 
-					float		   MaxTgId	= 100,          ///< Sec. with more % of idem are marked as "filtered" and not selected
-					LonSecPosRang  SecLim	= LonSecPosRang {1,0},	///< Filtre, using only this region. Will take into account alignment coordenates.
-                    SecPosRang     SecLenLim= SecPosRang    {0,0},  ///< Limit the length. tiny sec: not created, large: get trunkated
-					bool           loadSec  = true     ///< Get the sec? False: get only the dir/file structure
+					bool           all_dir  = false,              ///< Load all files and directories recursiverly? 
+					float		   MaxTgId	= 100,                ///< Sec. with more % of idem are marked as "filtered" and not selected
+					LonSecPosRang  SecLim	= LonSecPosRang {1,0},///< Filtre, using only this region. Will take into account alignment coordenates.
+                    SecPosRang     SecLenLim= SecPosRang    {0,0},///< Limit the length. tiny sec: not created, large: get trunkated
+					bool           loadSec  = true                ///< Get the sec? False: get only the dir/file structure
 				 ) ;
 
 
 	    bool	Selected(bool select)	{return _selected=select;} 			///< make protected: ??
 	    bool	Selected(		) const {return _selected ;}				///< User-editable
+
+        /// Construct a costum path acording to the current tree, which can be different 
+        /// from the original path saved in member variable ._Path
 		static std::string	Path(CMultSec *ms, const std::string& path_sep="/")
         {
 			std::string path  ;			 
@@ -82,10 +93,15 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name =
 				path = parent->_name + path_sep + path;
 			return path;
         }
-		std::string	path(const std::string& path_sep="/")
+
+        /// Construct a filesystem path acording to the current tree, which can be different 
+        /// from the original path saved in member variable ._Path
+		std::string	path( )
 		{
-            return Path(this,path_sep);
+            std::string sep(std::string(1,filesystem::slash<filesystem::path>().value));
+            return Path(this, sep);
 		}
+
 		static int			NewMS_ID()
 		{
 			static int ID(0);
@@ -94,27 +110,27 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name =
 
 		struct CExtremes
 		{
-		int			_NSec, _NMSec	;
-		NumRang<LonSecPos> _Len		;		
-		NumRang<Temperature> _Tm	;
-		CExtremes():_NSec(0), _NMSec(0)	{
-										}
-		void Set   (const CSec& s)	{	 
-										_Len.Set(s.Len());		_Tm.Set(s._Tm)	;
-									}
-		void Expand(const CSec& s)	{	
-										_Len.Expand(s.Len());	_Tm.Expand(s._Tm);
-									}
-		void Set   (const CExtremes& e)	{	 
-											_Len.Set(e._Len);		_Tm.Set(e._Tm)	;
-										}
-		bool Expand(const CExtremes& e)	{	
-											bool ex=_Len.Expand(e._Len);  return (_Tm.Expand(e._Tm) || ex );
-										}
-		void Clear(){_NSec=0, _NMSec=0;}
+		    int			_NSec, _NMSec	;
+		    NumRang<LonSecPos> _Len		;		
+		    NumRang<Temperature> _Tm	;
+		    CExtremes():_NSec(0), _NMSec(0)	{
+										    }
+		    void Set   (const CSec& s)	{	 
+										    _Len.Set(s.Len());		_Tm.Set(s._Tm)	;
+									    }
+		    void Expand(const CSec& s)	{	
+										    _Len.Expand(s.Len());	_Tm.Expand(s._Tm);
+									    }
+		    void Set   (const CExtremes& e)	{	 
+											    _Len.Set(e._Len);		_Tm.Set(e._Tm)	;
+										    }
+		    bool Expand(const CExtremes& e)	{	
+											    bool ex=_Len.Expand(e._Len);  return (_Tm.Expand(e._Tm) || ex );
+										    }
+		    void Clear(){_NSec=0, _NMSec=0;}
 
-		bool isExtreme(const CSec&		s){return _Tm.isExtrem( s._Tm ) || _Len.isExtrem( s.Len() );}
-		bool isExtreme(const CExtremes& e){return _Tm.isExtrem( e._Tm ) || _Len.isExtrem( e._Len  );}
+		    bool isExtreme(const CSec&		s){return _Tm.isExtrem( s._Tm ) || _Len.isExtrem( s.Len() );}
+		    bool isExtreme(const CExtremes& e){return _Tm.isExtrem( e._Tm ) || _Len.isExtrem( e._Len  );}
 
 		} _Local, _Global;
 
@@ -196,49 +212,23 @@ explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name =
 		int		AddFromFileODT	(ifstream &ifileODT);
 		int		AddFromFileODS	(ifstream &ifileODS);
 
-        /// will try all child of base to set the base dir and export
-        bool    Export_from   ( CMultSec& base, bool only_selected)
-        {
-             filesystem::path dir, file;
-            
-            auto sep=std::string(1,tr2::sys::slash<decltype (dir)>().value);
-            auto s= path(sep);
+        /// Reproduce the current -in memory- tree, creating directories as need, 
+        /// and export the local sequences in files with extention .fasta.
+        /// If the file allready exist create a file with a new name
+        /// From each child MSec of this MSec Export one file in fasta format  
+        /// (will try all child of base to set the base dir and export)
+        /// To decide the name of the file it need the path of the base node that do not form part of the file name
+        /// That is for example: "all_seq/Primers for Multiplex PCR/"...
+        bool    Export_from   ( CMultSec& base, bool only_selected)  ;
 
-            for (  base.goFirstMSec()   ; base.NotEndMSec() ;   base.goNextMSec())		// recorre todos las msec
-            {    
-                auto b= base.CurMSec()->path(sep);
-                if ( b.empty() || s.find(b))  continue;    // finded OK only if s beging with p
+        /// Export the local sequences in a file with extention .fasta.
+        /// The name is generated acording to the current postion of the group on the tree.
+        /// If the file allready exist create a file with a new name
+        /// To decide the name of the file it need the path of the base node that do not form part of the file name
+        /// That is for example: "all_seq/Primers for Multiplex PCR/"...
+        bool    Export_local_seq   ( CMultSec& base, bool only_selected);
 
-                file = dir = s.replace(0, b.length()-1, base.CurMSec()->_Path);
-                file.remove_filename().replace_extension("fasta");
-                dir.remove_filename().remove_filename();
-
-                filesystem::create_directories(dir);
-                Export_as(file, only_selected);
-                return true;
-            }
-            return false;
-        }
-
-
-        bool    Export_if   ( CMultSec& base, bool only_selected)
-        {
-            //assert(ms);
-            filesystem::path dir, file;
-            
-            auto sep=std::string(1,tr2::sys::slash<decltype (dir)>().value);
-            auto s= path(sep);
-            auto b= base.path(sep);
-            if ( s.find(b))  return false;            // finded OK only if s beging with p
-            file = dir = s.replace(0, b.length(), base._Path);
-            file.replace_extension("fasta");
-            dir.remove_filename();
-
-            filesystem::create_directories(dir);
-            Export_as(file, only_selected);
-        }
-
-        void   Export_as(std::string filename, bool only_selected)
+        void   Export_as(std::string filename, bool only_selected)  
         {
         	ofstream ofile( filename ); 
 	        if ( ! ofile ) 

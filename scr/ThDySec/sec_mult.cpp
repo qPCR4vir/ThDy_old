@@ -28,8 +28,57 @@ using namespace std ;
 #include "ThDySec/common.h" 
 using namespace DegCod;
 
+/// \todo make more efficient and elegant
+filesystem::path unique_filename(filesystem::path name)
+{
+    while(filesystem::exists(name))
+    {
+        std::string ext = name.extension();
+        std::string nam = name.basename() ;
+        //std::string pat = name.remove_filename() ;
+        name = name.remove_filename() / filesystem::path( nam + "X" + ext) ;
+    }
+    return name;
+}
 
-CMultSec::CMultSec (	const std::string &file	, 
+bool    CMultSec::Export_from   ( CMultSec& base, bool only_selected)  
+{
+    filesystem::path dir, file;
+    auto s= path();
+
+    for (  base.goFirstMSec()   ; base.NotEndMSec() ;   base.goNextMSec())		// recorre todos las msec
+    {    
+        auto b= base.CurMSec()->path();
+        if ( b.empty() || s.find(b))  continue;    // finded OK only if s beging with p
+
+        file = dir = s.replace(0, b.length()-1, base.CurMSec()->_Path);
+        file.remove_filename().replace_extension("fasta");
+        dir.remove_filename().remove_filename();
+
+        filesystem::create_directories(dir);
+        Export_as(unique_filename(file), only_selected);
+        return true;
+    }
+    return false;
+}
+
+bool      CMultSec::Export_local_seq   ( CMultSec& base, bool only_selected)
+{
+    //assert(ms);
+    filesystem::path dir, file;
+    auto s= path();
+    auto b= base.path();
+    if ( s.find(b))  return false;            // finded OK only if s beging with b
+    file = dir = s.replace(0, b.length(), base._Path);
+    file.replace_extension("fasta");
+    dir.remove_filename();
+
+    filesystem::create_directories(dir);
+    Export_as(unique_filename(file), only_selected);
+}
+
+
+CMultSec::CMultSec (	const std::string &path	, 
 					std::shared_ptr<CSaltCorrNN>  NNpar	, 
 					bool           all_dir  /*= false*/,
 					float		   MaxTgId	/*= 100*/, 
@@ -44,70 +93,42 @@ CMultSec::CMultSec (	const std::string &file	,
 	    _NNPar      (NNpar)/*,
         _Path       (file)*/
 {
-	filesystem::path  itf(file);
+	filesystem::path  itf(path);
 
-	if (all_dir)
+	if (all_dir)                    // Load all files and directories recursiverly?
     {
-        if (filesystem::is_regular_file(itf)) itf.remove_filename();
+        if (filesystem::is_regular_file(itf)) 
+            itf.remove_filename();
 
-	    _name = itf.filename ();     /// The new MSec take the name of the dir.
-        _Path = itf;                 /// and the _Path point to it.
+	    _name = itf.filename ();     // The new MSec take the name of the dir.
+        _Path = itf;                 // and the _Path point to it.
 
         filesystem::directory_iterator rdi{ itf }, end;
 
         for (; rdi != end; ++ rdi)
-            AddMultiSec(  new CMultSec(  rdi->path().string().c_str() , 
+            AddMultiSec(  new CMultSec(  rdi->path().string() , 
                                          NNpar,
                                          filesystem::is_directory(rdi->status()), 
                                          MaxTgId, 
                                          SecLim,   
                                          SecLenLim,
                                          loadSec) );
-          //      else 
-          //          itf.remove_filename();
-          //      _name = itf.   .basename();
-		        //AddFromDir(file);
+        return;
 	}
-	else
+	else                           // Load only this file
 	    if (itf.has_filename())
 	    {
 		    _name = itf.filename ();     /// The new MSec take the name of the file.
             _Path = itf;                 /// and the _Path point directly to the file.
             if (loadSec)
-		       AddFromFile(file);  /// will throw if not a file
+		       AddFromFile(path);  /// will throw if not a file
+            return;
 	    }
+	throw std::ios_base::failure(string("No such sequence file: ")+ path );
+    // throw "request a non recursive load from a non regular file";
 }
 
-
-//int		CMultSec::AddFromDir(const std::string& dir, bool  recurs  /*= false*/)		// return la cantidad de sec add --------------------  AddFromDir   -------------------
-//{	
-//	filesys::path  itf(dir);
-//
-//	if (recurs)
-//    {
-//        filesys::directory_iterator rdi{filesys::is_directory(itf) ? itf : itf.remove_filename() }, end;
-//	    _name = itf.filename ();
-//
-//        for (; rdi != end; ++ rdi)
-//            AddMultiSec(  new CMultSec(  rdi->path().string().c_str() , 
-//                                         _NNpar,
-//                                         filesys::is_directory(rdi->status()), 
-//                                         _MaxTgId, 
-//                                         _SecLim,   
-//                                         _SecLenLim  ) );
-//  //      else 
-//  //          itf.remove_filename();
-//  //      _name = itf.   .basename();
-//		//AddFromDir(file);
-//	}
-//	else
-//	    if (itf.has_filename())
-//	    {
-//		    _name = itf.filename ();
-//		    AddFromFile(file);
-//	    }
-//}
-int		CMultSec::AddFromFile (const std::string& file)		// return la cantidad de sec add --------------------  AddFromFile   -------------------
+int		CMultSec::AddFromFile (const std::string& file)	// return la cantidad de sec add ------  AddFromFile   ---
 {	
     ifstream ifile( file ); 
 	if ( ! ifile ) 
@@ -115,13 +136,21 @@ int		CMultSec::AddFromFile (const std::string& file)		// return la cantidad de s
 	    throw std::ios_base::failure(string("Could not open the sequence file: ")+ file );
 	}
 
-	return AddFromFile(ifile); /// \todo: retrow anadiendo el nombre del file
+        return AddFromFile(ifile); /// \todo: retrow anadiendo el nombre del file
+
+	     //try 
+         //   {
+         //   }
+         //   catch (std::exception &e)
+         //   {
+         //       e.what(e.what);
+         //   }
 }
 
-int		CMultSec::AddFromFile (ifstream& ifile)		// return la cantidad de sec add --------------------  AddFromFile   -------------------
+int		CMultSec::AddFromFile (ifstream& ifile)		// return la cantidad de sec add -----------  AddFromFile   ---
 {		
 	if (  _SecLim.Max() <= _SecLim.Min() ) 
-		_SecLim.SetMax(0) ; // if ( _SecEnd<=_SecBeg) _SecEnd=0 ;
+		_SecLim.SetMax(0) ;                      // if ( _SecEnd<=_SecBeg) _SecEnd=0 ;
 
 	int j=0;
 	char c1;
@@ -135,20 +164,24 @@ int		CMultSec::AddFromFile (ifstream& ifile)		// return la cantidad de sec add -
 		return AddFromFileFASTA (ifile);
 					// esto es FASTA, si no  BLAST o GB o ...
 	if (c1 =='<' )
-	{	string xml_DOCTYPE ;
-		getline (ifile, xml_DOCTYPE,'>') ;   // <?xml version="1.0"?>
-		getline (ifile, xml_DOCTYPE,'>') ;   // <!DOCTYPE BlastOutput PUBLIC "-//NCBI//NCBI BlastOutput/EN" "NCBI_BlastOutput.dtd">
-		if ( ! ifile.good() ) 	
-		{	throw std::ios_base::failure(string("Could not open the sequence file: ")/*+ file*/ );		}
+	{	
+        string xml_DOCTYPE ;
+		                    // <?xml version="1.0"?>
+		                    // <!DOCTYPE BlastOutput PUBLIC "-//NCBI//NCBI BlastOutput/EN" "NCBI_BlastOutput.dtd">
+		if ( ! getline (ifile, xml_DOCTYPE,'>')  ||  ! getline (ifile, xml_DOCTYPE,'>') ) 	
+		{	
+            throw std::ios_base::failure(string("Could not open the sequence file: ")/*+ file*/ );		
+        }
 
-		if		(string::npos!=xml_DOCTYPE.find("DOCTYPE BlastOutput") )				
+		if		(string::npos != xml_DOCTYPE.find("DOCTYPE BlastOutput") )				
 			return AddFromFileBLAST (ifile);
-		else if (string::npos!=xml_DOCTYPE.find("DOCTYPE Bioseq-set" ) )				
+		else if (string::npos != xml_DOCTYPE.find("DOCTYPE Bioseq-set" ) )				
 			return AddFromFileGB (ifile);
 		return 0;
 	}
 	if (c1 =='L' )	
-	{	ifile.putback(c1);												
+	{	
+        ifile.putback(c1);												
 		return AddFromFileGBtxt (ifile);	
 	}
 	return 0;   // cerr unknow format		
@@ -195,9 +228,9 @@ int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // -------------------    Add
 }
 
 int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::            AddFromFileBLAST  -----------------------------
-{	unsigned int	_BlastOutput_query_len ;		// x todos los "hits"
+{	unsigned int _BlastOutput_query_len ;		// x todos los "hits"
 	int			 id=0;
-	string li ;  //  xml_line
+	string       li ;  //  xml_line
     LonSecPos    lmax{ _SecLim.Max() >= _SecLim.Min()  ? _SecLim.Max() - _SecLim.Min() +1 : 0 };
     if (lmax > _SecLenLim.Max() ) 
         lmax = _SecLenLim.Max() ;

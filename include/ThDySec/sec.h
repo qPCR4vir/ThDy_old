@@ -147,7 +147,7 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
                                 NNpar,                      //  . maxlen . secBeg .
                                 lmax, 
                                 secBeg, 
-								clas,   
+                                clas,
                                 conc ),
 							_BlastOutput_query_len( BlastOutput_query_len ) ,
 							// para cada hit
