@@ -198,6 +198,9 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 {	unsigned int	_BlastOutput_query_len ;		// x todos los "hits"
 	int			 id=0;
 	string li ;  //  xml_line
+    LonSecPos    lmax{ _SecLim.Max() >= _SecLim.Min()  ? _SecLim.Max() - _SecLim.Min() +1 : 0 };
+    if (lmax > _SecLenLim.Max() ) 
+        lmax = _SecLenLim.Max() ;
 
 	do  {	getline (fi, li,'>') ;			if ( ! fi.good() ) return 0; }   // BLAST format error
 	while  (string::npos==li.find("BlastOutput_query-len") ); fi>>_BlastOutput_query_len;//  <BlastOutput_query-len>267</BlastOutput_query-len>
@@ -257,6 +260,10 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 
 			if ( (_SecLim.Min() <= _Hsp_query_to) && ( (!_SecLim.Max())  || _SecLim.Max() >=_Hsp_query_from) ) // _SecLim.Max()=0 significa no recortar la sec.
 			{	
+                LonSecPos  secBeg {_SecLim.Min() +  _Hsp_hit_from < _Hsp_query_from+1 ? 0 : ( _SecLim.Min() +  _Hsp_hit_from) - _Hsp_query_from , } ;
+								//clas,   
+
+                
                 std::unique_ptr<CSecBLASTHit> secH
                     { new CSecBLASTHit(      _BlastOutput_query_len ,
 											// para cada hit
@@ -280,7 +287,9 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 											_Hsp_align_len ,
 											std::move(_Hsp_midline) ,
 											_FormatOK ,
-											std::move(sec)		,_SecLim,                         // _SecBeg, _SecEnd,
+											std::move(sec)		,
+                                            lmax,
+                                            secBeg,                         // _SecBeg, _SecEnd,
 											id,			                    //Hit_num   ???		//	char	*	nam,	Hit_def
 											_NNPar               /*,  //long l=0,(Hit_len ---> NO ) !!!  -->_Hsp_align_len -OK clas,	conc*/
 											)

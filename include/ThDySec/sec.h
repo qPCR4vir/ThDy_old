@@ -134,7 +134,8 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 					std::string&&   Hsp_midline ,
 					bool			FormatOK ,
 					std::string&&   sec	,	
-					NumRang<long>	SecLim,			                 //long	SecBeg,long	SecEnd,
+					LonSecPos   	lmax,			                 //long	SecBeg,long	SecEnd,
+					LonSecPos       secBeg,			                 //long	SecBeg,long	SecEnd,
 					int				id,				                 //	Hit_num	char	*	nam,	Hit_def
                     std::shared_ptr<CSaltCorrNN>  NNpar,			 //	long  l=0,	Hit_len ------> _Hsp_align_len
 					std::string	    clas="", 
@@ -144,9 +145,8 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
                                 id,                         // 
                                 std::move(Hit_accession),   // name 
                                 NNpar,                      //  . maxlen . secBeg .
-								(SecLim.Max() && long(Hsp_query_to) > SecLim.Max()   ) ? SecLim.Max()       - SecLim.Min() +1 
-                                                                                       : long(Hsp_query_to) - SecLim.Min() +1	,	//Hsp_align_len,  --  Long
-								SecLim.Min() - long(Hsp_query_from+1) ,                 //     SecBeg
+                                lmax, 
+                                secBeg, 
 								clas,   
                                 conc ),
 							_BlastOutput_query_len( BlastOutput_query_len ) ,
@@ -170,8 +170,8 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 							_Hsp_gaps		( Hsp_gaps ) ,
 							_Hsp_align_len	( Hsp_align_len ) ,
 							_Hsp_midline	( std::move(Hsp_midline) ) ,
-							_FormatOK		( FormatOK ) ,
-							_SecLim			( SecLim )	/*,_SecBeg	(SecBeg), 	_SecEnd		(SecEnd)*/
+							_FormatOK		( FormatOK ) /*,
+							_SecLim			( SecLim )	*//*,_SecBeg	(SecBeg), 	_SecEnd		(SecEnd)*/
 							{
                         }			
 
@@ -198,7 +198,7 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 	unsigned int	_Hsp_align_len ;
 	std::string	    _Hsp_midline ;
 	bool			_FormatOK ;
-	NumRang<long>	_SecLim;   	                              //long	_SecBeg;	//long	_SecEnd;
+	//NumRang<long>	_SecLim;   	                              //long	_SecBeg;	//long	_SecEnd;
 	std::string	Description ()const	override {return _description.length() ? _description : _Hit_def ; }
 };
 
