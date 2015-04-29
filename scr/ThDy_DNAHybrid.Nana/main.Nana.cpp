@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
         numUpDw_TgBeg  .ResetLayout (35,40,30 );  
         numUpDw_TgEnd  .ResetLayout (35,40,30 );  
         numUpDw_SLenMin.ResetLayout (60,40,30 );   
-        numUpDw_SLenMax.ResetLayout (60,40,30 );  
+        numUpDw_SLenMax.ResetLayout (60,70,30 );  
     }
     void     ThDyNanaForm::AsignWidgetToFields() 
     {
