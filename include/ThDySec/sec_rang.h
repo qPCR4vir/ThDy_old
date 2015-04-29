@@ -66,11 +66,12 @@ struct Aligned_fragment
     long lenght()
     {
         long len ;
-        if ( len=sq.     lenght()) return len;
-        if ( len=bio.    lenght()) return len;
-        if ( len=sq_ref. lenght()) return len;
-        if ( len=bio_ref.lenght()) return len;
-        if ( len=aln.    lenght()) return len;
+        if ( len=sq.       lenght()) return len;
+        if ( len=bio.      lenght()) return len;
+        if ( len=sq_ref.   lenght()) return len;
+        if ( len=bio_ref.  lenght()) return len;
+        if ( len=consensus.lenght()) return len;
+        if ( len=aln.      lenght()) return len;
         return 0;
      }
 };

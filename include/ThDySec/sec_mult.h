@@ -336,7 +336,7 @@ class CMultSec	 : public CLink	// ----------------------------------------------
            {
                if (_Consenso)
                    return _Consenso->Len();
-               else 0;
+               else return 0;
            }
 
 	private:
