@@ -53,6 +53,7 @@ struct fragment:  NumRang<LonSecPos>
 };
 
 class CSecBasInfo;
+class CMultSec;
 /// to at least aproximately compare positions
 struct Aligned_fragment
 {
@@ -60,7 +61,8 @@ struct Aligned_fragment
                          bio,    ///< from self, but relatively to the presumible complete genome
                       sq_ref,    ///< from some reference: (posible partial) seq, maybe the first seq of an alignment
                      bio_ref,    ///< from some reference, but relatively to the presumible complete genome 
-                         aln;    ///< from a reference sequence from the aligment: a consensus
+                   consensus;    ///< from a reference sequence from the aligment: a consensus
+    fragment<CMultSec>   aln;    ///< from self: fragment of the original (posible partial) seq, probably not available 
     long lenght()
     {
         long len ;
