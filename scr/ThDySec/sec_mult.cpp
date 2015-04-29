@@ -241,54 +241,54 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 	do 
     {	
         unsigned int	_Hit_num=0 ;			// para cada hit
-			std::string	    _Hit_id  ;				
-			std::string	    _Hit_def ;				// descriptor ??
-			std::string	    _Hit_accession 	;
-			long			_Hit_len=0 ;				
-			float			_Hsp_bit_score=0 ;
-			unsigned int	_Hsp_score=0 ;
-			double			_Hsp_evalue=0 ;
-			LonSecPos		_Hsp_query_from=0 ;    // dejar signed or unsigned !!!!????
-			LonSecPos		_Hsp_query_to=0 ;
-			LonSecPos 		_Hsp_hit_from=0 ;
-			LonSecPos 		_Hsp_hit_to=0 ;
-			int				_Hsp_query_frame=0 ;
-			int				_Hsp_hit_frame=0 ;
-			LonSecPos 		_Hsp_identity=0 ; // revisar type --- no sera %  : float??
-			LonSecPos 		_Hsp_positive=0 ;
-			LonSecPos 		_Hsp_gaps=0 ;
-			LonSecPos 		_Hsp_align_len=0 ;
-			std::string	    _Hsp_midline ;
-			bool			_FormatOK=0 ;
+		std::string	    _Hit_id  ;				
+		std::string	    _Hit_def ;				// descriptor ??
+		std::string	    _Hit_accession 	;
+		long			_Hit_len=0 ;				
+		float			_Hsp_bit_score=0 ;
+		unsigned int	_Hsp_score=0 ;
+		double			_Hsp_evalue=0 ;
+		LonSecPos		_Hsp_query_from=0 ;    // dejar signed or unsigned !!!!????
+		LonSecPos		_Hsp_query_to=0 ;
+		LonSecPos 		_Hsp_hit_from=0 ;
+		LonSecPos 		_Hsp_hit_to=0 ;
+		int				_Hsp_query_frame=0 ;
+		int				_Hsp_hit_frame=0 ;
+		LonSecPos 		_Hsp_identity=0 ; // revisar type --- no sera %  : float??
+		LonSecPos 		_Hsp_positive=0 ;
+		LonSecPos 		_Hsp_gaps=0 ;
+		LonSecPos 		_Hsp_align_len=0 ;
+		std::string	    _Hsp_midline ;
+		bool			_FormatOK=0 ;
 
 		std::string	   sec;						// para CSec
 		std::string	   nam;
 		long		   l=0;
 		std::string	   clas;
 
-	while(getline(fi,li,'>')&& string::npos==li.find("Hit_num"      ) ) ;  fi>>_Hit_num;				//  <Hit_num>1</Hit_num>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hit_id"       ) ) ;                           	//<Hit_id>gi|84028434|gb|DQ318020.1|</Hit_id> 
-                                                            if ( ! getline (fi, _Hit_id, '<') ) return id;
-	while(getline(fi,li,'>')&& string::npos==li.find("Hit_def"      ) ) ;                               //<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
-                                                            if ( ! getline (fi, _Hit_def,'<') ) return id;
-	while(getline(fi,li,'>')&& string::npos==li.find("Hit_accession") ) ;                              	//<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
-                                                            if ( ! getline (fi, _Hit_accession,'<') ) return id;
-	while(getline(fi,li,'>')&& string::npos==li.find("Hit_len"      ) ) ;  fi>>_Hit_len;				//  <Hit_len>11048</Hit_len> 
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_bit-score") ) ;  fi>>_Hsp_bit_score;			//  <Hsp_bit-score>482.786</Hsp_bit-score>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_score"    ) ) ;  fi>>_Hsp_score;              //  <Hsp_score>534</Hsp_score>		
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_evalue"   ) ) ;  fi>>_Hsp_evalue;		    	//  <Hsp_evalue>3.71782e-133</Hsp_evalue>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_query-from")) ;  fi>>_Hsp_query_from;		    //  <Hsp_query-from>1</Hsp_query-from>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_query-to" ) ) ;  fi>>_Hsp_query_to;			//  <Hsp_query-to>267</Hsp_query-to>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_hit-from" ) ) ;  fi>>_Hsp_hit_from;			//  <Hsp_hit-from>9043</Hsp_hit-from>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_hit-to"   ) ) ;  fi>>_Hsp_hit_to;			    //  <Hsp_hit-to>9309</Hsp_hit-to>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_query-frame"));  fi>>_Hsp_query_frame;		//  <Hsp_query-frame>1</Hsp_query-frame>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_identity" ) ) ;  fi>>_Hsp_identity;			//  <Hsp_identity>267</Hsp_identity>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_positive" ) ) ;  fi>>_Hsp_positive;			//  <Hsp_positive>267</Hsp_positive>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_gaps"     ) ) ;  fi>>_Hsp_gaps;	 		    //  <Hsp_gaps>0</Hsp_gaps>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_align-len") ) ;  fi>>_Hsp_align_len;		    //  <Hsp_align-len>267</Hsp_align-len>
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_hseq") ) ; 	                            	//  <Hsp_hseq>TACAACATGATGGGAAAGAGAGAGAAGAAG 
-                                                            if ( ! getline (fi, sec         ,'<') ) return id;
-	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_midline") ) ;                                 //  <Hsp_midline>|||||||||||||||||||||||||||||||||||||||||
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hit_num"      ) ) ;  fi>>_Hit_num;				//  <Hit_num>1</Hit_num>
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hit_id"       ) ) ;                           	//<Hit_id>gi|84028434|gb|DQ318020.1|</Hit_id> 
+                                                                if ( ! getline (fi, _Hit_id, '<') ) return id;
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hit_def"      ) ) ;                               //<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
+                                                                if ( ! getline (fi, _Hit_def,'<') ) return id;
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hit_accession") ) ;                              	//<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
+                                                                if ( ! getline (fi, _Hit_accession,'<') ) return id;
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hit_len"      ) ) ;  fi>>_Hit_len;				//  <Hit_len>11048</Hit_len> 
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_bit-score") ) ;  fi>>_Hsp_bit_score;			//  <Hsp_bit-score>482.786</Hsp_bit-score>
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_score"    ) ) ;  fi>>_Hsp_score;              //  <Hsp_score>534</Hsp_score>		
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_evalue"   ) ) ;  fi>>_Hsp_evalue;		    	//  <Hsp_evalue>3.71782e-133</Hsp_evalue>
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_query-from")) ;  fi>>_Hsp_query_from;		    //  <Hsp_query-from>1</Hsp_query-from>
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_query-to" ) ) ;  fi>>_Hsp_query_to;			//  <Hsp_query-to>267</Hsp_query-to>
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_hit-from" ) ) ;  fi>>_Hsp_hit_from;			//  <Hsp_hit-from>9043</Hsp_hit-from>
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_hit-to"   ) ) ;  fi>>_Hsp_hit_to;			    //  <Hsp_hit-to>9309</Hsp_hit-to>
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_query-frame"));  fi>>_Hsp_query_frame;		//  <Hsp_query-frame>1</Hsp_query-frame>
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_identity" ) ) ;  fi>>_Hsp_identity;			//  <Hsp_identity>267</Hsp_identity>
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_positive" ) ) ;  fi>>_Hsp_positive;			//  <Hsp_positive>267</Hsp_positive>
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_gaps"     ) ) ;  fi>>_Hsp_gaps;	 		    //  <Hsp_gaps>0</Hsp_gaps>
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_align-len") ) ;  fi>>_Hsp_align_len;		    //  <Hsp_align-len>267</Hsp_align-len>
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_hseq") ) ; 	                            	//  <Hsp_hseq>TACAACATGATGGGAAAGAGAGAGAAGAAG 
+                                                                if ( ! getline (fi, sec         ,'<') ) return id;
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_midline") ) ;                                 //  <Hsp_midline>|||||||||||||||||||||||||||||||||||||||||
                                                             if ( ! getline (fi, _Hsp_midline,'<') ) return id;
 
 		if ( _Hsp_query_to  < _SecLim.Min() ) // end even before it need to beging
@@ -301,48 +301,49 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
         LonSecPos  secBeg {0};
         if (_SecLim.Min() +  _Hsp_hit_from >= _Hsp_query_from+1 )
             secBeg = (_SecLim.Min() +  _Hsp_hit_from) - _Hsp_query_from ;
-
+							
         //clas,   
-                
-                std::unique_ptr<CSecBLASTHit> secH
-                    { new CSecBLASTHit(      _BlastOutput_query_len ,
-											// para cada hit
-											_Hit_num ,
-											std::move(_Hit_id) ,				
-											std::move(_Hit_def) ,				
-											std::move(_Hit_accession)	,
-											_Hit_len ,				
-											_Hsp_bit_score ,
-											_Hsp_score ,
-											_Hsp_evalue ,
-											_Hsp_query_from ,
-											_Hsp_query_to ,
-											_Hsp_hit_from ,
-											_Hsp_hit_to ,
-											_Hsp_query_frame ,
-											_Hsp_hit_frame ,
-											_Hsp_identity ,
-											_Hsp_positive ,
-											_Hsp_gaps ,
-											_Hsp_align_len ,
-											std::move(_Hsp_midline) ,
-											_FormatOK ,
-											std::move(sec)		,
-                                            lmax,
-                                            secBeg,                         // _SecBeg, _SecEnd,
-											id,			                    //Hit_num   ???		//	char	*	nam,	Hit_def
-											_NNPar               /*,  //long l=0,(Hit_len ---> NO ) !!!  -->_Hsp_align_len -OK clas,	conc*/
-											)
-                    };
+
+        std::unique_ptr<CSecBLASTHit> secH
+                { new CSecBLASTHit(      _BlastOutput_query_len ,
+										// para cada hit
+										_Hit_num ,
+										std::move(_Hit_id) ,				
+										std::move(_Hit_def) ,				
+										std::move(_Hit_accession)	,
+										_Hit_len ,				
+										_Hsp_bit_score ,
+										_Hsp_score ,
+										_Hsp_evalue ,
+										_Hsp_query_from ,
+										_Hsp_query_to ,
+										_Hsp_hit_from ,
+										_Hsp_hit_to ,
+										_Hsp_query_frame ,
+										_Hsp_hit_frame ,
+										_Hsp_identity ,
+										_Hsp_positive ,
+										_Hsp_gaps ,
+										_Hsp_align_len ,
+										std::move(_Hsp_midline) ,
+										_FormatOK ,
+										std::move(sec)		,
+                                        lmax,
+                                        secBeg,          // _SecBeg, _SecEnd,
+										id,			     //Hit_num   ???		//	char	*	nam,	Hit_def
+										_NNPar           /*,  //long l=0,(Hit_len ---> NO ) !!!  -->_Hsp_align_len -OK clas,	conc*/
+										)
+                };
 
 	    if ( secH->Len() < _SecLenLim.Min()  )	
             continue;
 
-					if (! secH->_aln_fragment)
-                        secH->_aln_fragment.reset(new Aligned_fragment);
+        if (! secH->_aln_fragment)
+            secH->_aln_fragment.reset(new Aligned_fragment);
 
-                    secH->_aln_fragment->sq_ref.Set(_Hsp_query_from, _Hsp_query_to);
-                    secH->_aln_fragment->sq    .Set(_Hsp_hit_from,   _Hsp_hit_to  );
+        secH->_aln_fragment->sq_ref.Set(       _Hsp_query_from, _Hsp_query_to);
+        secH->_aln_fragment->aln   .set(*this, _Hsp_query_from, _Hsp_query_to);
+        secH->_aln_fragment->sq    .Set(       _Hsp_hit_from,   _Hsp_hit_to  );
 
         long MaxIdem= long(ceil((_Hsp_align_len*_MaxTgId)/100.0f));	// max of Id base 
 
@@ -354,16 +355,16 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
         }
         else
         {
-                    CSec *idem=Idem(*secH);
-					if (idem) 
-					{
-						secH->Selected(false);
-						secH->Filtered(true);
-					}
-					InsertSecAfter (secH.release()  , idem) ;	
-			}
+            CSec *idem=Idem(*secH);
+		    if (idem) 
+		    {
+			    secH->Selected(false);
+			    secH->Filtered(true);
+		    }
+		    InsertSecAfter (secH.release()  , idem) ;	
+        }
 		id++;		
-		}
+    }
 	while (fi.good() ); 
 	return id; 
 }
@@ -529,11 +530,19 @@ CSec	*CMultSec::Idem ( CSec &sec )   // ------  CMultSec:: NotIdem  --- busqueda
 
 	long MaxErCS= long(ceil(float(LenCandSec*(100.0f-_MaxTgId) ) / 100.0f)); // min of not Id base to be in the list
 	
-	for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec de esta misma ms
+    for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec de esta misma ms
 	{	
         CSec &s = *CurSec() ; 
 		if (s.Filtered()) 
             continue;
+
+        long qb=0, qe=LenCandSec-1;
+        long hb=0, he=s.Len()-1;
+        if(sec._aln_fragment && s._aln_fragment)
+        {
+        
+        }
+
 		long l, MaxEr ;
 		if (s.Len() < LenCandSec) 		
         {	
