@@ -251,7 +251,8 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 		CSec		*Idem			(CSec &sec);  //		CConsParam	_ConsPar ;
 		CSec		*AddSec			( CSec *sec );
 		CSec		*InsertSec		( CSec *sec ) ;
-		CSec		*InsertSecAfter	( CSec *sec , CSec *preSec ) ;
+		CSec		*InsertSecAfter	( CSec *sec , CSec *refSec ) ;
+		CSec		*InsertBefore	( CSec *sec , CSec *reftSec ) ;
 		int			CountSelectedSeq		()
 		{
             int count{0};

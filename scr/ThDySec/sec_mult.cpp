@@ -21,6 +21,7 @@
 #include <math.h>
 #include <list>
 #include <stack>
+#include <algorithm>
 
 using namespace std ; 
 
@@ -358,10 +359,21 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
             CSec *idem=Idem(*secH);
 		    if (idem) 
 		    {
-			    secH->Selected(false);
-			    secH->Filtered(true);
+		        if (idem->Len() >= secH->Len() ) 
+                {
+                    secH->Selected(false);
+			        secH->Filtered(true);
+		            InsertSecAfter (secH.release()  , idem) ;	
+                }
+                else
+                {
+                    idem->Selected(false);
+			        idem->Filtered(true);
+		            InsertBefore (secH.release()  , idem) ;	
+                }
 		    }
-		    InsertSecAfter (secH.release()  , idem) ;	
+            else
+               AddSec(secH.release() );
         }
 		id++;		
     }
@@ -536,33 +548,50 @@ CSec	*CMultSec::Idem ( CSec &sec )   // ------  CMultSec:: NotIdem  --- busqueda
 		if (s.Filtered()) 
             continue;
 
+        // sec:q           -------------------------------------------------------------------------
+        //          ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+        // s  :h    -------------------------------------------------------------------
+        // aln ------------------------------------------------------------------------------------------------
+        //
+
         long qb=0, qe=LenCandSec-1;
         long hb=0, he=s.Len()-1;
         if(sec._aln_fragment && s._aln_fragment)
         {
-        
-        }
+            if (sec._aln_fragment->aln.sq ==  s._aln_fragment->aln.sq )
+            {
+               if (sec._aln_fragment->aln.Min() > s._aln_fragment->aln.Min() )
+                   hb = sec._aln_fragment->aln.Min() - s._aln_fragment->aln.Min() ;
+               else
+                   qb = s._aln_fragment->aln.Min() - sec._aln_fragment->aln.Min() ;
 
+               if (sec._aln_fragment->aln.Max() > s._aln_fragment->aln.Max() )
+                   he -= (sec._aln_fragment->aln.Max() - s._aln_fragment->aln.Max()) ;
+               else
+                   qe -= s._aln_fragment->aln.Max() - sec._aln_fragment->aln.Max() ;
+            }
+        }
 		long l, MaxEr ;
 		if (s.Len() < LenCandSec) 		
         {	
             l=s.Len() ;			
-            MaxEr= long(ceil(l*(100-_MaxTgId)  / 100));		
+            MaxEr= long(ceil(l*(100-_MaxTgId)  / 100));	
         } 
 		else 					
         {	
             l=LenCandSec ;				
             MaxEr= MaxErCS;						
         }
+        l=std::min(he-hb, qe-qb);
 
-		long i=0 , Er=0 ;
-		while ( ++i <=l ) 	
-            if ( MaxEr   <   ( Er += ( s[i] != sec[i] )) ) 
-                break;
-		if (i>l) 
-            return &s ;		
+		for (long i=0 , Er=0 ; i <=l; ++i ) 
+        {
+            Er += ( s[i+hb] != sec[i+qb] ) ;
+            if (   Er >  MaxEr   ) 
+	            return nullptr ;
+        }
+        return &s ;	
 	}
-	return nullptr ;
 }
 
  CSec *	CMultSec::AddSec ( CSec *sec )
@@ -582,6 +611,14 @@ CSec	*CMultSec::Idem ( CSec &sec )   // ------  CMultSec:: NotIdem  --- busqueda
 	if (!preSec) return AddSec (sec);
 	if (!sec) return nullptr ;
 	sec->InsertAfter( preSec);
+	UpdateTotalsAdding ( sec );
+	return sec;
+}
+ CSec *	CMultSec::InsertBefore	( CSec *sec , CSec *preSec )			// insert 'link' sec ,  after preSec
+{	
+	if (!preSec) return AddSec (sec);
+	if (!sec) return nullptr ;
+	sec->InsertBefore( preSec);
 	UpdateTotalsAdding ( sec );
 	return sec;
 }
