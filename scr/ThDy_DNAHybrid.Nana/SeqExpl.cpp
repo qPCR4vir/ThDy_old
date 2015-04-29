@@ -46,11 +46,13 @@
         SelectClickableWidget( *this);
         _tree.checkable(true);
         _list.checkable(true);
-        _list.append_header(STR("Name")  , 120);
-        _list.append_header(STR("Lenght"), 50);
-        _list.append_header(STR("Tm °C") , 60);
-        _list.append_header(STR("Deg")   , 50);
-        _list.append_header(STR("Description")   , 220);
+        _list.append_header(STR("Name")  , 120);     // col 0: name  
+        _list.append_header(STR("Lenght"), 50);      // col 1: len
+        _list.append_header(STR("Tm °C") , 60);      //case 2: Tm 
+        _list.append_header(STR("Deg")   , 50);      // case 3: deg   
+        _list.append_header(STR("Description")   , 220);   // case 4: descr  
+        _list.append_header(STR("Beg"), 50);         // case 5: beg in aln 
+        _list.append_header(STR("End"), 50);         // case 6: end in aln    
         _list.append_header(STR("Seq")   , 420);
         //_list.resolver(ListSeqMaker());
 
@@ -427,7 +429,9 @@
     nana::char_t val[blen];
 
     swprintf(val,blen,     STR("%*d")  , 6,           sec->Len()       );
-    ores <<  sec->Name()  <<  val  ;                                    // col 0: name     // col 1: len
+
+    ores <<  sec->Name()                    // col 0: name  
+         <<  val  ;                         // col 1: len
 
 	Temperature t=KtoC( sec->NonDegSet() ? sec->NonDegSet()->_Local._Tm.Ave() : sec->_Tm.Ave());
 	swprintf(val,blen, STR("% *.*f °C"), 6, 1,   t );
@@ -435,10 +439,25 @@
     double fade_rate=  t<min? 0.0 : t>max? 1.0 : (t-min)/(max-min);
     nana::color tc{static_cast<nana::color_rgb>(0xFFFFFFFF)} , 
                 bc = nana::color(nana::colors::red).blend( nana::colors::blue, fade_rate); 
-    ores <<  List::cell {val, bc , tc};                                                 //case 2: Tm 
 
-    swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());            // case 3: deg     // case 4: descr   // sec
-    ores <<  val  << sec->Description() <<  (char *)(  sec->Sequence().substr (1, std::min( sec->Len(), slen)).c_str()    );                                                          
+    ores <<  List::cell {val, bc , tc};    //case 2: Tm 
+
+    swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());
+    ores <<  val                           // case 3: deg    
+         << sec->Description()     ;       // case 4: descr  
+
+    
+    if( sec->_aln_fragment && sec->_aln_fragment->aln.lenght())
+    {
+        swprintf(val,blen,     STR("%*d")  , 6,           sec->_aln_fragment ->aln.Min()       );
+        ores <<  val                       ;    // case 5: beg in aln   
+        swprintf(val,blen,     STR("%*d")  , 6,           sec->_aln_fragment ->aln.Max()       );
+        ores <<  val                       ;    // case 6: end in aln    
+    }
+    else
+        ores  << " - "      << " - "        ;    // no pos in aln 
+
+    ores <<  (char *)(  sec->Sequence().substr (1, std::min( sec->Len(), slen)).c_str()    );      // sec                                                     
 
     return ores;
 }
