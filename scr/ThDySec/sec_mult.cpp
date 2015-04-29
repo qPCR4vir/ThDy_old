@@ -238,7 +238,9 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 	do  {	getline (fi, li,'>') ;			if ( ! fi.good() ) return 0; }   // BLAST format error
 	while  (string::npos==li.find("BlastOutput_query-len") ); fi>>_BlastOutput_query_len;//  <BlastOutput_query-len>267</BlastOutput_query-len>
 	
-	do {	unsigned int	_Hit_num=0 ;			// para cada hit
+	do 
+    {	
+        unsigned int	_Hit_num=0 ;			// para cada hit
 			std::string	    _Hit_id  ;				
 			std::string	    _Hit_def ;				// descriptor ??
 			std::string	    _Hit_accession 	;
@@ -258,6 +260,7 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 			LonSecPos 		_Hsp_align_len=0 ;
 			std::string	    _Hsp_midline ;
 			bool			_FormatOK=0 ;
+
 		std::string	   sec;						// para CSec
 		std::string	   nam;
 		long		   l=0;
@@ -288,14 +291,18 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 	while(getline(fi,li,'>')&& string::npos==li.find("Hsp_midline") ) ;                                 //  <Hsp_midline>|||||||||||||||||||||||||||||||||||||||||
                                                             if ( ! getline (fi, _Hsp_midline,'<') ) return id;
 
-			// long SecBeg = _SecBeg - _Hsp_query_from +1 ;			// if (_SecBeg >= _Hsp_query_from)
-			//if ( (_SecBeg		<= _Hsp_query_to) && ( (!_SecEnd)		 || _SecEnd		  >=_Hsp_query_from) ) // _SecEnd=0 significa no recortar la sec.
+		if ( _Hsp_query_to  < _SecLim.Min() ) // end even before it need to beging
+            break;
+        if ( _SecLim.Max() && _Hsp_query_from > _SecLim.Max()  ) // _SecLim.Max()==0 mean dont cut the seq or beging after it need to end
+            break;
+        //if (lmax && ((_Hsp_query_to - _Hsp_query_from)>lmax) && (_Hsp_hit_to - _Hsp_hit_from)>lmax)
+        //    break;
 
-			if ( (_SecLim.Min() <= _Hsp_query_to) && ( (!_SecLim.Max())  || _SecLim.Max() >=_Hsp_query_from) ) // _SecLim.Max()=0 significa no recortar la sec.
-			{	
-                LonSecPos  secBeg {_SecLim.Min() +  _Hsp_hit_from < _Hsp_query_from+1 ? 0 : ( _SecLim.Min() +  _Hsp_hit_from) - _Hsp_query_from , } ;
-								//clas,   
+        LonSecPos  secBeg {0};
+        if (_SecLim.Min() +  _Hsp_hit_from >= _Hsp_query_from+1 )
+            secBeg = (_SecLim.Min() +  _Hsp_hit_from) - _Hsp_query_from ;
 
+        //clas,   
                 
                 std::unique_ptr<CSecBLASTHit> secH
                     { new CSecBLASTHit(      _BlastOutput_query_len ,
@@ -328,14 +335,25 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 											)
                     };
 
-				if ( secH->Len() >= _SecLenLim.Min()  )		
-				{	
+	    if ( secH->Len() < _SecLenLim.Min()  )	
+            continue;
+
 					if (! secH->_aln_fragment)
                         secH->_aln_fragment.reset(new Aligned_fragment);
 
                     secH->_aln_fragment->sq_ref.Set(_Hsp_query_from, _Hsp_query_to);
                     secH->_aln_fragment->sq    .Set(_Hsp_hit_from,   _Hsp_hit_to  );
 
+        long MaxIdem= long(ceil((_Hsp_align_len*_MaxTgId)/100.0f));	// max of Id base 
+
+        if( _Hsp_identity > MaxIdem )
+        {
+			secH->Selected(false);
+			secH->Filtered(true);
+            AddSec(secH.release() );
+        }
+        else
+        {
                     CSec *idem=Idem(*secH);
 					if (idem) 
 					{
@@ -343,9 +361,8 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 						secH->Filtered(true);
 					}
 					InsertSecAfter (secH.release()  , idem) ;	
-					id++;		
-				}
 			}
+		id++;		
 		}
 	while (fi.good() ); 
 	return id; 
@@ -503,22 +520,42 @@ int		CMultSec::AddFromFileGB (ifstream &ifile)  // ----------------  CMultSec:: 
 int		CMultSec::AddFromFileODT (ifstream &ifileODT){return 0;}
 int		CMultSec::AddFromFileODS (ifstream &ifileODS){return 0;}
 
-CSec	*CMultSec::Idem ( CSec &sec )   // ----------------  CMultSec::            NotIdem  --- busqueda trivial de sec identicas -------------
-{	if ( _MaxTgId >= 100  ) return nullptr ;
-	long Lcs=sec.Len() ;											// len of candidate sec (to be in the list, with MaxId)
-	long MaxErCS= long(ceil(float(Lcs*(100.0f-_MaxTgId) ) / 100.0f));					// min of not Id base to be in the list
+CSec	*CMultSec::Idem ( CSec &sec )   // ------  CMultSec:: NotIdem  --- busqueda trivial de sec identicas -------------
+{	
+    if ( _MaxTgId >= 100  ) //  no restriction on similarity
+        return nullptr ;    
+
+	long LenCandSec=sec.Len() ;     // Lenght of Candidate Sec (to be in the list, with MaxId)
+
+	long MaxErCS= long(ceil(float(LenCandSec*(100.0f-_MaxTgId) ) / 100.0f)); // min of not Id base to be in the list
+	
 	for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec de esta misma ms
-	{	CSec &s = *CurSec() ; 
-		if (s.Filtered()) continue;
+	{	
+        CSec &s = *CurSec() ; 
+		if (s.Filtered()) 
+            continue;
 		long l, MaxEr ;
-		if (s.Len() < Lcs) 		{	l=s.Len() ;			MaxEr= long(ceil(l*(100-_MaxTgId)  / 100));		} 
-		else 					{	l=Lcs ;				MaxEr= MaxErCS;						}
+		if (s.Len() < LenCandSec) 		
+        {	
+            l=s.Len() ;			
+            MaxEr= long(ceil(l*(100-_MaxTgId)  / 100));		
+        } 
+		else 					
+        {	
+            l=LenCandSec ;				
+            MaxEr= MaxErCS;						
+        }
+
 		long i=0 , Er=0 ;
-		while ( ++i <=l ) 	if ( MaxEr   <   ( Er += ( s[i] != sec[i] )) )  break;
-		if (i>l) return &s ;		
+		while ( ++i <=l ) 	
+            if ( MaxEr   <   ( Er += ( s[i] != sec[i] )) ) 
+                break;
+		if (i>l) 
+            return &s ;		
 	}
 	return nullptr ;
 }
+
  CSec *	CMultSec::AddSec ( CSec *sec )
 {	if (!sec) return nullptr ;
 	_LSec.Add(sec);
