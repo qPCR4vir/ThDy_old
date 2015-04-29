@@ -583,15 +583,17 @@ CSec	*CMultSec::Idem ( CSec &sec )   // ------  CMultSec:: NotIdem  --- busqueda
             MaxEr= MaxErCS;						
         }
         l=std::min(he-hb, qe-qb);
-
-		for (long i=0 , Er=0 ; i <=l; ++i ) 
+        long Er=0 ;
+		for (long i=0   ; i <=l; ++i ) 
         {
             Er += ( s[i+hb] != sec[i+qb] ) ;
             if (   Er >  MaxEr   ) 
-	            return nullptr ;
+	            break ;
         }
-        return &s ;	
+        if (   Er <=  MaxEr   ) 
+	         return &s ;	
 	}
+	return nullptr ;
 }
 
  CSec *	CMultSec::AddSec ( CSec *sec )
