@@ -10,6 +10,8 @@
 #include "ThDy_DNAHybrid.Nana\SeqExpl.h"
 #include "ThDy_DNAHybrid.Nana\main.Nana.h"
 
+#include <algorithm>
+
 //#include <iostream>    // temp, for debugging
 //#include <fstream>     // temp, for debugging
 //#include <filesystem>
