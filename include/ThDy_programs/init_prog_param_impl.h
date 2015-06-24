@@ -12,7 +12,7 @@
 #include <vector>
 #include <functional>
 
-#include "..\ThDySec\common_basics.h" 
+#include "..\ThDySec\common.h" 
 
 /// \brief Organize a "software" or Project into Specialized Programns and manage the input/config parametrs for each of the programs. 
 /// Make ease to write a program interfase with a command-line, a text "project file" or a GUI, or all of then together. 

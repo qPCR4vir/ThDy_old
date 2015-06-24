@@ -1,3 +1,12 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\include\ThDySec\th_dy_param.h
+*
+* @brief 
+*/
+
 #ifndef _TH_DY_PARAM_H
 #define _TH_DY_PARAM_H
 
@@ -8,7 +17,7 @@
 //#include <iosfwd>
 
 #include "cod_deg.h"
-#include "common_basics.h" 
+#include "common.h" 
 using namespace std;
 using namespace DegCod ;
 	///  \todo empezar por poner nombre a cosas como forbidden_enthalpy, iloop_entropy, bloop_entropy, bloop_enthalpy

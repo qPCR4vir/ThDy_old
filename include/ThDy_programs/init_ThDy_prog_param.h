@@ -1,9 +1,18 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\include\ThDy_programs\init_ThDy_prog_param.h
+*
+* @brief 
+*/
+
 #ifndef _INIT_ThDy_PROG_PARAM_H
 #define _INIT_ThDy_PROG_PARAM_H
 
 #include "init_prog_param.h" 
 #include <memory>
-#include "ThDySec/sec.h"
+#include "ThDySec/sec_mult.h"
 #include <filesystem>
 
 const SecPos MAX_SEQ_LEN_ALIGN{ 2001 };
@@ -506,6 +515,13 @@ class ThDyProject : public CProject /// Permite manejar todo el projecto: con un
         void ExportFASTA(CMultSec* ms, bool only_selected)
         {
             if (ms) ms->Export_from   (*_cp._pSeqTree,  only_selected);
+
+                    //nana::filebox  fb{ *this, true };
+                    //fb .add_filter ( SetupPage::FastaFiltre( )                   )
+                    //   .title(STR("Directory load: Add a tree of groups of sequences from a directory"));
+                    //if (fb()) 
+                    //    AddMSeqFiles(nana::charset(fb.file()), true);
+
         }
 	    int	Run	(IProg &prog ) override
         {

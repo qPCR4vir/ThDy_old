@@ -91,7 +91,8 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 	msCand.ExportCommonSonden(  IPrgPar_SdDes->_cp._OutputFile.get().c_str(), 
                                 IPrgPar_SdDes->_design, 
                                 ExtrCovPerc, 
-                                fasta | csv);
+                                fileFormat ( (int)fasta | (int)csv )
+                              );
 
 
 	time_t t_tm_cal = time(nullptr);

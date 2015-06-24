@@ -1,3 +1,12 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\include\ThDy_programs\prog_comm_functions.h
+*
+* @brief 
+*/
+
 #ifndef _PROG_COMM_FUNTIONS_H
 #define _PROG_COMM_FUNTIONS_H
 #pragma unmanaged
@@ -5,7 +14,7 @@
 
 #include "init_ThDy_prog_param.h"
 #include "..\ThDySec\th_dy_align.h"
-#include "..\ThDySec\matrix.h"
+#include "..\..\ProgParam\include\matrix.h"
 
 
 //unique_ptr<CSaltCorrNN> Create_NNpar    (ThDyCommProgParam& _cp);
@@ -13,7 +22,7 @@
 //void Check_NNp_Targets (ThDyCommProgParam& cp);
 
 
-auto_ptr<ThDyAlign>   Create_ThDyAlign(ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar);
+unique_ptr<ThDyAlign>   Create_ThDyAlign(ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar);
 
 class OutStr
 {public:

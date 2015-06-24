@@ -1,6 +1,17 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\scr\ThDySec\th_dy_align.cpp
+*
+* @brief 
+*/
 
-//#include "stdafx.h"
-//#pragma unmanaged	
+#ifdef WINDOWS_FORM_GUI
+#include "stdafx.h"
+#pragma unmanaged
+#endif
+
 #include "ThDySec/th_dy_align.h"
 #include <set>
 
@@ -600,8 +611,8 @@ bool	ThDyAlign_TmCand::AddIfHit(long fi, long fj)
 {	
 	if (fi<2 || fj<2) return false;   assert (fi>=2);assert (fj>=2);// como pueden ser < 2 y tener Tm > sig ???? 
 
-	CRang	*ri=_cs->_rg[fi-2] ,   // Candidato - Sonda  -termina en fi  (o sea -- i )
-			*rj=_ct->_rg[fj-2] ;   // Candidato - Target -termina en fj  (o sea -- j )
+	auto	&ri = _cs->_rg[fi-2] ,   // Candidato - Sonda  -termina en fi  (o sea -- i )
+			&rj = _ct->_rg[fj-2] ;   // Candidato - Target -termina en fj  (o sea -- j )
 	if(! ri && ! rj) return false;						// En al menos una de las sec todavia esta disp
 //  puede haber una sec intermedia bena para todas---	// algun cand en estas pos. Eso incluye que no estan demaciado cerca del comienzo de las sec.
 		// solucion TEMPORAL, no muy eficiente : mejor duplicar codigo para cada caso de que una de los rang=0
@@ -807,13 +818,13 @@ void	ThDyAlign::Export_Hits(ofstream &osHits, char *sep)		// mientras estan cone
 				else											osHits	<<   KtoC(_tg->Tm(h->_j0+1 -2, h->_j -2 )) ;				 
 	}
 }
-/// MEJORAR !!!
-void	CMSecCand::ExportCommonSonden(const std::string &fileName, bool colpased, NumRang<float> ExtrCovPerc, int format)
+/// \todo MEJORAR !!!
+void	CMSecCand::ExportCommonSonden(const std::string &fileName, bool colpased, NumRang<float> ExtrCovPerc, fileFormat format)
 {	
 	NumRang<int> ExtrCov ( ((_NSecCand-1) * ExtrCovPerc.Min()) /100.0  , ((_NSecCand-1) * ExtrCovPerc.Max()) /100.0 ) ;  
     
-    bool	f_fas=format && fasta,
-			f_csv=format && csv;
+    bool	f_fas = format & fileFormat::fasta ,
+			f_csv = format & fileFormat::csv   ;
 	ofstream	osFasta, osCSV;
 	char sep[]=";";							// cambiar a global sep
 	if (f_fas)
@@ -840,7 +851,7 @@ void	CMSecCand::ExportCommonSonden(const std::string &fileName, bool colpased, N
 		CSecCand &s=*((CSecCand *)_LSecCand.Cur());
 		long l= s._Sec.Len() ;
 		for (long fi=1 ; fi<=l;fi++)
-		{	CRang *r=s._rg[fi] ;
+		{	auto &r=s._rg[fi] ;/// \todo revisar !!!
 			if (! r) continue;   
 			for (long pi=r->Min(); pi <=r->Max();pi++)
 			{	assert(pi<l);
@@ -851,7 +862,7 @@ void	CMSecCand::ExportCommonSonden(const std::string &fileName, bool colpased, N
 				{	
 					CSec cand  (cur_s  , 1,"s", _TDATmC->_NNpar);     
 					
-					cand.Copy_Seq(cur_cs, rev_compl);
+					cand.Copy_Seq(cur_cs, DNAstrand::rev_compl);
 					CSec c_cand(cur_cs , 1,"c", _TDATmC->_NNpar);
 
 					fAl.Align(&cand,&c_cand);
@@ -1161,7 +1172,7 @@ void	ThDyAlign::Export_DPMz_Pre(ofstream &osDP_mz)
 
 
 	//long			_i,_j, _i0, _j0, _l;
-	//DNAStrand		_strnd;
+	//DNAstrand		_strnd;
 	//ThDyAlign::Step _Step ;
 	//float			_H, _S, _G, _Tm, _max ;
 

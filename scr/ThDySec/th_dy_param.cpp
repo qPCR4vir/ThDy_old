@@ -1,5 +1,17 @@
-//#include "stdafx.h"
-//#pragma unmanaged
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\scr\ThDySec\th_dy_param.cpp
+*
+* @brief 
+*/
+
+#ifdef WINDOWS_FORM_GUI
+#include "stdafx.h"
+#pragma unmanaged
+#endif
+
 #include <memory.h>
 #include <math.h>
 #include <string.h>
@@ -11,6 +23,12 @@
 #include "ThDySec/th_dy_param.h"
 
 using namespace std;
+const 	EnergyRang		G_def (-5,-1) ;	//  G_def , 
+const 	TemperatureRang	Tm_def (57,63);	//  Tm_def ;
+const 	SecPosRang		L_def  (20,35);	//  L_def  ;
+
+
+
 
 void	CSaltCorrNN::InitSaltNNMatriz()
 {	

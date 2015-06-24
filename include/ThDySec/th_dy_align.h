@@ -1,10 +1,18 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\include\ThDySec\th_dy_align.h
+*
+* @brief 
+*/
 #pragma unmanaged	
 #ifndef _TH_DY_ALIGN_H
 #define _TH_DY_ALIGN_H
 //#define _CRT_SECURE_NO_WARNINGS
 #include <assert.h>
-#include "sec.h"
-#include "common_basics.h" 
+#include "sec_mult.h"
+#include "common.h" 
 
 //  OJO !!! La primera sec a alinear es la sonda - "simple cadena", mientras que la seg sec es el Target - de doble cadena
 //  y por tanto normalmente (by default) se hibrida la sonda con la cadena complementaria del Target.
@@ -136,7 +144,7 @@ class CHit : public CLink // Hit dentro de la Matriz de prog dinamica
 {	
 public: 	
 	LonSecPos		_i,_j, _i0, _j0, _l;
-	DNAStrand		_strnd;
+	DNAstrand		_strnd;
 	ThDyAlign::Step _Step ;
 	Energy			_H,  _G ;
 	Entropy			_S ;
@@ -188,26 +196,36 @@ float  G(){return _Gr ;}
 
 class ThDyAlign_Tm			: public ThDyAlign  // -----------------------------Tm--------------------ThDyAlign_Tm------
 {public:	
-	ThDyAlign_Tm(long MaxLenSond, long MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar)
+	ThDyAlign_Tm ( long MaxLenSond, 
+                   long MaxLenTarg, 
+                   std::shared_ptr<CSaltCorrNN>  NNpar )
 		:ThDyAlign(MaxLenSond, MaxLenTarg, NNpar, NNpar->kein_Tm)
-																		{CalcParam = &ThDyAlign::CalcParamTm;} 
-	virtual const char *AlignMeth(){return "Tm";}
-	Temperature	GetMax_Tm()const{return _maxglo;}
+	{CalcParam = &ThDyAlign::CalcParamTm;} 
+
+	virtual const char *AlignMeth ()     {return "Tm"   ;}
+	Temperature	        GetMax_Tm ()const{return _maxglo;}
 };
 
 class ThDyAlign_TmHits			: public ThDyAlign_Tm  // -----------------------------Tm---------------ThDyAlign_TmHits----- no en uso????------
 {public:	
-	ThDyAlign_TmHits(long MaxLenSec, std::shared_ptr<CSaltCorrNN>  NNpar, float Tm_min=CtoK(57), float Tm_max=CtoK(63) )
-		:ThDyAlign_Tm(MaxLenSec, MaxLenSec, NNpar),	 _Tm_min(Tm_min), _Tm_max(Tm_max){} 
-	virtual const char *AlignMeth(){return "TmHits";}
-	virtual	bool	AddIfHit(long i, long j);
+	ThDyAlign_TmHits(   long                    MaxLenSec, 
+                      std::shared_ptr<CSaltCorrNN>  NNpar, 
+                      float               Tm_min =CtoK(57), 
+                      float               Tm_max =CtoK(63) )
+		:ThDyAlign_Tm(MaxLenSec, MaxLenSec, NNpar),	 _Tm_min(Tm_min), _Tm_max(Tm_max)
+     {} 
+
+	virtual const char *AlignMeth (){return "TmHits";}
+	virtual	bool	     AddIfHit (long i, long j);
 	Temperature  _Tm_min, _Tm_max ; //aqui se usan????????????????
 };
 
 class ThDyAlign_TmCand			: public ThDyAlign_Tm  // -----------------------------Tm-----------------ThDyAlign_TmCand---------
 {public:	
-	ThDyAlign_TmCand(long MaxLenSec, std::shared_ptr<CSaltCorrNN>  NNpar)       /*, float Tm_min=CtoK(57), float Tm_max=CtoK(63) */
+	ThDyAlign_TmCand ( long                      MaxLenSec, 
+                       std::shared_ptr<CSaltCorrNN>  NNpar)               /*, float Tm_min=CtoK(57), float Tm_max=CtoK(63) */
 		:ThDyAlign_Tm(MaxLenSec, MaxLenSec, NNpar){}                            /*,	 _Tm_min(Tm_min), _Tm_max(Tm_max)*/
+
 	virtual const char *AlignMeth(){return "TmCand";}
 	virtual bool	AddIfHit	(long i, long j);
 	void	Use			(CSecCand  *cand1, CSecCand *cand2)	{	_cs=cand1; _ct=cand2; ThDyAlign_Tm::Use	( &_cs->_Sec, &_ct->_Sec);}
@@ -244,7 +262,7 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 	void		FindCommon	(CSecCand  &cand1, CSecCand &cand2, bool design=true)	;
 	CSecCand	*CompNext	();
 
-	void		ExportCommonSonden(const std::string &fileName, bool colpased, NumRang<float> ExtrCovPerc, int format);
+	void		ExportCommonSonden(const std::string &fileName, bool colpased, NumRang<float> ExtrCovPerc, fileFormat format);
 	virtual ~CMSecCand(){	 
 							_LSecCand.Destroy() ; 
 							_LMSecCand.Destroy() ; }

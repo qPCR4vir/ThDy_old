@@ -1,6 +1,17 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\include\ThDySec\sec.h
+*
+* @brief 
+*/
+
 #pragma unmanaged	
+
 #ifndef _SEC_H
 #define _SEC_H
+
 #include <stdlib.h>
 #include <fstream>
 #include <cassert>
@@ -12,118 +23,40 @@ namespace filesystem = std::tr2::sys; //std::experimental::filesystem
 
 
 using namespace std;
-
-#include "link.h"
-#include "cod_deg.h"
+#include "sec_basic.h" 
 #include "th_dy_param.h"   // crear un nuevo par de fuente cpp con las cosas que nec los dos .h + sec.h
-#include "common_basics.h" 
+#include "common.h" 
 
-// separar CSec de la ThermDy y crear derivada CThDySec que incluye SdH,S,Tm  ?????????
+ 
 // anadir funcion de compactar cod (eliminar los gap y bases deg?). SdH y S se recalculan.
 // anadir funcion para regenerar cod no compactado, recordar estado comp/no comp
 // crear (adaptar) clase primer derivada de CSec, con pos y Tm en cada sec Target
-// pensar mejor la relacion con NNPar
-// anadir static member PNNParams NNpar??
-
+ 
 class CMultSec	;
-class ISec				// Pure virtual class ?
-{public:			
-	using sequence = std::basic_string<Base> ;
-	virtual const sequence& Sequence(													)	const=0 ;
-	const char*          charSequence()	const {return (char*) (  Sequence().c_str()  );}
-	virtual ISec        *Clone   	(DNAStrand strnd=direct								)	const=0 ; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
-	virtual std::string& Copy_Seq   (std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd=direct)	const=0  ;
-	virtual std::string& Copy_Seq   (std::string &SecHier, DNAStrand strnd=direct)	const=0  ;
-	virtual				~ISec			(){}
-};
-
-
-class CSecBasInfo : public ISec
-{ protected:	
-	bool			_selected{true}, _filtered{false};
-	int				_ID{NewS_ID()} ;			          ///< num de la sec en file original?? en total??, num unico?
-	std::string     _name ;			                      ///< nombre unico? FASTA id	// char			*_name ;
-	std::string		_description;
-	//long			_len ;			                      ///< longitud corregida, sin los '$'
-	long			_GrDeg {1} ;		                  ///< Grado de degeneracion. Cantidad total de diferentes molec, dependiendo de deg
-	float			_GCp   {} ;		
-	long			_Count[DegCod::n_dgba];	              ///< An array of counters for each deg base - inicializar!!
-	long			_NDB   {};			                  ///< cantidad de bases deg
-	std::string     _Clas ;		                          ///< clasificacion
-    sequence	    _c=sequence{ basek[n_basek-1]};		  ///< sec char, comienzan y terminan con '$'0
-	CMultSec		*_NonDegSet{nullptr} ;                /// \todo: std::unique_ptr<>
-	static int	NewS_ID     ()	{static int last_ID{};	return ++last_ID;	}
-
-		CSecBasInfo (int id,     const std::string& nam    , const std::string& clas) 						
-			           :	_ID	 ( id ), 								
-							_name( trim_string	(nam )),	
-						    _Clas(clas )/*,
-							_c{2,DegCod::basek[DegCod::n_basek]}*/
-                       {} 
-
-		CSecBasInfo()  {}
-		CSecBasInfo ( long l)    {_c.reserve(l+2);}   ///   ????????????????????
-public:
-    void ExportFASTA(ofstream& ofile, int line_len=80)
-    {
-        ofile << std::endl 
-              << ">" << _name << " " << Description ()   ;
-        for (int i=0 ; i< Len() ; ++i )
-        {
-            if (!(i % line_len)) ofile << std::endl;
-            ofile << charSequence()[i+1];
-        }
-        ofile << std::endl;
-     }
-
-	//CSecBasInfo			*CopyFirstBases	(long pos)	;			 // copia parcialmente hasta la pos
-    ~CSecBasInfo() override;
-    std::string Name		()const		{return _name;}              ///< User-editable
-	int			ID			()const		{return _ID;}	             ///< Run-time-sistem define, non-editable
-	bool		Filtered(bool filter)	{return _filtered=filter;}   ///< User-editable ?????
-	bool		Filtered(		) const {return _filtered;}
-	bool		Selected(bool select)	{return _selected=select;} 		  	 ///< make protected: ??
-	bool		Selected(		) const {return _selected;}					 ///< User-editable
-	void	    Description (std::string	description)		{ _description=description;}
-	virtual std::string	Description ()const	{return !_description.empty() ? _description : Name() ; }
-
-	virtual const sequence& Sequence	(						)	const override   /// ver esto !!!
-								{	 
-									return _c ;
-								}
-	 std::string& Copy_Seq  	(std::string &SecHier,  long InicBase, long EndBase, DNAStrand strnd=direct)	const override ;
-	 std::string& Copy_Seq  	(std::string &SecHier,  DNAStrand strnd=direct)	const override {return Copy_Seq ( SecHier, 1, Len(), strnd ) ;}
-	 bool		 NotIdem		(CSecBasInfo *sec) {return false;}
-	Base		operator[]	(int i)const{return _c[i];}  /// i+1 ????
-
-	long		Len			()const		{return _c.length()-2;} //
-	long		Degeneracy	()const		{return _GrDeg;}
-	long		*BaseCount	()			{return _Count;}
-	long		BaseCount	(Base b)	{ return  DegCod::is_degbase[b] ?  _Count[DegCod::db2nu[b]] : 0;}
-	CMultSec	*NonDegSet	()			{return _NonDegSet;}
-	float		GCpercent	()const		{return	_GCp ;}		
-};
 
 
 class CSec : public CLink, public CSecBasInfo	// ---------------------------------------   CSec	---------------------------------------------------
 {public:
 	    int                     x;				///<  ????
-		NumRang<float>	        _Tm ;			///< float		_Tm, _minTm, _maxTm ;				//  
+		TemperatureRang	        _Tm ;			///< float		_Tm, _minTm, _maxTm ;				//  
 		std::shared_ptr<CSaltCorrNN>  _NNpar ;
 		float			        _Conc ;			///< conc de esta molec. Si igual al resto -1 y la toma de NNParam
         std::vector<Code>	    _b=   std::vector<Code>{n_basek-1};			///< sec cod, inicialmente basek
         std::vector<Entropy>    _SdS= std::vector<Entropy>{ _NNpar->GetInitialEntropy()};		///< dS acumulada. Calcular Delta S sera solo restar la final menos la inicial	
         std::vector<Energy>		_SdH= std::vector<Energy> {  Energy{} };			// 
 		CMultSec	           *_parentMS{nullptr}	;   //std::weak_ptr<CMultSec> _parentMS	;
-
+    /// Some variables have index base [1] while others have [0] in sec. We need to clean the sec, 
+    /// which can contain non bases letter, like tabs, end of line, blancs, etc, but we take into account "-".
 	CSec (  const std::string&  sec, 
 		    int                 id,
-            const std::string&  nam,     // char*
+            const std::string&  nam,     
             std::shared_ptr<CSaltCorrNN>  NNpar, 
-            long                lmax=0, ///< limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
-            long                secBeg=1, 
+            LonSecPos           lmax=0,    ///< limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
+            LonSecPos           secBeg=1,  ///< base [1] in sec. The first letter in sec to be read. 
             const std::string&  clas="" , 
             float               conc=-1         );
+
+    /// Dummi sequence withow actual sequence, but with NNpar and reserved space
 	CSec ( long l, std::shared_ptr<CSaltCorrNN>  NNpar) ;
 
 
@@ -134,14 +67,17 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
 	CSec		*GenerateNonDegVariant	(CSec *s, long pos, Base ndb)   ; //< recursiva
 	CSec		*CopyFirstBases			(long pos)	;			///< copia parcialmente hasta la pos
 	void		 CorrectSalt			() { if ( _NNpar->UseOwczarzy () ) CorrectSaltOwczarzy();};
-	CSec		*Clone   	(DNAStrand strnd=direct	 ) const override; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+	CSec		*Clone   	(DNAstrand strnd=DNAstrand::direct	 ) const override; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 
-	//virtual CSec*CreateCopy		(DNAStrand strnd=direct) override;//< crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+	//virtual CSec*CreateCopy		(DNAstrand strnd=direct) override;//< crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 	//const char	*Get_charSec			()const{return (const char*)_c.c_str();}  ///   ???????????
 
     bool		Selected() const;				 //< User-editable    ???????????????????????????????????????????????????????????????????????????
-    bool		Selected(bool select)	{ _selected = select; return Selected(); } 			//< make protected: ?????????????????????????????????????????????????
-
+    bool		Selected(bool select)	
+                          { 
+                              _selected = select; 
+                              return Selected(); 
+                           } 			//< make protected: ?????????????????????????????????????????????????
 	Base		operator()		(int i)const{return _b[i];}
 	Temperature	Tm	(long pi, long pf	)const;				        ///< Tm de la sonda con sec desde pi hasta pf, inclusive ambas!! 
 	Temperature	Tm	(long pi			)const	{return Tm(pi,Len())   ;}   ///< Tm de la sonda con sec desde pi hasta el final, inclusive ambos!!
@@ -152,7 +88,7 @@ class CSec : public CLink, public CSecBasInfo	// -------------------------------
 	Energy		G	(long pi			)const	{return G(pi,Len())    ;}   ///< G de la sonda con sec desde pi hasta el final, inclusive ambos!!
 	Energy		G	(					)const	{return G(1,Len())     ;}   ///< G de la sonda con sec desde inicio hasta el final, inclusive ambos!!
 
-	 ~CSec() override  ;   // decidir si vale la pena que sea virtual. Cual es el efecto??
+	 ~CSec() override  ;    
 	virtual bool NotIdem(CSec *sec) {return false;}
 };
 
@@ -198,20 +134,20 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 					std::string&&   Hsp_midline ,
 					bool			FormatOK ,
 					std::string&&   sec	,	
-					NumRang<long>	SecLim,			                 //long	SecBeg,long	SecEnd,
+					LonSecPos   	lmax,			                 //long	SecBeg,long	SecEnd,
+					LonSecPos       secBeg,			                 //long	SecBeg,long	SecEnd,
 					int				id,				                 //	Hit_num	char	*	nam,	Hit_def
                     std::shared_ptr<CSaltCorrNN>  NNpar,			 //	long  l=0,	Hit_len ------> _Hsp_align_len
 					std::string	    clas="", 
 					float			conc=-1
 				)  :
-						CSec (  std::move(sec),   
-                                id,   
-                                std::move(Hit_accession),   
-                                NNpar, 
-								(SecLim.Max() && long(Hsp_query_to) > SecLim.Max()   ) ? SecLim.Max()       - SecLim.Min() +1 
-                                                                                       : long(Hsp_query_to) - SecLim.Min() +1	,	//Hsp_align_len,  --  Long
-								SecLim.Min() - long(Hsp_query_from+1) ,                 //     SecBeg
-								clas,   
+						CSec (  std::move(sec),             // sec
+                                id,                         // 
+                                std::move(Hit_accession),   // name 
+                                NNpar,                      //  . maxlen . secBeg .
+                                lmax, 
+                                secBeg, 
+                                clas,
                                 conc ),
 							_BlastOutput_query_len( BlastOutput_query_len ) ,
 							// para cada hit
@@ -234,8 +170,8 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 							_Hsp_gaps		( Hsp_gaps ) ,
 							_Hsp_align_len	( Hsp_align_len ) ,
 							_Hsp_midline	( std::move(Hsp_midline) ) ,
-							_FormatOK		( FormatOK ) ,
-							_SecLim			( SecLim )	/*,_SecBeg	(SecBeg), 	_SecEnd		(SecEnd)*/
+							_FormatOK		( FormatOK ) /*,
+							_SecLim			( SecLim )	*//*,_SecBeg	(SecBeg), 	_SecEnd		(SecEnd)*/
 							{
                         }			
 
@@ -262,7 +198,7 @@ class CSecBLASTHit : public CSec // ---------------------------------------   CS
 	unsigned int	_Hsp_align_len ;
 	std::string	    _Hsp_midline ;
 	bool			_FormatOK ;
-	NumRang<long>	_SecLim;   	                              //long	_SecBeg;	//long	_SecEnd;
+	//NumRang<long>	_SecLim;   	                              //long	_SecBeg;	//long	_SecEnd;
 	std::string	Description ()const	override {return _description.length() ? _description : _Hit_def ; }
 };
 
@@ -273,9 +209,9 @@ class CSecGB : public CSec // ---------------------------------------   CSecGB	-
 	std::string 	_Seqdesc_title		 ;
 	long			_Seq_inst_length	 ;	    
 	
-	CSecGB(			std::string&&	Textseq_id_accession ,	
-					std::string&&	Org_ref_taxname	 ,
-					std::string&&	Seqdesc_title	,
+	CSecGB(			std::string	    Textseq_id_accession ,	
+					std::string	    Org_ref_taxname	 ,
+					std::string     Seqdesc_title	,
 					long			Seq_inst_length	 ,    
 					const char	*	sec	,	
 					int				id,						//	char		*	nam,	Seqdesc_title	,	
@@ -301,11 +237,11 @@ class CSecGBtxt : public CSec // ---------------------------------------   CSecG
 	std::string	_DEFINITION      ;
 	std::string	_ACCESSION       ;
 	std::string	_ORGANISM        ;			// ORIGIN      
-	CSecGBtxt(		std::string&&	LOCUS       ,
+	CSecGBtxt(		std::string	    LOCUS       ,
 					long		    Seq_inst_length,	
-					std::string&&	DEFINITION     ,
-					std::string&&	ACCESSION      ,
-					std::string&&	ORGANISM       ,
+					std::string	    DEFINITION     ,
+					std::string	    ACCESSION      ,
+					std::string	    ORGANISM       ,
 					const char	*	sec	,	
 					int				id,						//	char		*	nam,	DEFINITION	,	
 					std::shared_ptr<CSaltCorrNN>  NNpar,  				//	long			l=0,		Seq_inst_length
@@ -322,477 +258,24 @@ class CSecGBtxt : public CSec // ---------------------------------------   CSecG
 	virtual ~CSecGBtxt() {				}	
 };
 
-
-class CRangBase : public NumRang<long> // ---------------------------------------   CRang	: AMPLIAR y mejorar !!!  ---------------------------------------
-{public:	
-	CRangBase (long i,long f) : NumRang<long>(i,f), _c(   f+1, i-1   )  { /* open();*/} 		// NumRang<long> _p;
-
-public:
-	CRangBase MatchRange() {return CRangBase( _c.Min(), _c.Max() );} // NO ME GUSTA ASI  !!!!!! pensar algo mas eficiente
-	void open(void){  _c.Set(   Max()+1, Min()-1   )     ;}
-						//    pi      pf                fi
-											//----|++++++++|-----------------|--------			El rango inicial, y como va quedando
-											// pfcur                        fi					El rango para calculo ("cur"), antes del comienzo	
-											//---|----------|----------------|--------			Asi se queda si no hibridan entre si las sec en esta zona,
-											//             picur            fi					y entonces "colapsa" el rango
-											//            pfcur             fi					En este caso encontro 5 "cand" comunes	
-											//--------|+++|------------------|--------			
-											//       picur                  fi					
-	//NumRang<long>	_p, _pcur ;
-	void adjustCur(long p){ _c.Expand(p); } //if( _c.Min()>p ) 	_c.Min()=p;		if( _c.Max()<p )	_c.Max()=p;}
-	bool isOpen  ()const{ return _c.Min() > _c.Max() ;}
-	bool hasMatch()const{ return !isOpen   ()    ;}
-	long NumMatch()const{ return _c.length() + 1;}
-	void SchrinkToMatch(){Set(_c);}					// scheck if open????  
-	//long length()const  { return Max() - Min() ;}
-	void schift(int s) { Min()+=s;Max()+=s;_c.Min()+=s;_c.Max()+=s;}   //{ _pf+=s;_pi+=s;_pfcur+=s;_picur+=s;}
-	bool addMatch(long i){ if (inRang(i)) {adjustCur(i);return true;} else return false;}
-
- protected:
-	NumRang<long> _c;		//	long			_pi,_picur, _pf,_pfcur; //  _picur= _pf+1; _pfcur= _pi-1;}	
-} ; 
-class CRangBaseSchift /*: public CRangBase */
-{	CRangBase &_R;
-	long _sch;
-public:
-	CRangBaseSchift	(CRangBase& r, long sch) : _R(r), _sch(sch)
-				{
-					_R.schift(_sch);
-				}
-	void AddSchift	(int sch)
-				{
-					_sch+=sch;
-					_R.schift(sch);
-				}
-	void ResetSchift()
-				{
-					_R.schift(-_sch);
-					_sch=0;
-				}
-		~CRangBaseSchift()
-				{
-					ResetSchift();
-				}
-};
-
-
-
-class CRang : public CRangBase// ---------------------------------------   CRang	: AMPLIAR y mejorar !!!  ---------------------------------------
-{public:		//NumRang<long>	_p, _pcur ;
-
-	       CRang (long i,long f) : CRangBase ( i, f),	 matchs(new int[length()+1])    { for (int i=0 ; i<= length() ; ++i) matchs[i]=0;} 
-		   CRang (CRangBase  &R) : CRangBase ( R ),	     matchs(new int[length()+1])    { for (int i=0 ; i<= length() ; ++i) matchs[i]=0;} 
-	int	   *matchs;
-	      ~CRang  ( )  { delete []matchs; }
-    void  IncrMatchs() { 	for (int pi_pos=_c.Min()    ; pi_pos <= _c.Max() ; pi_pos++ ) 	matchs[pi_pos - Min() ]++;		}
-
-} ; typedef CRang *pCRang ;
-
-
-//! destinado a formar parte de una lista en un busq de sondas.-------------------------   CSecCand	-------------------------------
-class CSecCand : public CLink 
-{public:						
-	long _NumPosCand, _NumCand  , _NumPosCandIn, _NumCandIn  ,_NumCandExact ;	
-	CSec &_Sec ;	// ref a la sec, que ni se modifica ni se cambia de lugar
-	pCRang *_rg;
-
-	//CSecCand(CSec &sec, float Tm_min, float Tm_max, int L_min, int L_max);
-	CSecCand(CSec &sec, 	SondeLimits sL		);
-							//float	G_min	, float G_max ,					// en kcal ...
-							//float	Tm_min	, float Tm_max ,  
-							//int		L_min	, int L_max 
-
-	long ColapseRangs(bool colapse=true);
-
-	virtual ~CSecCand(){ for (long i=0; i<=_Sec.Len(); i++)	delete _rg[i]; 	delete _rg;}
-};
-
-
-class CSecAl : public CLink // destinado a formar parte de una lista en un alineamieto.
-{public:
-	CSec &_Sec ;	// ref a la sec, que ni se modifica ni se cambia de lugar
-	long *_inAlp_B ;// array que dice que base de la sec va en esa pos del Al (len=Al)
-	long *_inBp_Al ;// array que dice en que pos del Al va esa base de la sec (len=sec)
-
-	CSecAl(CSec &sec, long LenAlign)
-		: _Sec(sec), 
-		  _inAlp_B(new long[sec.Len()]), 
-		  _inBp_Al(new long[LenAlign])
-	   {}
-	CSecAl(CSec &sec) 
-		: _Sec(sec), 
-		  _inAlp_B(new long[sec.Len()]), 
-		  _inBp_Al(0)
-	  {}
-	virtual ~CSecAl(){ delete []_inAlp_B; delete []_inBp_Al;}
-
-	char *CopyAlignedSecChar(long Al_pBeg, long Al_pEnd, char *CharSec)	;// CUIDADO !! asume suficiente espacio !!
-	char *GetAlignedSecChar (long Al_pBeg, long Al_pEnd);  // "regala" esta memoria, no olvide delete !
-};
-
-  // permite hacer grupos de sec o de MultiSec para analisis por "especies"
-  // anadir posibilidad de construir sec concenso 
-  // CUIDADO :  se aduena de las sec y las borra en su destructor:Usar Remove() or Free() para evitarlo
-class CMultSec	 : public CLink	// --------------------------------------------------------------------- 	CMultSec    -------------------
-{	public:
-		std::string			_name ;						///< 
-        int					_ID       {NewMS_ID()};		///< Unique ID in each programm run
-        LonSecPosRang       _SecLim   {1,0};			///< \todo: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
-        SecPosRang          _SecLenLim{0,0};            ///< \todo: NumRang<LonSecPos> _SecRange{1,0};// def-unlimited: the range used, not the limits
-		float				_MaxTgId  {100};			///< \todo: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
-		std::shared_ptr<CSaltCorrNN>	_NNPar ;		///< \todo: quitar de aqui?. Pertenece a CSec, o a un objeto "AddFromFile" 
-		CMultSec			*_parentMS {nullptr};		///< std::weak_ptr<CMultSec> _parentMS	;
-        CSec				*_Consenso {nullptr};
-        bool                 _selected { true };
-		std::string			 _Path ;				///< file path of the original sequence source
-
-
-//explicit CMultSec (const std::string &Name  )                 : _name		(trim_string(Name))  {	}
-explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name = "")        
-                      : _NNPar      (NNpar            ), 
-					    _name       (trim_string(Name))            
-                 {  }
-         CMultSec(CMultSec	*ms, const std::string &Name = ""): _name       (trim_string(Name)),
-                                                                _SecLim     (ms->_SecLim),
-                                                                _SecLenLim  (ms->_SecLenLim),
-                                                                _MaxTgId    (ms->_MaxTgId), 
-                                                                _NNPar      (ms->_NNPar)         {  }
-		 CMultSec (	ifstream &	 file	,	 
-					std::shared_ptr<CSaltCorrNN>  NNpar	, 
-					float		  MaxTgId	= 100, 
-					LonSecPosRang  SecLim	= LonSecPosRang {1,0}, 
-                    SecPosRang     SecLenLim= SecPosRang{0,0})  : /*_name(trim_string(file)),	*/
-	                                                            _SecLim     (SecLim),
-                                                                _SecLenLim  (SecLenLim),
-	                                                            _MaxTgId    (MaxTgId), 
-	                                                            _NNPar      (NNpar)              { AddFromFile(file); }
-		 CMultSec (	const std::string &file	,                   ///< The name of the file or directory to be loaded 
-					std::shared_ptr<CSaltCorrNN>  NNpar	, 
-					bool           all_dir  = false,        ///< Load all files and directories recursiverly? 
-					float		   MaxTgId	= 100,          ///< Sec. with more % of idem are marked as "filtered" and not selected
-					LonSecPosRang  SecLim	= LonSecPosRang {1,0},	///< Filtre, using only this region. Will take into account alignment coordenates.
-                    SecPosRang     SecLenLim= SecPosRang    {0,0},  ///< Limit the length. tiny sec: not created, large: get trunkated
-					bool           loadSec  = true     ///< Get the sec? False: get only the dir/file structure
-				 ) ;
-
-
-	    bool	Selected(bool select)	{return _selected=select;} 			///< make protected: ??
-	    bool	Selected(		) const {return _selected ;}				///< User-editable
-		static std::string	Path(CMultSec *ms, const std::string& path_sep="/")
-        {
-			std::string path  ;			 
-			for (CMultSec *parent=ms; parent;parent=parent->_parentMS)
-				path = parent->_name + path_sep + path;
-			return path;
-        }
-		std::string	path(const std::string& path_sep="/")
-		{
-            return Path(this,path_sep);
-		}
-		static int			NewMS_ID()
-		{
-			static int ID(0);
-			return ++ID;
-		}
-
-		struct CExtremes
-		{
-		int			_NSec, _NMSec	;
-		NumRang<LonSecPos> _Len		;		
-		NumRang<Temperature> _Tm	;
-		CExtremes():_NSec(0), _NMSec(0)	{
-										}
-		void Set   (const CSec& s)	{	 
-										_Len.Set(s.Len());		_Tm.Set(s._Tm)	;
-									}
-		void Expand(const CSec& s)	{	
-										_Len.Expand(s.Len());	_Tm.Expand(s._Tm);
-									}
-		void Set   (const CExtremes& e)	{	 
-											_Len.Set(e._Len);		_Tm.Set(e._Tm)	;
-										}
-		bool Expand(const CExtremes& e)	{	
-											bool ex=_Len.Expand(e._Len);  return (_Tm.Expand(e._Tm) || ex );
-										}
-		void Clear(){_NSec=0, _NMSec=0;}
-
-		bool isExtreme(const CSec&		s){return _Tm.isExtrem( s._Tm ) || _Len.isExtrem( s.Len() );}
-		bool isExtreme(const CExtremes& e){return _Tm.isExtrem( e._Tm ) || _Len.isExtrem( e._Len  );}
-
-		} _Local, _Global;
-
-		void Add2LocalExtreme(const CSec& s)
-		{ 
-			if (_Global._NSec)
-			{
-				_Global.Expand(s);
-				_Local._NSec ? _Local.Expand(s) : _Local.Set(s);
-			}else
-			{
-				_Local.Set(s);
-				_Global.Set(s);
-			}
-			_Local._NSec++;
-			_Global._NSec++;
-		}
-		void Add2GlobalExtreme(const CSec& s)
-		{ 
-			if (_Global._NSec)
-			{
-				_Global.Expand(s);
-			}else
-			{
-				_Global.Set(s);
-			}
-			_Global._NSec++;
-		}
-		bool Add2LocalExtreme(const CMultSec& ms)
-		{
-			_Local._NMSec ++ ;
-			return Add2GlobalExtreme(ms);
-		}
-		bool Add2GlobalExtreme(const CMultSec& ms)
-		{	
-			_Global._NMSec += 1 + ms._Global._NMSec   ;
-			if (! ms._Global._NSec )
-				return false;
-			bool res=true;
-			if (_Global._NSec  )
-				res=_Global.Expand(ms._Global); 
-			else
-				_Global.Set(ms._Global) ;
-			_Global._NSec  += ms._Global._NSec   ;
-			 return res;
-		}
-		void RecalExtremes()
-		{
-			_Local.Clear();
-
-			CSec &to_rest = *CurSec() ; 	
-			for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec
-				Add2LocalExtreme( *CurSec()) ; 
-			RestoreCur( &to_rest);
-			RecalGlobExtremes();
-		}
-		void RecalGlobExtremes()
-		{
-			_Global=_Local;
-
-			CMultSec &to_rest = *CurMSec() ; 	
-			for (  goFirstMSec()   ; NotEndMSec()   ;   goNextMSec() )		// recorre todos las primeras sec
-				Add2LocalExtreme( *CurMSec()) ; 
-			RestoreMCur( &to_rest);
-		}
-		bool isGlobExtreme(const CSec     *s ){return _Global.isExtreme( *s				) ;}
-		bool isGlobExtreme(const CMultSec *ms){return _Global.isExtreme( ms->_Global	) ;}
-		bool isLocExtreme (const CSec     *s ){return  _Local.isExtreme( *s				) ;}
-		//bool isLocExtreme (const CMultSec *ms){return _Tm.isExtrem (ms->_TTm) || _Len.isExtrem (ms->_TLen );}
-		//void setGloExtreme(const CMultSec *ms){return _Tm.isExtrem (ms->_TTm) || _Len.isExtrem (ms->_TLen );}
-
-		//int			AddFromDir		(const std::string& dir , bool  recurs  /*= false*/)
-		int		AddFromFile		(const std::string& file);
-		int		AddFromFile     (ifstream& ifile);	
-		int		AddFromFileFASTA(ifstream &ifileFASTA);
-		int		AddFromFileBLAST(ifstream &ifileBLAST);
-		int		AddFromFileGB	(ifstream &ifileGB);
-		int		AddFromFileGBtxt(ifstream &ifileGB);
-		int		AddFromFileODT	(ifstream &ifileODT);
-		int		AddFromFileODS	(ifstream &ifileODS);
-
-        /// will try all child of base to set the base dir and export
-        bool    Export_from   ( CMultSec& base, bool only_selected)
-        {
-             filesystem::path dir, file;
-            
-            auto sep=std::string(1,tr2::sys::slash<decltype (dir)>().value);
-            auto s= path(sep);
-
-            for (  base.goFirstMSec()   ; base.NotEndMSec() ;   base.goNextMSec())		// recorre todos las msec
-            {    
-                auto b= base.CurMSec()->path(sep);
-                if ( b.empty() || s.find(b))  continue;    // finded OK only if s beging with p
-
-                file = dir = s.replace(0, b.length()-1, base.CurMSec()->_Path);
-                file.remove_filename().replace_extension("fasta");
-                dir.remove_filename().remove_filename();
-
-                filesystem::create_directories(dir);
-                Export_as(file, only_selected);
-                return true;
-            }
-            return false;
-        }
-
-
-        bool    Export_if   ( CMultSec& base, bool only_selected)
-        {
-            //assert(ms);
-            filesystem::path dir, file;
-            
-            auto sep=std::string(1,tr2::sys::slash<decltype (dir)>().value);
-            auto s= path(sep);
-            auto b= base.path(sep);
-            if ( s.find(b))  return false;            // finded OK only if s beging with p
-            file = dir = s.replace(0, b.length(), base._Path);
-            file.replace_extension("fasta");
-            dir.remove_filename();
-
-            filesystem::create_directories(dir);
-            Export_as(file, only_selected);
-        }
-
-        void   Export_as(std::string filename, bool only_selected)
-        {
-        	ofstream ofile( filename ); 
-	        if ( ! ofile ) 
-	        {
-	            throw std::ios_base::failure(string("Could not create the sequence file: ")+ filename );
-	        }
-            Export( ofile, only_selected);
-        }
-        void   Export(ofstream& ofile, bool only_selected)
-        {
-        	for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las sec locales
-				if (CurSec()->Selected() || !only_selected)
-                    CurSec()->ExportFASTA(ofile) ; 
-
-            for (  goFirstMSec()   ; NotEndMSec() ;   goNextMSec())		// recorre todos las msec
-			    CurMSec()->Export(ofile, only_selected);
-        }
-
-
-		CSec		*Idem			(CSec &sec);  //		CConsParam	_ConsPar ;
-		CSec		*AddSec			( CSec *sec );
-		CSec		*InsertSec		( CSec *sec ) ;
-		CSec		*InsertSecAfter	( CSec *sec , CSec *preSec ) ;
-		int			CountSelectedSeq		()
-		{
-            int count{0};
-			for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec de esta misma ms
-				 count += (CurSec()->Selected()) ;
-			return count;
-		}
-		int			CountSelectedSeqRec		()
-		{
-            int count{0};
-				 count += CountSelectedSeq() ;
-			for (  goFirstMSec()   ; NotEndMSec()   ;   goNextMSec() )		// recorre todos las primeras sec
-				 count += (CurMSec()->CountSelectedSeqRec());
-			return count;
-		}
-		int			CountSelectedNDegSeq	(int MaxGrDeg=0)
-		{
-			int count(0);
-			for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec de esta misma ms
-				if( CurSec()->Filtered() ) 
-					if(CurSec()->NonDegSet())
-					{	
-						if (!MaxGrDeg)
-							count += CurSec()->NonDegSet()->_Global._NSec ;
-						else	
-							if( MaxGrDeg > CurSec()->NonDegSet()->_Global._NSec)
-								count += CurSec()->NonDegSet()->_Global._NSec ;
-					}
-					else ++count;
-			return count;
-		}
-		int			CountSelectedNDegSeqRec	(int MaxGrDeg=0)
-		{
-			int count(0);
-				 count += CountSelectedNDegSeq( MaxGrDeg) ;
-			for (  goFirstMSec()   ; NotEndMSec()   ;   goNextMSec() )		// recorre todos las primeras sec
-				 count += CurMSec()->CountSelectedNDegSeqRec( MaxGrDeg);
-			return count;
-		}
-
-		void			CreateNonDegSet	( )
-		{
-			for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las primeras sec de esta misma ms
-			  CurSec()->CreateNonDegSet();
-		}
-		void			CreateNonDegSetRec	( )
-		{
-			CreateNonDegSet( ) ;
-			for (  goFirstMSec()   ; NotEndMSec()   ;   goNextMSec() )		// recorre todos las primeras sec
-				 CurMSec()->CreateNonDegSetRec( );
-		}
-
-
-		CMultSec	*AddMultiSec	(const std::string &Name )
-		{
-			return AddMultiSec(new CMultSec (this, Name  ));
-		}
-		CMultSec	*AddMultiSec	(CMultSec *MultSec);
-
-		CSec		CalculateConsenso	(double) ;
-		void		Free			()	{_LSec.free(); _LMSec.free();}
-		void		Destroy			()	{_LSec.Destroy(); _LMSec.Destroy();}
-
-		CSec *goFirstSec() {return (CSec *)_LSec.goBeging(); }
-		CSec *goNextSec () {return (CSec *)_LSec.goNext  (); }
-		CSec *CurSec    () {return (CSec *)_LSec.Cur	 (); }
-		CSec *GetLast	() {return (CSec *)_LSec.Last	 (); }
-		bool  NotEndSec () {return         _LSec.NotEnd  (); }
-		bool     EndSec () {return         _LSec.End     (); }
-		void  RestoreCur(CSec *cur){       _LSec.SetCur(cur);}
-
-		CMultSec *goFirstMSec() {return (CMultSec *)_LMSec.goBeging(); }
-		CMultSec *goNextMSec () {return (CMultSec *)_LMSec.goNext  (); }
-		CMultSec *CurMSec    () {return (CMultSec *)_LMSec.Cur	   (); }
-		bool	  NotEndMSec () {return _LMSec.NotEnd  (); }
-		void  RestoreMCur(CMultSec *cur){       _LMSec.SetCur(cur);}
-
-		virtual ~CMultSec ()  ;	
-
-	private:
-        CList			_LSec, _LMSec;    
-        //std::list<std::shared_ptr<CSec    >> _LSec;
-        //std::list<std::shared_ptr<CMultSec>> _LMSec;
-		void			UpdateTotals		( CSec		*sec ) ;
-		void			UpdateTotalsAdding	( CSec		*sec ) ;
-		void			UpdateTotalsAdding	( CMultSec	*sec ) ;
-		CMultSec		*findComParent		( CMultSec	*ms	);
-		static void		RefreshExtremes		( CMultSec	*ms	);
-};
-
-class CMultAlign   // EXPERIMENTAL
-{public:
-		CList _LASec;
-		long _LenAlign ;
-		int _fLenEx;
-		void Set_fLenEx(int fLenEx) {_fLenEx=fLenEx;}
-		CMultAlign () :  _fLenEx(3){};
-		explicit CMultAlign (long LenAlign) : _LenAlign(LenAlign), _fLenEx(3){};
-		CMultAlign (CMultSec &MultSec, int fLenEx=3) 
-			: _LenAlign(MultSec._Global._Len.Max() *fLenEx), _fLenEx(fLenEx){};//implementsr   !!!!!!!!
-	
-		void AddFromMultiSec(CMultSec *MultSec);
-		void AddSec ( CSec *sec );
-
-};
-
-    // ahora estos seran solo para mantener "copias" (punteros) de sec o msec en otras listas. 
-    // Cada sec o msec sabe en que lista esta
-
+/// ahora estos seran solo para mantener "copias" (punteros) de sec o msec en otras listas. 
+/// Cada sec o msec sabe en que lista esta
 class CSecLink   : public CLink    // NO es dueno de la sec, no la borra, no delete
 {	public:
 		CSecLink (CSec *s, CSecLink *p, CSecLink *n=nullptr) : _sec(s), CLink (n, p) {} ;
 		CSec *_sec ;
 };
 		
-class CMSecLink    : public CLink     // NO es dueno de la sec, no la borra, no delete
-{	public:
-		CMSecLink (CMultSec *ms, CMSecLink *p, CMSecLink *n=nullptr) : _msec(ms), CLink (n, p) {} ;
-		CMultSec *_msec ;
-};
 #endif
+
+
 //class CConsParam 
 //{	public:
 //		double _min ;
 //};
-//enum DNAStrand						{plus	, minus, direct	, rev	, compl, rev_compl	} ;
-//// extern char *DNAStrandName[]=	{""		, "(c)", ""		, "(r)"	, "(i)", "(c)"		} ;
-//extern char *DNAStrandName[];
+//enum DNAstrand						{plus	, minus, direct	, rev	, compl, rev_compl	} ;
+//// extern char *DNAstrandName[]=	{""		, "(c)", ""		, "(r)"	, "(i)", "(c)"		} ;
+//extern char *DNAstrandName[];
 //enum fileFormat {fasta=1 , csv=1<<1, f2=1<<2, f3=1<<3} ; // se pueden "OR" los formatos : OUTPUT !!!!!!
 //
 //char *AttachToCharStr       (const char *CharStr, const char *Attach)	;

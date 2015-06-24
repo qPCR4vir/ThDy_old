@@ -1,3 +1,11 @@
+/**
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file  ThDySec\include\ThDySec\oligo.h
+*
+* @brief ?? not in use
+*/
 #pragma unmanaged	
 #ifndef _OLIGO_H
 #define _OLIGO_H
