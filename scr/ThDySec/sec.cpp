@@ -43,13 +43,14 @@ bool		CSec::Selected(		) const //< User-editable  ??
 	return CSecBasInfo::Selected() && (_parentMS ? _parentMS->Selected(): true)  ;
 }					 
 
+/// Fundamental class to manipulate sec.
 /// Some variables have index base [1] while others have [0] in sec. 
 CSec::CSec (    const std::string&  sec, 
                 int                 id, 
                 const std::string&  nam, 
                 std::shared_ptr<CSaltCorrNN> NNpar, 
-                LonSecPos           lmax,   ///< lamx - limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
-                LonSecPos           secBeg, ///< base [1] in sec. The first letter in sec to be read. 
+                LonSecPos           lmax,   // lamx - limita la cant de bases originales a leer despues de las primeras secBeg-1 bases 
+                LonSecPos           secBeg, // base [1] in sec. The first letter in sec to be read. 
                 const std::string&  clas, 
                 float               conc        ) 
 :	CSecBasInfo ( id, nam, clas) ,		
@@ -59,10 +60,18 @@ CSec::CSec (    const std::string&  sec,
 		if (secBeg<1) 
               secBeg=1; // from the very begginig
 
-        //              beg ,            end,   current position  
-        LonSecPos sec_beging,        /*   se,*/  sec_pos,   /// s - string seq. Original string text of the seq.  (index in sec[])
-                  orig_beging=secBeg, orig_end,  orig_pos,  /// o - original "abstract" seq for with s intent to be the representation
-                  /* fb,*/           /*fe,*/     fltr_pos;  /// f - filtred seq, or what will be the resulting seq   (index in _c[], _b, etc.)
+                                      //      beg ,      end,   current position  
+        LonSecPos sec_beging,         
+                  sec_end,    
+                  sec_pos;    // s - string seq. Original string text of the seq.  (index in sec[])
+                  
+        LonSecPos orig_beging=secBeg,  // -1 ?
+                  orig_end,  
+                  orig_pos;  // o - original "abstract" seq for with s intent to be the representation
+                  
+        LonSecPos /* fb, */           
+                  /* fe, */     
+                  fltr_pos;  // f - filtred seq, or what will be the resulting seq   (index in _c[], _b, etc.)
 
         const LonSecPos sLen=sec.length();
 			
@@ -73,6 +82,14 @@ CSec::CSec (    const std::string&  sec,
                     break;
                 ++orig_pos ;
             }  
+        Base gap=basek[0];  // "-"
+        for (                  ; sec_pos<sLen && !is_degbase[(Base)sec[sec_pos]]  ; sec_pos++) ; // trow no bases
+        for (sec_beging=sec_pos; sec_pos<sLen &&    (((Base)sec[sec_pos]) == gap) ; sec_pos++) ; // count "-"
+
+        orig_pos   += (sec_pos - sec_beging); 
+        sec_beging  = sec_pos ;
+        orig_beging = orig_pos +1 ;
+
         if ( sec_pos >= sLen-1 )   /// return if only 0 or 1 base to analize
             return;
 
@@ -80,7 +97,9 @@ CSec::CSec (    const std::string&  sec,
                             /// but first we want to know how many bases are there making a pre - read.
  		if (lmax)			
 		{	
-            orig_end=orig_beging+lmax -1 ;
+            orig_end    = orig_beging+lmax -1 ;
+            //orig_beging = orig_pos+1 ;
+
 			for (         ; sec_pos<sLen   ; sec_pos++) 
                 if( is_degbase	[Base (sec[sec_pos])] ) 
                 {   
@@ -88,17 +107,32 @@ CSec::CSec (    const std::string&  sec,
                     if ( orig_pos == orig_end )
                     {
                         lmax=0;   /// the lmax was not used becouse the seq is too short
+                        ++sec_pos ;
                         break;
                     }
                 }     /// the lmax was used 
 		}else
 		{	 
+            //orig_beging = orig_pos+1 ;
 			for (         ; sec_pos<sLen            ; sec_pos++) 
                 if( is_degbase	[Base (sec[sec_pos])] ) 
                     ++orig_pos ;	// salta no-bases 
 		}
-        orig_end=orig_pos ;
-        LonSecPos len = orig_end-orig_beging+1;   /// _len is the numer of "bases" to be readed (posible including gaps and deg-bases)
+        sec_end = sec_pos  ;
+        for ( --sec_end;  !is_degbase[(Base)sec[sec_end]]  ; --sec_end ) ;   // back non base
+        for (   sec_end;  sec_end>sec_beging  &&    (((Base)sec[sec_end]) == gap) ; --sec_end )--orig_pos ;
+
+        orig_end= orig_pos ;
+        
+        if (orig_beging > 1 || sec_pos < sLen)    // there  are initial ----, posible the sec not beg at the beg of the aln
+        {
+            if (! _aln_fragment)
+                _aln_fragment.reset(new Aligned_fragment);
+            _aln_fragment->sq.SetMin(orig_beging);
+            _aln_fragment->sq.SetMax(orig_end);
+        }
+
+        LonSecPos len = orig_end-orig_beging+1;   /// _len is the numer of "bases" to be readed (posible including gaps and deg-bases, but not external gaps)
 			              /// as in:" TGCA$" . Dont count the 2 '$' - principio y fin de Kadelari and the final '\0'
         if ( sLen < 2 )   /// return if only 0 or 1 base to analize
             return;
@@ -115,17 +149,20 @@ CSec::CSec (    const std::string&  sec,
 		//_SdS.push_back( _NNpar->GetInitialEntropy()); // Solo dep de las conc, no de la sec. Ajustar primero la conc del target, y despues volverla a poner,?? 
 		//_SdH.push_back(  0 );						  // y comprobar que se hacen los calculos necesarios
 
-	    a_1=is_degbase	[ base(sec[sec_beging]) ] ; 		// in fltr_pos=1 when sec_pos=sec_beging
-		_GCp	+= is_GC	[a_1] ;
+	    a_1=is_degbase	[ base(sec[sec_beging]) ] ;   // we read sepparate the first base, in fltr_pos=1 when sec_pos=sec_beging
+		_GCp	+= is_GC	[a_1] ;                   // it will be always OK (we just tested that)
 		_GrDeg	*= grad_deg	[a_1] ;
 		_Count  [  db2nu	[a_1]]++ ;
 		if (grad_deg[a_1] >1) _NDB++ ;
 		_c.push_back( a_1  );
 		_b.push_back( a_1 =bk2nu[is_base[a_1]]) ;						// que hacer si en la sec hay bases deg que Kadelari no considera?
 
-		for (sec_pos=sec_beging+1, fltr_pos= 2; fltr_pos <= len /*&& sec_pos<se*/ ; ++sec_pos)						// suficiente    curPos <= _len   ???
+		for (sec_pos=sec_beging+1, fltr_pos= 2; fltr_pos <= len && sec_pos <= sec_end  ; ++sec_pos)						// suficiente    curPos <= _len   ???
 			if ( a=is_degbase	[ Base(sec[sec_pos] )] ) 	
 			{	
+                fltr_pos++ ;
+                if(sec[sec_pos]==gap)
+                    continue;
 				_GCp	+= is_GC		[a] ;						// 1-G or C, 0-lo demas.      Y que con las bases deg ??????????????????
 				_GrDeg	*= grad_deg		[a] ;
 				_Count  [  db2nu		[a] ]++ ;
@@ -135,19 +172,11 @@ CSec::CSec (    const std::string&  sec,
 				_SdS.push_back( _SdS.back() + NNpar->GetSelfEntr (	a_1 , a)  );
 				_SdH.push_back( _SdH.back() + NNpar->GetSelfEnth (	a_1 , a)  );
 				a_1 = a ;
-                fltr_pos++ ;
 			}	
 		_c.push_back( basek[n_basek-1] ); // '$' principio y fin de Kadelari.=" TGCA$", + '\0'
 		_b.push_back(       n_basek-1  ); 	  	
 		_GCp	= _GCp*100/len ;	
 		_Tm.Set( NNpar->CalcTM( _SdS.back(), _SdH.back()) ) ;      //_maxTm = _minTm =
-
-        if(orig_beging !=1 || lmax )
-        {
-            _aln_fragment.reset(new Aligned_fragment);
-            _aln_fragment->sq.Set(orig_beging, orig_end);
-        }
-
 }
 
 //CSec  * CSec::CreateCopy(DNAstrand strnd) // strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados

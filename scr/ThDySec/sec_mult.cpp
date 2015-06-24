@@ -150,8 +150,8 @@ int		CMultSec::AddFromFile (const std::string& file)	// return la cantidad de se
 
 int		CMultSec::AddFromFile (ifstream& ifile)		// return la cantidad de sec add -----------  AddFromFile   ---
 {		
-	if (  _SecLim.Max() <= _SecLim.Min() ) 
-		_SecLim.SetMax(0) ;                      // if ( _SecEnd<=_SecBeg) _SecEnd=0 ;
+	//if (  _SecLim.Max() <= _SecLim.Min() ) 
+	//	_SecLim.SetMax(0) ;                      // if ( _SecEnd<=_SecBeg) _SecEnd=0 ;
 
 	int j=0;
 	char c1;
@@ -191,6 +191,26 @@ int		CMultSec::AddFromFile (ifstream& ifile)		// return la cantidad de sec add -
 int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // -------------------    AddFromFileFASTA   ------------
 {	int j=0 ;													//long l= (_SecEnd ? _SecEnd-_SecBeg +1 : 0) ;
 	string Descriptor  ;
+
+    LonSecPos secBeg = _SecLim.Min()  ;   // here beginig to read, set to 1 if originaly <1
+    if (secBeg < 1) secBeg = 1;
+
+    LonSecPos secEnd = _SecLim.Max()  ;   // here end to read, set to 0 to ignore it, and if < secBeg
+    if (secEnd <= secBeg) secEnd = 0;
+
+    LonSecPos lmin = _SecLenLim.Min() ;   // read at least this # of bases, always >=1
+    if (lmin < 1 ) lmin = 1;
+
+    LonSecPos lmax = _SecLenLim.Max() ;   // read at most this # of bases, ignore if =0
+    if (lmax < lmin ) lmax = 0;
+
+    if (secEnd)
+        if (lmax == 0 || lmax > secEnd - secBeg +1)
+            lmax = secEnd - secBeg +1;
+
+    if (lmax && lmin > lmax)
+        return 0;
+    
 	while (getline (ifile, Descriptor) )
     {
 		size_t b_d=Descriptor.find_first_not_of(
@@ -201,29 +221,47 @@ int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // -------------------    Add
   		string Fasta_SEC ;					
 		if (!getline (ifile, Fasta_SEC,'>')) 		break ;		
 
-		if ( Fasta_SEC.length() < _SecLim.Min() ||  Fasta_SEC.length() < _SecLenLim.Min() )	continue;
+		if (     Fasta_SEC.length() < secBeg + lmin -1   )	
+             continue;
 
 		unique_ptr<CSec> sec (  new CSec(   Fasta_SEC , 
                                             _Local._NSec, 
                                             Fasta_NAME , 
                                             _NNPar,
-                                            _SecLim.Max() ? _SecLim.Max()-_SecLim.Min()+1 : 0 ,
-                                            _SecLim.Min()                                       /// \todo: cambiar constr de CSec ????
+                                            lmax, 
+                                            secBeg  //  \todo: cambiar constr de CSec ????
                                          )) ;                  assert(sec);
 						
-		if ( sec->Len() >= _SecLenLim.Min()   )		
-		{	
-			CSec *idem=Idem(*sec);
-			if (idem) 
-			{
-				sec->Selected(false);
-				sec->Filtered(true);
-			}
-			else
-				j++;		
-			sec->Description(trim_string(Descriptor));
-			InsertSecAfter ( sec.release() , idem) ;	
+		if ( sec->Len() < lmin  )	
+            continue; 
+
+        if ( sec->_aln_fragment)
+            sec->_aln_fragment->aln.set(*this, sec->_aln_fragment->sq.Min(),
+                                               sec->_aln_fragment->sq.Max());
+
+		sec->Description(trim_string(Descriptor));
+
+		CSec *idem=Idem(*sec);
+
+        if (idem) 
+		{
+		    if (idem->Len() >= sec->Len() ) 
+            {
+                sec->Selected(false);
+			    sec->Filtered(true);
+		        InsertSecAfter (sec.release()  , idem) ;	
+            }
+            else
+            {
+                idem->Selected(false);
+			    idem->Filtered(true);
+		        InsertBefore (sec.release()  , idem) ;	
+            }
 		}
+        else
+            AddSec(sec.release() );
+
+		j++;		
 	}
 	return j;	
 }
@@ -232,9 +270,26 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 {	unsigned int _BlastOutput_query_len ;		// x todos los "hits"
 	int			 id=0;
 	string       li ;  //  xml_line
-    LonSecPos    lmax{ _SecLim.Max() >= _SecLim.Min()  ? _SecLim.Max() - _SecLim.Min() +1 : 0 };
-    if (lmax > _SecLenLim.Max() ) 
-        lmax = _SecLenLim.Max() ;
+
+    LonSecPos secBeg = _SecLim.Min()  ;   // here beginig to read, set to 1 if originaly <1
+    if (secBeg < 1) secBeg = 1;
+
+    LonSecPos secEnd = _SecLim.Max()  ;   // here end to read, set to 0 to ignore it, and if < secBeg
+    if (secEnd <= secBeg) secEnd = 0;
+
+    LonSecPos lmin = _SecLenLim.Min() ;   // read at least this # of bases, always >=1
+    if (lmin < 1 ) lmin = 1;
+
+    LonSecPos lmax = _SecLenLim.Max() ;   // read at most this # of bases, ignore if =0
+    if (lmax < lmin ) lmax = 0;
+
+    if (secEnd)
+        if (lmax == 0 || lmax > secEnd - secBeg +1)
+            lmax = secEnd - secBeg +1;
+
+    if (lmax && lmin > lmax)
+        return 0;
+  
 
 	do  {	getline (fi, li,'>') ;			if ( ! fi.good() ) return 0; }   // BLAST format error
 	while  (string::npos==li.find("BlastOutput_query-len") ); fi>>_BlastOutput_query_len;//  <BlastOutput_query-len>267</BlastOutput_query-len>
@@ -292,18 +347,24 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_midline") ) ;                                 //  <Hsp_midline>|||||||||||||||||||||||||||||||||||||||||
                                                             if ( ! getline (fi, _Hsp_midline,'<') ) return id;
 
-		if ( _Hsp_query_to  < _SecLim.Min() ) // end even before it need to beging
-            break;
-        if ( _SecLim.Max() && _Hsp_query_from > _SecLim.Max()  ) // _SecLim.Max()==0 mean dont cut the seq or beging after it need to end
-            break;
-        //if (lmax && ((_Hsp_query_to - _Hsp_query_from)>lmax) && (_Hsp_hit_to - _Hsp_hit_from)>lmax)
-        //    break;
+        LonSecPos  secHitBeg {secBeg - _Hsp_query_from +1};  // omitir estas primeras bases del Hit (de la parte del hit que tenemos)
+        LonSecPos  lmaxHit   {lmax };  // max # de bases a leer del Hit (de la parte del hit que tenemos)
 
-        LonSecPos  secBeg {0};
-        if (_SecLim.Min() +  _Hsp_hit_from >= _Hsp_query_from+1 )
-            secBeg = (_SecLim.Min() +  _Hsp_hit_from) - _Hsp_query_from ;
-							
-        //clas,   
+        if (secHitBeg <= 1)
+        {
+            if(lmaxHit)
+                lmaxHit += secHitBeg ;
+            if(lmaxHit < lmin)
+                continue;
+            secHitBeg = 1;
+        }
+        
+        //if ( _Hsp_query_to  < secBeg ) // end even before it need to beging
+        //    continue;
+        //if ( secEnd && _Hsp_query_from > secEnd  ) // secEnd==0 mean dont cut the seq or beging after it need to end
+        //    continue;
+        //if (lmax && ((_Hsp_query_to - _Hsp_query_from)>lmax) && (_Hsp_hit_to - _Hsp_hit_from)>lmax)
+        //    continue;
 
         std::unique_ptr<CSecBLASTHit> secH
                 { new CSecBLASTHit(      _BlastOutput_query_len ,
@@ -329,18 +390,30 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 										std::move(_Hsp_midline) ,
 										_FormatOK ,
 										std::move(sec)		,
-                                        lmax,
-                                        secBeg,          // _SecBeg, _SecEnd,
+                                        lmaxHit,
+                                        secHitBeg,          // _SecBeg, _SecEnd,
 										id,			     //Hit_num   ???		//	char	*	nam,	Hit_def
 										_NNPar           /*,  //long l=0,(Hit_len ---> NO ) !!!  -->_Hsp_align_len -OK clas,	conc*/
 										)
                 };
 
-	    if ( secH->Len() < _SecLenLim.Min()  )	
+	    if ( secH->Len() < lmin  )	
             continue;
 
-        if (! secH->_aln_fragment)
+        if ( secH->_aln_fragment)
+        {
+            if(secH->_aln_fragment->sq.Max()) 
+                _Hsp_query_to    = _Hsp_query_from + secH->_aln_fragment->sq.Max()  -2;
+            else
+                _Hsp_query_to    = _Hsp_query_from + secH->Len() -2;
+            _Hsp_query_from  = _Hsp_query_from + secH->_aln_fragment->sq.Min()-1;
+        }
+        else
+        {
             secH->_aln_fragment.reset(new Aligned_fragment);
+            _Hsp_query_to    = _Hsp_query_from + secHitBeg + secH->Len() -2;
+            _Hsp_query_from  = _Hsp_query_from + secHitBeg-1;
+        }
 
         secH->_aln_fragment->sq_ref.Set(       _Hsp_query_from, _Hsp_query_to);
         secH->_aln_fragment->aln   .set(*this, _Hsp_query_from, _Hsp_query_to);
@@ -553,12 +626,36 @@ CSec	*CMultSec::Idem ( CSec &sec )   // ------  CMultSec:: NotIdem  --- busqueda
         // s  :h    -------------------------------------------------------------------
         // aln ------------------------------------------------------------------------------------------------
         //
-
-        long qb=0, qe=LenCandSec-1;
-        long hb=0, he=s.Len()-1;
+                                       // b - beging, e - end
+        long qb=0, qe=LenCandSec-1;    // q - (sec, CandSec) query sec: is this sec alrready here?
+        long hb=0, he=s.Len()-1;       // h - (s) hit sec: this sec from the list hit the query?
         if(sec._aln_fragment && s._aln_fragment)
         {
-            if (sec._aln_fragment->aln.sq ==  s._aln_fragment->aln.sq )
+            NumRang<LonSecPos> *SecRang{}, *SRang{};
+            //if (sec._aln_fragment->aln.is_comparable_to( s._aln_fragment->aln ) )
+
+            if (sec._aln_fragment->aln.sq && sec._aln_fragment->aln.sq == s._aln_fragment->aln.sq  )
+            {
+                SecRang = &sec._aln_fragment->aln ;
+                SRang   = &  s._aln_fragment->aln ;
+            }else
+            if (sec._aln_fragment->consensus.sq && sec._aln_fragment->consensus.sq == s._aln_fragment->consensus.sq  )
+            {
+                SecRang = &sec._aln_fragment->consensus ;
+                SRang   = &  s._aln_fragment->consensus ;
+            }else
+            if (sec._aln_fragment->bio_ref.sq && sec._aln_fragment->bio_ref.sq == s._aln_fragment->bio_ref.sq  )
+            {
+                SecRang = &sec._aln_fragment->bio_ref ;
+                SRang   = &  s._aln_fragment->bio_ref ;
+            }else
+            if (sec._aln_fragment->sq_ref.sq && sec._aln_fragment->sq_ref.sq == s._aln_fragment->sq_ref.sq  )
+            {
+                SecRang = &sec._aln_fragment->sq_ref ;
+                SRang   = &  s._aln_fragment->sq_ref ;
+            } 
+
+            if (SecRang)
             {
                if (sec._aln_fragment->aln.Min() > s._aln_fragment->aln.Min() )
                    hb = sec._aln_fragment->aln.Min() - s._aln_fragment->aln.Min() ;
@@ -571,7 +668,7 @@ CSec	*CMultSec::Idem ( CSec &sec )   // ------  CMultSec:: NotIdem  --- busqueda
                    qe -= s._aln_fragment->aln.Max() - sec._aln_fragment->aln.Max() ;
             }
         }
-		long l, MaxEr ;
+		long l, MaxEr ;  // active lenght, MaxEr - if we detect this number of error the sec are suficient different and are not filtred
 		if (s.Len() < LenCandSec) 		
         {	
             l=s.Len() ;			
