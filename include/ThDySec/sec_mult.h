@@ -19,7 +19,6 @@
 #include <memory>
 #include <vector>
 #include <filesystem>
-namespace filesystem = std::tr2::sys; //std::experimental::filesystem
 
 
 using namespace std;
@@ -98,7 +97,7 @@ class CMultSec	 : public CLink	// ----------------------------------------------
         /// from the original path saved in member variable ._Path
 		std::string	path( )
 		{
-            std::string sep(std::string(1,filesystem::slash<filesystem::path>().value));
+			std::string sep(std::string(1, filesystem::path::preferred_separator));// ::slash<filesystem::path>().value));
             return Path(this, sep);
 		}
 

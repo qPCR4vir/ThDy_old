@@ -34,8 +34,8 @@ filesystem::path unique_filename(filesystem::path name)
 {
     while(filesystem::exists(name))
     {
-        std::string ext = name.extension();
-        std::string nam = name.basename() ;
+        std::string ext = name.extension().string();
+        std::string nam = name.stem().string();
         //std::string pat = name.remove_filename() ;
         name = name.remove_filename() / filesystem::path( nam + "X" + ext) ;
     }
@@ -57,7 +57,7 @@ bool    CMultSec::Export_from   ( CMultSec& base, bool only_selected)
         dir.remove_filename().remove_filename();
 
         filesystem::create_directories(dir);
-        Export_as(unique_filename(file), only_selected);
+        Export_as(unique_filename(file).string(), only_selected);
         return true;
     }
     return false;
@@ -75,7 +75,7 @@ bool      CMultSec::Export_local_seq   ( CMultSec& base, bool only_selected)
     dir.remove_filename();
 
     filesystem::create_directories(dir);
-    Export_as(unique_filename(file), only_selected);
+    Export_as(unique_filename(file).string(), only_selected);
 }
 
 
@@ -101,8 +101,8 @@ CMultSec::CMultSec (	const std::string &path	,
         if (filesystem::is_regular_file(itf)) 
             itf.remove_filename();
 
-	    _name = itf.filename ();     // The new MSec take the name of the dir.
-        _Path = itf;                 // and the _Path point to it.
+	    _name = itf.filename ().string();     // The new MSec take the name of the dir.
+        _Path = itf.string();                 // and the _Path point to it.
 
         filesystem::directory_iterator rdi{ itf }, end;
 
@@ -119,8 +119,8 @@ CMultSec::CMultSec (	const std::string &path	,
 	else                           // Load only this file
 	    if (itf.has_filename())
 	    {
-		    _name = itf.filename ();     /// The new MSec take the name of the file.
-            _Path = itf;                 /// and the _Path point directly to the file.
+		    _name = itf.filename ().string();     /// The new MSec take the name of the file.
+            _Path = itf.string();                 /// and the _Path point directly to the file.
             if (loadSec)
 		       AddFromFile(path);  /// will throw if not a file
             return;
