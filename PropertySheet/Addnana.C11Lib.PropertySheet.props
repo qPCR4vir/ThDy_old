@@ -4,7 +4,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <IncludePath>..\..\ExtLib\Nana\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\ExtLib\Nana\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\ExtLib\nana\build\bin;$(LibraryPath)</LibraryPath>
     <SourcePath>..\..\ExtLib\Nana\source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
