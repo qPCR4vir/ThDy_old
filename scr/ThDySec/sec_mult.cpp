@@ -76,6 +76,7 @@ bool      CMultSec::Export_local_seq   ( CMultSec& base, bool only_selected)
 
     filesystem::create_directories(dir);
     Export_as(unique_filename(file).string(), only_selected);
+	return true;
 }
 
 
