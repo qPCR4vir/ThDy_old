@@ -23,7 +23,7 @@
 #include <stack>
 #include <algorithm>
 
-using namespace std ; 
+//using namespace std ; 
 
 #include "ThDySec/sec_mult.h"
 #include "ThDySec/common.h" 

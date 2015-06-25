@@ -76,7 +76,7 @@ class CSecBasInfo : public ISec
 		CSecBasInfo ( long l)    {_c.reserve(l+2);}   ///   ????????????????????
 public:
     std::unique_ptr<Aligned_fragment> _aln_fragment;
-    void ExportFASTA(ofstream& ofile, int line_len=80)
+    void ExportFASTA(std::ofstream& ofile, int line_len=80)
     {
         ofile << "\n"
               << ">" << _name << " " << Description ()   ;
@@ -87,7 +87,7 @@ public:
 
             ofile << charSequence()[i+1]; // we dont export the first letter: $, and the last
         }
-        ofile << std::endl;
+        ofile << "\n";
      }
 
 	//CSecBasInfo			*CopyFirstBases	(long pos)	;			 // copia parcialmente hasta la pos

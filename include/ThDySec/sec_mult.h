@@ -21,8 +21,6 @@
 #include <filesystem>
 
 
-using namespace std;
-
 #include "sec.h" 
 #include "sec_rang.h" 
 
@@ -229,14 +227,14 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 
         void   Export_as(std::string filename, bool only_selected)  
         {
-        	ofstream ofile( filename ); 
+			std::ofstream ofile( filename );
 	        if ( ! ofile ) 
 	        {
 	            throw std::ios_base::failure(string("Could not create the sequence file: ")+ filename );
 	        }
             Export( ofile, only_selected);
         }
-        void   Export(ofstream& ofile, bool only_selected)
+        void   Export(std::ofstream& ofile, bool only_selected)
         {
         	for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las sec locales
 				if (CurSec()->Selected() || !only_selected)
