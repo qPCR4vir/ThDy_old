@@ -31,7 +31,7 @@ struct fragment:  NumRang<LonSecPos>
         : NumRang<LonSecPos>(beg, end)
     { }
 
-    long lenght()
+    long lenght() const
     { 
         if ( Min() && Max() )
             return Max()-Min()+1;
@@ -50,6 +50,12 @@ struct fragment:  NumRang<LonSecPos>
         Set(beg, end);
         sq=&s;
     }
+
+    bool is_comparable_to(const fragment<SQ> &r)  const /// \todo experiment with this !!
+    {
+        return  sq == r.sq  &&  ( sq ||              // ref to the same sec
+                            ( lenght() && r.lenght()) ); // or at to any but both set "abstract" ranges    
+    }
 };
 
 class CSecBasInfo;
@@ -59,10 +65,10 @@ struct Aligned_fragment
 {
     fragment<CSecBasInfo> sq,    ///< from self: fragment of the original (posible partial) seq, probably not available 
                          bio,    ///< from self, but relatively to the presumible complete genome
-                      sq_ref,    ///< from some reference: (posible partial) seq, maybe the first seq of an alignment
-                     bio_ref,    ///< from some reference, but relatively to the presumible complete genome 
-                   consensus;    ///< from a reference sequence from the aligment: a consensus
-    fragment<CMultSec>   aln;    ///< from self: fragment of the original (posible partial) seq, probably not available 
+                      sq_ref,    ///< 3-from some reference: (posible partial) seq, maybe the first seq of an alignment
+                     bio_ref,    ///< 3-from some reference, but relatively to the presumible complete genome 
+                   consensus;    ///< 2-from a reference sequence from the aligment: a consensus
+    fragment<CMultSec>   aln;    ///< 1-from self: fragment of the original (posible partial) seq, probably not available 
     long lenght()
     {
         long len ;
@@ -74,6 +80,15 @@ struct Aligned_fragment
         if ( len=aln.      lenght()) return len;
         return 0;
      }
+    //bool is_comparable_to(const Aligned_fragment&r) /// \todo experiment with this !!
+    //{
+    //    return    sq.sq == r.sq.sq  &&  ( sq.sq || (sq.lenght() && r.sq.lenght())  )  ||
+    //            bio.sq &&    bio.sq == r.bio.sq    ||
+    //            sq_ref.sq && sq_ref.sq == r.sq_ref.sq ||
+    //            bio_ref.sq && bio_ref.sq == r.bio_ref.sq ||
+    //           consensus.sq == r.consensus.sq ||
+    //                 aln.sq == r.aln.sq 
+    //}
 };
 
 class CRangBase : public NumRang<long> // ---------------------------------------   CRang	: AMPLIAR y mejorar !!!  ---------------------------------------

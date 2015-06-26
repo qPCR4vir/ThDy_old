@@ -45,9 +45,9 @@ class ISec				// Pure virtual class ?
                                      DNAstrand   strnd = DNAstrand::direct)	    const=0  ;
 
 	virtual				~ISec			()
-       { }
+      
+ { }
 };
-
 /// Have a letter sequence but no code sequence and no thermodyinamics - abstract because of clone ?!-fix?
 class CSecBasInfo : public ISec
 { protected:	
@@ -76,16 +76,18 @@ class CSecBasInfo : public ISec
 		CSecBasInfo ( long l)    {_c.reserve(l+2);}   ///   ????????????????????
 public:
     std::unique_ptr<Aligned_fragment> _aln_fragment;
-    void ExportFASTA(ofstream& ofile, int line_len=80)
+    void ExportFASTA(std::ofstream& ofile, int line_len=80)
     {
-        ofile << std::endl 
+        ofile << "\n"
               << ">" << _name << " " << Description ()   ;
         for (int i=0 ; i< Len() ; ++i )
         {
-            if (!(i % line_len)) ofile << std::endl;
-            ofile << charSequence()[i+1];
+            if (!(i % line_len))    // after description, i=0 print end line too
+                ofile << "\n";
+
+            ofile << charSequence()[i+1]; // we dont export the first letter: $, and the last
         }
-        ofile << std::endl;
+        ofile << "\n";
      }
 
 	//CSecBasInfo			*CopyFirstBases	(long pos)	;			 // copia parcialmente hasta la pos

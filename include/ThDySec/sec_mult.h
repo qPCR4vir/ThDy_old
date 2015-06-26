@@ -19,10 +19,7 @@
 #include <memory>
 #include <vector>
 #include <filesystem>
-namespace filesystem = std::tr2::sys; //std::experimental::filesystem
 
-
-using namespace std;
 
 #include "sec.h" 
 #include "sec_rang.h" 
@@ -98,7 +95,7 @@ class CMultSec	 : public CLink	// ----------------------------------------------
         /// from the original path saved in member variable ._Path
 		std::string	path( )
 		{
-            std::string sep(std::string(1,filesystem::slash<filesystem::path>().value));
+			std::string sep(std::string(1, filesystem::path::preferred_separator));// ::slash<filesystem::path>().value));
             return Path(this, sep);
 		}
 
@@ -230,14 +227,14 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 
         void   Export_as(std::string filename, bool only_selected)  
         {
-        	ofstream ofile( filename ); 
+			std::ofstream ofile( filename );
 	        if ( ! ofile ) 
 	        {
 	            throw std::ios_base::failure(string("Could not create the sequence file: ")+ filename );
 	        }
             Export( ofile, only_selected);
         }
-        void   Export(ofstream& ofile, bool only_selected)
+        void   Export(std::ofstream& ofile, bool only_selected)
         {
         	for (  goFirstSec()   ; NotEndSec()   ;   goNextSec() )		// recorre todos las sec locales
 				if (CurSec()->Selected() || !only_selected)

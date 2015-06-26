@@ -19,10 +19,9 @@
 #include <memory>
 #include <vector>
 #include <filesystem>
-namespace filesystem = std::tr2::sys; //std::experimental::filesystem
+namespace filesystem = std::experimental::filesystem; //    ::tr2::sys; //std::experimental::filesystem
 
 
-using namespace std;
 #include "sec_basic.h" 
 #include "th_dy_param.h"   // crear un nuevo par de fuente cpp con las cosas que nec los dos .h + sec.h
 #include "common.h" 
