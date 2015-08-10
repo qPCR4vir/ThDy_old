@@ -54,25 +54,25 @@ class TmCalcPage : public CompoWidget
     nana::group             primers             {*this, STR("<bold=true> Primers: </>" ), true}, 
                             interaction         {*this, STR("<bold=true> Interaction: </>" ), true},
                             align               {*this, STR("<bold=true> Alignment: </>" ), true}; 
-    nana::textbox           sec_                {primers.inner()},  
-                            sec2align_          {primers.inner()},  
-                            txtBx_ResultSec     {align.inner()},  
-                            txtBx_ResultSec2Align{align.inner()};
+    nana::textbox           sec_                {primers},  
+                            sec2align_          {primers},  
+                            txtBx_ResultSec     {align},  
+                            txtBx_ResultSec2Align{align};
     nana::checkbox          chkBx_Tm_save_asPCR {*this, STR("save")},   
                             chkBx_align         {*this, STR("align")},
-                            chkBx_copy_rev      {primers.inner(), STR("rev")},    
-                            chkBx_copy_compl    {primers.inner(), STR("cpl")};
+                            chkBx_copy_rev      {primers, STR("rev")},    
+                            chkBx_copy_compl    {primers, STR("cpl")};
     nana::button            run_                {*this, STR("Tm !")},
-                            copy_f_s_2          {primers.inner(), STR("copy")},   
-                            copy_s              {primers.inner(), STR("c")},
-                            copy_s_a            {primers.inner(), STR("c")};      
-    nana::label             error_              {primers.inner(), STR("no error")};
-    nana::NumberBox         Tm_min_Up{interaction.inner()}, Tm_Up{interaction.inner()}, Tm_max_Up{interaction.inner()} ,
-                            Tm_min_Dw{interaction.inner()}, Tm_Dw{interaction.inner()}, Tm_max_Dw{interaction.inner()} ,
-                            Tm_min_In{interaction.inner()}, Tm_In{interaction.inner()}, Tm_max_In{interaction.inner()} ,
-                            G_min_Up {interaction.inner()},  G_Up{interaction.inner()},  G_max_Up{interaction.inner()} ,
-                            G_min_Dw {interaction.inner()},  G_Dw{interaction.inner()},  G_max_Dw{interaction.inner()} ,
-                            G_min_In {interaction.inner()},  G_In{interaction.inner()},  G_max_In{interaction.inner()} ;
+                            copy_f_s_2          {primers, STR("copy")},   
+                            copy_s              {primers, STR("c")},
+                            copy_s_a            {primers, STR("c")};      
+    nana::label             error_              {primers, STR("no error")};
+    nana::NumberBox         Tm_min_Up{interaction}, Tm_Up{interaction}, Tm_max_Up{interaction} ,
+                            Tm_min_Dw{interaction}, Tm_Dw{interaction}, Tm_max_Dw{interaction} ,
+                            Tm_min_In{interaction}, Tm_In{interaction}, Tm_max_In{interaction} ,
+                            G_min_Up {interaction},  G_Up{interaction},  G_max_Up{interaction} ,
+                            G_min_Dw {interaction},  G_Dw{interaction},  G_max_Dw{interaction} ,
+                            G_min_In {interaction},  G_In{interaction},  G_max_In{interaction} ;
 
     ParamGUIBind::BindGroup              _TmCalc;
 public:     
@@ -89,15 +89,15 @@ public:
 	"		\n\t"
             ;
 
-         primers.plc().div("vert <weight=50 horizontal margin=[0,5,0,5] <min=100 vertical gap=2 InputSec>                            "  
+         primers.div("vert <weight=50 horizontal margin=[0,5,0,5] <min=100 vertical gap=2 InputSec>                            "  
                         "                                       <weight=50 gap=1 CopyBut grid=[2,2]  collapse(0,0,1,2)> > \n\t "
                         "<weight=23 horizontal  <weight=20>"
                         "                       <min=50    error     > "
                         "                       <weight=80 rev_compl >     >         \n\t  ");
 
-         interaction.plc().div("vert <min=280    margin=[0,5,5,5] Table    grid=[7,4]    >                "  );
+         interaction.div("vert <min=280    margin=[0,5,5,5] Table    grid=[7,4]    >                "  );
 
-         align.plc().div("vert < weight=50 vertical margin=[0,5,0,5]  ResAlign  >                            " );
+         align.div("vert < weight=50 vertical margin=[0,5,0,5]  ResAlign  >                            " );
 
 
     }
@@ -108,18 +108,18 @@ public:
 	    _place.field("Table"    )<< interaction;
 	    _place.field("ResAlign" )<< align      ;
 
-	    primers.plc()["InputSec" ]<< sec_          << sec2align_ ;
-	    primers.plc()["CopyBut"  ]<<  copy_f_s_2   << copy_s      << copy_s_a ;
-	    primers.plc()["error"    ]<< error_        ;
-	    primers.plc()["rev_compl"]<< chkBx_copy_rev << chkBx_copy_compl ;
+	    primers["InputSec" ]<< sec_          << sec2align_ ;
+	    primers["CopyBut"  ]<<  copy_f_s_2   << copy_s      << copy_s_a ;
+	    primers["error"    ]<< error_        ;
+	    primers["rev_compl"]<< chkBx_copy_rev << chkBx_copy_compl ;
 
-	    interaction.plc()["Table" ]<< L""          << L"   min-" << L"Tm(°C)"   << L"-max" << L"   min-"  << L"G(kJ)"   << L"-max   "   
+	    interaction["Table" ]<< L""          << L"   min-" << L"Tm(°C)"   << L"-max" << L"   min-"  << L"G(kJ)"   << L"-max   "   
 	                             << L"Up"        << Tm_min_Up << Tm_Up        << Tm_max_Up<<G_min_Up   <<  G_Up      <<  G_max_Up   
 	                             << L"Down"      << Tm_min_Dw << Tm_Dw        << Tm_max_Dw<<G_min_Dw   <<  G_Dw      <<  G_max_Dw   
 	                             << L"Interact"  << Tm_min_In << Tm_In        << Tm_max_In<<G_min_In   <<  G_In      <<  G_max_In  ;
 
 
-        align.plc()["ResAlign" ]  << txtBx_ResultSec << txtBx_ResultSec2Align ;
+        align["ResAlign" ]  << txtBx_ResultSec << txtBx_ResultSec2Align ;
     }
     void Run()
     {

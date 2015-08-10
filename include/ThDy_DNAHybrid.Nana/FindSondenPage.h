@@ -59,14 +59,14 @@ class FindSondenPage : public CompoWidget
                         _gr_prob_ntg{*this, STR("<bold=true> Probe-non-target: </>"), true},
                         _gr_find_prb{*this, STR(           " Find Probes "         ), true},
                         _gr_probself{*this, STR("<bold=true> Probe-self: </>"      ), true};
-    nana::NumUnitUpDown _Gmin     {_gr_probes.inner(), STR("G : "    ), -5, -10 , 10,"kcal/mol"},   _Gmax   {_gr_probes.inner(), STR(""), -1, -10, 10, "kcal/mol"}, 
-                        _Tmmin    {_gr_probes.inner(), STR("Tm : "   ), 57,  40 , 60,"°C"      },  _Tmmax   {_gr_probes.inner(), STR(""), 63,  45, 75, "°C"      }, 
-                        _Lengthmin{_gr_probes.inner(), STR("Length: "), 20,  15 , 35,"nt"      }, _Lengthmax{_gr_probes.inner(), STR(""), 35,  15, 40, "nt"      },
-                        _MaxG     {_gr_prob_tg.inner(), STR("Max G: " ), 10, -10, 30, "kcal/mol" },  _MinTm   {_gr_prob_tg.inner(), STR("Tm: "  ), 30,  10 , 60,"°C"}, 
-                        _MinG     {_gr_prob_ntg.inner(), STR("Min G: " ), 15, -10 , 30,"kcal/mol" }, _MaxTm   {_gr_prob_ntg.inner(), STR("Max Tm: "), 10, -10, 75, "°C"}, 
-                        _MinSelfG {_gr_probself.inner(), STR("Min G: " ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{_gr_probself.inner(), STR("Max Tm: "), 10, -10, 75, "°C"}, 	
-                        numUpDw_MinTargCov{ _gr_find_prb.inner(), STR("max."),   0.0, 0.0 , 100.0,"%" }, 
-                        numUpDw_MaxTargCov{ _gr_find_prb.inner(), STR("min."), 100.0, 0.0 , 100.0,"%" } ;
+    nana::NumUnitUpDown _Gmin     {_gr_probes, STR("G : "    ), -5, -10 , 10,"kcal/mol"},   _Gmax   {_gr_probes, STR(""), -1, -10, 10, "kcal/mol"}, 
+                        _Tmmin    {_gr_probes, STR("Tm : "   ), 57,  40 , 60,"°C"      },  _Tmmax   {_gr_probes, STR(""), 63,  45, 75, "°C"      }, 
+                        _Lengthmin{_gr_probes, STR("Length: "), 20,  15 , 35,"nt"      }, _Lengthmax{_gr_probes, STR(""), 35,  15, 40, "nt"      },
+                        _MaxG     {_gr_prob_tg, STR("Max G: " ), 10, -10, 30, "kcal/mol" },  _MinTm   {_gr_prob_tg, STR("Tm: "  ), 30,  10 , 60,"°C"}, 
+                        _MinG     {_gr_prob_ntg, STR("Min G: " ), 15, -10 , 30,"kcal/mol" }, _MaxTm   {_gr_prob_ntg, STR("Max Tm: "), 10, -10, 75, "°C"}, 
+                        _MinSelfG {_gr_probself, STR("Min G: " ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{_gr_probself, STR("Max Tm: "), 10, -10, 75, "°C"}, 	
+                        numUpDw_MinTargCov{ _gr_find_prb, STR("max."),   0.0, 0.0 , 100.0,"%" }, 
+                        numUpDw_MaxTargCov{ _gr_find_prb, STR("min."), 100.0, 0.0 , 100.0,"%" } ;
     nana::tooltip _Gmintt     {_Gmin, STR("Only probes with stronger interaction with target (smaller G by selected Ta) will be included"    ) }/*,   _Gmax   {*this, STR(""), -1, -10, 10, "kcal/mol"}, 
                              _Tmmin    {*this, STR("Tm :"   ), 57,  40 , 60,"°C"      },  _Tmmax   {*this, STR(""), 63,  45, 75, "°C"      }, 
                              _Lengthmin{*this, STR("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{*this, STR(""), 35,  15, 40, "nt"      },
@@ -79,8 +79,8 @@ class FindSondenPage : public CompoWidget
     nana::button        _design {*this, STR("Design !" )}, 
                         _compare{*this, STR("Compare !")};
 
-    nana::checkbox      chkBx_unique{_gr_find_prb.inner(), STR("Unique, with target coverage ")}, 
-                        chkBx_common{_gr_find_prb.inner(), STR("Common, with target coverage ")}, 
+    nana::checkbox      chkBx_unique{_gr_find_prb, STR("Unique, with target coverage ")}, 
+                        chkBx_common{_gr_find_prb, STR("Common, with target coverage ")}, 
                         chkBx_showFindedProbes{*this, STR("Show Finded Probes")};
 	nana::tooltip       chkBx_uniqueTT{chkBx_unique, STR("For each target seq, probes with hybrid on it, AND maximum on a given percent of the OTHER targets will be reported")};
 	nana::tooltip       chkBx_commonTT{chkBx_common, STR("All probes with hybrid on at laest the given percent of targets will be reported")};
@@ -106,14 +106,14 @@ public:
         ;
 
 
-    _gr_probes .plc().div("vert < Sonde  margin=2 gap= 2 grid=[2,4]  	    \n\t"
+    _gr_probes .div("vert < Sonde  margin=2 gap= 2 grid=[2,4]  	    \n\t"
 	"					                                    		\n\t"
 	"						                                  >	\n\t");
 
-    _gr_prob_tg .plc().div("<  margin=2 gap= 2 vertical   options>");
-    _gr_prob_ntg.plc().div("<  margin=2 gap= 2 vertical   options>");
-    _gr_probself.plc().div("<  margin=2 gap= 2 vertical   options>");
-    _gr_find_prb.plc().div("<  margin=5 gap= 2 TargCov grid=[2,2]>");
+    _gr_prob_tg .div("<  margin=2 gap= 2 vertical   options>");
+    _gr_prob_ntg.div("<  margin=2 gap= 2 vertical   options>");
+    _gr_probself.div("<  margin=2 gap= 2 vertical   options>");
+    _gr_find_prb.div("<  margin=5 gap= 2 TargCov grid=[2,2]>");
 
          _Gmin.ResetLayout     (45,40,55 );   _Gmax.ResetLayout     (1,40,75 );
         _Tmmin.ResetLayout     (45,40,55 );  _Tmmax.ResetLayout     (1,40,75 );
@@ -157,17 +157,17 @@ public:
 	    _place.field ("options" )  << _gr_prob_tg <<  _gr_prob_ntg     << _gr_probself;
         _place.field("Output"  )   << chkBx_showFindedProbes;
 
-          _gr_probes.plc()["Sonde"]  << STR("                               Min." )<< STR("           Max."  ) 
+          _gr_probes["Sonde"]  << STR("                               Min." )<< STR("           Max."  ) 
                                    <<   _Gmin     <<   _Gmax  
                                    <<   _Tmmin    <<   _Tmmax  
                                    << _Lengthmin  <<   _Lengthmax  ; 
 
-        _gr_find_prb.plc()["TargCov"]<< chkBx_unique << numUpDw_MinTargCov       
+        _gr_find_prb["TargCov"]<< chkBx_unique << numUpDw_MinTargCov       
                                    << chkBx_common << numUpDw_MaxTargCov     	;
                  
-	    _gr_prob_tg .plc()["options"] <<   _MaxG     << _MinTm;
-        _gr_prob_ntg.plc()["options"] <<   _MinG     << _MaxTm;
-        _gr_probself.plc()["options"] <<   _MinSelfG << _MaxSelfTm    ;
+	    _gr_prob_tg ["options"] <<   _MaxG     << _MinTm;
+        _gr_prob_ntg["options"] <<   _MinG     << _MaxTm;
+        _gr_probself["options"] <<   _MinSelfG << _MaxSelfTm    ;
 
 
     }

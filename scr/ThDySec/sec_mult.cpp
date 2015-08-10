@@ -292,7 +292,7 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
         return 0;
   
 
-	do  {	getline (fi, li,'>') ;			if ( ! fi.good() ) return 0; }   // BLAST format error
+	do  {	if ( !getline (fi, li,'>') )  return 0; }   // BLAST format error
 	while  (string::npos==li.find("BlastOutput_query-len") ); fi>>_BlastOutput_query_len;//  <BlastOutput_query-len>267</BlastOutput_query-len>
 	
 	do 
