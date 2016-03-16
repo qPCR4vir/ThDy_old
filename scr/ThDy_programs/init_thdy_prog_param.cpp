@@ -1,3 +1,16 @@
+/**
+* Copyright (C) 2009-2015, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+*
+* @file  ThDySec\scr\ThDy_programs\init_thdy_prog_param.cpp
+*
+* @brief
+*
+*/
+
+
+
 //#include "StdAfx.h"
 #pragma unmanaged
 #include "thdy_programs\init_thdy_prog_param.h"

@@ -1,10 +1,12 @@
 /**
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* 2009-2015, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
 *
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 
 * @file  ThDySec\include\ThDySec\th_dy_align.h
 *
 * @brief 
+* 
 */
 #pragma unmanaged	
 #ifndef _TH_DY_ALIGN_H

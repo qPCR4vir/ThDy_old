@@ -1,3 +1,14 @@
+/**
+* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2015
+*
+* @file ThDySec\scr\ThDy_programs\ThDy_DegTmCalc.cpp
+*
+* @brief
+*/
+
 //#include "StdAfx.h"
 #pragma unmanaged
 #include "ThDy_programs/prog_comm_functions.h"
