@@ -28,7 +28,7 @@ const int ThDyAlign::stj1[]={0,0,0,1,1,1,1,1};
 	//			st_0=0, st_1, st_2, st_3, st_4, st_5, st_6, st_7,
 	//			c_01=01, c_02=2,c_04=4, c_05=5, c_06=6, c_08=8, c_09=9, c_10=10, 
 	//			
-	//		  } *_pre/*,*_pre0, *_pre1, *_pre2*/ ;   // back punter matriz a:i+1 dirc sonda, b:j+1 dir tg, d:diag
+	//		  } *_pre/*,*_pre0, *_pre1, *_pre2*/ ;   // back pointer matrix a:i+1 dirc sonda, b:j+1 dir tg, d:diag
 
 ThDyAlign::ThDyAlign(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar, float InitMax) // ------------------------ ThDyAlign	--------
 			:_NNpar		(NNpar) ,								//_sd(nullptr),
@@ -38,10 +38,13 @@ ThDyAlign::ThDyAlign(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr
 			 _Ta(CtoK(60)),										// _Ta(NNpar->kein_Tm), --asi estaba. Se justifica?
 			 _Ta_lastCalc(-1),									// todavia no se ha calculado. Aqui estara la Ta del ultimo calculo
 			 _Tm_sig(CtoK(15))									//_Tm_min(CtoK(57)), _Tm_max(CtoK(63)), _TableSize ( 0 )
-{	force_ResizeTable();		}
+{	
+	force_ResizeTable();		
+}
 
 void ThDyAlign::ResizeTable(long LenSond, long LenTarg)		//	--------------------------------------------------------------	ResizeTable	---------
-{	bool initBorder = (LenSond+2 > _LenSond) ;	// Si la nueva sonda es mayor que las anteriores (tabla mas "ancha") ajustar los bordes
+{	
+	bool initBorder = (LenSond+2 > _LenSond) ;	// Si la nueva sonda es mayor que las anteriores (tabla mas "ancha") ajustar los bordes
 	_LenSond	 = LenSond +2 ;					// Para que incluya los ´$´    ?
 	_LenTarg	 = LenTarg +2 ;					// 	inline float &dS0(long i, long j)const{return _dS0[i +j*_LenSondPlus1]; }
 

@@ -325,13 +325,10 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 		long		   l=0;
 		std::string	   clas;
 
-	    while(getline(fi,li,'>')&& string::npos==li.find("Hit_num"      ) ) ;  fi>>_Hit_num;				//  <Hit_num>1</Hit_num>
-	    while(getline(fi,li,'>')&& string::npos==li.find("Hit_id"       ) ) ;                           	//<Hit_id>gi|84028434|gb|DQ318020.1|</Hit_id> 
-                                                                if ( ! getline (fi, _Hit_id, '<') ) return id;
-	    while(getline(fi,li,'>')&& string::npos==li.find("Hit_def"      ) ) ;                               //<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
-                                                                if ( ! getline (fi, _Hit_def,'<') ) return id;
-	    while(getline(fi,li,'>')&& string::npos==li.find("Hit_accession") ) ;                              	//<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
-                                                                if ( ! getline (fi, _Hit_accession,'<') ) return id;
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hit_num"      ) ) ;  fi>>_Hit_num;                                //  <Hit_num>1</Hit_num>
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hit_id"       ) ) ; if(!getline(fi, _Hit_id, '<') ) return id;    //<Hit_id>gi|84028434|gb|DQ318020.1|</Hit_id> 
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hit_def"      ) ) ; if(!getline(fi, _Hit_def,'<') ) return id;    //<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hit_accession") ) ; if(!getline(fi, _Hit_accession,'<'))return id;//<Hit_def>Wets NIle virus strain ArB3573/82, complete genome</Hit_def>
 	    while(getline(fi,li,'>')&& string::npos==li.find("Hit_len"      ) ) ;  fi>>_Hit_len;				//  <Hit_len>11048</Hit_len> 
 	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_bit-score") ) ;  fi>>_Hsp_bit_score;			//  <Hsp_bit-score>482.786</Hsp_bit-score>
 	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_score"    ) ) ;  fi>>_Hsp_score;              //  <Hsp_score>534</Hsp_score>		
@@ -345,10 +342,9 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_positive" ) ) ;  fi>>_Hsp_positive;			//  <Hsp_positive>267</Hsp_positive>
 	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_gaps"     ) ) ;  fi>>_Hsp_gaps;	 		    //  <Hsp_gaps>0</Hsp_gaps>
 	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_align-len") ) ;  fi>>_Hsp_align_len;		    //  <Hsp_align-len>267</Hsp_align-len>
-	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_hseq") ) ; 	                            	//  <Hsp_hseq>TACAACATGATGGGAAAGAGAGAGAAGAAG 
-                                                                if ( ! getline (fi, sec         ,'<') ) return id;
-	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_midline") ) ;                                 //  <Hsp_midline>|||||||||||||||||||||||||||||||||||||||||
-                                                            if ( ! getline (fi, _Hsp_midline,'<') ) return id;
+	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_hseq"     ) ) ; if(!getline(fi, sec,'<'))         return id;//<Hsp_hseq>TACAACATGATGGGAAAGAGAGAGAAGAAG 
+ 	    while(getline(fi,li,'>')&& string::npos==li.find("Hsp_midline"  ) ) ; if(!getline(fi, _Hsp_midline,'<'))return id;//<Hsp_midline>|||||||||||||||||||||||||||||||||||||||||
+                                                            
 
         LonSecPos  secHitBeg {secBeg - _Hsp_query_from +1};  // omitir estas primeras bases del Hit (de la parte del hit que tenemos)
         LonSecPos  lmaxHit   {lmax };  // max # de bases a leer del Hit (de la parte del hit que tenemos)

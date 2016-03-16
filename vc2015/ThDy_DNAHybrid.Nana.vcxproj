@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ExtLib\nana.ext\include\EditableForm.hpp" />
+    <ClInclude Include="..\..\ExtLib\nana.ext\include\nanaBind.hpp" />
     <ClInclude Include="..\..\ExtLib\nana.ext\include\Numer.hpp" />
     <ClInclude Include="..\..\ExtLib\nana.ext\include\vplace.hpp" />
     <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\FindSondenPage.h" />
@@ -85,6 +86,7 @@
     <ProjectGuid>{C08F6343-E59C-4BE6-B8FA-A8FDE68ACA9F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>nana</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -232,15 +234,27 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTd|Win32'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDd|Win32'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTd|x64'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDd|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>../../nana.ext/include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTd|x64'">
+    <IncludePath>../../nana.ext/include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDd|x64'">
+    <IncludePath>../../nana.ext/include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTr|Win32'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDr|Win32'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTr|x64'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDr|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>../../nana.ext/include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MTr|x64'">
+    <IncludePath>../../nana.ext/include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MDr|x64'">
+    <IncludePath>../../nana.ext/include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>

@@ -93,5 +93,8 @@
     <ClInclude Include="..\include\ThDy_DNAHybrid.Nana\TableResults.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\ExtLib\nana.ext\include\nanaBind.hpp">
+      <Filter>Header Files\nana.ext</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
