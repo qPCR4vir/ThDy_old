@@ -16,21 +16,21 @@
 
          SeqExpl::SeqExpl              (ThDyNanaForm& tdForm)
         : _Pr             (tdForm), 
-          CompoWidget     (tdForm, STR("Seq Explorer"), STR("SeqExpl.lay.txt"))
+          CompoWidget     (tdForm, ("Seq Explorer"), ("SeqExpl.lay.txt"))
     {
         InitMyLayout();
         SelectClickableWidget( _tree);
         SelectClickableWidget( *this);
         _tree.checkable(true);
         _list.checkable(true);
-        _list.append_header(STR("Name")  , 120);     // col 0: name  
-        _list.append_header(STR("Lenght"), 50);      // col 1: len
-        _list.append_header(STR("Tm °C") , 60);      //case 2: Tm 
-        _list.append_header(STR("Deg")   , 50);      // case 3: deg   
-        _list.append_header(STR("Description")   , 220);   // case 4: descr  
-        _list.append_header(STR("Beg"), 50);         // case 5: beg in aln 
-        _list.append_header(STR("End"), 50);         // case 6: end in aln    
-        _list.append_header(STR("Seq")   , 420);
+        _list.append_header(("Name")  , 120);     // col 0: name  
+        _list.append_header(("Lenght"), 50);      // col 1: len
+        _list.append_header(("Tm °C") , 60);      //case 2: Tm 
+        _list.append_header(("Deg")   , 50);      // case 3: deg   
+        _list.append_header(("Description")   , 220);   // case 4: descr  
+        _list.append_header(("Beg"), 50);         // case 5: beg in aln 
+        _list.append_header(("End"), 50);         // case 6: end in aln    
+        _list.append_header(("Seq")   , 420);
         //_list.resolver(ListSeqMaker());
 
 
@@ -46,7 +46,7 @@
 		        }
 				catch ( std::exception& e)
 		        { 
-				  (nana::msgbox ( STR("Error adding new group" ) )<< e.what()).show() ;
+				  (nana::msgbox ( ("Error adding new group" ) )<< e.what()).show() ;
                   return node;
 		        }		
 		}
@@ -60,11 +60,12 @@
 		}
 		catch ( std::exception& e)
 		{ 
-			(nana::msgbox ( STR("Error adding sequences" ) )<< e.what()).show() ;
+			(nana::msgbox ( ("Error adding sequences" ) )<< e.what()).show() ;
             return _tree.selected();
  		}		 
 	}
-         SeqExpl::Node SeqExpl::Replace      (Tree::item_proxy& tn, CMultSec *ms, const std::string& Path, bool all_in_dir)
+
+SeqExpl::Node SeqExpl::Replace      (Tree::item_proxy& tn, CMultSec *ms, const std::string& Path, bool all_in_dir)
     {        
     try{ 
          Tree::item_proxy   own = tn->owner();
@@ -79,14 +80,14 @@
 		}
 		catch ( std::exception& e)
 		{ 
-			(nana::msgbox ( STR("Error replacing sequences: " ) ).icon(nana::msgbox::icon_error)
-               << "into "<< nana::charset(tn.key())                                 
-               << "from " << (all_in_dir?"directory ":"file ") << Path     <<"\n"<< e.what()
+			(nana::msgbox ( ("Error replacing sequences: " ) ).icon(nana::msgbox::icon_error)
+               << "into gruop:    "  << nana::charset(tn.key())                                 
+               << "\n from " << (all_in_dir?"directory: " : "file: ") << Path     <<"\n"<< e.what()
             ).show() ;
  		}		
 		catch(...)
 		{
-             (nana::msgbox(STR("An uncaptured exception during replacing sequences: "))
+             (nana::msgbox(("An uncaptured exception during replacing sequences: "))
                     .icon(nana::msgbox::icon_error) 
                << "into "<< nana::charset(tn.key())                                 
                << "from " << (all_in_dir?"directory ":"file ") << Path    
@@ -114,26 +115,26 @@
     {
         menu.append_splitter();
 
-        menu.append(STR("Add a new, empty, group for sequences")  , [&](nana::menu::item_proxy& ip) {  AddNewSeqGr(_tree.selected());    });
-        menu.append(STR("Add a group of sequences from a file..."), [&](nana::menu::item_proxy& ip) {  Click(_loadFile);                 });
-        menu.append(STR("Add a tree of groups of sequences from a directory..."),[&](nana::menu::item_proxy& ip) {  Click(_loadDir);     });
+        menu.append(("Add a new, empty, group for sequences")  , [&](nana::menu::item_proxy& ip) {  AddNewSeqGr(_tree.selected());    });
+        menu.append(("Add a group of sequences from a file..."), [&](nana::menu::item_proxy& ip) {  Click(_loadFile);                 });
+        menu.append(("Add a tree of groups of sequences from a directory..."),[&](nana::menu::item_proxy& ip) {  Click(_loadDir);     });
 
         menu.append_splitter();
 
-        menu.append(STR("Reproduce only the structure of directory..."),[&](nana::menu::item_proxy& ip)  {  Click(_scanDir);     });
-        menu.append(STR("Reload from the original file" )  , [&](nana::menu::item_proxy& ip)   {  ReloadFile(_tree.selected());    });
-        menu.append(STR("Reload from the original directory"), [&](nana::menu::item_proxy& ip) {  ReloadDir(_tree.selected());     });
-        menu.append(STR("Replace from a file . . ." )  , [&](nana::menu::item_proxy& ip) 
+        menu.append(("Reproduce only the structure of directory..."),[&](nana::menu::item_proxy& ip)  {  Click(_scanDir);     });
+        menu.append(("Reload from the original file" )  , [&](nana::menu::item_proxy& ip)   {  ReloadFile(_tree.selected());    });
+        menu.append(("Reload from the original directory"), [&](nana::menu::item_proxy& ip) {  ReloadDir(_tree.selected());     });
+        menu.append(("Replace from a file . . ." )  , [&](nana::menu::item_proxy& ip) 
         {
 			auto tn= _tree.selected();
             if (isRoot(tn))
             {
-                nana::msgbox ( STR("Sorry, you can´t replace group " + tn.text()) ).show() ;
+                nana::msgbox ( ("Sorry, you can´t replace group " + tn.text()) ).show() ;
                 return;
             }
             nana::filebox  fb{ *this, true };
             fb .add_filter ( SetupPage::FastaFiltre( )                   )
-               .title(STR("Replace/reload a group of sequences from a file"));
+               .title(("Replace/reload a group of sequences from a file"));
             if (!fb()) return;
 
             CMultSec *ms = tn.value<CMultSec*>();
@@ -146,16 +147,16 @@
             //Refresh(appendNewNode  (own, newms) );
             //_tree.auto_draw(true);
         });
-        menu.append(STR("Replace from directory . . ."), [&](nana::menu::item_proxy& ip) 
+        menu.append(("Replace from directory . . ."), [&](nana::menu::item_proxy& ip) 
         {
 			auto tn= _tree.selected();
             if (tn->owner()->owner().empty())
             {
-                nana::msgbox ( STR("Sorry, you can´t replace group " + tn->text()) ) ;
+                nana::msgbox ( ("Sorry, you can´t replace group " + tn->text()) ) ;
                 return;
             }
             nana::filebox  fb{ *this, true };
-            fb.title(STR("Replace/reload a group of sequences from a directory"));
+            fb.title(("Replace/reload a group of sequences from a directory"));
             if (!fb()) return;
 
             CMultSec *ms = tn.value<CMultSec*>();
@@ -180,23 +181,23 @@
 
         menu.append_splitter();
 
-        menu.append     ( STR("Show Only local sequences"),[&](nana::menu::item_proxy& ip) { ShowLocals( menu.checked(ip.index())); })
+        menu.append     ( ("Show Only local sequences"),[&](nana::menu::item_proxy& ip) { ShowLocals( menu.checked(ip.index())); })
             .check_style( nana::menu::checks::option)
             .checked    ( false );
 
-        menu.append     ( STR("Show filtered sequences"  ),[&](nana::menu::item_proxy& ip) { ShowFiltered( menu.checked(ip.index())); })
+        menu.append     ( ("Show filtered sequences"  ),[&](nana::menu::item_proxy& ip) { ShowFiltered( menu.checked(ip.index())); })
             .check_style( nana::menu::checks::highlight )
             .checked    ( true );
  
         menu.append_splitter();
-        menu.append(STR("Cut selected sequences from list"          ),[&](nana::menu::item_proxy& ip)  {  Click(_cutSec);  });
-        menu.append(STR("Cut selected groups of sequences from tree"),[&](nana::menu::item_proxy& ip)  {  Click(_cut   );  });
-        menu.append(STR("Paste the sequences"                       ),[&](nana::menu::item_proxy& ip)  {  Click(_paste );  });
+        menu.append(("Cut selected sequences from list"          ),[&](nana::menu::item_proxy& ip)  {  Click(_cutSec);  });
+        menu.append(("Cut selected groups of sequences from tree"),[&](nana::menu::item_proxy& ip)  {  Click(_cut   );  });
+        menu.append(("Paste the sequences"                       ),[&](nana::menu::item_proxy& ip)  {  Click(_paste );  });
 
         menu.append_splitter();
-        menu.append(STR("Del selected sequences from list"),[&](nana::menu::item_proxy& ip)            {  Click(_delSec);  });
-        menu.append(STR("Del selected groups of sequences from tree"),[&](nana::menu::item_proxy& ip)  {  Click(_del   );  });
-        menu.append(STR("Rename the selected group of sequences"),[&](nana::menu::item_proxy& ip) 
+        menu.append(("Del selected sequences from list"),[&](nana::menu::item_proxy& ip)            {  Click(_delSec);  });
+        menu.append(("Del selected groups of sequences from tree"),[&](nana::menu::item_proxy& ip)  {  Click(_del   );  });
+        menu.append(("Rename the selected group of sequences"),[&](nana::menu::item_proxy& ip) 
         {
             
             RenameFrom rnm(_tree, nana::charset(_tree.selected().text()));
@@ -207,13 +208,13 @@
         }).enabled(true);
 
         menu.append_splitter();
-        auto  indxFASTA = menu.append(STR("Export FASTA . . ."          ),[&](nana::menu::item_proxy& ip)            {  /*_tree.selected().value<CMultSec*>()->ExportFASTA();*/  }).index();
+        auto  indxFASTA = menu.append(("Export FASTA . . ."          ),[&](nana::menu::item_proxy& ip)            {  /*_tree.selected().value<CMultSec*>()->ExportFASTA();*/  }).index();
         auto& menuFASTA = *menu.create_sub_menu(indxFASTA);
-        menuFASTA.append(STR("Only current sequences"     ),[&](nana::menu::item_proxy& ip)            {  ;  });
-        menuFASTA.append(STR("Selected sequences in group"),[&](nana::menu::item_proxy& ip)            { _Pr.ExportFASTA(_tree.selected().value<CMultSec*>(), true );  });
-        menuFASTA.append(STR("All sequences in group"     ),[&](nana::menu::item_proxy& ip)            { _Pr.ExportFASTA(_tree.selected().value<CMultSec*>(), false);  });
-        menuFASTA.append(STR("All selected sequences"     ),[&](nana::menu::item_proxy& ip)            { _Pr._cp._pSeqTargets->Export_as("export.fasta", true )  ;  });
-        menuFASTA.append(STR("All sequences"              ),[&](nana::menu::item_proxy& ip)            { _Pr._cp._pSeqTargets->Export_as("export.fasta", false)  ;  });
+        menuFASTA.append(("Only current sequences"     ),[&](nana::menu::item_proxy& ip)            {  ;  });
+        menuFASTA.append(("Selected sequences in group"),[&](nana::menu::item_proxy& ip)            { _Pr.ExportFASTA(_tree.selected().value<CMultSec*>(), true );  });
+        menuFASTA.append(("All sequences in group"     ),[&](nana::menu::item_proxy& ip)            { _Pr.ExportFASTA(_tree.selected().value<CMultSec*>(), false);  });
+        menuFASTA.append(("All selected sequences"     ),[&](nana::menu::item_proxy& ip)            { _Pr._cp._pSeqTargets->Export_as("export.fasta", true )  ;  });
+        menuFASTA.append(("All sequences"              ),[&](nana::menu::item_proxy& ip)            { _Pr._cp._pSeqTargets->Export_as("export.fasta", false)  ;  });
 
     }
     void SeqExpl::MakeResponive()
@@ -237,33 +238,33 @@
                         {
                             nana::filebox  fb{ *this, true };
                             fb .add_filter ( SetupPage::FastaFiltre( )                   )
-                               .title      ( STR("File load: Add a group of sequences from a file") );
+                               .title      ( ("File load: Add a group of sequences from a file") );
 
                             if (fb()) 
                                AddMSeqFiles(nana::charset(fb.file()), false);
                         });
-        //_loadFileTT.set(_loadFile,STR("File load: Add a group of sequences from a file"));
+        //_loadFileTT.set(_loadFile,("File load: Add a group of sequences from a file"));
 
         _re_loadFile.events().click([this]()  {  ReloadFile(_tree.selected());    });
-        _re_loadFileTT.set(_re_loadFile,STR("File reload: Reload a group of sequences from a file, \nposible using new filtres."));
+        _re_loadFileTT.set(_re_loadFile,("File reload: Reload a group of sequences from a file, \nposible using new filtres."));
 
-        _loadDir    .tooltip(STR("Directory load: Add a tree of groups of sequences from a directory."))
+        _loadDir    .tooltip(("Directory load: Add a tree of groups of sequences from a directory."))
                     .events().click([this]()
                         {
                             nana::filebox  fb{ *this, true };
                             fb .add_filter ( SetupPage::FastaFiltre( )                   )
-                               .title(STR("Directory load: Add a tree of groups of sequences from a directory"));
+                               .title(("Directory load: Add a tree of groups of sequences from a directory"));
                             if (fb()) 
                                 AddMSeqFiles(nana::charset(fb.file()), true);
                         });
-        _re_loadDir .tooltip(STR("Directory reload: Reload a tree of groups of sequences from a directory,\nposible using new filtres."))
+        _re_loadDir .tooltip(("Directory reload: Reload a tree of groups of sequences from a directory,\nposible using new filtres."))
                     . events().click([this]()  {  ReloadDir (_tree.selected());    });
-        _scanDir    .tooltip(STR("Directory scan: Reproduce the structure of directory..."))
+        _scanDir    .tooltip(("Directory scan: Reproduce the structure of directory..."))
                     .events().click([this]()
                         {
                             nana::filebox  fb{ *this, true };
                             fb .add_filter ( SetupPage::FastaFiltre( )                   )
-                               .title(STR("Directory scan: Reproduce the structure of directory..."));
+                               .title(("Directory scan: Reproduce the structure of directory..."));
                             if (!fb()) return;
 
                             auto      tn    = _tree.selected();
@@ -274,7 +275,7 @@
                             tn.expand(true);
                             _tree.auto_draw(true);
                         });
-        _paste      .tooltip(STR("Paste sequences"))
+        _paste      .tooltip(("Paste sequences"))
                     .events().click([this]()
         {
 			auto       tn = _tree.selected();
@@ -292,7 +293,7 @@
             _list.auto_draw(false);
 
             populate(tn);
-            populate(_tree.find(STR("Dont use") ));
+            populate(_tree.find(("Dont use") ));
             _list.clear();
             populate_list_recur(tn);
             tn.select(true).expand(true);
@@ -300,14 +301,14 @@
             _tree.auto_draw(false);
             _list.auto_draw(false);
         });
-        _cut        .tooltip(STR("Cut a group of sequences"))
+        _cut        .tooltip(("Cut a group of sequences"))
                     .events().click([this]()
         {
 			auto tn= _tree.selected(); 
             if (tn->owner()->owner().empty())    //   ???  if( tn->level() < 2 );
             {
-                (nana::msgbox ( _tree , STR("Cut a group of sequences " + tn->text()) )
-                          << STR("Sorry, you can´t cut the group: ") + tn->text() )
+                (nana::msgbox ( _tree , ("Cut a group of sequences " + tn->text()) )
+                          << ("Sorry, you can´t cut the group: ") + tn->text() )
                           .icon(nana::msgbox::icon_error )
                           .show() ;
                 return;
@@ -323,17 +324,17 @@
             _list.auto_draw(false);
 
             _tree.erase(tn);
-            populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
+            populate(appendNewNode (_tree.find(("Dont use") ), ms ));
             own.select(true).expand(true);
         });
-        _del        .tooltip(STR("Delete a group of sequences "))
+        _del        .tooltip(("Delete a group of sequences "))
                     .events().click([this]()
         {
 			auto tn= _tree.selected();
             if (tn->owner()->owner().empty())
             {
-                (nana::msgbox ( _tree , STR("Deleting a group of sequences " + tn->text()) )
-                          << STR("Sorry, you can´t delete the group: ") + tn->text() )
+                (nana::msgbox ( _tree , ("Deleting a group of sequences " + tn->text()) )
+                          << ("Sorry, you can´t delete the group: ") + tn->text() )
                           .icon(nana::msgbox::icon_error )
                           .show() ;
                 return;
@@ -347,12 +348,12 @@
             _list.auto_draw(false);
 
             _tree.erase(tn);
-            populate(appendNewNode (_tree.find(STR("Dont use") ), ms ));
+            populate(appendNewNode (_tree.find(("Dont use") ), ms ));
 
             own.select(true).expand(true);
 
         });
-        _cutSec     .tooltip(STR("Cut selected sequences from list"))
+        _cutSec     .tooltip(("Cut selected sequences from list"))
                     .events().click([this]()
         {
 			auto sel =	_list.selected() ; 
@@ -364,7 +365,7 @@
 			}
 			RefreshList();
         });
-        _delSec     .tooltip(STR("Delete selected sequences from list"))
+        _delSec     .tooltip(("Delete selected sequences from list"))
                     .events().click([this]()
         {
 			auto sel =	_list.selected() ; 
@@ -378,12 +379,12 @@
 
         _show_locals_s.enable_pushed(true)
                       .pushed(false)
-                      .tooltip(STR("Show only local sequences, and not the sequences in internal trees"))   
+                      .tooltip(("Show only local sequences, and not the sequences in internal trees"))   
                       .events().click([this]() { ShowLocals( _show_locals_s.pushed());  });
 
         _show_filt_s.enable_pushed(true)  
                     .pushed(true) 
-                    .tooltip(STR("Show filtered sequences too"))   
+                    .tooltip(("Show filtered sequences too"))   
                     .events().click([this]() { ShowFiltered( _show_filt_s.pushed());  });
     }
     void SeqExpl::InitTree()
@@ -395,7 +396,7 @@
         for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
 			populate( AddRoot( ms->CurMSec())) ;
 
-        _tree.find(STR("Target seq")).select(true);
+        _tree.find(("Target seq")).select(true);
         populate_list_recur(_Pr._cp._pSeqTree.get());
 
     }
@@ -403,15 +404,15 @@
     List::oresolver& operator<<(List::oresolver & ores, CSec * const sec )
 {
     static const long    blen{ 50 }, slen{ 1000 };
-    nana::char_t val[blen];
+    char val[blen];
 
-    swprintf(val,blen,     STR("%*d")  , 6,           sec->Len()       );
+    snprintf(val,blen,     ("%*d")  , 6,           sec->Len()       );
 
     ores <<  sec->Name()                    // col 0: name  
          <<  val  ;                         // col 1: len
 
 	Temperature t=KtoC( sec->NonDegSet() ? sec->NonDegSet()->_Local._Tm.Ave() : sec->_Tm.Ave());
-	swprintf(val,blen, STR("% *.*f °C"), 6, 1,   t );
+	snprintf(val,blen, ("% *.*f °C"), 6, 1,   t );
     Temperature min=57.0, max=63.0;
     double fade_rate=  t<min? 0.0 : t>max? 1.0 : (t-min)/(max-min);
     nana::color tc{static_cast<nana::color_rgb>(0xFFFFFFFF)} , 
@@ -419,16 +420,16 @@
 
     ores <<  List::cell {val, bc , tc};    //case 2: Tm 
 
-    swprintf(val,blen,     STR("%*d")  , 5,           sec->Degeneracy());
+    snprintf(val,blen,     ("%*d")  , 5,           sec->Degeneracy());
     ores <<  val                           // case 3: deg    
          << sec->Description()     ;       // case 4: descr  
 
     
     if( sec->_aln_fragment && sec->_aln_fragment->aln.lenght())
     {
-        swprintf(val,blen,     STR("%*d")  , 6,           sec->_aln_fragment ->aln.Min()       );
+        snprintf(val,blen,     ("%*d")  , 6,           sec->_aln_fragment ->aln.Min()       );
         ores <<  val                       ;    // case 5: beg in aln   
-        swprintf(val,blen,     STR("%*d")  , 6,           sec->_aln_fragment ->aln.Max()       );
+        snprintf(val,blen,     ("%*d")  , 6,           sec->_aln_fragment ->aln.Max()       );
         ores <<  val                       ;    // case 6: end in aln    
     }
     else

@@ -111,21 +111,21 @@ void  SetupPage::AsignWidgetToFields ()
 
 	    _gr_salt["ConcST"     ]   << numUpDowSdConc       << numUpDowTgConc ;
 	    _gr_salt["ConcSaltTa" ]   << numUpDowSalConc      << numUpDowTa ;
-	    _gr_salt["SMeth"      ]   << L" Salt Correct. Method:"	   <<  comBoxSalMeth;
-	    _gr_salt["AMeth"      ]   << L" ThDy Align. Method"       <<  comBoxTAMeth ;
+	    _gr_salt["SMeth"      ]   << " Salt Correct. Method:"	   <<  comBoxSalMeth;
+	    _gr_salt["AMeth"      ]   << " ThDy Align. Method"       <<  comBoxTAMeth ;
     }
 void  SetupPage::MakeResponive()
     {
-        _proj.add_filter(STR("ThDy project"),STR("*.ThDy.txt"));
-        _proj.onOpenAndSelectFile ([this](const nana::string &file)
+        _proj.add_filter(("ThDy project"),("*.ThDy.txt"));
+        _proj.onOpenAndSelectFile ([this](const std::string &file)
         { 
             this->LoadProject (  file  );
-                std::wcerr << L"onOpenAndSelectFile: Loaded Project file: " << file << std::endl;
+                std::cerr << "onOpenAndSelectFile: Loaded Project file: " << file << std::endl;
         } );
-        _proj.onSaveFile          ([this](const nana::string &file)
+        _proj.onSaveFile          ([this](const std::string &file)
         { 
             this->_Pr.save (nana::charset ( (  file  ))); 
-                std::wcerr << L"onSaveFile: Saved Project file: " << file << std::endl;
+                std::cerr << "onSaveFile: Saved Project file: " << file << std::endl;
         } );
 
         AddFastaFiltre(_targets );
@@ -133,7 +133,7 @@ void  SetupPage::MakeResponive()
         AddFastaFiltre(_PCRfiltre );
         AddFastaFiltre(_PrimersFilePCR );
 
-        _NNParamFile.add_filter      (STR("Nearest Neibrhud Parametr"),STR("*.NN.csv"));
+        _NNParamFile.add_filter      (("Nearest Neibrhud Parametr"),("*.NN.csv"));
         _NNParamFile.onOpenAndSelect ([this]()
             { 
 
@@ -153,7 +153,7 @@ void  SetupPage::MakeResponive()
             //assert((  std::cerr<< "\nBefore saving NNfile, SetupPage: " , true  ));;
             //assert((  std::wcerr<< caption() << std::endl , true  ));;
             
-            std::ofstream{ _Pr._cp._InputNNFile.get() /* + STR(".NN.csv") */} << *_Pr._cp._pSaltCorrNNp;        
+            std::ofstream{ _Pr._cp._InputNNFile.get() /* + (".NN.csv") */} << *_Pr._cp._pSaltCorrNNp;        
 
             //assert((  std::cerr << "onSave: Saved NNp file: " << _Pr._cp._InputNNFile.get() << std::endl, true  ));;
          } );
@@ -193,25 +193,25 @@ void  SetupPage::RestDefPr	 ( )		// Restore (USE) Deff  Proj File
 		}
 	catch ( std::exception& e)
 	{ 
-		(nana::msgbox ( STR("Error loading Def Project" ) )<< e.what()).show() ;
+		(nana::msgbox ( ("Error loading Def Project" ) )<< e.what()).show() ;
  	}		 
 }
 void  SetupPage::AddMenuItems(nana::menu& menu)
 {
-//      		_menuFile.append  (STR("&Open..."   ),[this](nana::menu::item_proxy& ip){ this->_OSbx.open(nana::string(nana::charset(this->_textBox.filename())));this->OpenFile()  ;}                );
-//      _menuFile.append  (STR("&Save"      ),[&](nana::menu::item_proxy& ip){  ForceSave(nana::string(nana::charset(_textBox.filename())) ) ;}   );
-	//_menuFile.append  (STR("Save &As..."),[&](nana::menu::item_proxy& ip){ _OSbx.save(nana::string(nana::charset(_textBox.filename())));SaveFile() ;} );
+//      		_menuFile.append  (("&Open..."   ),[this](nana::menu::item_proxy& ip){ this->_OSbx.open(std::string(nana::charset(this->_textBox.filename())));this->OpenFile()  ;}                );
+//      _menuFile.append  (("&Save"      ),[&](nana::menu::item_proxy& ip){  ForceSave(std::string(nana::charset(_textBox.filename())) ) ;}   );
+	//_menuFile.append  (("Save &As..."),[&](nana::menu::item_proxy& ip){ _OSbx.save(std::string(nana::charset(_textBox.filename())));SaveFile() ;} );
 
-    menu.append(STR("New"    )  , [&](nana::menu::item_proxy& ip)  {  ;  } );
-    menu.append(STR("Open...")  , [&](nana::menu::item_proxy& ip)  
+    menu.append(("New"    )  , [&](nana::menu::item_proxy& ip)  {  ;  } );
+    menu.append(("Open...")  , [&](nana::menu::item_proxy& ip)  
     { 
         _proj.open(_proj.FileName()); /*OpenProj() ;*/   
         if (!_proj.Canceled())
-            LoadProject( nana::charset(_proj.FileName()));
-        //this->_OSbx.open(nana::string(nana::charset(this->_textBox.filename())));this->OpenFile()  ;}                );
+            LoadProject( _proj.FileName());
+        //this->_OSbx.open(std::string(nana::charset(this->_textBox.filename())));this->OpenFile()  ;}                );
 
     } );
-    menu.append(STR("Save...")  , [&](nana::menu::item_proxy& ip)  
+    menu.append(("Save...")  , [&](nana::menu::item_proxy& ip)  
     { 
         _proj.save(_proj.FileName()); 
         if( ! _proj.Canceled () )   
@@ -220,18 +220,18 @@ void  SetupPage::AddMenuItems(nana::menu& menu)
         //SaveProj() ;  
     } );
     menu.append_splitter();
-    menu.append(STR("Set as deffault") , [&](nana::menu::item_proxy& ip)  {;  });
-    menu.append(STR("Restore deffault"), [&](nana::menu::item_proxy& ip)  {;  });
+    menu.append(("Set as deffault") , [&](nana::menu::item_proxy& ip)  {;  });
+    menu.append(("Restore deffault"), [&](nana::menu::item_proxy& ip)  {;  });
     menu.append_splitter();
-    menu.append(STR("Exit"    )  , [&](nana::menu::item_proxy& ip)  {  _Pr.close();  } );
+    menu.append(("Exit"    )  , [&](nana::menu::item_proxy& ip)  {  _Pr.close();  } );
 
 }
-void  SetupPage::LoadProjectAndReg(nana::string file)
+void  SetupPage::LoadProjectAndReg(std::string file)
     {
         LoadProject(file);
  		_proj.FileName(file  );
    }
-void  SetupPage::LoadProject(nana::string file)
+void  SetupPage::LoadProject(std::string file)
 	{
 		try
 		{
@@ -266,7 +266,7 @@ void  SetupPage::LoadProject(nana::string file)
 	}
       SetupPage::SetupPage          (ThDyNanaForm& tdForm)
         : _Pr           (tdForm), 
-          CompoWidget  (tdForm, STR("Setup"), STR("Setup.lay.txt"))
+          CompoWidget  (tdForm, ("Setup"), ("Setup.lay.txt"))
     {
         InitMyLayout();
         SelectClickableWidget( _set_def_proj);
@@ -276,12 +276,12 @@ void  SetupPage::LoadProject(nana::string file)
     }
 FilePickBox::filtres SetupPage::FastaFiltre( )
     {
-        return FilePickBox::filtres       { {STR("fasta")       , STR("*.fas;*.fasta"     ) },
-                                            {STR("NCBI BLAST")  , STR("*-Alignment.xml"   ) },
-                                            {STR("GB"        )  , STR("*.gb;*-sequence.xml")},
-                                            {STR("Text"      )  , STR("*.txt"             ) },
-                                            {STR("All sequences"), STR("*.fas;*.fasta;*.txt;*-Alignment.xml;*.gb;*-sequence.xml")},
-                                            {STR("All files" )  , STR("*.*"               ) }
+        return FilePickBox::filtres       { {("fasta")       , ("*.fas;*.fasta"     ) },
+                                            {("NCBI BLAST")  , ("*-Alignment.xml"   ) },
+                                            {("GB"        )  , ("*.gb;*-sequence.xml")},
+                                            {("Text"      )  , ("*.txt"             ) },
+                                            {("All sequences"), ("*.fas;*.fasta;*.txt;*-Alignment.xml;*.gb;*-sequence.xml")},
+                                            {("All files" )  , ("*.*"               ) }
                                           } ;
     }
 void   SetupPage::SetDefLayout   () 

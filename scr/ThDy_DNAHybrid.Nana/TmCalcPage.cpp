@@ -38,12 +38,12 @@
 
         TmCalcPage::TmCalcPage        (ThDyNanaForm& tdForm)
         : _Pr           (tdForm), 
-          CompoWidget  (tdForm, STR("Tm Calc"), STR("Tm Calc.lay.txt"))
+          CompoWidget  (tdForm, ("Tm Calc"), ("Tm Calc.lay.txt"))
     {
-                         sec_.multi_lines(false).editable(true ).tip_string (STR("forward primer"));
-                   sec2align_.multi_lines(false).editable(true ).tip_string (STR("reverse primer"));
-              txtBx_ResultSec.multi_lines(false).editable(false).tip_string (STR("alingned forward primer"));
-        txtBx_ResultSec2Align.multi_lines(false).editable(false).tip_string (STR("alingned reverse primer"));
+                         sec_.multi_lines(false).editable(true ).tip_string (("forward primer"));
+                   sec2align_.multi_lines(false).editable(true ).tip_string (("reverse primer"));
+              txtBx_ResultSec.multi_lines(false).editable(false).tip_string (("alingned forward primer"));
+        txtBx_ResultSec2Align.multi_lines(false).editable(false).tip_string (("alingned reverse primer"));
         
         using ParamGUIBind::link;
 
@@ -53,8 +53,8 @@
                 ;
 
         run_      .events().click([&](){Run ();});
-        copy_f_s_2.events().click([&](){Copy();});      ;   //(*this, STR("copy")),   
-        copy_s    .events().click([&](){Self();});      ;  //  (*this, STR("c")),
+        copy_f_s_2.events().click([&](){Copy();});      ;   //(*this, ("copy")),   
+        copy_s    .events().click([&](){Self();});      ;  //  (*this, ("c")),
         copy_s_a  .events().click([&](){Rev ();});      ;  
 
         InitMyLayout();

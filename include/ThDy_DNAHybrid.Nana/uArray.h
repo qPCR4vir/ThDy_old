@@ -47,7 +47,7 @@ class ThDyNanaForm ;
 class uArray : public CompoWidget
 { public: 
     ThDyNanaForm      &_Pr;
-    nana::button  _do_uArray{*this, STR(" uArray ! ")};
+    nana::button  _do_uArray{*this, (" uArray ! ")};
     ParamGUIBind::BindGroup          _uArray;
 
     uArray (ThDyNanaForm& tdForm);
@@ -72,7 +72,7 @@ class uArray : public CompoWidget
 class MplexPCR : public CompoWidget
 { public: 
     ThDyNanaForm      &_Pr;
-    nana::button  _do_mPCR{*this, STR(" PCR ! ")};
+    nana::button  _do_mPCR{*this, (" PCR ! ")};
     ParamGUIBind::BindGroup          _mPCR;
 
     MplexPCR (ThDyNanaForm& tdForm);

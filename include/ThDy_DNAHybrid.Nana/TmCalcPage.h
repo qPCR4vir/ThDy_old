@@ -53,22 +53,22 @@ class ThDyNanaForm ;
 class TmCalcPage : public CompoWidget
 {
     ThDyProject             &_Pr;
-    nana::group             primers             {*this, STR("<bold=true> Primers: </>" ), true}, 
-                            interaction         {*this, STR("<bold=true> Interaction: </>" ), true},
-                            align               {*this, STR("<bold=true> Alignment: </>" ), true}; 
+    nana::group             primers             {*this, ("<bold=true> Primers: </>" ), true}, 
+                            interaction         {*this, ("<bold=true> Interaction: </>" ), true},
+                            align               {*this, ("<bold=true> Alignment: </>" ), true}; 
     nana::textbox           sec_                {primers},  
                             sec2align_          {primers},  
                             txtBx_ResultSec     {align},  
                             txtBx_ResultSec2Align{align};
-    nana::checkbox          chkBx_Tm_save_asPCR {*this, STR("save")},   
-                            chkBx_align         {*this, STR("align")},
-                            chkBx_copy_rev      {primers, STR("rev")},    
-                            chkBx_copy_compl    {primers, STR("cpl")};
-    nana::button            run_                {*this, STR("Tm !")},
-                            copy_f_s_2          {primers, STR("copy")},   
-                            copy_s              {primers, STR("c")},
-                            copy_s_a            {primers, STR("c")};      
-    nana::label             error_              {primers, STR("no error")};
+    nana::checkbox          chkBx_Tm_save_asPCR {*this, ("save")},   
+                            chkBx_align         {*this, ("align")},
+                            chkBx_copy_rev      {primers, ("rev")},    
+                            chkBx_copy_compl    {primers, ("cpl")};
+    nana::button            run_                {*this, ("Tm !")},
+                            copy_f_s_2          {primers, ("copy")},   
+                            copy_s              {primers, ("c")},
+                            copy_s_a            {primers, ("c")};      
+    nana::label             error_              {primers, ("no error")};
     nana::NumberBox         Tm_min_Up{interaction}, Tm_Up{interaction}, Tm_max_Up{interaction} ,
                             Tm_min_Dw{interaction}, Tm_Dw{interaction}, Tm_max_Dw{interaction} ,
                             Tm_min_In{interaction}, Tm_In{interaction}, Tm_max_In{interaction} ,
@@ -115,10 +115,10 @@ public:
 	    primers["error"    ]<< error_        ;
 	    primers["rev_compl"]<< chkBx_copy_rev << chkBx_copy_compl ;
 
-	    interaction["Table" ]<< L""          << L"   min-" << L"Tm(°C)"   << L"-max" << L"   min-"  << L"G(kJ)"   << L"-max   "   
-	                             << L"Up"        << Tm_min_Up << Tm_Up        << Tm_max_Up<<G_min_Up   <<  G_Up      <<  G_max_Up   
-	                             << L"Down"      << Tm_min_Dw << Tm_Dw        << Tm_max_Dw<<G_min_Dw   <<  G_Dw      <<  G_max_Dw   
-	                             << L"Interact"  << Tm_min_In << Tm_In        << Tm_max_In<<G_min_In   <<  G_In      <<  G_max_In  ;
+	    interaction["Table" ]<< ""          << "   min-" << u8"Tm(°C)"   << "-max" << "   min-"  << "G(kJ)"   << "-max   "
+	                             << "Up"        << Tm_min_Up << Tm_Up        << Tm_max_Up<<G_min_Up   <<  G_Up      <<  G_max_Up   
+	                             << "Down"      << Tm_min_Dw << Tm_Dw        << Tm_max_Dw<<G_min_Dw   <<  G_Dw      <<  G_max_Dw   
+	                             << "Interact"  << Tm_min_In << Tm_In        << Tm_max_In<<G_min_In   <<  G_In      <<  G_max_In  ;
 
 
         align["ResAlign" ]  << txtBx_ResultSec << txtBx_ResultSec2Align ;
@@ -132,11 +132,11 @@ public:
 		}
 		catch ( std::exception& e)
 		{ 
-            (nana::msgbox(*this,STR("Error during Tm calculation !"), nana::msgbox::button_t::ok)<<e.what()) (  ) ;
+            (nana::msgbox(*this,("Error during Tm calculation !"), nana::msgbox::button_t::ok)<<e.what()) (  ) ;
 		    return;
 		}	 	        		 
-        txtBx_ResultSec      .caption (nana::string(nana::charset(_Pr._TmCal._AlignedSec )       ));
-        txtBx_ResultSec2Align.caption (nana::string(nana::charset(_Pr._TmCal._AlignedSec2Align  )));
+        txtBx_ResultSec      .caption (std::string(nana::charset(_Pr._TmCal._AlignedSec )       ));
+        txtBx_ResultSec2Align.caption (std::string(nana::charset(_Pr._TmCal._AlignedSec2Align  )));
         Tm_min_Up.Value( _Pr._TmCal._TmS.Min ());
         Tm_Up    .Value( _Pr._TmCal._TmS.Ave ());  
         Tm_max_Up.Value( _Pr._TmCal._TmS.Max ()); 

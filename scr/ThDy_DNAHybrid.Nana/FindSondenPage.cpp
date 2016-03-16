@@ -16,7 +16,7 @@
 
          FindSondenPage::FindSondenPage(ThDyNanaForm& tdForm)
         : _Pr        (tdForm), 
-          CompoWidget(tdForm, STR("Find probes"), STR("FindSonden.lay.txt"))
+          CompoWidget(tdForm, "Find probes", "FindSonden.lay.txt")
     {
                 bgcolor (static_cast<nana::color_rgb>(0xAAAAAA));  ///\todo: use codigo
 
@@ -34,7 +34,7 @@
             Run_Design(false);  
         });  
 
-        //_Gmin.tooltip(STR("Only probes with stronger interaction with target (smaller G by selected Ta) will be \"include\""));
+        //_Gmin.tooltip(("Only probes with stronger interaction with target (smaller G by selected Ta) will be \"include\""));
    
    }
     void FindSondenPage::Run_Design(bool design)
@@ -50,7 +50,7 @@
  		}
 		catch ( std::exception& e)
 		{ 
-            (nana::msgbox(*this,STR("Error during Sonde Design !"), nana::msgbox::button_t::ok)<<e.what()) (  ) ;
+            (nana::msgbox(*this,"Error during Sonde Design !", nana::msgbox::button_t::ok)<<e.what()) (  ) ;
 		    return;
 		}	 	        		 
     }   

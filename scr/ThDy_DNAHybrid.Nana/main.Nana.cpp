@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 
     ThDyNanaForm::ThDyNanaForm (int argc, char *argv[])
                   :nana::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
-                   EditableForm    (nullptr, *this, STR("ThDy DNA Hybrid"), STR("ThDy.lay.txt")) 
+                   EditableForm    (nullptr, *this,  "ThDy DNA Hybrid"  , "ThDy.lay.txt")  
    {
         //nana::API::zoom_window(*this, true);
         //nana::pixel_rgb_t bk;
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
         add_page( uArr_     );// uArr_.ReCollocate();// 4
         add_page( tmCalc_   );// tmCalc_.ReCollocate();// 5
 
-        tabbar_.activate (1);
+        tabbar_.activated (1);
 
         setup_._proj.FileNameOnly(nana::charset ( ProjetFile()  ));
         try{ 
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 		    }
     	catch ( std::exception& e )      // Por ejemplo cuando no existe Def Project: 1ra vez que se usa el prog.
 		{   
-            (nana::msgbox(*this, STR("Error during initial project load !\n\t"), nana::msgbox::button_t::ok)
+            (nana::msgbox(*this, "Error during initial project load !\n\t", nana::msgbox::button_t::ok)
                              .icon(nana::msgbox::icon_information )
                             << e.what()    << "\n\n A new Default Project will be created. "
                           ).show (  ) ;
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 		    }
     	catch ( std::exception& e )      //  
 		{   
-            (nana::msgbox(*this, STR("Error during sequence or NN parametr load !\n\t"), nana::msgbox::button_t::ok)
+            (nana::msgbox(*this, "Error during sequence or NN parametr load !\n\t", nana::msgbox::button_t::ok)
                              .icon(nana::msgbox::icon_information )
                             << e.what()     
                           ).show (  ) ;
@@ -135,9 +135,9 @@ int main(int argc, char *argv[])
 
         InitMyLayout();
 
-        setup_.AddMenuItems (_menuBar.push_back(STR("P&roject")));     // 0
-        mExpl_.AddMenuItems (_menuBar.push_back(STR("&Sequences")));   // 1 
-        AddMenuProgram();                                              // 2
+        setup_.AddMenuItems (_menuBar.push_back("P&roject"));     // 0
+        mExpl_.AddMenuItems (_menuBar.push_back("&Sequences"));   // 1 
+        AddMenuProgram();                                         // 2
         
         SelectClickableWidget( _menuBar);
 
@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
  
 	    _place.field("PagesTag")        << tabbar_  ;
 	    _place.field("TargetsOptions" ) << numUpDwMaxTgId<<   numUpDw_TgBeg << numUpDw_TgEnd << numUpDw_SLenMin << numUpDw_SLenMax;
-	    _place.field("Firma"  )         << STR(" ArielVina.Rodriguez@fli.bund.de")
+	    _place.field("Firma"  )         << " ArielVina.Rodriguez@fli.bund.de"
                                 ;
     }                                        
     void     ThDyNanaForm::add_page(widget& w)
@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
         //bk.u.element.blue =0; 
         //w.background (1);
         tabbar_.push_back (                    w.caption());
-        tabbar_.relate    (tabbar_.length()-1, w          );
+        tabbar_.attach    (tabbar_.length()-1, w          );
 	    _place.field("Pages"   ).fasten( w)  ;
     }         
 

@@ -38,19 +38,19 @@
 
 class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
 {
-    using tabbar = nana::tabbar<nana::string> ;
+    using tabbar = nana::tabbar<std::string> ;
 	tabbar                     tabbar_     {*this};
     SetupPage                  setup_      {*this};
     FindSondenPage             findSond_   {*this};
     MplexPCR                   mPCR_       {*this};
     uArray                     uArr_       {*this}; 
     TmCalcPage                 tmCalc_     {*this}; 
-    nana::NumUnitUpDown        numUpDwMaxTgId  {*this, STR("Max. ident.:"        ), 99,  50 , 100 ,   "%"}, 
-                               numUpDw_TgBeg   {*this, STR("Beg.:"               ),  0,   0 , 100000,"nt"},    /// rev !!
-                               numUpDw_TgEnd   {*this, STR("End.:"               ),  0,   0 , 100000,"nt"},    /// rev !!	
-                               numUpDw_SLenMin {*this, STR("Min.Len.:"           ),  0,   0 , 100000,"nt"},
-                               numUpDw_SLenMax {*this, STR("Max.Len.:"           ),  0,   0 , 100000,"nt"};
-    nana::label                _firma     {*this, STR("ArielVina.Rodriguez@fli.bund.de")};
+    nana::NumUnitUpDown        numUpDwMaxTgId  {*this, "Max. ident.:"        , 99,  50 , 100 ,   "%"}, 
+                               numUpDw_TgBeg   {*this, "Beg.:"               ,  0,   0 , 100000,"nt"},    /// rev !!
+                               numUpDw_TgEnd   {*this, "End.:"               ,  0,   0 , 100000,"nt"},    /// rev !!	
+                               numUpDw_SLenMin {*this, "Min.Len.:"           ,  0,   0 , 100000,"nt"},
+                               numUpDw_SLenMax {*this, "Max.Len.:"           ,  0,   0 , 100000,"nt"};
+    nana::label                _firma     {*this, "ArielVina.Rodriguez@fli.bund.de"};
     ParamGUIBind::BindGroup    _commPP     ;
 
   public:    
@@ -63,7 +63,7 @@ class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
     void SetDefLayout       () override;
     void AsignWidgetToFields() override;
     void add_page           (widget& w);
-    void ShowExpl           (){tabbar_.activate(1);}
+    void ShowExpl           (){tabbar_.activated(1);}
 };
 
 

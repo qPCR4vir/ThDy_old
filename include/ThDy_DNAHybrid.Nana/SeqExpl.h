@@ -55,20 +55,20 @@ class SeqExpl : public CompoWidget
     std::vector<CSec*>      _dragSec;
     std::vector<CMultSec*>  _dragMSec;
 
-    nana::button    _loadFile     {*this,STR("Load"   )},       //nana::toolbar  _tbar { *this };
-                    _re_loadFile  {*this,STR("reLoad" )},   
-                    _loadDir      {*this,STR("Load"   )},       
-                    _re_loadDir   {*this,STR("reLoad" )},
-                    _scanDir      {*this,STR("Scan"   )},
-                    _cut          {*this,STR("Cut"    )},
-                    _paste        {*this,STR("Paste"  )},
-                    _del          {*this,STR("Del"    )},
-                    _cutSec       {*this,STR("Cut"    )},
-                    _delSec       {*this,STR("Del"    )},
-                    _show_locals_s{*this,STR("local"  )},
-                    _show_filt_s  {*this,STR("filtr"  )}
+    nana::button    _loadFile     {*this,("Load"   )},       //nana::toolbar  _tbar { *this };
+                    _re_loadFile  {*this,("reLoad" )},   
+                    _loadDir      {*this,("Load"   )},       
+                    _re_loadDir   {*this,("reLoad" )},
+                    _scanDir      {*this,("Scan"   )},
+                    _cut          {*this,("Cut"    )},
+                    _paste        {*this,("Paste"  )},
+                    _del          {*this,("Del"    )},
+                    _cutSec       {*this,("Cut"    )},
+                    _delSec       {*this,("Del"    )},
+                    _show_locals_s{*this,("local"  )},
+                    _show_filt_s  {*this,("filtr"  )}
                     ; 
-    nana::tooltip    _loadFileTT {_loadFile,STR("File load: Add a group of sequences from a file")},
+    nana::tooltip    _loadFileTT {_loadFile,("File load: Add a group of sequences from a file")},
                           _re_loadFileTT ;  
 ;  
 
@@ -87,11 +87,11 @@ class SeqExpl : public CompoWidget
     }
     void AsignWidgetToFields() override
     {
- 	    _place.field("toolbar") << L"   Files:"  << _loadFile << _re_loadFile   
+ 	    _place.field("toolbar") <<  "   Files:"  << _loadFile << _re_loadFile   
                                /* << 10  */         << _paste           
-                                << L"      Dir:" << _loadDir  << _re_loadDir  << _scanDir  
+                                <<  "      Dir:" << _loadDir  << _re_loadDir  << _scanDir  
                                /* << 10 */          << _cut      << _del      
-                                << L"      Seq:" << _show_locals_s  << _show_filt_s 
+                                <<  "      Seq:" << _show_locals_s  << _show_filt_s 
 								/*<< 10*/           << _cutSec   << _delSec
                                 ;
         _place.field("Tree"   ) << _tree;
@@ -150,7 +150,7 @@ class SeqExpl : public CompoWidget
 
     Node AddRoot          (CMultSec*ms)  
     {
-        nana::string name = nana::charset(ms->_name);
+        std::string name = nana::charset(ms->_name);
         return _tree.insert(name, name).value(ms).check(ms->Selected());
     }
     bool isRoot(Node &node)
@@ -159,7 +159,7 @@ class SeqExpl : public CompoWidget
     }
  static Node appendNewNode(Node &node, CMultSec*ms) /// Add a new node to the child of node.
     {
-        nana::string name = nana::charset(ms->_name);
+        std::string name = nana::charset(ms->_name);
         return node->append(name, name, ms).check(ms->Selected());
     }
     Node &populate     (Node &node)  /// crea y add to the child of node un nodo nuevo por cada seq in ms. Asume el nodo estaba vacio
@@ -230,8 +230,8 @@ class RenameFrom : public nana::form, public EditableForm
     std::string     _name;
     bool            _renamed    {false};
     nana::textbox   edit        {*this};
-    nana:: button   OK          {*this, STR("rename")}, 
-                    Cancel      {*this, STR("abort" )};
+    nana:: button   OK          {*this, ("rename")}, 
+                    Cancel      {*this, ("abort" )};
     ParamGUIBind::BindGroup       _bind     ;
 
 
@@ -239,9 +239,9 @@ class RenameFrom : public nana::form, public EditableForm
     RenameFrom(nana::window owner, std::string name) : 
             _name(name),  
              nana::form  (nana::rectangle( nana::point(150,500), nana::size(300,50) )),
-             EditableForm(owner, *this, STR("Rename") )     
+             EditableForm(owner, *this, ("Rename") )     
         {
-            edit.caption(nana::string(nana::charset(_name) ));
+            edit.caption(std::string(nana::charset(_name) ));
             InitMyLayout();
             OK.events().click([this]()
             {

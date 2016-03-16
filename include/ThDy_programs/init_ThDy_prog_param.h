@@ -33,7 +33,7 @@ class CParamSondeLimits: public IBParam  /// \todo Use delegating constructor to
 		             const std::string& etiqTmax, Temperature minTmax,   Temperature maxTmax,    Temperature defValueTmax,
 		             const std::string& etiqLmin, SecPos minLmin,        SecPos maxLmin,         SecPos defValueLmin,
 		             const std::string& etiqLmax, SecPos minLmax,        SecPos maxLmax,         SecPos defValueLmax,
-                           std::string  UnitG="kcal/mol", std::string UnitT="°C", std::string UnitL="nt" 
+                           std::string  UnitG="kcal/mol", std::string UnitT= u8"°C", std::string UnitL="nt"
 
 					) : IBParam ( titel), 
 					    G(pp, titel+". Perf.Match dG", parRef._G,
@@ -58,7 +58,7 @@ class CParamSondeLimits: public IBParam  /// \todo Use delegating constructor to
 		             const std::string& etiqTmax, Temperature minTmax,   Temperature maxTmax,    Temperature defValueTmax,
 		             const std::string& etiqLmin, SecPos minLmin,        SecPos maxLmin,         SecPos defValueLmin,
 		             const std::string& etiqLmax, SecPos minLmax,        SecPos maxLmax,         SecPos defValueLmax,
-                     const std::string& UnitG="kcal/mol", const std::string& UnitT="°C", const std::string& UnitL="nt" 
+                     const std::string& UnitG="kcal/mol", const std::string& UnitT= u8"°C", const std::string& UnitL="nt"
 
 					) : IBParam ( titel), 
 					    G(pp, titel+". Perf.Match dG", sL._G,
@@ -107,7 +107,7 @@ class ThDyCommProgParam : public CCommProgParam
                              ConcSalt{this,    "Conc of salt",						"ConcenSalt", _ConcSalt,0.0f,1.0f,    50e-3f ,"M" } ;
 
 	Temperature		               _Ta  {55.0f }  ;				
-    CParamNumRange <Temperature>	Ta  {this, "Temp anneling expected in exp",		"TempAnnelg", _Ta,  20.0f, 90.0f, 55.0f, "°C"  }  ;	
+    CParamNumRange <Temperature>	Ta  {this, "Temp anneling expected in exp",		"TempAnnelg", _Ta,  20.0f, 90.0f, 55.0f, u8"°C"  }  ;
 	AlignMeth		           _TAMeth  {TAMeth_Tm }  ;			
     CParamEnumRange<AlignMeth>	TAMeth  {this, "Optimized parametr during DynProg",	"AlignMethd", _TAMeth, TAMeth_Tm, TAMeth_Fract, TAMeth_Tm }  ;	
 
@@ -402,16 +402,16 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 		        "MaxSondeTm",  -270.0f,    99.0f,	63.0f,
 		        "MinSondeLn",  3,         200,		20,
 		        "MaxSondeLn",  4,         200,		35,
-                /*UnitG=*/"kcal/mol",  /*UnitT=*/"°C",  /*UnitL=*/"nt" 
+                /*UnitG=*/"kcal/mol",  /*UnitT=*/u8"°C",  /*UnitL=*/"nt"
 		   ),
 		_G_sig (10),		  G_sig  (this, "Significative G probe-target",		"MaxSd_Tg_G",    _G_sig,  -15.0f, 30.0f,	10.0f, "kcal/mol" ),	
-		_Tm_sig (30)	, 	  Tm_sig (this, "Significative Tm probe-target",	"MinSd_TgTm",    _Tm_sig, -0.0f,  80.0f,	30.0f, "°C" ),	
+		_Tm_sig (30)	, 	  Tm_sig (this, "Significative Tm probe-target",	"MinSd_TgTm",    _Tm_sig, -0.0f,  80.0f,	30.0f, u8"°C" ),
 
 		_MinSd_nTgG (15) , MinSd_nTgG(this, "Significative G probe-nontarget",	"MinSdnTg_G", _MinSd_nTgG,  0.0f, 30.0f,	15.0f, "kcal/mol" ),		
-		_MaxSd_nTgTm (10),MaxSd_nTgTm(this, "Significative Tm probe-nontarget",	"MaxSdnTgTm",_MaxSd_nTgTm, -0.0f,  70.0f,	10.0f, "°C" ),	 
+		_MaxSd_nTgTm (10),MaxSd_nTgTm(this, "Significative Tm probe-nontarget",	"MaxSdnTgTm",_MaxSd_nTgTm, -0.0f,  70.0f,	10.0f, u8"°C" ),
 
 		_MinSelfG (10),		 MinSelfG(this, "Significative selfprobe G",		"MinSdSlf_G", _MinSelfG,  0.0f, 30.0f,		10.0f, "kcal/mol" ),		
-		_MaxSelfTm (10),    MaxSelfTm(this, "Significative selfprobe Tm",		"MaxSdSlfTm",_MaxSelfTm, -0.0f,  70.0f,		10.0f, "°C" )
+		_MaxSelfTm (10),    MaxSelfTm(this, "Significative selfprobe Tm",		"MaxSdSlfTm",_MaxSelfTm, -0.0f,  70.0f,		10.0f, u8"°C" )
 		//_MinTgCov (100),	MinTgCov (this, "Find sondes with more % coverage",	"Min_Tg_Cov",  _MinTgCov,  0.0f,100.0f,		99.0f  ,"%")							
         {
 	    }  // revisar cuales deben ser estos valores !!!!	
@@ -520,7 +520,7 @@ class ThDyProject : public CProject /// Permite manejar todo el projecto: con un
 
                     //nana::filebox  fb{ *this, true };
                     //fb .add_filter ( SetupPage::FastaFiltre( )                   )
-                    //   .title(STR("Directory load: Add a tree of groups of sequences from a directory"));
+                    //   .title(("Directory load: Add a tree of groups of sequences from a directory"));
                     //if (fb()) 
                     //    AddMSeqFiles(nana::charset(fb.file()), true);
 
@@ -537,17 +537,17 @@ class ThDyProject : public CProject /// Permite manejar todo el projecto: con un
         //   }
         //catch(std::exception& e)
         //{
-             //(nana::msgbox(*_EdWd_owner, STR("std::exception during EditableWidget ReCollocation: "))
+             //(nana::msgbox(*_EdWd_owner, ("std::exception during EditableWidget ReCollocation: "))
              //       .icon(nana::msgbox::icon_error)
-             //                    <<STR("\n   in form: ") << nana::API::window_caption(*_EdWd_owner)
-             //                    <<STR("\n   exception : ") << e.what() 
+             //                    <<("\n   in form: ") << nana::API::window_caption(*_EdWd_owner)
+             //                    <<("\n   exception : ") << e.what() 
              //).show();
   //      }
 		//catch(...)
 		//{
-             //(nana::msgbox(*_EdWd_owner, STR("An uncaptured exception during EditableWidget ReCollocation: "))
+             //(nana::msgbox(*_EdWd_owner, ("An uncaptured exception during EditableWidget ReCollocation: "))
              //       .icon(nana::msgbox::icon_error)
-             //                    <<STR("\n   in form: ") << nana::API::window_caption(*_EdWd_owner)
+             //                    <<("\n   in form: ") << nana::API::window_caption(*_EdWd_owner)
              //).show();
 	    //}
      //      return -1;

@@ -39,11 +39,11 @@ class TableRes  : public nana::form, public EditableForm
         virtual float val  (index row,  index col)const =0 ;
                 float operator()(index row,  index col){return val(row,col);}
         
-        virtual nana::string str(index row,  index col) const
+        virtual std::string str(index row,  index col) const
         {
-            nana::string s (n_len, 0);
+            std::string s (n_len, 0);
 
-            auto l=swprintf((wchar_t*)s.data(), n_len+1 , STR("% *.*f"), n_len, n_dec, val(row,col) );
+            auto l=snprintf( &s[0], n_len+1 , ("% *.*f"), n_len, n_dec, val(row,col) );
             //s.resize(l);
             return s;
         }
@@ -90,10 +90,10 @@ class TableRes  : public nana::form, public EditableForm
     std::shared_ptr<Table> _table;
     List                   _list { *this };
 
-    nana::button           _bTm  {*this,STR("Tm" )},       //nana::toolbar     _tbar { *this };
-                           _bG   {*this,STR("G"  )},   
-                           _bPos {*this,STR("Pos")},
-                           _mix  {*this, STR("Consolide")}; 
+    nana::button           _bTm  {*this,("Tm" )},       //nana::toolbar     _tbar { *this };
+                           _bG   {*this,("G"  )},   
+                           _bPos {*this,("Pos")},
+                           _mix  {*this, ("Consolide")}; 
 
     Tm                     _Tm;
     G                      _G;
@@ -122,8 +122,8 @@ class TableRes  : public nana::form, public EditableForm
 
     bool comp(index col, nana::any* row1_, nana::any*row2_, bool reverse)
     {
-                float  v1{ val->val( row1_->get<Index>()->row , col-1) }, 
-                       v2{ val->val( row2_->get<Index>()->row , col-1) };
+                float  v1{ val->val( nana::any_cast<Index>( row1_)->row , col-1) },
+                       v2{ val->val( nana::any_cast<Index>( row2_)->row , col-1) };
                 return reverse?  v2<v1 : v1<v2 ;
     }
     void SetDefLayout   () override
@@ -146,13 +146,13 @@ class TableRes  : public nana::form, public EditableForm
                             _table(table), 
                             _Tm{*table.get()}, _G{*table.get()}, _Pos{*table.get()},  
                             nana::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
-                            EditableForm    (nullptr, *this, nana::charset( table->TitTable() ), STR("TableTm.lay.txt")) 
+                            EditableForm    (nullptr, *this, nana::charset( table->TitTable() ), ("TableTm.lay.txt")) 
    {
         //nana::API::zoom_window(*this, true);
-        caption( nana::string(STR("Table Tm: ")) +  _Titel);
-        //_tbar.append(STR("Tm"));
-        //_tbar.append(STR("G"));
-        //_tbar.append(STR("Pos"));
+        caption( std::string(("Table Tm: ")) +  _Titel);
+        //_tbar.append(("Tm"));
+        //_tbar.append(("G"));
+        //_tbar.append(("Pos"));
 
         InitMyLayout();
         SelectClickableWidget( _list);
@@ -160,11 +160,11 @@ class TableRes  : public nana::form, public EditableForm
 
         _list.auto_draw(false);
                 
-        _list.append_header(STR("Seq")  , 120);
+        _list.append_header(("Seq")  , 120);
         for (index col = 1; col <= table->totalCol(); ++col)
         {    
-            _list.append_header(nana::charset(  table->TitColumn(col-1) ) , 100);
-            _list.set_sort_compare(col,[col,this](const nana::string&, nana::any* row1_, const nana::string&, nana::any*row2_, bool reverse)
+            _list.append_header(   table->TitColumn(col-1)   , 100);
+            _list.set_sort_compare(col,[col,this](const std::string&, nana::any* row1_, const std::string&, nana::any*row2_, bool reverse)
             {
                  return comp(col,row1_,row2_,reverse);
             });
@@ -180,7 +180,7 @@ class TableRes  : public nana::form, public EditableForm
                         {
                             SetFormat(1);
                             SetValType(_Tm);
-                            caption( nana::string(STR("Table Tm: ")) +  _Titel);
+                            caption( std::string(("Table Tm: ")) +  _Titel);
                             _bTm .pushed(true);
                             _bG  .pushed(false);
                             _bPos.pushed(false);
@@ -190,7 +190,7 @@ class TableRes  : public nana::form, public EditableForm
                         {
                             SetFormat(1);
                             SetValType(_G);
-                            caption( nana::string(STR("Table G: ")) +  _Titel);
+                            caption( std::string(("Table G: ")) +  _Titel);
                             _bTm .pushed(false);
                             _bG  .pushed(true);
                             _bPos.pushed(false);
@@ -200,7 +200,7 @@ class TableRes  : public nana::form, public EditableForm
                         {
                             SetFormat(0);
                             SetValType(_Pos);
-                            caption( nana::string(STR("Table Pos: ")) +  _Titel);
+                            caption( std::string(("Table Pos: ")) +  _Titel);
                             _bTm .pushed(false);
                             _bG  .pushed(false);
                             _bPos.pushed(true );
@@ -214,15 +214,15 @@ class TableRes  : public nana::form, public EditableForm
 
         _menuProgram.append_splitter();
         
-        mTm=_menuProgram.append     ( STR("Show Tm")    , [&](nana::menu::item_proxy& ip)  { Click( _bTm); })
+        mTm=_menuProgram.append     ( ("Show Tm")    , [&](nana::menu::item_proxy& ip)  { Click( _bTm); })
                         .check_style( nana::menu::checks::option)
                         .index();
 
-        mG=_menuProgram.append      ( STR("Show delta G"), [&](nana::menu::item_proxy& ip) { Click( _bG);  })
+        mG=_menuProgram.append      ( ("Show delta G"), [&](nana::menu::item_proxy& ip) { Click( _bG);  })
                         .check_style( nana::menu::checks::option)
                         .index();
 
-        mP=_menuProgram.append      ( STR("Show Pos")    , [&](nana::menu::item_proxy& ip) { Click( _bPos);})
+        mP=_menuProgram.append      ( ("Show Pos")    , [&](nana::menu::item_proxy& ip) { Click( _bPos);})
                         .check_style( nana::menu::checks::option)
                         .index();
     }

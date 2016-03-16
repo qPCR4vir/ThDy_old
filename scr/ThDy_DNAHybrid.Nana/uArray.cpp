@@ -17,7 +17,7 @@
 
 MplexPCR::MplexPCR            (ThDyNanaForm& tdForm)
         : _Pr             (tdForm), 
-          CompoWidget     (tdForm, STR("MplexPCR"), STR("MplexPCR.lay.txt"))
+          CompoWidget     (tdForm, ("MplexPCR"), ("MplexPCR.lay.txt"))
     {
 
         _do_mPCR      .events().click([&](){buttPCR_Click ();});
@@ -41,7 +41,7 @@ MplexPCR::MplexPCR            (ThDyNanaForm& tdForm)
 	catch ( std::exception& e)
 		{ 
           cerr<< e.what()    ;
-          (nana::msgbox(*this,STR("Error during multiplex PCR analis !"), 
+          (nana::msgbox(*this,("Error during multiplex PCR analis !"), 
                                                 nana::msgbox::button_t::ok)   <<e.what()) (  ) ;
 		  return;
 		}
@@ -54,7 +54,7 @@ MplexPCR::MplexPCR            (ThDyNanaForm& tdForm)
 	}
             uArray::uArray            (ThDyNanaForm& tdForm)
         : _Pr             (tdForm), 
-          CompoWidget     (tdForm, STR("uArray"), STR("uArray.lay.txt"))
+          CompoWidget     (tdForm, ("uArray"), ("uArray.lay.txt"))
     {
 
         _do_uArray      .events().click([&](){buttuArray_Click ();});
@@ -74,7 +74,7 @@ MplexPCR::MplexPCR            (ThDyNanaForm& tdForm)
 	catch ( std::exception& e)
 		{ 
           cerr<< e.what()    ;
-          (nana::msgbox(*this,STR("Error during uArr analis !"), 
+          (nana::msgbox(*this,("Error during uArr analis !"), 
                                                 nana::msgbox::button_t::ok)   <<e.what()) (  ) ;
 		  return;
 		}
