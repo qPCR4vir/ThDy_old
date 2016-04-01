@@ -100,7 +100,7 @@ public:
 	bool		Filtered(		) const {return _filtered;}
 	bool		Selected(bool select)	{return _selected=select;} 		  	 ///< make protected: ??
 	bool		Selected(		) const {return _selected;}					 ///< User-editable
-	void	    Description (std::string	description)		{ _description=description;}
+	void	    Description (std::string	description)		{ _description.swap(description);}
 	virtual std::string	Description ()const	
         {
             return _description.empty() ? Name()  : _description ; 
@@ -124,7 +124,7 @@ public:
 	bool		 NotIdem		(CSecBasInfo *sec) {return false;}
 	DegCod::Base operator[]	(int i)const{return _c[i];}  /// i+1 ????
 
-	long		Len			()const		{return _c.length()-2;} //
+	long		Len			()const		{return static_cast<long>(_c.length())-2;} //
 	long		Degeneracy	()const		{return _GrDeg;}
 	long		*BaseCount	()			{return _Count;}
 	long		BaseCount	(DegCod::Base b) const{ return  DegCod::is_degbase[b] ?  _Count[DegCod::db2nu[b]] : 0;}

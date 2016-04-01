@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
   {
     using namespace ParamGUIBind;
 
+
     IParBind::SetDef(PriorizeDefault::Parametr );
     ThDyNanaForm tdForm(  argc,  argv);
     //tdForm.ReCollocate();

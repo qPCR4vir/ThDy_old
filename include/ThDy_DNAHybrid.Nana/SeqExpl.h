@@ -87,15 +87,12 @@ class SeqExpl : public CompoWidget
     }
     void AsignWidgetToFields() override
     {
- 	    _place.field("toolbar") <<  "   Files:"  << _loadFile << _re_loadFile   
-                               /* << 10  */         << _paste           
-                                <<  "      Dir:" << _loadDir  << _re_loadDir  << _scanDir  
-                               /* << 10 */          << _cut      << _del      
-                                <<  "      Seq:" << _show_locals_s  << _show_filt_s 
-								/*<< 10*/           << _cutSec   << _delSec
+ 	    _place["toolbar"] <<  "   Files:"  << _loadFile << _re_loadFile  << _paste           
+                          <<  "      Dir:" << _loadDir  << _re_loadDir   << _scanDir << _cut      << _del      
+                          <<  "      Seq:" << _show_locals_s  << _show_filt_s   << _cutSec   << _delSec
                                 ;
-        _place.field("Tree"   ) << _tree;
-        _place.field("List"   ) << _list;
+        _place[ "Tree"  ] << _tree;
+        _place[ "List"  ] << _list;
     }
     void MakeResponive();
 
