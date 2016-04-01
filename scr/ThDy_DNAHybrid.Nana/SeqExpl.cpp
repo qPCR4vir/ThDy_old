@@ -34,7 +34,7 @@
         _list.checkable(true);
         _list.append_header(("Name")  , 120);     // col 0: name  
         _list.append_header(("Lenght"), 50);      // col 1: len
-        _list.append_header(("Tm °C") , 60);      //case 2: Tm 
+        _list.append_header((u8"Tm °C") , 60);      //case 2: Tm 
         _list.append_header(("Deg")   , 50);      // case 3: deg   
         _list.append_header(("Description")   , 220);   // case 4: descr  
         _list.append_header(("Beg"), 50);         // case 5: beg in aln 
@@ -421,7 +421,7 @@ SeqExpl::Node SeqExpl::Replace      (Tree::item_proxy& tn, CMultSec *ms, const s
          <<  val  ;                         // col 1: len
 
 	Temperature t=KtoC( sec->NonDegSet() ? sec->NonDegSet()->_Local._Tm.Ave() : sec->_Tm.Ave());
-	snprintf(val,blen, ("% *.*f °C"), 6, 1,   t );
+	snprintf(val,blen, (u8"% *.*f °C"), 6, 1,   t );
     Temperature min=57.0, max=63.0;
     double fade_rate=  t<min? 0.0 : t>max? 1.0 : (t-min)/(max-min);
     nana::color tc{static_cast<nana::color_rgb>(0xFFFFFFFF)} , 
