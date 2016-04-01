@@ -430,8 +430,13 @@ SeqExpl::Node SeqExpl::Replace      (Tree::item_proxy& tn, CMultSec *ms, const s
     ores <<  List::cell {val, bc , tc};    //case 2: Tm 
 
     snprintf(val,blen,     ("%*d")  , 5,           sec->Degeneracy());
+
+
+	std::string desc = sec->Description();
+	if (nana::review_utf8(desc))
+		sec->Description(desc);
     ores <<  val                           // case 3: deg    
-         << sec->Description()     ;       // case 4: descr  
+         <<  desc   ;                      // case 4: descr  
 
     
     if( sec->_aln_fragment && sec->_aln_fragment->aln.lenght())
