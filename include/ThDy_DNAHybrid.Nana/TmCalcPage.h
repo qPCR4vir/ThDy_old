@@ -85,15 +85,15 @@ public:
         _DefLayout= 	
 	"vertical      gap=8  min=150    margin=5                              		\n\t"
 	"		       < weight=95  primers  >                                               		\n\t"
-	"		        < weight=95 horizontal gap=2  <weight=120 vertical gap=2  margin=[15,45,0,15]   Left  >              	\n\t"
+	"		        < weight=95  gap=2  <weight=120 vertical gap=2  margin=[15,45,0,15]   Left  >              	\n\t"
 	"                                                                       <weight=320   Table     >  >           		\n\t"
 	"		        < weight=70 vertical  ResAlign>    		\n\t"
 	"		\n\t"
             ;
 
-         primers.div("vert <weight=50 horizontal margin=[0,5,0,5] <min=100 vertical gap=2 InputSec>                            "  
+         primers.div("vert <weight=50  margin=[0,5,0,5] <min=100 vertical gap=2 InputSec>                            "  
                         "                                       <weight=50 gap=1 CopyBut grid=[2,2]  collapse(0,0,1,2)> > \n\t "
-                        "<weight=23 horizontal  <weight=20>"
+                        "<weight=23   <weight=20>"
                         "                       <min=50    error     > "
                         "                       <weight=80 rev_compl >     >         \n\t  ");
 

@@ -288,12 +288,12 @@ void   SetupPage::SetDefLayout   ()
     {
         _DefLayout =
 	"vertical      gap=3    margin=10    				\n\t"
-	"	  < min=465  horizontal    gap=5   				\n\t"
+	"	  < min=465      gap=5   				\n\t"
 	"	                   <weight=5>   		                		\n\t"
 	"	                  <min=450   vertical   gap=5 	    	\n\t"
 	"			                      <weight=26  Project       >       	\n\t"
 	"				                  <weight=400 dir>       	\n\t"
-	"				                  <weight=30 horizontal  	            	\n\t"
+	"				                  <weight=30   	            	\n\t"
 	"				                            <weight=20>             	    	\n\t"
 	"				                            <min=280 max=700  gap=5 buttons>   	\n\t"
 	"				                            <>       	                    	\n\t"
@@ -359,7 +359,7 @@ void   SetupPage::SetDefLayout   ()
         _gr_checks .div(	" <vertical weight=210 checks>     				\n\t");
 
         _gr_salt .div(  
-            "     <horizontal <> 		                                    \n\t" 
+            "     < <> 		                                    \n\t" 
 	        "                 <weight=200 vertical ConcST        gap=2>     \n\t"
 	        "                 <> 		                                    \n\t" 
 	        "		          <weight=230 vertical ConcSaltTa    gap=2>     \n\t"
