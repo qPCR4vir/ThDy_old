@@ -36,7 +36,7 @@
 //#include "../../nana.ext/include/nanaBind.hpp"
 
 
-        TmCalcPage::TmCalcPage        (ThDyNanaForm& tdForm)
+TmCalcPage::TmCalcPage        (ThDyNanaForm& tdForm) try
         : _Pr           (tdForm), 
           CompoWidget  (tdForm, ("Tm Calc"), ("Tm Calc.lay.txt"))
     {
@@ -61,3 +61,11 @@
         SelectClickableWidget( *this);
         SelectClickableWidget( error_);
     }
+catch (std::exception & e)
+{
+	throw std::runtime_error(std::string("An error ocurred during initialization of the Tm Calc page window:\n") + e.what());
+}
+catch (...)
+{
+	throw std::runtime_error(std::string("An unknonw error ocurred during initialization of the Tm Calc page window"));
+}

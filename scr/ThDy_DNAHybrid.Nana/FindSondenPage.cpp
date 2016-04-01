@@ -14,7 +14,7 @@
 //
 
 
-         FindSondenPage::FindSondenPage(ThDyNanaForm& tdForm)
+         FindSondenPage::FindSondenPage(ThDyNanaForm& tdForm) try
         : _Pr        (tdForm), 
           CompoWidget(tdForm, "Find probes", "FindSonden.lay.txt")
     {
@@ -37,6 +37,17 @@
         //_Gmin.tooltip(("Only probes with stronger interaction with target (smaller G by selected Ta) will be \"include\""));
    
    }
+catch (std::exception & e)
+{
+	throw std::runtime_error(std::string("An error ocurred during initialization of the Find probes page window:\n") + e.what());
+}
+catch (...)
+{
+	throw std::runtime_error(std::string("An unknonw error ocurred during initialization of the Find probes page window"));
+}
+
+
+
     void FindSondenPage::Run_Design(bool design)
     {
         _Pr._SdDes._design	 = design ;		

@@ -63,12 +63,22 @@ int main(int argc, char *argv[])
     catch (std::exception& e)
         {
             std::cerr<< std::endl<< e.what();
-            throw ;
-        } 
+			//nana::msgbox(e.what()).show();
+			//nana::exec();
+			char c; std::cin >> c ;
+
+            //throw ;
+
+	
+	} 
     catch (...)
         {
             std::cerr<< std::endl<< "exeption !!";
-            throw ;
+			//nana::msgbox("Sorry, some error ocurred").show();
+			//nana::exec();
+			char c; std::cin >> c;
+
+			//throw ;
         }
 
     
@@ -79,7 +89,7 @@ int main(int argc, char *argv[])
 
 
 
-    ThDyNanaForm::ThDyNanaForm (int argc, char *argv[])
+    ThDyNanaForm::ThDyNanaForm (int argc, char *argv[]) try
                   :nana::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
                    EditableForm    (nullptr, *this,  "ThDy DNA Hybrid"  , "ThDy.lay.txt")  
    {
@@ -134,7 +144,28 @@ int main(int argc, char *argv[])
 		this->_mPCR._probesMS->CreateNonDegSetRec();
         mExpl_.InitTree();
 
-        InitMyLayout();
+
+		try {
+			InitMyLayout();
+		}
+		catch (std::exception & e)
+		{
+			throw std::runtime_error(std::string("An error ocurred during initialization of the windows layout\n") + e.what());
+		}
+		catch (...)
+		{
+			throw std::runtime_error(std::string("An unknonw error ocurred during initialization of the windows layout\n"));
+		}
+
+		//catch (std::exception& e)      //  
+		//{
+		//	
+		//	(nana::msgbox(*this, "Error during Initialization of the windows layout\n\t", nana::msgbox::button_t::ok)
+		//		.icon(nana::msgbox::icon_information)
+		//		<< e.what()
+		//		).show();
+		//	save_defPr();
+		//}
 
         setup_.AddMenuItems (_menuBar.push_back("P&roject"));     // 0
         mExpl_.AddMenuItems (_menuBar.push_back("&Sequences"));   // 1 
@@ -156,6 +187,14 @@ int main(int argc, char *argv[])
 
 
    }
+	catch (std::exception & e)
+	{ 
+		throw std::runtime_error(std::string("An error ocurred during initialization of the main window of the application ThDy DNA Hybrid:\n") + e.what() );
+	}
+	catch (...)
+	{ 
+		throw std::runtime_error(std::string("An unknonw error ocurred during initialization of the main window of the application ThDy DNA Hybrid") );
+	}
 
     //~ThDyNanaForm();
     void     ThDyNanaForm::SetDefLayout   () 

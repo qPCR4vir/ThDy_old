@@ -264,9 +264,10 @@ void  SetupPage::LoadProject(std::string file)
 			}
 		}
 	}
-      SetupPage::SetupPage          (ThDyNanaForm& tdForm)
+   
+SetupPage::SetupPage          (ThDyNanaForm& tdForm) try
         : _Pr           (tdForm), 
-          CompoWidget  (tdForm, ("Setup"), ("Setup.lay.txt"))
+          CompoWidget   (tdForm, ("Setup"), ("Setup.lay.txt"))
     {
         InitMyLayout();
         SelectClickableWidget( _set_def_proj);
@@ -274,6 +275,17 @@ void  SetupPage::LoadProject(std::string file)
 
         MakeResponive();
     }
+   catch (std::exception & e)
+   {
+	   throw std::runtime_error(std::string("An error ocurred during initialization of the Setup page window:\n") + e.what());
+   }
+   catch (...)
+   {
+	   throw std::runtime_error(std::string("An unknonw error ocurred during initialization of the Setup page window"));
+   }
+
+
+
 FilePickBox::filtres SetupPage::FastaFiltre( )
     {
         return FilePickBox::filtres       { {("fasta")       , ("*.fas;*.fasta"     ) },

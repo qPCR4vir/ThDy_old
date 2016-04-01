@@ -15,7 +15,7 @@
 #include "ThDy_DNAHybrid.Nana\main.Nana.h"
 
 
-MplexPCR::MplexPCR            (ThDyNanaForm& tdForm)
+MplexPCR::MplexPCR            (ThDyNanaForm& tdForm) try
         : _Pr             (tdForm), 
           CompoWidget     (tdForm, ("MplexPCR"), ("MplexPCR.lay.txt"))
     {
@@ -25,6 +25,15 @@ MplexPCR::MplexPCR            (ThDyNanaForm& tdForm)
         InitMyLayout();
         SelectClickableWidget( *this);
     }
+catch (std::exception & e)
+{
+	throw std::runtime_error(std::string("An error ocurred during initialization of the MplexPCR page window:\n") + e.what());
+}
+catch (...)
+{
+	throw std::runtime_error(std::string("An unknonw error ocurred during initialization of the MplexPCR page window"));
+}
+
      void MplexPCR::buttPCR_Click()  //	  Run      _IPrgPar_mPCR
 	{	 			
 	 try{                                   
@@ -52,7 +61,8 @@ MplexPCR::MplexPCR            (ThDyNanaForm& tdForm)
         //_Pr._mPCR._rtbl_self = nullptr;
 
 	}
-            uArray::uArray            (ThDyNanaForm& tdForm)
+
+   uArray::uArray            (ThDyNanaForm& tdForm) try
         : _Pr             (tdForm), 
           CompoWidget     (tdForm, ("uArray"), ("uArray.lay.txt"))
     {
@@ -62,6 +72,16 @@ MplexPCR::MplexPCR            (ThDyNanaForm& tdForm)
         InitMyLayout();
         SelectClickableWidget( *this);
     }
+   catch (std::exception & e)
+   {
+	   throw std::runtime_error(std::string("An error ocurred during initialization of the uArray page window:\n") + e.what());
+   }
+   catch (...)
+   {
+	   throw std::runtime_error(std::string("An unknonw error ocurred during initialization of the uArray page window"));
+   }
+
+
        void uArray::buttuArray_Click()  
 	{	 			
 	 try{                                   
