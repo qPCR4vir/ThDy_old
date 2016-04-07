@@ -16,11 +16,9 @@
 #include <string.h>
 #include <fstream>
 #include <iostream>
-//#include <iosfwd>
 
 #include "cod_deg.h"
 #include "common.h" 
-using namespace std;
 using namespace DegCod ;
 	///  \todo empezar por poner nombre a cosas como forbidden_enthalpy, iloop_entropy, bloop_entropy, bloop_enthalpy
 	// y de paso verificar todos estos datos. Dar posibilidad de ajustar solo algunos parametros (correcciones)
@@ -45,7 +43,7 @@ class COriNN
 	Temperature CalcTM (Entropy S,Energy H	 )		 const{return (S>=0 || H>=forbidden_enthalpy/10000 || (H/S)<0 ) ?  0		  :  (H/S	  );}
 	Energy	CalcG (Entropy S,Energy H,Temperature Ta)const{return (S>=0 || H>=forbidden_enthalpy/10000 ) ? -forbidden_freeEnerg : +(H - Ta*S);}//  ????
 	Energy	CalcG (Entropy S,Energy H		 )		 const{return CalcG(S,H,_Ta);}///< Usa la Ta almacenada aqui con el ultimo SetTa
-	bool LoadNNParam(istream &isTDP)  ;
+	bool LoadNNParam(std::istream &isTDP)  ;
 		COriNN						(float C1 = 50e-9,  
 			                         float C2 = 50e-9, const std::string &NNfileName="" ) 
 		:		_RlogC				( R * (float)log( (C1>C2)?C1-C2/2:C2-C1/2  )	),
@@ -109,7 +107,7 @@ public:
 				_ConcTg	( ConcTg ),
 				_ConcSalt		( CationConc),
 				_SaltCorr		( sc )						{	InitSaltNNMatriz()  ;}
-	bool    LoadNNParam(istream &isTDP)  ;
+	bool    LoadNNParam(std::istream &isTDP)  ;
     bool    NeedActualization (float  ConcSd	 =50e-9     ,  float		  ConcTg= 50e-9, 
 				               float CationConc=50e-3, SaltCorrection sc = StLucia) const
     {
@@ -152,7 +150,7 @@ public:
 		return GetOriSelfEntr(a_1, a) + GetSelfEnth(a_1, a)  *((4.29f * 100*_GCp -3.95f )*(1e-5f)*LogSC+ (9.4e-6f)*LogSC*LogSC);	
 	}
 
-	friend ostream &operator<<(ostream &osTDP, const CSaltCorrNN &sp)  ;
+	friend std::ostream &operator<<(std::ostream &osTDP, const CSaltCorrNN &sp)  ;
 		  virtual ~CSaltCorrNN(){}	///< Hace falta ????
 };
 
