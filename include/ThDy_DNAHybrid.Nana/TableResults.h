@@ -82,7 +82,7 @@ class TableRes  : public nana::form, public EditableForm
     {
         float val(index row,  index col)const override
         {
-            return table->at(row,col )._Pos;
+            return static_cast<float>( table->at(row,col)._Pos );
         }
         Pos(Table &t) :value {t} {n_dec=0;};
    };
