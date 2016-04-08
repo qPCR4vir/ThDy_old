@@ -1,13 +1,17 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* 2012-2016
 *
 * @file  ThDySec\include\ThDySec\cod_deg.h
 *
-* @brief 
+* @brief  to avoid billions of repited conversions nucleotide letter - code and make ease find complement, etc.
+*
 * se usa asi: 
+* \code{.cpp}
 * for (Base b=0; b <  n_dgba				; b++)			// recorre las bas deg, aqui solo para
 *				                                        	// mostrar todas las variante
 *
@@ -18,14 +22,14 @@
 *           b & db2nu[dg2ba [b][c]] ;	
 *   		dg2bkn[b][c]  ;						            // cod K de cada caracter a generar
 *     }
-*
+* \codeend
 */
 
 #ifndef _COD_DEG_H
 #define _COD_DEG_H
 #include <limits.h>
 #include <ctype.h>
-#pragma warning( disable : 4996 )
+#pragma warning( disable : 4996 ) // ?
 
 namespace DegCod
 {
@@ -34,18 +38,16 @@ using Code = Base;
 inline Base base(char b){return static_cast<Base>(b);}
 
 ///\todo ? Introducir Letter->UCHAR_MAX , Base -> "ACGT<>-" , DegBase -> "-GCSTKYBARMVWDHN"
-///\todo ?  las 4 bases en el orden complementario de Kadelari. Cambiar a algo asi "-TGCA." o "GCTA-." o "GCTAx-." Calcular si no es mejor "-GCSTKYBARMVWDHN"
+///\todo ?  las 4 bases en el orden complementario de Kaderali. Cambiar a algo asi "-TGCA." o "GCTA-." o "GCTAx-." Calcular si no es mejor "-GCSTKYBARMVWDHN"
 ///\todo ?  usar basek[]=".ACGT$"   or basek[]="-ACGT$"  --- efecto del '-' ????
 
-const Base	nu2ba		[]="GCTA"				,  ///< las 4 bases, cod corto. de "numero a base".
+constexpr 
+    Base	nu2ba		[]="GCTA"				,  ///< las 4 bases, cod corto. de "numero a base".
 			nu2c_ba		[]="CGAT"				,  // 
 			n_ba		  =sizeof(nu2ba)-1      ,			
 
-			basek		[]="-ACGT$"				,  ///< las 4 bases en el orden de Kadelari. ? Coservar este orden  => b+cb=5 ?
-			basek_c		[]="-TGCA$"				,  ///< las 4 bases en el orden complementario de Kadelari.
-			//basek		[]=".ACGT$"				,  ///< las 4 bases en el orden de Kadelari. ? Coservar este orden  => b+cb=5 ?
-			//basek_c	[]=".TGCA$"				,  ///< las 4 bases en el orden complementario de Kadelari.
-
+			basek		[]="-ACGT$"				,  ///< las 4 bases en el orden de Kaderali. ? Coservar este orden  => b+cb=5 ?
+			basek_c		[]="-TGCA$"				,  ///< las 4 bases en el orden complementario de Kaderali.
 
 			n_basek		=sizeof(basek)-1		,
 

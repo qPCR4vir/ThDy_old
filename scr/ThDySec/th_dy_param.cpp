@@ -1,12 +1,43 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2015
 *
 * @file  ThDySec\scr\ThDySec\th_dy_param.cpp
 *
-* @brief 
+* @brief An implementation of the Nearest Neighbor Model Parameters, intented to be a simplification of that
+*        developed and reported by Santa Lucia: http://www.annualreviews.org/doi/abs/10.1146/annurev.biophys.32.110601.141800
+*        This representation is based on the ideas and code of Kaderali (http://bioinformatics.oxfordjournals.org/content/21/10/2375.abstract)
+*        but with many modifications, so that the original authors have no responsability on the many erros,
+*        simplifications or inconsistencies I have introduce (most files and class names were changes to avoid confusion with originals).
+*        The original source file had the following header:
+*
+* //=============================================================================
+* // Module:        nnparams.cpp
+* // Project:       Diploma Thesis - Probe Selection for DNA Microarrays
+* // Type:          implementation - Nearest Neighbor Model / Parameters
+* // Language:      c++
+* // Compiler:      microsoft visual c++ 6.0, unix/linux gcc
+* // System/OS:     Windows 32, Sun solaris, Linux, other unix systems (untested)
+* // Database:      none
+* // Description:   class CNNParams - Nearest Neighbor Model / Parameters
+* // Author:        kaderali
+* // Date:          12/2000
+* // Copyright:     (c) L. Kaderali, 9/2000 - 12/2000
+* //
+* // Revision History
+* // $              00sep07 LK : created
+* //                00dec17 LK : modified to use new nn parameters
+* //                00dec29 LK : modified to include dangling end parameters
+* //                01jan09 LK : included CalcSelfTM
+* //                01feb07 LK : optimized
+* // #$
+* //=============================================================================
+*
+* Which is accesible under GNU GPL at: http://dna.engr.uconn.edu/?page_id=85
 */
 
 #ifdef WINDOWS_FORM_GUI
@@ -197,13 +228,14 @@ ostream &operator<<(ostream &stream, const CSaltCorrNN &sp)
 }
 
 
-void	COriNN::UpdatedSMatriz_forb_entr_elem()// despues de esto hay que update cualquier SaltCorr o al menos una parte
-{		Base x,y,a,b;									//		basek[]=".ACGT$"	.-0, A-1, C-2, G-3, T-4, $-5 , g=0 /* gap */ , e=5 /* extremo, end */
-		//  En lugar de $...$  tratar de poner <....>
-	// Set all parameters to zero!     y porque 0 y no forbidden ?!					//  borrado por Ariel 		
-	//memset(_oridH,0,sizeof(_oridH));	//memset(_oridS,0,sizeof(_oridS));
+void	COriNN::UpdatedSMatriz_forb_entr_elem() // despues de esto hay que update cualquier SaltCorr o al menos una parte
+{		
+	Base x,y,a,b;							//		basek[]=".ACGT$"	.-0, A-1, C-2, G-3, T-4, $-5 , g=0 /* gap */ , e=5 /* extremo, end */
+		/// \todo  instead of $...$  try to use <....>
+	    // Set all parameters to zero!?     why 0 and not forbidden ?!					//  erased by Ariel 		
+	    //memset(_oridH,0,sizeof(_oridH));	//memset(_oridS,0,sizeof(_oridS));
 
-      const Base A = bk2nu['A'],            //  Revisar esto si cambia el cod_deg  !!!!!!!!!!!!!!!!!!!!!!
+      const Base A = bk2nu['A'],            /// \todo adjust!?  Revisar esto si cambia el cod_deg  !!!!!!!!!!!!!!!!!!!!!!
 	             C = bk2nu['C'], 
 	             T = bk2nu['T'], 
 	             G = bk2nu['G'], 
@@ -213,8 +245,8 @@ void	COriNN::UpdatedSMatriz_forb_entr_elem()// despues de esto hay que update cu
 			 first = 0, last       = all-1,
 		first_base = 1,	last_base  = 4 ;
 	
-	for     ( x=first; x<=last ;x++)					//  bases plus   - and $													// Ariel 
-	{	for ( y=first; y<=last ;y++)				//  forbid $./XY etc.
+	for     ( x=first; x<=last ;x++)		//  bases plus   - and $													// Ariel 
+	{	for ( y=first; y<=last ;y++)		//  forbid $./XY etc.
 		{	ndS(e,g,x,y)=forbidden_entropy;   //   $-/XY						// Ariel 
 		//	ndS(g,e,x,y)=forbidden_entropy;   //   -$/XY						// Ariel - caso especial: comienzo de sec
 		//	ndS(x,y,g,e)=forbidden_entropy;   //   XY/-$						// Ariel - caso especial: comienzo de sec
@@ -570,21 +602,3 @@ void	COriNN::InitOriNNMatriz()
 
 
 
-
-	// update() // anadir dS_salt[6][6][6][6] , y funcion de actualizacion
-//	//  PURPOSE:    return free energy G for given entropy and enthalpy
-//    //              Assuming a one-state transition and using the formula
-//    //              G = dH - new_TM * dS,    dH = enthalpy,    dS = entropy
-//	//                new_TM = value for the optimal melting temperature of
-//  	//                         the last iteration
-//inline float COriNN::CalcG(float entropy, float enthalpy) const // revisar !!!!!!!!!!!!!!!!!!! y hace falta??
-//{   float freeEnergy = -999999999.0f;
-//			if (enthalpy>=forbidden_enthalpy)  
-//				return -999999999.0f;
-//            if (entropy<0)         // avoid division by zero and model errors! 
-//            {	entropy = entropy * -1;
-//                enthalpy = enthalpy * -1;
-//                freeEnergy = enthalpy - _Tm_n * entropy;
-//            }
-//            return freeEnergy;
-//}

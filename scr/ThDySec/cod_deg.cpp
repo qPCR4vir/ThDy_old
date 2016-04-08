@@ -1,12 +1,14 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* 2012-2016
 *
 * @file  ThDySec\scr\ThDySec\cod_deg.cpp
 *
-* @brief 
+* @brief to avoid billions of repited conversions nucleotide letter - code and make ease find complement, etc.
 */
 
 #ifdef WINDOWS_FORM_GUI
@@ -61,7 +63,7 @@ CInit_Cod_Deg::CInit_Cod_Deg()
 				db2nu		[b]	=
 				ba2nu		[b]	= 0 ;   // por ejemplo '.' or '-'
 
-				c_degbase	[b]	= b ;	// solo cambia las bases !!!!
+				c_degbase	[b]	= b ;	// only changes bases !!!!
 			}
 
 

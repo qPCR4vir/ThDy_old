@@ -1,17 +1,27 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* 2012-2016
 *
 * @file  ThDySec\include\ThDySec\th_dy_param.h
 *
-* @brief A representation of the Nearest Neighbor Model Parameters, intented to be a simplification of that
+* @brief A representation of the Nearest Neighbor Model Parameters
+*
+*        Intented to be a simplification of that
 *        developed and reported by Santa Lucia: http://www.annualreviews.org/doi/abs/10.1146/annurev.biophys.32.110601.141800 
 *        This representation is based on the ideas and code of Kaderali (http://bioinformatics.oxfordjournals.org/content/21/10/2375.abstract) 
 *        but with many modifications, so that the original authors have no responsability on the many erros, 
-*        simplifications or inconsistencies I have introduce.
-*        The original source file had the folowing header:
+*        simplifications or inconsistencies I have introduce (most files and class names were changes to avoid confusion with originals).
+*        Some additions are: 
+*        - use codes directly as apposite to letter (nucloetides), which is repited millions of times
+*        - separate original and salt corrected parameters to avoid millions of recalculations
+*        - ability to save and load all parametrs from a file
+*
+*        The original source file had the following header:
+*
 * //=============================================================================
 * // Module:        nnparams.h
 * // Project:       Diploma Thesis - Probe Selection for DNA Microarrays
@@ -49,28 +59,37 @@ using namespace DegCod ;
 	///  \todo name thing like: forbidden_enthalpy, iloop_entropy, bloop_entropy, bloop_enthalpy
 	///  \todo review all this data! see http://public.lanl.gov/jgans/tntblast/tntblast_doc.html
 
+/// The Nearest Neighbor Model Parameters before Salt Corrections
+///
+///   Some additions are: 
+///      -use codes directly as apposite to letter(nucloetides), which is repited millions of times
+///      -separate original and salt corrected parameters to avoid millions of recalculations
+///      -ability to save and load all parametrs from a file
 class COriNN  
-{	Entropy			_oridS[6][6][6][6];  ///< A-C-G-T + gap + initiation (dangling end, $ sign)
+{	Entropy			_oridS[6][6][6][6];  ///< A-C-G-T + gap + initiation (dangling end, $ sign); 6=	sizeof(basek)-1	
  protected:
 	Energy			_oridH[6][6][6][6];
 	void			InitOriNNMatriz	();
-    void			Copy_oridS		(void *dS) 			{memcpy( dS, _oridS,sizeof(_oridS)) ;}
+    void			Copy_oridS		(void *dS) 			{memcpy( dS, _oridS,sizeof(_oridS)) ;} //?
 	bool			ChangeConc		(float C1 = 50e-9,  float C2 = 50e-9 ) ;
-	void			UpdatedSMatriz_forb_entr_elem(); ///< despues de esto hay que update cualquier SaltCorr
+	void			UpdatedSMatriz_forb_entr_elem(); ///< after this update any SaltCorr
  public:
-	Temperature			SetTa (Temperature Ta){Temperature T=_Ta; _Ta=Ta;return  T ;}  ///< in Kelvin --- for new Iteration, and G calc
-	Temperature			Ta	()				  {							 return _Ta;} 
+	Temperature			SetTa (Temperature Ta){Temperature T=_Ta; _Ta=Ta;return  T ;}  ///< in Kelvin --- for new Iteration, and CalcG
+	Temperature			Ta	()				  {	 return _Ta;} 
     Energy	&ndH			(Base a_1, Base a, Base b_1, Base b)	 {return _oridH[a_1][a][b_1][b]; }
     Entropy	&ndS			(Base a_1, Base a, Base b_1, Base b)	 {return _oridS[a_1][a][b_1][b]; }
     Entropy	GetOriEntr		(Base a_1, Base a, Base b_1, Base b)const{return _oridS[a_1][a][b_1][b]; }
 	Entropy	GetOriSelfEntr	(Base a_1, Base a)					const{return GetOriEntr (		  a_1  ,		  a, 
                                                                                         bkn2c_nu[ a_1 ], bkn2c_nu[a] ); }
 	Entropy	GetInitialEntropy()						 const{return 	-5.9f+_RlogC;	}
-	Temperature CalcTM (Entropy S,Energy H	 )		 const{return (S>=0 || H>=forbidden_enthalpy/10000 || (H/S)<0 ) ?  0		  :  (H/S	  );}
+	Temperature CalcTM (Entropy S,Energy H	 )		 const{return (S>=0 || H>=forbidden_enthalpy/10000 || (H/S)<0 ) ?  0		  :  (H/S	  );}//  ????
+	
 	Energy	CalcG (Entropy S,Energy H,Temperature Ta)const{return (S>=0 || H>=forbidden_enthalpy/10000 ) ? -forbidden_freeEnerg : +(H - Ta*S);}//  ????
-	Energy	CalcG (Entropy S,Energy H		 )		 const{return CalcG(S,H,_Ta);}///< Usa la Ta almacenada aqui con el ultimo SetTa
+	Energy	CalcG (Entropy S,Energy H		 )		 const{return CalcG(S,H,_Ta);}///< Use last setted Ta with SetTa
+	
 	bool LoadNNParam(std::istream &isTDP)  ;
-		COriNN						(float C1 = 50e-9,  
+
+		COriNN						(float C1 = 50e-9,  ///< Concentration of strain 1, in \todo introdudce members C1, C2
 			                         float C2 = 50e-9, const std::string &NNfileName="" ) 
 		:		_RlogC				( R * (float)log( (C1>C2)?C1-C2/2:C2-C1/2  )	),
 				forbidden_entropy	(_RlogC	)		///< OJO !! dependencia de parte de la matriz dS de las conc ADN
@@ -112,16 +131,21 @@ private:		  COriNN& operator=(const COriNN& ){} /*= delete*/ ;
 //enum SaltCorrection {NoSelect=-1,StLucia=0, Owczarzy=1};
 ////  \todo ya se puede usar StLucia inicializando todo en el constructor. Parcialmente implementado cambio de Conc
 
+/// to avoid repeated recalculing 
+///
+///   Some additions are: 
+///      -separate original and salt corrected parameters to avoid millions of recalculations
+///      
 class CSaltCorrNN : public COriNN
 {	SaltCorrection	_SaltCorr;   
-	float			_ConcSd, _ConcTg ; ///< \todo pasar a ori?????
+	float			_ConcSd, _ConcTg ;  ///< \todo goto ori?????
 	float			_ConcSalt;
-	float			_GCp ;		// cambiar para que acepte CSec ???, o solo que acepte el GCp ya calculado 
-								///  \todo para calcular Owczarzy SaltCorrection  // todo
+	float			_GCp ;		        // cambiar para que acepte CSec ???, o solo que acepte el GCp ya calculado 
+								        ///  \todo para calcular Owczarzy SaltCorrection   
 
-	void	InitSaltNNMatriz() ; ///< inicial ?
-	void	InitStLuciaSaltNNMatriz ();///< llamarla al cambiar conc de sal o DNA(este posible parcial)
-	void	InitOwczarzySaltNNMatriz();///< llamarla solo despues de cambio de GC
+	void	InitSaltNNMatriz() ;        ///< initial ?
+	void	InitStLuciaSaltNNMatriz (); ///< call when changing conc of sal or DNA(this posible partial)
+	void	InitOwczarzySaltNNMatriz(); ///< call only by GC change
 
 	float			_dS[6][6][6][6];	///<	float	_dH[6][6][6][6];  // A-C-G-T + gap + initiation (dangling end, $ sign)
 	
