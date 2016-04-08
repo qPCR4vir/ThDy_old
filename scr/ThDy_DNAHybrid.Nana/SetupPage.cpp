@@ -168,8 +168,8 @@ void  SetupPage::SaveProj()
 	}
 void  SetupPage::setAsDefProject()
     {
-		string caption = "Set current setting as Default project";
-		string message = std::string("This will overwrite the current Default Project." )        + "\n\n"
+		std::string caption = "Set current setting as Default project";
+		std::string message = std::string("This will overwrite the current Default Project." )        + "\n\n"
 						+  "Are you sure?"   + "\n\n"
 						+ "\tYes:  The default project will be overwrited. " + "\n"
 						+ "\tNo:  No action will be taken. " + "\n"
@@ -239,8 +239,8 @@ void  SetupPage::LoadProject(std::string file)
  		}
 		catch (std::exception& e)
 		{
-			string caption = "Error trying to load the project file:";
-			string message = string (nana::charset (  file ))         + "\n\n"
+			std::string caption = "Error trying to load the project file:";
+			std::string message =   file          + "\n\n"
 							+  e.what()   + "\n\n"
 							+  "Use the Default project?"   + "\n\n"
 							+ "\tYes:  The default project file will be loaded. " + "\n"

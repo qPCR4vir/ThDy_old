@@ -13,7 +13,7 @@
 #pragma unmanaged
 #include "ThDy_programs/prog_comm_functions.h"
 //int microArrayProg ( CProgParam_microArray *IPrgPar_uArr, CMultSec &pr, CMultSec &tg, time_t t_0,  int MAxGrDegTg=1, const std::string of_x=""	);
-
+using namespace std; /// \todo temp?
 
 void	CreateColumns(CTable<TmGPos> &rtbl, CMultSec &pr, int MaxGrDeg, OutStr &os )
 {

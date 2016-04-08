@@ -57,7 +57,7 @@ class CMultSec	 : public CLink	// ----------------------------------------------
                                                                 _NNPar      (ms->_NNPar)         
                   {  }
 
-		 CMultSec (	ifstream &	    file	,	 
+		 CMultSec (	std::ifstream &	    file	,	 
 					std::shared_ptr<CSaltCorrNN>  NNpar	, 
 					float		  MaxTgId	= 100, 
 					LonSecPosRang  SecLim	= LonSecPosRang {1,0}, 
@@ -203,13 +203,13 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 
 		//int			AddFromDir		(const std::string& dir , bool  recurs  /*= false*/)
 		int		AddFromFile		(const std::string& file);
-		int		AddFromFile     (ifstream& ifile);	
-		int		AddFromFileFASTA(ifstream &ifileFASTA);
-		int		AddFromFileBLAST(ifstream &ifileBLAST);
-		int		AddFromFileGB	(ifstream &ifileGB);
-		int		AddFromFileGBtxt(ifstream &ifileGB);
-		int		AddFromFileODT	(ifstream &ifileODT);
-		int		AddFromFileODS	(ifstream &ifileODS);
+		int		AddFromFile     (std::ifstream& ifile);
+		int		AddFromFileFASTA(std::ifstream &ifileFASTA);
+		int		AddFromFileBLAST(std::ifstream &ifileBLAST);
+		int		AddFromFileGB	(std::ifstream &ifileGB);
+		int		AddFromFileGBtxt(std::ifstream &ifileGB);
+		int		AddFromFileODT	(std::ifstream &ifileODT);
+		int		AddFromFileODS	(std::ifstream &ifileODS);
 
         /// Reproduce the current -in memory- tree, creating directories as need, 
         /// and export the local sequences in files with extention .fasta.
@@ -232,7 +232,7 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 			std::ofstream ofile( filename );
 	        if ( ! ofile ) 
 	        {
-	            throw std::ios_base::failure(string("Could not create the sequence file: ")+ filename );
+	            throw std::ios_base::failure(std::string("Could not create the sequence file: ")+ filename );
 	        }
             Export( ofile, only_selected);
         }

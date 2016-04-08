@@ -12,7 +12,7 @@
 //#include "StdAfx.h"
 #pragma unmanaged
 #include "ThDy_programs/prog_comm_functions.h"
-
+using namespace std;
 
 
 

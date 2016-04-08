@@ -30,6 +30,7 @@
 #include "ThDySec/sec_mult.h"
 #include "ThDySec/common.h" 
 using namespace DegCod;
+using namespace std;   // temp
 
 /// \todo make more efficient and elegant
 filesystem::path unique_filename(filesystem::path name)

@@ -93,11 +93,11 @@ public:										// ------ Lo mismo que : Get_X , pero calculados todos de una v
 	Energy		 G (Temperature Ta )const{return +(_optH-Ta*_optS);  } // la G NO depende de como selecionaste los optParam
 	CHit		*GetOptHit();
 
-	void		Export_Hits    (ofstream &osHits , char *sep);
-	void		Export_DPMz_Tm (ofstream &osDP_mz, char *sep);
-	void		Export_DPMz_H  (ofstream &osDP_mz, char *sep);
-	void		Export_DPMz_S  (ofstream &osDP_mz, char *sep);
-	void		Export_DPMz_Pre(ofstream &osDP_mz);
+	void		Export_Hits    (std::ofstream &osHits , char *sep);
+	void		Export_DPMz_Tm (std::ofstream &osDP_mz, char *sep);
+	void		Export_DPMz_H  (std::ofstream &osDP_mz, char *sep);
+	void		Export_DPMz_S  (std::ofstream &osDP_mz, char *sep);
+	void		Export_DPMz_Pre(std::ofstream &osDP_mz);
 
 	virtual int	IterationNum()const{return 1;}			//  ??? hace falta aqui?
 
@@ -164,7 +164,7 @@ class CHitAligned  : public CHit
 {
 public:
 	ISec::sequence          _sd, _tg ;
-	vector<ThDyAlign::Step> _st ;
+	std::vector<ThDyAlign::Step> _st ;
 	long                    _mt, _mm, _sgap, _tgap ;    // count sonde and target - matchs , mistmatch, and gaps
 	float		            _Hr, _Sr, _Gr, _Tmr ;
 
@@ -256,7 +256,7 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 					_osPaarComp(0)	  */	
 		{} 
 
-	void		Use(shared_ptr<CMultSec> MSec);//	void		Set_PaarComparExport(ofstream &osPaarComp){_osPaarComp=osPaarComp;};
+	void		Use(std::shared_ptr<CMultSec> MSec);//	void		Set_PaarComparExport(ofstream &osPaarComp){_osPaarComp=osPaarComp;};
 	CSecCand	*Add(CSec &sec);
 	CSecCand	&AddBeging	(CSec &sec) ;
 	CSecCand	&curTg		()		{return *((CSecCand *)_LSecCand.Cur());	}
@@ -278,10 +278,10 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 	long	_TNumPosCand,	_TNumCand;  // Tambien cuenta los de la multiseq
     long    _NSecCand;
 
-	ofstream _osPaarComp;
+	std::ofstream _osPaarComp;
 
-	shared_ptr<CMultSec>            _MSec ;
-	shared_ptr<ThDyAlign_TmCand>	_TDATmC ;  // donde se crea y se borra???   _______________ PROBLEMA !!!!!!!!!!!!!!!!
+	std::shared_ptr<CMultSec>            _MSec ;
+	std::shared_ptr<ThDyAlign_TmCand>	_TDATmC ;  // donde se crea y se borra???   _______________ PROBLEMA !!!!!!!!!!!!!!!!
 
 
 	CList	_LSecCand, _LMSecCand;
@@ -353,13 +353,13 @@ class ThDyAlign_restTm			: public ThDyAlign  // ---------------------------HACER
 
 
 
-void		print_ThDyAlign (ofstream &osTm,ThDyAlign &Al);
+void		print_ThDyAlign (std::ofstream &osTm,ThDyAlign &Al);
 //void		print_Tm		(ofstream &osTm, CMultSec	&pr, int MaxGrDeg=-1, char sep[]=";" );
-void print_Tm (ofstream &osTm, CMultSec	&pr, int MaxGrDeg, char sep[]);
-ofstream	&operator<<(ofstream &stream,	ThDyAlign_Tm	&TmAl) ;
-ofstream	&operator<<(ofstream &osTm,		ThDyAlign		&Al) ;
-ofstream	&operator<<(ofstream &stream,	ThDyAlign_G		&G_Al) ;
-ofstream	&operator<<(ofstream &stream,	FracTDAlign		&FrAl) ;
+void print_Tm (std::ofstream &osTm, CMultSec	&pr, int MaxGrDeg, char sep[]);
+std::ofstream	&operator<<(std::ofstream &stream,	ThDyAlign_Tm	&TmAl) ;
+std::ofstream	&operator<<(std::ofstream &osTm,	ThDyAlign		&Al) ;
+std::ofstream	&operator<<(std::ofstream &stream,	ThDyAlign_G		&G_Al) ;
+std::ofstream	&operator<<(std::ofstream &stream,	FracTDAlign		&FrAl) ;
 #endif
 
 

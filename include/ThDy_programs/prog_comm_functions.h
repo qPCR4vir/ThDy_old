@@ -24,41 +24,41 @@
 //void Check_NNp_Targets (ThDyCommProgParam& cp);
 
 
-unique_ptr<ThDyAlign>   Create_ThDyAlign(ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar);
+std::unique_ptr<ThDyAlign>   Create_ThDyAlign(ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar);
 
 class OutStr
 {public:
-	ofstream &Tm, &G, &Pos, &Pl_Tm, &Pl_G, &Al;
-	OutStr(	ofstream &osTm,
-			ofstream &osG,
-			ofstream &osPos,
-			ofstream &osPl_Tm,
-			ofstream &osPl_G,
-			ofstream &osAl
+	std::ofstream &Tm, &G, &Pos, &Pl_Tm, &Pl_G, &Al;
+	OutStr( std::ofstream &osTm,
+			std::ofstream &osG,
+			std::ofstream &osPos,
+			std::ofstream &osPl_Tm,
+			std::ofstream &osPl_G,
+			std::ofstream &osAl
 		  )
 			:Tm(osTm), G(osG),Pos(osPos),Pl_Tm(osPl_Tm),Pl_G(osPl_G),Al(osAl)
 			{}
 };
 
 
-inline void Hybrid(CSec &s, CSec &t, 	ThDyAlign &Al,	ofstream &osTm,
-														ofstream &osG,
-														ofstream &osPos,
-														ofstream &osPl_Tm,
-														ofstream &osPl_G,
-														ofstream &osAl,
+inline void Hybrid(CSec &s, CSec &t, 	ThDyAlign &Al,  std::ofstream &osTm,
+														std::ofstream &osG,
+														std::ofstream &osPos,
+														std::ofstream &osPl_Tm,
+														std::ofstream &osPl_G,
+														std::ofstream &osAl,
 														CTable<TmGPos> *_rtbl = nullptr	/*,
 														CTable<Temperature> *_tlTm = nullptr	,
 														CTable<Energy>	*tlG = nullptr,
 														CTable<SecPos> *tlPos  = nullptr*/);
 
 
-void HybridPr(CMultSec &pr, CSec &t, 	ThDyAlign &Al,	ofstream &osTm,
-														ofstream &osG,
-														ofstream &osPos,
-														ofstream &osPl_Tm,
-														ofstream &osPl_G,
-														ofstream &osAl,
+void HybridPr(CMultSec &pr, CSec &t, 	ThDyAlign &Al,  std::ofstream &osTm,
+														std::ofstream &osG,
+														std::ofstream &osPos,
+														std::ofstream &osPl_Tm,
+														std::ofstream &osPl_G,
+														std::ofstream &osAl,
 														CTable<TmGPos> *_rtbl = nullptr	/*,
 														CTable<Temperature> *_tlTm = nullptr	,
 														CTable<Energy>	*tlG = nullptr,

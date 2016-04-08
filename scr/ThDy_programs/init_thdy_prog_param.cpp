@@ -17,6 +17,7 @@
 #include "ThDy_programs\prog_comm_functions.h"
 #include "ThDySec/sec.h"
 #include <assert.h>
+using namespace std;
 
 
 //ThDyCommProgParam::~ThDyCommProgParam(void)        {/*delete []_ProgList;*/}

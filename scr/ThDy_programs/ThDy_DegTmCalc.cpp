@@ -46,7 +46,7 @@ int DegTmCalc ( CProgParam_TmCalc *IPrgPar_Calc)
 	CSec *pr_maxTmH=pr->goFirstSec()  ;	IPrgPar_Calc->_GS.Set ( pr_maxTmH->G()/1000  )  ; 
 	CSec *tg_maxTmH=tg->goFirstSec()  ; IPrgPar_Calc->_G2A.Set( tg_maxTmH->G()/1000  )  ;
 														
-	unique_ptr<ThDyAlign> apAl; 
+	std::unique_ptr<ThDyAlign> apAl; 
 
 	//LonSecPos TgMaxLen= (tg->_TMaxLen > pr->_TMaxLen) ? tg->_TMaxLen : pr->_TMaxLen ;
 

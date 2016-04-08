@@ -49,7 +49,7 @@ catch (...)
 		}
 	catch ( std::exception& e)
 		{ 
-          cerr<< e.what()    ;
+			std::cerr<< e.what()    ;
           (nana::msgbox(*this,("Error during multiplex PCR analis !"), 
                                                 nana::msgbox::button_t::ok)   <<e.what()) (  ) ;
 		  return;
@@ -93,7 +93,7 @@ catch (...)
 		}
 	catch ( std::exception& e)
 		{ 
-          cerr<< e.what()    ;
+          std::cerr<< e.what()    ;
           (nana::msgbox(*this,("Error during uArr analis !"), 
                                                 nana::msgbox::button_t::ok)   <<e.what()) (  ) ;
 		  return;

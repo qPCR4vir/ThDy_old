@@ -178,30 +178,31 @@ class ThDyCommProgParam : public CCommProgParam
 			SaltCorr.AddStrValues("Owczarzy",	Owczarzy);
 		} 
 	
-unique_ptr<CSaltCorrNN> Create_NNpar        ( )   //< Create a new set of NeirN parametrs based on current concentr. and Ta set in com-par.
+std::unique_ptr<CSaltCorrNN> Create_NNpar        ( )   //< Create a new set of NeirN parametrs based on current concentr. and Ta set in com-par.
 {
-	unique_ptr<CSaltCorrNN> NNpar ( new  	CSaltCorrNN	(	 _ConcSd,  _ConcTg,  _ConcSalt, _SaltCorr, loadNNPar.get()?_InputNNFile.get():"")); 		
+	std::unique_ptr<CSaltCorrNN> NNpar ( new  	CSaltCorrNN	(	 _ConcSd,  _ConcTg,  _ConcSalt, _SaltCorr, loadNNPar.get()?_InputNNFile.get():"")); 
+	//auto NNpar = std::make_unique<CSaltCorrNN>();
 	NNpar->SetTa(	CtoK(	 _Ta));			 
 	return NNpar ;
 }
-unique_ptr<CSaltCorrNN> Init_NNpar          ()   //< Initialize the set of NeirN parametrs  in com-par, loading/saving if necesary
+std::unique_ptr<CSaltCorrNN> Init_NNpar          ()   //< Initialize the set of NeirN parametrs  in com-par, loading/saving if necesary
 {                                      /// Depend on  _ConcSd,  _ConcTg,  _ConcSalt , _Ta, _loadNNPar,  _InputNNFile,  _saveNNPar,_OutputFile      
-    unique_ptr<CSaltCorrNN> NNpar=Create_NNpar();
+	std::unique_ptr<CSaltCorrNN> NNpar=Create_NNpar();
 	if (loadNNPar.get()) 
     {
-        ifstream isTDP(_InputNNFile.get());	assert(isTDP);	
+		std::ifstream isTDP(_InputNNFile.get());	assert(isTDP);
         NNpar->LoadNNParam(isTDP) ;	
     }
 	if ( saveNNPar.get())
 	{	
         //std::string OutputTDP( _OutputFile.Get()) ; OutputTDP += ".ThDyParam.csv";
 
-		ofstream osTDP	(_OutputFile.get() + ".ThDyParam.csv");				assert(osTDP);	
+		std::ofstream osTDP	(_OutputFile.get() + ".ThDyParam.csv");				assert(osTDP);
 		osTDP << *NNpar ;
 	}
 	return NNpar ;
 }
-shared_ptr<CSaltCorrNN> Get_Actualiced_NNpar(const shared_ptr<CSaltCorrNN>& currNNpar )
+std::shared_ptr<CSaltCorrNN> Get_Actualiced_NNpar(const std::shared_ptr<CSaltCorrNN>& currNNpar )
 {
 	if ( currNNpar)
     {

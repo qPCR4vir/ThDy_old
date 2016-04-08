@@ -15,7 +15,7 @@
 #include "ThDySec\th_dy_align.h"
 #include "ThDy_programs/prog_comm_functions.h"
 
-void FindSonden( CMultSec *tg, /*int& tgN,*/ int& compN, CMSecCand& msCand, ofstream &osNCand, CProgParam_SondeDesign *IPrgPar_SdDes )
+void FindSonden( CMultSec *tg, /*int& tgN,*/ int& compN, CMSecCand& msCand, std::ofstream &osNCand, CProgParam_SondeDesign *IPrgPar_SdDes )
 {
 	for (  tg->goFirstSec(); tg->NotEndSec()   ;   tg->goNextSec() )  // recorre todos los targets
 	{	CSec &nt = *tg->CurSec() ;
@@ -26,7 +26,7 @@ void FindSonden( CMultSec *tg, /*int& tgN,*/ int& compN, CMSecCand& msCand, ofst
 		for(CSecCand &newtg =msCand.AddBeging(nt)	;msCand.NotFinisch() ; msCand.CompNext())  // anade el curr tg y lo comp con todos los anteriormente anadidos
 		{	CSecCand &curtg =msCand.curTg();
             compN++;
-			osNCand	<<endl<< msCand._TNumPosCand << sep<< msCand._TNumCand  
+			osNCand	<<"\n"<< msCand._TNumPosCand << sep<< msCand._TNumCand  
 					<<sep<< msCand._NSecCand	<<sep<<	compN	
 					<<sep<<	newtg._Sec.Name()	<<sep<<	newtg._NumPosCand/*In*/  << sep<< newtg._NumCand/*In*/	
 					<<sep<<	curtg._Sec.Name()	<<sep<<	curtg._NumPosCand/*In */ << sep<< curtg._NumCand/*In*/;	
@@ -59,9 +59,9 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 
     IPrgPar_SdDes->_cp.Check_NNp_Targets( );
 
-    ofstream osNCand(IPrgPar_SdDes->_cp._OutputFile.get() + ".TgCand.csv");
+	std::ofstream osNCand(IPrgPar_SdDes->_cp._OutputFile.get() + ".TgCand.csv");
 	osNCand.precision(2);
-	osNCand	<<endl<<"Num T Pos" <<sep<< "Num T Cand"	
+	osNCand	<<"\n"<<"Num T Pos" <<sep<< "Num T Cand"	
 			<<sep<<	"Targ Num"	<<sep<< "Iterat#"  	
 			<<sep<<	"Targ name" <<sep<<	"Num Pos"  << sep<<  "Num Cand"	
 			<<sep<<	"Targ name" <<sep<<	"Num Pos"  << sep<<  "Num Cand"	
@@ -69,7 +69,7 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 			<<sep<<	"Targ name" <<sep<<	"Num Pos"  << sep<<  "Num Cand"	
 			<<sep<<	"Targ name" <<sep<<	"Num Pos"  << sep<<  "Num Cand"	
 			<<sep<< "Num T Pos" <<sep<< "Num T Cand"	
-			<< fixed			; 
+			<< std::fixed			; 
 
 	time_t t_sec = time(nullptr);
 
@@ -107,9 +107,9 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 
 
 	time_t t_tm_cal = time(nullptr);
-	osNCand<< endl << endl <<"Time sec= "			<< sep<< t_sec			- t_0		
-				   << endl <<"Time Ob crea="		<< sep<< t_al_created	- t_sec		
-				   << endl <<"Time Tm calc= "		<< sep<< t_tm_cal		-t_al_created ;
+	osNCand<< "\n" << "\n" <<"Time sec= "			<< sep<< t_sec			- t_0		
+				   << "\n" <<"Time Ob crea="		<< sep<< t_al_created	- t_sec		
+				   << "\n" <<"Time Tm calc= "		<< sep<< t_tm_cal		-t_al_created ;
 	return 1;
 }
 
