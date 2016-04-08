@@ -6,7 +6,33 @@
 *
 * @file  ThDySec\include\ThDySec\th_dy_param.h
 *
-* @brief 
+* @brief A representation of the Nearest Neighbor Model Parameters, intented to be a simplification of that
+*        developed and reported by Santa Lucia: http://www.annualreviews.org/doi/abs/10.1146/annurev.biophys.32.110601.141800 
+*        This representation is based on the ideas and code of Kaderali (http://bioinformatics.oxfordjournals.org/content/21/10/2375.abstract) 
+*        but with many modifications, so that the original authors have no responsability on the many erros, 
+*        simplifications or inconsistencies I have introduce.
+*        The original source file had the folowing header:
+* //=============================================================================
+* // Module:        nnparams.h
+* // Project:       Diploma Thesis - Probe Selection for DNA Microarrays
+* // Type:          header file - Nearest Neighbor Parameters / Model.
+* // Language:      c++
+* // Compiler:      microsoft visual c++ 6.0, unix/linux gcc
+* // System/OS:     Windows 32, Sun solaris, Linux, other unix systems (untested)
+* // Database:      none
+* // Description:   class CNNParams - Nearest Neighbor Model Parameters
+* // Author:        kaderali
+* // Date:          9-12/2000
+* // Copyright:     (c) L. Kaderali, 9/2000 - 12/2000
+* //
+* // Revision History
+* // $              00sep07 LK : created
+* //                00dec29 LK : changed to include dangling end data
+* //                01jan09 LK : included CalcSelfTM function
+* //                01feb07 LK : optimized
+* // #$
+* //=============================================================================
+* Which is accesible under GNU GPL at: http://dna.engr.uconn.edu/?page_id=85
 */
 
 #ifndef _TH_DY_PARAM_H
@@ -20,8 +46,8 @@
 #include "cod_deg.h"
 #include "common.h" 
 using namespace DegCod ;
-	///  \todo empezar por poner nombre a cosas como forbidden_enthalpy, iloop_entropy, bloop_entropy, bloop_enthalpy
-	// y de paso verificar todos estos datos. Dar posibilidad de ajustar solo algunos parametros (correcciones)
+	///  \todo name thing like: forbidden_enthalpy, iloop_entropy, bloop_entropy, bloop_enthalpy
+	///  \todo review all this data! see http://public.lanl.gov/jgans/tntblast/tntblast_doc.html
 
 class COriNN  
 {	Entropy			_oridS[6][6][6][6];  ///< A-C-G-T + gap + initiation (dangling end, $ sign)
