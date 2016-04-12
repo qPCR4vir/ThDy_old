@@ -10,14 +10,14 @@
 *
 * @brief A representation of the Nearest Neighbor Model Parameters
 *
-*        Intented to be a simplification of that
-*        developed and reported by Santa Lucia: http://www.annualreviews.org/doi/abs/10.1146/annurev.biophys.32.110601.141800 
-*        This representation is based on the ideas and code of Kaderali (http://bioinformatics.oxfordjournals.org/content/21/10/2375.abstract) 
-*        but with many modifications, so that the original authors have no responsability on the many erros, 
-*        simplifications or inconsistencies I have introduce (most files and class names were changes to avoid confusion with originals).
-*        Some additions are: 
-*        - use codes directly as apposite to letter (nucloetides), which is repited millions of times
-*        - separate original and salt corrected parameters to avoid millions of recalculations
+*        Attempt to be a simplification of what
+*        developed and reported Santa Lucia: http://www.annualreviews.org/doi/abs/10.1146/annurev.biophys.32.110601.141800
+*        This representation is based on the ideas and code of Kaderali (http://bioinformatics.oxfordjournals.org/content/21/10/2375.abstract)
+*        but with many modifications, so that the original authors have no responsability on the many erros,
+*        simplifications or inconsistencies I have introduced (most files and class names were changed to avoid confusion with originals).
+*        Some additions are:
+*        - use codes directly as opposite to letters (nucloetides), which is repited millions of times
+*        - separates original and salt corrected parameters to avoid millions of recalculations
 *        - ability to save and load all parametrs from a file
 *
 *        The original source file had the following header:
@@ -42,7 +42,9 @@
 * //                01feb07 LK : optimized
 * // #$
 * //=============================================================================
+*
 * Which is accesible under GNU GPL at: http://dna.engr.uconn.edu/?page_id=85
+*
 */
 
 #ifndef _TH_DY_PARAM_H

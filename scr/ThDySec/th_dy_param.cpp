@@ -4,15 +4,18 @@
 *  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* 2012-2016
 *
 * @file  ThDySec\scr\ThDySec\th_dy_param.cpp
 *
-* @brief An implementation of the Nearest Neighbor Model Parameters, intented to be a simplification of that
-*        developed and reported by Santa Lucia: http://www.annualreviews.org/doi/abs/10.1146/annurev.biophys.32.110601.141800
+* @brief An implementation of the Nearest Neighbor Model Parameters
+*
+*        Attempt to be a simplification of what
+*        developed and reported Santa Lucia: http://www.annualreviews.org/doi/abs/10.1146/annurev.biophys.32.110601.141800
 *        This representation is based on the ideas and code of Kaderali (http://bioinformatics.oxfordjournals.org/content/21/10/2375.abstract)
 *        but with many modifications, so that the original authors have no responsability on the many erros,
-*        simplifications or inconsistencies I have introduce (most files and class names were changes to avoid confusion with originals).
+*        simplifications or inconsistencies I have introduced (most files and class names were changed to avoid confusion with originals).
+*
 *        The original source file had the following header:
 *
 * //=============================================================================
@@ -38,6 +41,7 @@
 * //=============================================================================
 *
 * Which is accesible under GNU GPL at: http://dna.engr.uconn.edu/?page_id=85
+*
 */
 
 #ifdef WINDOWS_FORM_GUI

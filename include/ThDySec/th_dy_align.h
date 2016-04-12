@@ -1,13 +1,82 @@
 /**
-* 2009-2015, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* 2009-2016, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 
 * @file  ThDySec\include\ThDySec\th_dy_align.h
 *
-* @brief 
-* 
+* @brief  Thermodynamic Alignment Algorithm
+*
+* This representation is based on the ideas and code of Kaderali (http://bioinformatics.oxfordjournals.org/content/21/10/2375.abstract)
+* but with many modifications, so that the original authors have no responsability on the many erros,
+* simplifications or inconsistencies I have introduced (most files and class names were changed to avoid confusion with originals).
+*
+* Some additions/modifications are:
+*
+* - Integrate different variants of the algorithm into a (virtual) class hierarchy
+* - use the code (Base) from CSec instead of char* as input sequences
+* - open the dynamicprogramm (DP) black-box to output any hit passing a cutoff
+* - class CHit to managed hits
+* - split each of the two DP matrix into three, becouse the 0,1,2 index was not used as variable, but as a name
+* - introduce a step matrix to go back in the DP matrix with minimal calculation
+* - use a shared_ptr<CSaltCorrNN> member
+* - idiomatic typedefs: Energy, Entropy, Temperature, etc. 
+* - the initial maxlen of probes and targets are only a hint, and the DPT is resized as need. \todo implement as std::vector
+* - ThDyAlign_TmCand -designed specially to find probes that hybridice in both sequences and in others targets too.
+* -
+* -
+*
+* The original source files have the following headers:
+*
+*     //=============================================================================
+*     // Module:        thermalign.h
+*     // Project:       Diploma Thesis - Probe Selection for DNA Microarrays
+*     // Type:          header file - Thermodynamic Alignment.
+*     // Language:      c++
+*     // Compiler:      microsoft visual c++ 6.0, unix/linux gcc
+*     // System/OS:     Windows 32, Sun solaris, Linux, other unix systems (untested)
+*     // Database:      none
+*     // Description:   class CThermAlign - Thermodynamic Alignment Algorithm
+*     // Author:        kaderali
+*     // Date:          9/2000 - 12/2000
+*     // Copyright:     (c) L. Kaderali, 9/2000 - 12/2000
+*     //
+*     // Revision History
+*     // $ 00sep04 LK : created
+*     // $ 00dec30 LK : changed to do local alignment of probe against
+*     //                one entire sequence
+*     // $ 01feb07 LK : optimized
+*     // #$
+*     //=============================================================================
+*
+*     //=============================================================================
+*     // Module:        galign.h
+*     // Project:       Cubic Project - Calculation of melting temperature and free
+*     //                energy of two DNA strands
+*     // Type:          header file - Thermodynamic Alignment.
+*     // Language:      c++
+*     // Compiler:      microsoft visual c++ 6.0, unix/linux gcc
+*     // System/OS:     Windows 32, Sun solaris, Linux, other unix systems (untested)
+*     // Database:      none
+*     // Description:   class GAlign - Thermodynamic Alignment Algorithm
+*     // Author:        leber
+*     // Date:          01/2002 - 02/2002
+*     // Copyright:     (c) L. Kaderali & M. Leber, 01/2002 - 02/2002
+*     //
+*     // Revision History
+*     // $ 00sep04 LK : created
+*     // $ 00dec30 LK : changed to do local alignment of probe against
+*     //                one entire sequence
+*     // $ 01feb07 LK : optimized
+*     // #$
+*     //=============================================================================
+*
+* Which are accesible under GNU GPL at: http://dna.engr.uconn.edu/?page_id=85
+*
 */
+
 #pragma unmanaged	
 #ifndef _TH_DY_ALIGN_H
 #define _TH_DY_ALIGN_H
