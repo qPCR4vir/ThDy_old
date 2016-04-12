@@ -10,34 +10,34 @@
 *
 * @brief  Thermodynamic Alignment Algorithm
 *
-*        This representation is based on the ideas and code of Kaderali (http://bioinformatics.oxfordjournals.org/content/21/10/2375.abstract)
-*        but with many modifications, so that the original authors have no responsability on the many erros,
-*        simplifications or inconsistencies I have introduced (most files and class names were changed to avoid confusion with originals).
+* This representation is based on the ideas and code of Kaderali (http://bioinformatics.oxfordjournals.org/content/21/10/2375.abstract)
+* but with many modifications, so that the original authors have no responsability on the many erros,
+* simplifications or inconsistencies I have introduced (most files and class names were changed to avoid confusion with originals).
+* 
+* The original source file had the following header:
 *
-*        The original source file had the following header:
-*
-* //=============================================================================
-* // Module:        thermalign.cpp
-* // Project:       Diploma Thesis - Probe Selection for DNA Microarrays
-* // Type:          implementation - Thermodynamic Alignment.
-* // Language:      c++
-* // Compiler:      microsoft visual c++ 6.0, unix/linux gcc
-* // System/OS:     Windows 32, Sun solaris, Linux, other unix systems (untested)
-* // Database:      none
-* // Description:   class CThermAlign - Thermodynamic Alignment Algorithm
-* // Author:        kaderali
-* // Date:          9/2000 - 01/2001
-* // Copyright:     (c) L. Kaderali, 9/2000 - 01/2001
-* //
-* // Revision History
-* // $ 00sep04 LK : created
-* // $ 00dec30 LK : changed to do local alignment of probe against
-* //                one entire sequence
-* // $ 01feb07 LK : optimized!
-* // $ 01aug06 LK : corrected, included salt and concentration input;
-* // $              made true local alignment (problem with initial mismatches!)
-* // #$
-* //=============================================================================
+*     //=============================================================================
+*     // Module:        thermalign.cpp
+*     // Project:       Diploma Thesis - Probe Selection for DNA Microarrays
+*     // Type:          implementation - Thermodynamic Alignment.
+*     // Language:      c++
+*     // Compiler:      microsoft visual c++ 6.0, unix/linux gcc
+*     // System/OS:     Windows 32, Sun solaris, Linux, other unix systems (untested)
+*     // Database:      none
+*     // Description:   class CThermAlign - Thermodynamic Alignment Algorithm
+*     // Author:        kaderali
+*     // Date:          9/2000 - 01/2001
+*     // Copyright:     (c) L. Kaderali, 9/2000 - 01/2001
+*     //
+*     // Revision History
+*     // $ 00sep04 LK : created
+*     // $ 00dec30 LK : changed to do local alignment of probe against
+*     //                one entire sequence
+*     // $ 01feb07 LK : optimized!
+*     // $ 01aug06 LK : corrected, included salt and concentration input;
+*     // $              made true local alignment (problem with initial mismatches!)
+*     // #$
+*     //=============================================================================
 *
 * Which is accesible under GNU GPL at: http://dna.engr.uconn.edu/?page_id=85
 *
@@ -89,6 +89,7 @@ void ThDyAlign::ResizeTable(LonSecPos LenSond, LonSecPos LenTarg)		//	----------
 	}
 	force_ResizeTable() ;
 }
+
 void ThDyAlign::force_ResizeTable()						//	--------------------------------------------------------------	force_ResizeTable	---------
 {	delete[] _dH0;	delete[] _dH1;	delete[] _dH2;
 	delete[] _dS0;	delete[] _dS1;	delete[] _dS2;	

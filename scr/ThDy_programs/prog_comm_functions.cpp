@@ -1,12 +1,15 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2015
 *
 * @file  ThDySec\scr\ThDy_programs\prog_comm_functions.cpp
 *
-* @brief
+* @brief A few global functions for hybridization
+*
 */
 
 //#include "StdAfx.h"
@@ -17,7 +20,7 @@ using namespace std;
 
 
 
-unique_ptr<ThDyAlign> Create_ThDyAlign(ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar)
+unique_ptr<ThDyAlign> Create_ThDyAlign(const ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar)
 {
 	unique_ptr<ThDyAlign>	apAl;
 	switch (	_cp._TAMeth )
@@ -30,6 +33,7 @@ unique_ptr<ThDyAlign> Create_ThDyAlign(ThDyCommProgParam& _cp, LonSecPos MaxLenS
 	return apAl;
 }
 
+/// Set CSec and trigget the aligment in an existing ThDyAlign with output a line of Tm, G and Position to a table and files.
 inline void Hybrid(CSec &s, CSec &t, 	ThDyAlign &Al,	ofstream &osTm,
 														ofstream &osG,
 														ofstream &osPos,
@@ -55,6 +59,7 @@ inline void Hybrid(CSec &s, CSec &t, 	ThDyAlign &Al,	ofstream &osTm,
 
 }
 
+/// Align all CSec vs all in the list os sequences probe and target in an existing ThDyAlign with output a line of Tm, G and Position to a table and files.
 void HybridPr(CMultSec &pr, CSec &t, 	ThDyAlign &Al,	ofstream &osTm,
 														ofstream &osG,
 														ofstream &osPos,

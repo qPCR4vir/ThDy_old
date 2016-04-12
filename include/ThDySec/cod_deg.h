@@ -31,6 +31,7 @@
 #include <ctype.h>
 #pragma warning( disable : 4996 ) // ?
 
+/// Use schort nt codes to avoid billions of repited conversions nucleotide letter <-> code and make ease to construct complement, etc.
 namespace DegCod
 {
 using Base = unsigned char ;///< A simple char can be neagtive which can be a problem when using as index for an array.

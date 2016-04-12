@@ -1,12 +1,16 @@
 /**
 * Copyright (C) 2009-2016, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2016
 *
 * @file  ThDySec\scr\ThDy_DNAHybrid.Nana\main.Nana.cpp
 *
-* @brief 
+* @brief Entry point (main) for ThDyHybr with Nana GUI
+*
+*
 */
 
 #include "ThDy_DNAHybrid.Nana\main.Nana.h"
@@ -39,7 +43,7 @@ int main(int argc, char *argv[])
 
 
     //std::cin.rdbuf(cinbuf);   //reset to standard input again
-
+	///\todo What about coustom colors in nana GUI?
   //nana::color::current_schema[nana::color::schema::list_header_border]=nana::color::Red;
   //nana::color::current_schema[nana::color::schema::list_header_bg]=nana::color::Yellow;    // 0xF1F2F4 
   //nana::color::current_schema[nana::color::schema::list_header_highlighted_bg]=nana::color::Rose;    // 0xFFFFFF 
@@ -52,7 +56,6 @@ int main(int argc, char *argv[])
   {
     using namespace ParamGUIBind;
 
-
     IParBind::SetDef(PriorizeDefault::Parametr );
     ThDyNanaForm tdForm(  argc,  argv);
     //tdForm.ReCollocate();
@@ -63,27 +66,18 @@ int main(int argc, char *argv[])
     catch (std::exception& e)
         {
             std::cerr<< std::endl<< e.what();
-			//nana::msgbox(e.what()).show();
+			//nana::msgbox(e.what()).show();    // --> when we are here the GUI is already "close"
 			//nana::exec();
 			char c; std::cin >> c ;
-
             //throw ;
-
-	
 	} 
     catch (...)
         {
             std::cerr<< std::endl<< "exeption !!";
-			//nana::msgbox("Sorry, some error ocurred").show();
-			//nana::exec();
 			char c; std::cin >> c;
-
 			//throw ;
         }
-
-    
     //std::cout.rdbuf(coutbuf); //reset to standard output again
-
 } 
 
 

@@ -1,5 +1,7 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2015
@@ -7,6 +9,7 @@
 * @file  ThDySec\include\ThDySec\sec.h
 *
 * @brief 
+*
 */
 
 #pragma unmanaged	
@@ -25,7 +28,7 @@ namespace filesystem = std::experimental::filesystem; //    ::tr2::sys; //std::e
 
 
 #include "sec_basic.h" 
-#include "th_dy_param.h"   // crear un nuevo par de fuente cpp con las cosas que nec los dos .h + sec.h
+#include "th_dy_param.h"   ///\todo crear un nuevo par de fuente cpp con las cosas que nec los dos .h + sec.h ?
 #include "common.h" 
 
  
@@ -35,19 +38,23 @@ namespace filesystem = std::experimental::filesystem; //    ::tr2::sys; //std::e
  
 class CMultSec	;
 
+                   // ---------------------------------------   CSec	---------------------------------------------------
 
-class CSec : public CLink, public CSecBasInfo	// ---------------------------------------   CSec	---------------------------------------------------
+/// Fundamental class to manipulate sec.
+
+/// 
+class CSec : public CLink, public CSecBasInfo	
 {public:
 	    int                     x;				///<  ????
-		TemperatureRang	        _Tm ;			///< float		_Tm, _minTm, _maxTm ;				//  
+		TemperatureRang	        _Tm ;			// float		_Tm, _minTm, _maxTm ;			
 		std::shared_ptr<CSaltCorrNN>  _NNpar ;
-		float			        _Conc ;			///< conc de esta molec. Si igual al resto -1 y la toma de NNParam
-        std::vector<Code>	    _b=   std::vector<Code>{n_basek-1};			///< sec cod, inicialmente basek
+		float			        _Conc ;			///< concentration of this molecule. If equal to all others is set to -1 and NNParam is used instead
+        std::vector<Code>	    _b=   std::vector<Code>{n_basek-1};			///< codified sequence, initialy? basek
         std::vector<Entropy>    _SdS= std::vector<Entropy>{ _NNpar->GetInitialEntropy()};		///< dS acumulada. Calcular Delta S sera solo restar la final menos la inicial	
         std::vector<Energy>		_SdH= std::vector<Energy> {  Energy{} };			// 
 		CMultSec	           *_parentMS{nullptr}	;   //std::weak_ptr<CMultSec> _parentMS	;
-    /// Some variables have index base [1] while others have [0] in sec. We need to clean the sec, 
-    /// which can contain non bases letter, like tabs, end of line, blancs, etc, but we take into account "-".
+
+    /// Some variables have index base [1] while others have [0] in sec. We need to clean the sec, which can contain non bases letter, like tabs, end of line, blancs, etc, but we take into account "-".
 	CSec (  const std::string&  sec, 
 		    int                 id,
             const std::string&  nam,     

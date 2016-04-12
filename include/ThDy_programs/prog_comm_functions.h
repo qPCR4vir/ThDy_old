@@ -24,7 +24,7 @@
 //void Check_NNp_Targets (ThDyCommProgParam& cp);
 
 
-std::unique_ptr<ThDyAlign>   Create_ThDyAlign(ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar);
+std::unique_ptr<ThDyAlign>   Create_ThDyAlign(const ThDyCommProgParam& _cp, LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar);
 
 class OutStr
 {public:

@@ -1,5 +1,7 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2015
@@ -26,10 +28,14 @@
 #include "sec.h" 
 #include "sec_rang.h" 
 
-  /// @brief permite hacer grupos de sec o de MultiSec (para analisis por "especies"?)
-  /// \todo anadir posibilidad de construir sec concenso 
-  /// CUIDADO :  It owns the sequences y las borra en su destructor: Usar Remove() or Free() para evitarlo
-class CMultSec	 : public CLink	// ---------------------------------------------------------- 	CMultSec    -------------------
+                                        // ---------------------------------------------------------- 	CMultSec    -------------------
+  /// Permite hacer grupos de sec o de MultiSec (para analisis por "especies"?)
+
+  /// \todo add construction of concensus 
+  /// \todo no CLink 
+  /// \todo make std with vector or list of std::shared_ptr<Csec> and CMultSec> ?
+  /// Atention:  It owns and destroy the sequences: Use Remove() or Free() to prevent destruction fo sequences
+class CMultSec	 : public CLink	
 {	public:
 		std::string			_name ;						///< 
         int					_ID       {NewMS_ID()};		///< Unique ID in each programm run
@@ -45,23 +51,26 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 
      //explicit CMultSec (const std::string &Name  )                 : _name		(trim_string(Name))  {	}
 
-   explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name = "")        
-                      : _NNPar      (NNpar            ), 
-					    _name       (trim_string(Name))            
-                  {  }
+       /// Create a named and free empty group
+       explicit CMultSec (std::shared_ptr<CSaltCorrNN> NNpar, const std::string &Name = "")        
+                          : _NNPar      (NNpar            ), 
+   	  			            _name       (trim_string(Name))            
+                      {  }
 
-         CMultSec(CMultSec	*ms, const std::string &Name = ""): _name       (trim_string(Name)),
+	   /// Create a named and free empty group using the given group as "template"
+       CMultSec(CMultSec	*ms, const std::string &Name = ""): _name       (trim_string(Name)),
                                                                 _SecLim     (ms->_SecLim),
                                                                 _SecLenLim  (ms->_SecLenLim),
                                                                 _MaxTgId    (ms->_MaxTgId), 
                                                                 _NNPar      (ms->_NNPar)         
                   {  }
 
-		 CMultSec (	std::ifstream &	    file	,	 
+	   /// Read all the sequences from a stream into this group dedducing format and appling filters
+       CMultSec (	std::ifstream &	    file	,	 
 					std::shared_ptr<CSaltCorrNN>  NNpar	, 
-					float		  MaxTgId	= 100, 
-					LonSecPosRang  SecLim	= LonSecPosRang {1,0}, 
-                    SecPosRang     SecLenLim= SecPosRang{0,0})  /*_name(trim_string(file)),	*/
+					float		  MaxTgId	= 100,                 ///< Sec. with more % of identity are marked as "filtered" and not selected
+					LonSecPosRang  SecLim	= LonSecPosRang {1,0}, ///< Filtre, using only this region. Will take into account alignment coordenates.
+                    SecPosRang     SecLenLim= SecPosRang{0,0})     ///< Limit the length. tiny sec: not created, large: get trunkated   
                   : 
 	                    _SecLim     (SecLim),
                         _SecLenLim  (SecLenLim),
@@ -70,21 +79,23 @@ class CMultSec	 : public CLink	// ----------------------------------------------
                   { AddFromFile(file); }
 
          /// The new MSec take the name of the dir, and remember the rest of the path
-         CMultSec (	const std::string &path	,                     ///< The name of the file or directory to be loaded 
+         CMultSec (	const std::string &path	,                       ///< The name of the file or directory to be loaded 
 					std::shared_ptr<CSaltCorrNN>  NNpar	, 
-					bool           all_dir  = false,              ///< Load all files and directories recursiverly? 
-					float		   MaxTgId	= 100,                ///< Sec. with more % of idem are marked as "filtered" and not selected
-					LonSecPosRang  SecLim	= LonSecPosRang {1,0},///< Filtre, using only this region. Will take into account alignment coordenates.
-                    SecPosRang     SecLenLim= SecPosRang    {0,0},///< Limit the length. tiny sec: not created, large: get trunkated
-					bool           loadSec  = true                ///< Get the sec? False: get only the dir/file structure
+					bool           all_dir  = false,                ///< Load all files and directories recursiverly? 
+					float		   MaxTgId	= 100,                  ///< Sec. with more % of identity are marked as "filtered" and not selected
+					LonSecPosRang  SecLim	= LonSecPosRang {1,0},  ///< Filtre, using only this region. Will take into account alignment coordenates.
+                    SecPosRang     SecLenLim= SecPosRang    {0,0},  ///< Limit the length. tiny sec: not created, large: get trunkated
+					bool           loadSec  = true                  ///< Get the sec? False: get only the dir/file structure
 				 ) ;
 
 
-	    bool	Selected(bool select)	{return _selected=select;} 			///< make protected: ??
+	    bool	Selected(bool select)	{return _selected=select;} 			///< \todo make protected: ??
 	    bool	Selected(		) const {return _selected ;}				///< User-editable
 
-        /// Construct a costum path acording to the current tree, which can be different 
-        /// from the original path saved in member variable ._Path
+
+        /// Construct a full-current path acording to the current tree
+		
+		/// can be different from the original path saved in member variable ._Path
 		static std::string	Path(CMultSec *ms, const std::string& path_sep="/")
         {
 			std::string path  ;			 
@@ -93,14 +104,14 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 			return path;
         }
 
-        /// Construct a filesystem path acording to the current tree, which can be different 
-        /// from the original path saved in member variable ._Path
+        /// Construct a filesystem path acording to the current tree, which can be different from the original path saved in member variable ._Path
 		std::string	path( )
 		{
 			std::string sep(std::string(1, filesystem::path::preferred_separator));// ::slash<filesystem::path>().value));
             return Path(this, sep);
 		}
 
+		/// generate a runing unique ID
 		static int			NewMS_ID()
 		{
 			static int ID(0);
@@ -202,6 +213,12 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 		//void setGloExtreme(const CMultSec *ms){return _Tm.isExtrem (ms->_TTm) || _Len.isExtrem (ms->_TLen );}
 
 		//int			AddFromDir		(const std::string& dir , bool  recurs  /*= false*/)
+
+		/// determine the file format and read sequences into this group
+
+		/// The file format is decided lookind at the first non blanc character: > fasta, < some xml, etc.
+		/// @return number of readed sequences 
+		/// \todo better exeption mesg and new exeptio classes for format error?
 		int		AddFromFile		(const std::string& file);
 		int		AddFromFile     (std::ifstream& ifile);
 		int		AddFromFileFASTA(std::ifstream &ifileFASTA);
@@ -211,6 +228,8 @@ class CMultSec	 : public CLink	// ----------------------------------------------
 		int		AddFromFileODT	(std::ifstream &ifileODT);
 		int		AddFromFileODS	(std::ifstream &ifileODS);
 
+		/// Recursively export sequences to new files in fasta format with filters applied
+
         /// Reproduce the current -in memory- tree, creating directories as need, 
         /// and export the local sequences in files with extention .fasta.
         /// If the file allready exist create a file with a new name
@@ -219,6 +238,8 @@ class CMultSec	 : public CLink	// ----------------------------------------------
         /// To decide the name of the file it need the path of the base node that do not form part of the file name
         /// That is for example: "all_seq/Primers for Multiplex PCR/"...
         bool    Export_from   ( CMultSec& base, bool only_selected)  ;
+
+		/// Export local sequences to a new file in fasta format with filters applied
 
         /// Export the local sequences in a file with extention .fasta.
         /// The name is generated acording to the current postion of the group on the tree.

@@ -1,5 +1,7 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2015
@@ -184,7 +186,7 @@ int		CMultSec::AddFromFile (ifstream& ifile)		// return la cantidad de sec add -
 			return AddFromFileGB (ifile);
 		return 0;
 	}
-	if (c1 =='L' )	
+	if (c1 =='L' )	// LOCUS ?
 	{	
         ifile.putback(c1);												
 		return AddFromFileGBtxt (ifile);	
@@ -193,9 +195,7 @@ int		CMultSec::AddFromFile (ifstream& ifile)		// return la cantidad de sec add -
 }	 
 
 int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // -------------------    AddFromFileFASTA   ------------
-{	int j=0 ;													//long l= (_SecEnd ? _SecEnd-_SecBeg +1 : 0) ;
-	string Descriptor  ;
-
+{	
     LonSecPos secBeg = _SecLim.Min()  ;   // here beginig to read, set to 1 if originaly <1
     if (secBeg < 1) secBeg = 1;
 
@@ -215,11 +215,13 @@ int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // -------------------    Add
     if (lmax && lmin > lmax)
         return 0;
     
+	int NumSeq = 0;   // number os sequences
+	string Descriptor  ;
 	while (getline (ifile, Descriptor) )
     {
-		size_t b_d=Descriptor.find_first_not_of(
+		size_t name_end=Descriptor.find_first_not_of(
 								"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890!#$()*+-./<=>@[]^_{|}~"    );
-		string Fasta_NAME = Descriptor.substr(0,b_d );
+		string Fasta_NAME = Descriptor.substr(0,name_end );
 		Descriptor=Descriptor.substr(Fasta_NAME.length());
 
   		string Fasta_SEC ;					
@@ -233,7 +235,7 @@ int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // -------------------    Add
                                             Fasta_NAME , 
                                             _NNPar,
                                             lmax, 
-                                            secBeg  //  \todo: cambiar constr de CSec ????
+                                            secBeg  //  \todo: cambiar constr de CSec ???? use make_unique?
                                          )) ;                  assert(sec);
 						
 		if ( sec->Len() < lmin  )	
@@ -265,9 +267,9 @@ int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // -------------------    Add
         else
             AddSec(sec.release() );
 
-		j++;		
+		NumSeq++;		
 	}
-	return j;	
+	return NumSeq;	
 }
 
 int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::            AddFromFileBLAST  -----------------------------

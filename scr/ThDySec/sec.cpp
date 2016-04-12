@@ -1,5 +1,7 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2015
@@ -7,6 +9,7 @@
 * @file  ThDySec\scr\ThDySec\sec.cpp
 *
 * @brief 
+*
 */
 
 #ifdef WINDOWS_FORM_GUI
@@ -65,11 +68,11 @@ CSec::CSec (    const std::string&  sec,
                                       //      beg ,      end,   current position  
         LonSecPos sec_beging,         
                   sec_end,    
-                  sec_pos;    // s - string seq. Original string text of the seq.  (index in sec[])
+                  sec_pos;    // sec_X - string seq. Original string TEXT of the seq.  (index in sec[])
                   
         LonSecPos orig_beging=secBeg,  // -1 ?
                   orig_end,  
-                  orig_pos;  // o - original "abstract" seq for with s intent to be the representation
+                  orig_pos;  // o - original "abstract" seq for with sec intent to be the representation, for example some gene
                   
         LonSecPos /* fb, */           
                   /* fe, */     
