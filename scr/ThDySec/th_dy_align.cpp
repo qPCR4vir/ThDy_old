@@ -77,7 +77,7 @@ ThDyAlign::ThDyAlign(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr
 	force_ResizeTable();		
 }
 
-void ThDyAlign::ResizeTable(long LenSond, long LenTarg)		//	--------------------------------------------------------------	ResizeTable	---------
+void ThDyAlign::ResizeTable(LonSecPos LenSond, LonSecPos LenTarg)		//	--------------------------------------------------------------	ResizeTable	---------
 {	
 	bool initBorder = (LenSond+2 > _LenSond) ;	// Si la nueva sonda es mayor que las anteriores (tabla mas "ancha") ajustar los bordes
 	_LenSond	 = LenSond +2 ;					// Para que incluya los ´$´    ?
@@ -132,7 +132,7 @@ void	ThDyAlign::InitBorder()						//	-------------------------------------------
      }
 }
 
-void	ThDyAlign::Run(long tg_j_StartPos)  // tg_j_StartPos	:  pos de com del target !? -------------------------	Run	----------------
+void	ThDyAlign::Run(LonSecPos tg_j_StartPos /*= 1*/) // tg_j_StartPos	:  pos de com del target !? -------------------------	Run	----------------
 {   _maxglo = _InitMax;		// max del parametro rector :  como G o Tm
 	_maxgloi  = 0;			
 	_maxgloj  = 0;			//	_maxglot  = 0;			// ?????????????????// HACE FALTA ??????????????????
@@ -459,7 +459,7 @@ void	FracTDAlign::BeginAlign (CSec  *sonde, CSec *target)
 	_iterations = 1 ;
 }
 
-void	FracTDAlign::iterate		(float ta)
+void	FracTDAlign::iterate		(Temperature ta)
 {	assert ( _iterations ); 
 	assert ( _fixedNumIter>=0 ); 
 

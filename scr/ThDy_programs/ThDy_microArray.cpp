@@ -112,7 +112,7 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr,
 	std::unique_ptr<ThDyAlign> apAl; 	
 	apAl= Create_ThDyAlign(		IPrgPar_uArr->_cp, pr._Global._Len.Max() , tg._Global._Len.Max(), NNpar);	ThDyAlign	&Al=*apAl ;
 
-	string TableName = "Target / Probe (align method: " + string(Al.AlignMeth()) +  " )" ; 
+	string TableName = "Target / Probe (align method: " + Al.AlignMeth() +  " )" ; 
 	if (osTm)	osTm	<<TableName 	;		// No hace falta el if ?????   Se ignora I/O cuando no esta open??
 				osG		<<TableName	;
 				osPos	<<TableName  ;	

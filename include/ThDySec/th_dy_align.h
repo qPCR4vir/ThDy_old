@@ -342,8 +342,8 @@ class ThDyAlign_Tm			: public ThDyAlign  // -----------------------------Tm-----
 		CalcParam = &ThDyAlign::CalcParamTm;
 	} 
 
-	virtual const char *AlignMeth ()     {return "Tm"   ;}
-	Temperature	        GetMax_Tm ()const{return _maxglo;}
+	std::string   AlignMeth ()  override   {return "Tm"   ;}
+	Temperature	  GetMax_Tm ()  const      {return _maxglo;}
 };
 
 /// unused ?
@@ -356,8 +356,8 @@ class ThDyAlign_TmHits			: public ThDyAlign_Tm  // -----------------------------
 		:ThDyAlign_Tm(MaxLenSec, MaxLenSec, NNpar),	 _Tm_min(Tm_min), _Tm_max(Tm_max)
      {} 
 
-	virtual const char *AlignMeth (){return "TmHits";}
-	virtual	bool	     AddIfHit (long i, long j);
+	std::string   AlignMeth()  override {return "TmHits";}
+	bool	     AddIfHit  (LonSecPos i, LonSecPos j) override;
 	Temperature  _Tm_min, _Tm_max ; //aqui se usan????????????????
 };
 
@@ -370,8 +370,8 @@ class ThDyAlign_TmCand			: public ThDyAlign_Tm  // -----------------------------
                        std::shared_ptr<CSaltCorrNN>  NNpar)               /*, float Tm_min=CtoK(57), float Tm_max=CtoK(63) */
 		:ThDyAlign_Tm(MaxLenSec, MaxLenSec, NNpar){}                            /*,	 _Tm_min(Tm_min), _Tm_max(Tm_max)*/
 
-	virtual const char *AlignMeth(){return "TmCand";}
-	virtual bool	AddIfHit	(long i, long j);
+	std::string   AlignMeth()  override {return "TmCand";}
+	virtual bool	AddIfHit	(long i, long j) override;
 	void	Use			(CSecCand  *cand1, CSecCand *cand2)	{	_cs=cand1; _ct=cand2; ThDyAlign_Tm::Use	( &_cs->_Sec, &_ct->_Sec);}
 	void	FindCommon	(CSecCand  *cand1, CSecCand *cand2, bool colapse=true) {	Use	(cand1, cand2);
 																					Align( &_cs->_Sec, &_ct->_Sec); 
@@ -440,7 +440,7 @@ class ThDyAlign_G			: public ThDyAlign	// ------------------------------G-------
 	ThDyAlign_G(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar)// usar ultima Ta de calculo en NNpar, o "Set" despues
 		:	ThDyAlign(MaxLenSond, MaxLenTarg, NNpar, NNpar->forbidden_freeEnerg)
 																	{CalcParam = &ThDyAlign::CalcParamG;} 	
-	virtual const char *AlignMeth(){return "G";}
+	std::string AlignMeth()  override {return "G";}
 	float		 GetMax_G()const{return -_maxglo;} // mas o menos lo mismo, pero "comprobado", usa ultima Ta de calculo
 };
 
@@ -450,7 +450,7 @@ class FracTDAlign	: public ThDyAlign			// --------------------------Frac--------
 	int		_iterations, _maxNumIt, _fixedNumIter; //, _totalIterations 
 	Energy	_maxG_der ;  // epsilum 
  public:
-	virtual const char *AlignMeth(){return "FractG";}
+	 std::string AlignMeth()  override {return "FractG";}
 	 FracTDAlign(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar)  
 		 :	ThDyAlign	(MaxLenSond, MaxLenTarg, NNpar),
 																	_iterations(0),	// prohibido comenzar sin BeginAlign
@@ -482,7 +482,7 @@ class ThDyAlign_restTm			: public ThDyAlign  // ---------------------------HACER
 	ThDyAlign_restTm(long MaxLenSond, long MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar, Temperature minTm)
 			:		ThDyAlign(MaxLenSond, MaxLenTarg, NNpar, -274)
 			{		_minTm = minTm ; /*CalcParam = &ThDyAlign::CalcParamRs;*/} 
-	virtual const char *AlignMeth(){return "restTm";}
+	std::string  AlignMeth()  override {return "restTm";}
 	virtual inline float CalcParam (float S, float H) const		
 	{	
 		Temperature Tm = _NNpar->CalcTM (S +_restS, H +_restH);
@@ -508,17 +508,3 @@ std::ofstream	&operator<<(std::ofstream &stream,	ThDyAlign_G		&G_Al) ;
 std::ofstream	&operator<<(std::ofstream &stream,	FracTDAlign		&FrAl) ;
 #endif
 
-
-//	inline float CalcParamG (float S, float H) const {return NNpar->CalcG  (S, H);} 
-	//virtual inline float CalcParam  (float S, float H) const {return NNpar->CalcG  (S, H);} 
-//	inline float CalcParamTm(float S, float H) const {return NNpar->CalcTM (S, H);}  // = 0; hacer virtual ????
-//virtual	inline float CalcParam  (float S, float H) const {return NNpar->CalcTM (S, H);}  // duplicado--- dejar????
-	/*virtual inline float CalcParam  (float S, float H) const {return NNpar->CalcTM (S, H);}  // = CalcParamTm; esto  o lo sig*/
-				//float Tm_sig,
-				//float Tm_min, 		float Tm_max, 
-				//int L_min,			int L_max, 
-				//float MaxSelfTm)
-			//	:	
-					//_G_min(G_min)	, _G_max(G_max) ,
-					//_Tm_min(Tm_min) , _Tm_max(Tm_max),
-					//_L_min (L_min ) , _L_max (L_max ),
