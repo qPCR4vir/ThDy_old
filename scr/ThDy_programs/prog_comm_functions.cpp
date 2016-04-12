@@ -40,7 +40,7 @@ inline void Hybrid(CSec &s, CSec &t, 	ThDyAlign &Al,	ofstream &osTm,
 														CTable<Temperature> *tlTm,
 														CTable<Energy>	*tlG,
 														CTable<SecPos> *tlPos*/)
-{	Al.Align( &(s), &(t));					//  virtual !!!
+{	Al.Align( &s, &t);					//  virtual !!!
 	Al.SelectOptParam(Al.Ta());				//	FrAl.GetOptHit();
 
 	if (osTm	) osTm		<<sep	<<	KtoC(Al.Tm())			;	if (rtbl) *rtbl << TmGPos ( KtoC( Al.Tm() ), Al.G()	/ 1000	,Al._maxgloj);

@@ -85,81 +85,134 @@
 #include "sec_mult.h"
 #include "common.h" 
 
-//  OJO !!! La primera sec a alinear es la sonda - "simple cadena", mientras que la seg sec es el Target - de doble cadena
-//  y por tanto normalmente (by default) se hibrida la sonda con la cadena complementaria del Target.
-//  proximamente se hibridara con las dos cadenas.
 
 class CHit;
 class CHitAligned ;
 //extern char sep[];
-class ThDyAlign													// clase abstr?   hace lo que ThDyAlign_Tm ... simplificar? ------   ThDyAlign  ---
-{public:		friend class	CHitAligned ;	 friend class	CHit ;
-					 ThDyAlign	(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar, float InitMax= 0 );
-	virtual			~ThDyAlign	() ;
-	virtual const char *AlignMeth(){return "ThAl";}
-	Temperature		SetTa	(Temperature Ta)					{Temperature T=_Ta;		_NNpar->_Ta=_Ta=Ta;	   return T;}
-	Temperature	     Ta		()const								{return _Ta;} // da Ta "seteada", la que se elige para el "experimento"  ---REVISAR esto de las Ta 
-	void			SetSig	(Temperature Tm_sig, Energy G_sig)	{_Tm_sig=Tm_sig;	_G_sig=G_sig ;}	
-	virtual void	Align	(CSec  *sonde, CSec *target)		{	ClearHits();
-																	Use	(sonde, target);	//	InitBorder	();
-																	Run();
-																	SelectOptParam();	// a la Ta en que se calculo
-																}
-	void			force_ResizeTable();		//	void			force_ResizeTable(long LenSond, long LenTarg) ;
+
+
+//  ------------------------------------------------------   ThDyAlign  ----------------------------------
+
+/// base for thermodynamic dynamicprogramm alignment calculation classes
+
+/// "hybrid" the first sequence (the sonde) as simple-strand onto the 
+///  complementary (by default) strand of the double-stranded second sequence (the target). 
+/// It uses the code (Base) from CSec as input sequence 
+/// Construct once, and reuse for each new paar sonde/target, and after each use of Align()
+/// use the "OUTPUT" functions to return results
+/// The "OUTPUT" functions Get_X(i,j)- return parametr x at (i,j) (dynamic-table-coordinates-position in sequences) for maximized algorithm parametr
+/// while the other "OUTPUT" x() functions return parametr x for maximized algorithm parametr
+/// \todo: make clase abstr?   do what ThDyAlign_Tm do... simplify?
+/// \todo: make hibridization on both strand simulstaneulsly
+class ThDyAlign												
+{
+ public:		
+	friend class	CHitAligned ;	 
+	friend class	CHit ;
+
+	ThDyAlign	(LonSecPos MaxLenSond, 
+				LonSecPos MaxLenTarg, 
+				std::shared_ptr<CSaltCorrNN>  NNpar, 
+				float InitMax= 0 );
+	virtual	~ThDyAlign	() ;
+	
+	                               /// just return the name of the method
+	virtual std::string AlignMeth() 
+	{  return "ThAl"; }
+
+	                              /// will be used in the next "experiment"
+	Temperature		SetTa	(Temperature Ta)					
+	{
+		Temperature T= _Ta;		
+		_NNpar->_Ta  = _Ta=Ta;	   
+		return T;
+	}
+
+	  /// return setted Ta "seteada", which will be used in the next "experiment"   \todo: review all around Ta 	
+	Temperature	     Ta		()const							
+	{  return _Ta; } 
+
+	void			SetSig	(Temperature Tm_sig, Energy G_sig)	///< Tm and G cut off values
+	{ _Tm_sig=Tm_sig;	_G_sig=G_sig ;}	
+
+	       /// main trigger of alignment calculation of the sonde on the camplementary strand of the target \todo: use const references
+	virtual void	Align	( CSec *sonde,  CSec *target)		
+	{	ClearHits();
+		Use	(sonde, target);	//	InitBorder	();
+		Run();
+		SelectOptParam();	// a la Ta en que se calculo
+	}
+
+	        /// Ta used for the last calculation (-1 before any calculation) 
+	Temperature		last_Ta()const{return _Ta_lastCalc;}  
+
+	void			force_ResizeTable();		    //	void force_ResizeTable(long LenSond, long LenTarg) ;
 	void			ResizeTable(LonSecPos LenSond, LonSecPos LenTarg);
-	Temperature		last_Ta()const{return _Ta_lastCalc;} // da Ta a la que se realizo el ultimo calculo, (-1) antes del calculo
-	enum Step {	st_a=1, st_i=1, st_b=2, st_j=2, st_d=3, NoStep=0,		// back punter matriz a:i+1 dirc sonda, b:j+1 dir tg, d:diag
+
+	///  back pointer matrix  a:i+1 -direct sonde,    b:j+1 -dir tg,   d:diag
+	enum Step {	st_a=1, st_i=1, st_b=2, st_j=2, st_d=3, NoStep=0,		 
 				st_0=0, st_1, st_2, st_3, st_4, st_5, st_6, st_7,
 				c_01=01, c_02=2,c_04=4, c_05=5, c_06=6, c_08=8, c_09=9, c_10=10, 
 			  } *_pre	;   /*,*_pre0, *_pre1, *_pre2*/ 
 protected:
-	void			Use			(CSec  *sonde, CSec *target);
+	void			Use			(CSec  *sonde, CSec *target);            ///< \todo: take const ?
+	void			Run			(LonSecPos tg_j_StartPos =1);            ///< the actual calculation
+	void			ClearHits	()							{	_Hits.Destroy(); }
+	virtual	bool	AddIfHit	(LonSecPos i, LonSecPos j)	{	return false;    }
 	void			ResizeTable	()							{	ResizeTable(_sd->Len() , _tg->Len() ) ;}
-	void			Run			(LonSecPos tg_j_StartPos =1);
-	void			ClearHits	()							{	_Hits.Destroy();}
-	virtual	bool	AddIfHit	(LonSecPos i, LonSecPos j)	{	return false;}
 private:
 	void			InitBorder	();
 public:
-	float	(ThDyAlign::*CalcParam)(Entropy S, Energy H)const ;
-			Temperature	CalcParamTm(Entropy S, Energy H) const {return    _NNpar->CalcTM (S, H);}  // = 0; hacer virtual ????
+	float	(ThDyAlign::*CalcParam)(Entropy S, Energy H)const ; ///<  \todo: make it virtual ????
+			Temperature	CalcParamTm(Entropy S, Energy H) const {return    _NNpar->CalcTM (S, H);} 
 			Energy		CalcParamG (Entropy S, Energy H) const {return  - _NNpar->CalcG  (S, H);} 
 			Temperature	CalcParamRs(Entropy S, Energy H) const {	Temperature Tm = _NNpar->CalcTM (S +_restS, H +_restH);	//  EXPERIMENTAL
 																	if ( _NNpar->CalcTM (S , H )==0 ) Tm= 0;		//if ( Tm < _minTm ) return 0;
 																	Tm -= _sd->_Tm.Ave();
 																	return 		Tm ;
 																}  
-								// "OUTPUT" usar las sig. solo despues de CalculateTable  !!!
-protected:													// --------- Get_X	----------    da param en (i,j) para Tm max !!!!    ?????????
-	Energy		 Get_H_max_para	(LonSecPos i, LonSecPos j)const;	
-	Entropy		 Get_S_max_para	(LonSecPos i, LonSecPos j)const;
-	Temperature	 Get_Tm_max_para(LonSecPos i, LonSecPos j)const;
-	Energy		 Get_G_max_para	(LonSecPos i, LonSecPos j)const {return Get_G_max_para(i,j, last_Ta() );}		// a la Ta en que se calculo
-	Energy		 Get_G_max_para	(LonSecPos i, LonSecPos j, Temperature Ta )const;						// eliges a que Ta
-															// --------- Getmaxglo_X	---    
-	//Energy		 Getmaxglo_H()				const		{return Get_H (_maxgloi,_maxgloj);}
-	//Entropy		 Getmaxglo_S()				const		{return Get_S (_maxgloi,_maxgloj);}
-	//Temperature	 Getmaxglo_Tm()				const		{return Get_Tm(_maxgloi,_maxgloj);}
-	//Energy		 Getmaxglo_G()				const		{return Get_G (_maxgloi,_maxgloj);}			// a la Ta en que se calculo
-	//Energy		 Getmaxglo_G(Temperature Ta)const		{return Get_G (_maxgloi,_maxgloj,Ta);}		// eliges a que Ta
-	void		 SelectOptParam_max_para(LonSecPos i, LonSecPos j, Temperature Ta );				// eliges a que Ta
 
-															// ---- SelectOptParam ---    segun step !!!!!-------alternativa a   Get_X	
-	void		 SelectOptParam(LonSecPos i, LonSecPos j) {return SelectOptParam(i,j, last_Ta() );}	// a la Ta en que se calculo
-	void		 SelectOptParam(LonSecPos i, LonSecPos j, Temperature Ta );							// eliges a que Ta
-protected:										// ---------alternativa a   Get_X	----------    da param en (i,j) segun step()i,j) !!!!    ?????????
-	Energy		Get_H	(LonSecPos i, LonSecPos j, Step st) const;
-	Entropy		Get_S	(LonSecPos i, LonSecPos j, Step st) const;
-	Step		Get_pre	(LonSecPos i, LonSecPos j, Step st) const; 
-	inline Step	step	(LonSecPos i, LonSecPos j		  ) const {return pre(i,j);} 
-public:										// ------ Lo mismo que : Get_X , pero calculados todos de una vez.
+
+			// "OUTPUT" functions to return results. Use only after Align()  !!!
+
+protected:						
+	         // --------- Get_X(i,j)	---------- return parametr at (i,j) for maximized algorithm parametr !!!!    ?????????
+
+	Energy		 Get_H_max_para	(LonSecPos i, LonSecPos j)const;	///< "OUTPUT" function
+	Entropy		 Get_S_max_para	(LonSecPos i, LonSecPos j)const;	///< "OUTPUT" function
+	Temperature	 Get_Tm_max_para(LonSecPos i, LonSecPos j)const;	///< "OUTPUT" function
+	Energy		 Get_G_max_para	(LonSecPos i, LonSecPos j)const 	///< "OUTPUT" function. G at the Ta used for the calculation
+	                            {return Get_G_max_para(i,j, last_Ta() );}		 
+	Energy		 Get_G_max_para	(LonSecPos i, LonSecPos j, Temperature Ta )const;	///< "OUTPUT" function. G at given Ta
+
+			// --------- Getmaxglo_X	---    
+
+	void		 SelectOptParam_max_para(LonSecPos i, LonSecPos j, Temperature Ta );	///< "OUTPUT" function			// eliges a que Ta
+
+			// ---- SelectOptParam ---    segun step !!!!!-------alternativa a   Get_X	
+
+	void		 SelectOptParam(LonSecPos i, LonSecPos j) {return SelectOptParam(i,j, last_Ta() );}	///< "OUTPUT" function // a la Ta en que se calculo
+	void		 SelectOptParam(LonSecPos i, LonSecPos j, Temperature Ta );							///< "OUTPUT" function // eliges a que Ta
+protected:										
+	       
+	        // ---------alternative to   Get_X	----------    da param en (i,j) segun step()i,j) !!!!    ?????????
+
+	Energy		Get_H	(LonSecPos i, LonSecPos j, Step st) const; ///< "OUTPUT" function
+	Entropy		Get_S	(LonSecPos i, LonSecPos j, Step st) const; ///< "OUTPUT" function
+	Step		Get_pre	(LonSecPos i, LonSecPos j, Step st) const; ///< "OUTPUT" function
+	inline Step	step	(LonSecPos i, LonSecPos j		  ) const {return pre(i,j);} ///< "OUTPUT" function
+
+public:										
+	
+	        // ------ Same that : Get_X , pero calculados todos de una vez. "OUTPUT" x() functions return parametr x for maximized algorithm parametr
+
 	void		 SelectOptParam()				{return SelectOptParam(_maxgloi,_maxgloj);}			// a la Ta en que se calculo
 	void		 SelectOptParam(Temperature Ta ){return SelectOptParam(_maxgloi,_maxgloj,Ta);}		
-	Energy		 H ()const{return _optH ;}
-	Entropy		 S ()const{return _optS ;}
-	Temperature	 Tm()const{return _optTm;}
-	Energy		 G ()const{return _optG ;} // la G depende de como selecionaste los optParam
-	Energy		 G (Temperature Ta )const{return +(_optH-Ta*_optS);  } // la G NO depende de como selecionaste los optParam
+	Energy		 H ()const{return _optH ;}          ///< "OUTPUT" function
+	Entropy		 S ()const{return _optS ;}          ///< "OUTPUT" function
+	Temperature	 Tm()const{return _optTm;}          ///< "OUTPUT" function
+	Energy		 G ()const{return _optG ;}          ///< "OUTPUT" function. G depend on how optParam were selected
+	Energy		 G (Temperature Ta )const{return +(_optH-Ta*_optS);  }  ///< "OUTPUT" function G NOT depend on how optParam were selected
 	CHit		*GetOptHit();
 
 	void		Export_Hits    (std::ofstream &osHits , char *sep);
@@ -171,28 +224,35 @@ public:										// ------ Lo mismo que : Get_X , pero calculados todos de una v
 	virtual int	IterationNum()const{return 1;}			//  ??? hace falta aqui?
 
 public:		
-	static int const  sti[], stj[], sti1[], stj1[];
+	static int const  sti[], stj[], sti1[], stj1[];    /// \todo make non public ?
 	std::shared_ptr<CSaltCorrNN>  _NNpar ;
-	CSec				*_sd , *_tg ;
-	long				_THits, _HitsOK ;   // Hacer interface
-	LonSecPos			_maxgloi, _maxgloj			/*, _maxglot*/ ;
+	CSec				*_sd , *_tg ;        
+	long				_THits,     ///< total number of hits 
+		                _HitsOK ;   ///< total of Ok hits: which are shraed with all the the other aligments. \todo: make interface?
+	LonSecPos			_maxgloi, _maxgloj	;	///< coordenates of the global max in DP matrix	/*, _maxglot*/ 
 
 protected:	
-	Temperature			_Tm_sig, _minTm, _Ta, _Ta_lastCalc;
-	Energy				_G_sig ;		// _Tm_min, _Tm_max ; // _Tm_min, _Tm_max ; aqui se usan????????????????
+	Temperature			_Tm_sig,    ///< "significative", cut-off Tm
+		                _minTm, 
+		                _Ta,
+		                _Ta_lastCalc;
+	Energy				_G_sig ;    ///< "significative", cut-off G		// _Tm_min, _Tm_max ; // _Tm_min, _Tm_max ; aqui se usan????????????????
 
 	LonSecPos			_LenSond, _LenTarg,  _LenSondPlus1 ;
 	long				_TableSize;
 
-	Energy				*_dH0, *_dH1, *_dH2;          // Dynamic Programming Table for Entropy
-	Entropy				*_dS0, *_dS1, *_dS2;          // Dynamic Programming Table for Enthalpy
+	               // Dynamic Programming (DP) Tables for Entropy and Enthalpy
+	Energy				*_dH0, ///< Enthalpy DP matrix for Enthalpy - for steps that will align x(i+1) with y(j+1) - diagonal, match, unmatch
+		                *_dH1, ///< Enthalpy DP matrix for Enthalpy - for steps that will align x(i+1) with a gap in the target  
+		                *_dH2; ///< Enthalpy DP matrix for Enthalpy - for steps that will align y(i+1) with a gap in the sonde            
+	Entropy				*_dS0, *_dS1, *_dS2;         
 
-	float		_InitMax, _maxglo, _max ;   // max del parametro rector :  como G o Tm
+	float		_InitMax, _maxglo, _max ;   ///< max of rector parametr  :  like G o Tm
 
-	Entropy		_optS;
-	Energy		_optH, _optG;
-	Temperature	_optTm ;
-	CList		_Hits ;
+	Entropy		_optS;           ///< optimal value
+	Energy		_optH, _optG;    ///< optimal value
+	Temperature	_optTm ;         ///< optimal value
+	CList		_Hits ;         ///< the list of detected hits. \todo: make vector or std::list<CHit>
 
 
  protected:
@@ -210,29 +270,35 @@ protected:
 												_restH = _sd->_SdH[_sd->Len() -1 ] - (i==1?0:_sd->_SdH[i-2]);
 											;}
 };
+//Energy		 Getmaxglo_H()				const		{return Get_H (_maxgloi,_maxgloj);}
+//Entropy		 Getmaxglo_S()				const		{return Get_S (_maxgloi,_maxgloj);}
+//Temperature	 Getmaxglo_Tm()				const		{return Get_Tm(_maxgloi,_maxgloj);}
+//Energy		 Getmaxglo_G()				const		{return Get_G (_maxgloi,_maxgloj);}			// a la Ta en que se calculo
+//Energy		 Getmaxglo_G(Temperature Ta)const		{return Get_G (_maxgloi,_maxgloj,Ta);}		// eliges a que Ta
 
-class CHit : public CLink // Hit dentro de la Matriz de prog dinamica
+/// Hits "inside" of the dynamic programming Matriz, when the algorithm parametr pass the X_sig cut off. \todo: no CLink
+class CHit : public CLink 
 {	
 public: 	
-	LonSecPos		_i,_j, _i0, _j0, _l;
-	DNAstrand		_strnd;
-	ThDyAlign::Step _Step ;
+	LonSecPos		_i,_j, _i0, _j0, _l;   ///< begin, end and lenth of the local alignment hit in both strands
+	DNAstrand		_strnd;                ///< ?
+	ThDyAlign::Step _Step ;                ///< ?
 	Energy			_H,  _G ;
 	Entropy			_S ;
 	Temperature		_Tm ;
-	float			_max ;
+	float			_max ;                 ///< ?
 	CHit (LonSecPos i, LonSecPos j, Temperature Tm): _i(i), _j(j), _Tm(Tm){}
 	CHit (LonSecPos i, LonSecPos j, Energy H, Entropy S,float max, ThDyAlign::Step st): _i(i), _j(j), _H(H), _S(S), _max(max),_Step(st) {};
 	CHit (LonSecPos i, LonSecPos j, LonSecPos i0, LonSecPos j0, LonSecPos l,Energy H, Entropy S,float max, ThDyAlign::Step st)
 		: _i(i), _j(j),  _i0(i0), _j0(j0), _l(l)      ,_H(H), _S(S), _max(max),_Step(st) {};
-	CHit (ThDyAlign &Al);  // Hit optimo: recalcula optP de AL a la temp Ta actual NNpar
+	CHit (ThDyAlign &Al);  ///< save the optimal Hit: recalcule optP of AL at temperatue Ta set in NNpar
 	explicit CHit (){}
 };
 
 class CHitAligned  : public CHit
 {
 public:
-	ISec::sequence          _sd, _tg ;
+	ISec::sequence          _sd, _tg ;  ///< string with the aligned sequences, (including introduced gaps?)
 	std::vector<ThDyAlign::Step> _st ;
 	long                    _mt, _mm, _sgap, _tgap ;    // count sonde and target - matchs , mistmatch, and gaps
 	float		            _Hr, _Sr, _Gr, _Tmr ;
@@ -250,11 +316,12 @@ public:
 };
 
 class AlignedSecPar : public CHitAligned
-{public: 
-explicit AlignedSecPar( ISec::sequence s,  ISec::sequence t, std::shared_ptr<CSaltCorrNN>  NNpar ):CHitAligned(s, t, NNpar){};
-Temperature Tm(){return _Tmr;}
-float  G(){return _Gr ;}
-	virtual ~AlignedSecPar()  {_sd=_tg=nullptr;}
+{
+ public: 
+	explicit AlignedSecPar( ISec::sequence s,  ISec::sequence t, std::shared_ptr<CSaltCorrNN>  NNpar ):CHitAligned(s, t, NNpar){};
+	Temperature Tm(){return _Tmr;}
+	float  G(){return _Gr ;}
+		virtual ~AlignedSecPar()  {_sd=_tg=nullptr;}
 };
 
 //
@@ -264,20 +331,23 @@ float  G(){return _Gr ;}
 //	return stream;
 //}
 
-
+/// the rector parametr for DP is Tm (simplistically) = H / S  (G=H-ST, Tm is T for which G=0)
 class ThDyAlign_Tm			: public ThDyAlign  // -----------------------------Tm--------------------ThDyAlign_Tm------
 {public:	
 	ThDyAlign_Tm ( long MaxLenSond, 
                    long MaxLenTarg, 
                    std::shared_ptr<CSaltCorrNN>  NNpar )
 		:ThDyAlign(MaxLenSond, MaxLenTarg, NNpar, NNpar->kein_Tm)
-	{CalcParam = &ThDyAlign::CalcParamTm;} 
+	{
+		CalcParam = &ThDyAlign::CalcParamTm;
+	} 
 
 	virtual const char *AlignMeth ()     {return "Tm"   ;}
 	Temperature	        GetMax_Tm ()const{return _maxglo;}
 };
 
-class ThDyAlign_TmHits			: public ThDyAlign_Tm  // -----------------------------Tm---------------ThDyAlign_TmHits----- no en uso????------
+/// unused ?
+class ThDyAlign_TmHits			: public ThDyAlign_Tm  // -----------------------------Tm---------------ThDyAlign_TmHits----- not in use????------
 {public:	
 	ThDyAlign_TmHits(   long                    MaxLenSec, 
                       std::shared_ptr<CSaltCorrNN>  NNpar, 
@@ -291,6 +361,9 @@ class ThDyAlign_TmHits			: public ThDyAlign_Tm  // -----------------------------
 	Temperature  _Tm_min, _Tm_max ; //aqui se usan????????????????
 };
 
+/// Designed specially to find probes that hybridice in both sequences and in others targets too.
+
+/// Take CSecCand instead of CSec, the rector parametr for DP is Tm 
 class ThDyAlign_TmCand			: public ThDyAlign_Tm  // -----------------------------Tm-----------------ThDyAlign_TmCand---------
 {public:	
 	ThDyAlign_TmCand ( long                      MaxLenSec, 
@@ -307,8 +380,8 @@ class ThDyAlign_TmCand			: public ThDyAlign_Tm  // -----------------------------
 	CSecCand	*_cs, *_ct;
 	//float  _Tm_min, _Tm_max ; //aqui se usan????????????????
 };
-//
 
+/// grapper for CSec adding Rangs of hit in each position to track existing thermodynamic hits with the other sequences
 class CMSecCand : public CLink		//--------------------------------Tm------ CMSecCand --------------------------------
 {public:
 	CMSecCand(	SondeLimits sL ,
@@ -356,6 +429,7 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 	CList	_LSecCand, _LMSecCand;
 };
 
+///  the rector parametr for DP is G
 class ThDyAlign_G			: public ThDyAlign	// ------------------------------G-------------------------
 {public:
 	ThDyAlign_G(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar, Temperature Tm)
@@ -370,6 +444,7 @@ class ThDyAlign_G			: public ThDyAlign	// ------------------------------G-------
 	float		 GetMax_G()const{return -_maxglo;} // mas o menos lo mismo, pero "comprobado", usa ultima Ta de calculo
 };
 
+/// fractional DP
 class FracTDAlign	: public ThDyAlign			// --------------------------Frac-----------------------------
 {	bool	_finisch ;
 	int		_iterations, _maxNumIt, _fixedNumIter; //, _totalIterations 
@@ -378,12 +453,12 @@ class FracTDAlign	: public ThDyAlign			// --------------------------Frac--------
 	virtual const char *AlignMeth(){return "FractG";}
 	 FracTDAlign(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar)  
 		 :	ThDyAlign	(MaxLenSond, MaxLenTarg, NNpar),
-																			_iterations(0),	// prohibido comenzar sin BeginAlign
-																			_maxG_der(1.0f),// super excesivo
-																			_maxNumIt(10),	// super excesivo
-																			_finisch(true),	// prohibido comenzar sin BeginAlign
-																			_fixedNumIter(0)// NOT fixed !!	
-																		{}
+																	_iterations(0),	// prohibido comenzar sin BeginAlign
+																	_maxG_der(1.0f),// super excesivo
+																	_maxNumIt(10),	// super excesivo
+																	_finisch(true),	// prohibido comenzar sin BeginAlign
+																	_fixedNumIter(0)// NOT fixed !!	
+																{}
 	 void			SetmaxG_der	(Energy maxG_der) { _maxG_der = maxG_der;}	// max desviacion permisible de la G sobre 0 o de G(Tm)
 	 void			SetEpsilum  (Energy maxG_der) {  SetmaxG_der( maxG_der);} // exactamente lo mismo
 	 void			SetMaxNumIt	(int maxNumIt)	 { _maxNumIt = maxNumIt;}
@@ -409,7 +484,9 @@ class ThDyAlign_restTm			: public ThDyAlign  // ---------------------------HACER
 			{		_minTm = minTm ; /*CalcParam = &ThDyAlign::CalcParamRs;*/} 
 	virtual const char *AlignMeth(){return "restTm";}
 	virtual inline float CalcParam (float S, float H) const		
-	{	Temperature Tm = _NNpar->CalcTM (S +_restS, H +_restH);
+	{	
+		Temperature Tm = _NNpar->CalcTM (S +_restS, H +_restH);
+
 		if ( _NNpar->CalcTM (S , H )==0 ) Tm= 0;
 		//if ( Tm < _minTm ) return 0;
 		Tm -= _sd->_Tm.Ave();
