@@ -65,71 +65,70 @@ CSec::CSec (    const std::string&  sec,
 		if (secBeg<1) 
               secBeg=1; // from the very begginig
 
-                                      //      beg ,      end,   current position  
-        LonSecPos sec_beging,         
-                  sec_end,    
-                  sec_pos;    // sec_X - string seq. Original string TEXT of the seq.  (index in sec[])
-                  
-        LonSecPos orig_beging=secBeg,  // -1 ?
-                  orig_end,  
-                  orig_pos;  // o - original "abstract" seq for with sec intent to be the representation, for example some gene
-                  
-        LonSecPos /* fb, */           
-                  /* fe, */     
-                  fltr_pos;  // f - filtred seq, or what will be the resulting seq   (index in _c[], _b, etc.)
+            //      Y_beg ,  Y_end,  Y_pos (current position) are coordenates in Y. This coordenates will be adjusted in the first (pre)read
 
-        const LonSecPos sLen=sec.length();
+            // sec_X - string seq. Original string TEXT of the seq.  (index in sec[0])     
+        const LonSecPos sec_Len=static_cast<LonSecPos>( sec .length());
+		if (sec_Len < 2)  return;  /// return if only 0 or 1 base to analize
+        LonSecPos sec_beging =0,     
+                  sec_end    =sec_Len,    
+                  sec_pos    =0;   
+
+            // orig_X - original "abstract" seq for which sec intent to be the representation, for example some gene: is the only intersting for a "biologist"
+		    // index orig gene[1] 
+		LonSecPos orig_beging = 0,  // secBeg,
+                  orig_end    =  lmax ? secBeg + lmax -1 : secBeg + sec_Len -1,
+                  orig_pos    = 0;   
+                  
+            // fltr - filtred seq, or what will be the resulting seq   (index in _c[1], _b[1], etc. becouse [0] is ? )
+        LonSecPos fltr_pos =1;  
+				/* fb, */           
+                /* fe, */     
 			
-        for (sec_pos= 0, orig_pos= 0 ; sec_pos<sLen   ; sec_pos++) 
-            if( is_degbase	[Base (sec[sec_pos])] ) 	             // salta no-bases pero no "-"
-            {   
-                if ( orig_pos == orig_beging-1 )                     // y las primeras secBeg-1 bases 
-                    break;
-                ++orig_pos ;
-            }  
-        Base gap=basek[0];  // "-"
-        for (                  ; sec_pos<sLen && !is_degbase[(Base)sec[sec_pos]]  ; sec_pos++) ; // trow no bases
-        for (sec_beging=sec_pos; sec_pos<sLen &&    (((Base)sec[sec_pos]) == gap) ; sec_pos++) ; // count "-"
+		// skip  non base and first secBeg bases or gaps in sec and set it in orig
+		while ( !is_degbase[base(sec[sec_beging])] || ++orig_beging < secBeg ) // skip no-bases but not gaps "-"
+			if (++sec_beging >= sec_Len) return;    // the sec had no more nt, but we dont reach the desired beg in the gene
 
-        orig_pos   += (sec_pos - sec_beging); 
-        sec_beging  = sec_pos ;
-        orig_beging = orig_pos +1 ;
+        Base c, gap=basek[0];  // "-"
 
-        if ( sec_pos >= sLen-1 )   /// return if only 0 or 1 base to analize
-            return;
+		// skip any further non base or gaps, and set orig beg to the first actual non gap nt in sec
+		while (c = base(sec[sec_beging]), (c == gap || !is_degbase[c] ) )
+		{
+			if (c == gap)
+				if (++orig_beging >= orig_end) return;  // we find no nt, but we reach the desired end of the gene
 
-        sec_beging=sec_pos; /// Now we are at the position were we beging to read the bases of the sequence
-                            /// but first we want to know how many bases are there making a pre - read.
- 		if (lmax)			
-		{	
-            orig_end    = orig_beging+lmax -1 ;
-            //orig_beging = orig_pos+1 ;
-
-			for (         ; sec_pos<sLen   ; sec_pos++) 
-                if( is_degbase	[Base (sec[sec_pos])] ) 
-                {   
-                    ++orig_pos ;
-                    if ( orig_pos == orig_end )
-                    {
-                        lmax=0;   /// the lmax was not used becouse the seq is too short
-                        ++sec_pos ;
-                        break;
-                    }
-                }     /// the lmax was used 
-		}else
-		{	 
-            //orig_beging = orig_pos+1 ;
-			for (         ; sec_pos<sLen            ; sec_pos++) 
-                if( is_degbase	[Base (sec[sec_pos])] ) 
-                    ++orig_pos ;	// salta no-bases 
+			if (++sec_beging >= sec_Len) return;    // the sec had no more nt, but we dont reach the desired beg in the gene
 		}
-        sec_end = sec_pos  ;
-        for ( --sec_end;  !is_degbase[(Base)sec[sec_end]]  ; --sec_end ) ;   // back non base
-        for (   sec_end;  sec_end>sec_beging  &&    (((Base)sec[sec_end]) == gap) ; --sec_end )--orig_pos ;
 
-        orig_end= orig_pos ;
-        
-        if (orig_beging > 1 || sec_pos < sLen)    // there  are initial ----, posible the sec not beg at the beg of the aln
+		orig_pos = orig_beging ; /// where in alignment really beging the nts of this sequence, after all gaps
+		sec_pos  = sec_beging ;  /// Now we are at the position were we beging to read the bases of the sequence
+
+        if (sec_beging >= sec_Len-1 || orig_beging >= orig_end)   return; /// return if only 0 or 1 base to analize ???
+           
+        /// first we want to know how many bases are there making a pre - read.
+		do
+		{
+			c = base(sec[sec_pos]);
+			if (is_degbase[c] && c != gap) // a nt, n gap - count it
+				if (++orig_pos >= orig_end) break;  // we find no nt, but we reach the desired end of the gene
+
+			if (sec_pos == sec_Len - 1) break; // this was the last char in sec
+			++sec_pos;
+		} while ( true );
+
+		sec_end = sec_pos  ;
+		orig_end = orig_pos ;
+
+        /// now go back to ignore terminal gaps and non bases in sec 
+		while (c = base(sec[sec_end]), (c == gap || !is_degbase[c] ) )
+		{
+			if (c == gap)
+				if ( orig_beging >= --orig_end) return;  // we find no nt 
+
+			if ( sec_beging >= --sec_end) return;    // the sec had no nt
+		}
+
+        if (orig_beging > 1 || orig_pos > orig_end)    // there  are initial or terminal ----, posible the sec not beg at the beg of the aln
         {
             if (! _aln_fragment)
                 _aln_fragment.reset(new Aligned_fragment);
@@ -139,8 +138,8 @@ CSec::CSec (    const std::string&  sec,
 
         LonSecPos len = orig_end-orig_beging+1;   /// _len is the numer of "bases" to be readed (posible including gaps and deg-bases, but not external gaps)
 			              /// as in:" TGCA$" . Dont count the 2 '$' - principio y fin de Kadelari and the final '\0'
-        if ( sLen < 2 )   /// return if only 0 or 1 base to analize
-            return;
+        if (len < 2 )  return;  /// return if only 0 or 1 base to analize
+           
 		_c  .reserve(len+2)   ;
 		_b  .reserve(len+2)   ;
 		_SdS.reserve(len+1)   ;
@@ -162,8 +161,8 @@ CSec::CSec (    const std::string&  sec,
 		_c.push_back( a_1  );
 		_b.push_back( a_1 =bk2nu[is_base[a_1]]) ;						// que hacer si en la sec hay bases deg que Kadelari no considera?
 
-		for (sec_pos=sec_beging+1, fltr_pos= 2; fltr_pos <= len && sec_pos <= sec_end  ; ++sec_pos)						// suficiente    curPos <= _len   ???
-			if ( a=is_degbase	[ Base(sec[sec_pos] )] ) 	
+		for (sec_pos=sec_beging+1, fltr_pos= 2; fltr_pos <= len && sec_pos <= sec_end  ; ++sec_pos)		// suficiente  fltr_pos <= len   ???
+			if ( a=is_degbase	[ base(sec[sec_pos] )] ) 	
 			{	
                 fltr_pos++ ;
                 if(sec[sec_pos]==gap)
