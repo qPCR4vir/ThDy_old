@@ -164,9 +164,9 @@ CSec::CSec (    const std::string&  sec,
 		for (sec_pos=sec_beging+1, fltr_pos= 2; fltr_pos <= len && sec_pos <= sec_end  ; ++sec_pos)		// suficiente  fltr_pos <= len   ???
 			if ( a=is_degbase	[ base(sec[sec_pos] )] ) 	
 			{	
-                fltr_pos++ ;
-                if(sec[sec_pos]==gap)
+                if(sec[sec_pos]==gap)   // ignore gaps !!!!
                     continue;
+                fltr_pos++ ;  
 				_GCp	+= is_GC		[a] ;						// 1-G or C, 0-lo demas.      Y que con las bases deg ??????????????????
 				_GrDeg	*= grad_deg		[a] ;
 				_Count  [  db2nu		[a] ]++ ;
