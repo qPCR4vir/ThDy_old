@@ -359,6 +359,7 @@ class CMultSec	 : public CLink
                else return 0;
            }
 
+		CMultSec		*findComParent		( CMultSec	*ms	);
 	private:
         CList			_LSec, _LMSec;    
         //std::list<std::shared_ptr<CSec    >> _LSec;
@@ -366,7 +367,6 @@ class CMultSec	 : public CLink
 		void			UpdateTotals		( CSec		*sec ) ;
 		void			UpdateTotalsAdding	( CSec		*sec ) ;
 		void			UpdateTotalsAdding	( CMultSec	*sec ) ;
-		CMultSec		*findComParent		( CMultSec	*ms	);
 		static void		RefreshExtremes		( CMultSec	*ms	);
 };
 

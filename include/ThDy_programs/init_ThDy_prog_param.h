@@ -18,6 +18,7 @@
 #include <memory>
 #include "ThDySec/sec_mult.h"
 #include <filesystem>
+#include <set>
 
 const SecPos MAX_SEQ_LEN_ALIGN{ 2001 };
 
@@ -138,13 +139,15 @@ class ThDyCommProgParam : public CCommProgParam
 					 st_Exp_sond{this, "Programm option- re-export probes",	     "Exp_probes",   false }, 
 					 st_ExpTarg {this, "Programm option- re-export targets",	 "Exp_target",   false };
 
-    
+   	std::set<CMultSec*>           _primersGr  ;
     std::shared_ptr<CSaltCorrNN>  _pSaltCorrNNp{Create_NNpar( )};
 	std::shared_ptr<CMultSec>     _pSeqTree         {CreateRoot() } ;  ///<  The root of the sequences tree
 	std::shared_ptr<CMultSec>     _pSeqNoUsed       {AddSeqGroup(_pSeqTree.get(), "Dont use"  ) } ;
 	std::shared_ptr<CMultSec>     _pSeqTargets      {AddSeqGroup(_pSeqTree.get(), "Target seq") } ; 
 	std::shared_ptr<CMultSec>     _pSeqNonTargets   {AddSeqGroup(_pSeqTree.get(), "Non Target seq")  } ; 
-	std::shared_ptr<CMultSec>     _pPCRfiltrePrimers{AddSeqGroup(_pSeqTree.get(), "PCR Primers to <filtre> sequences")  } ; 
+	std::shared_ptr<CMultSec>     _pPCRfiltrePrimers{ AddPrimerGroup(_pSeqTree.get(), "PCR Primers to <filtre> sequences")  } ;
+
+	///
 	void Actualize_All_NNp()
 	{
         if ( ! _pSaltCorrNNp->NeedActualization(_ConcSd, _ConcTg, _ConcSalt, _SaltCorr)  )
@@ -169,7 +172,7 @@ class ThDyCommProgParam : public CCommProgParam
   //          ms->_NNPar=_pSaltCorrNNp;
     }
 
-
+	///
     ThDyCommProgParam(const std::string& titel,   CProject *proj)
 		:	CCommProgParam(titel,proj)
 		{	
@@ -237,6 +240,13 @@ void Check_NNp_Targets (/*ThDyCommProgParam& cp*/)
 }
     CMultSec* CreateRoot	();
 	CMultSec *AddSeqGroup	(CMultSec *parentGr, const std::string&     Name);
+	CMultSec *AddPrimerGroup(CMultSec *parentGr, const std::string&     Name)
+	{
+		CMultSec *pgr = AddSeqGroup(parentGr, Name);
+		_primersGr.insert(pgr);
+		return pgr;
+	}
+
 
 	/// take parametrs from the parent if posible
 	CMultSec *AddSeqFromFile    (CMultSec *parentGr, const std::string& FileName, bool recursive=false, bool onlyStructure=false); 
@@ -301,7 +311,7 @@ class CEspThDyProgParam : public CEspProg
 
 class CProgParam_microArray : public CEspThDyProgParam
 {public:	
-    std::shared_ptr<CMultSec>   _probesMS{_cp.AddSeqGroup(_cp._pSeqTree.get(), "Probes of Virtual uArr")};
+    std::shared_ptr<CMultSec>   _probesMS      { _cp.AddPrimerGroup(_cp._pSeqTree.get(), "Probes of Virtual uArr")};
     CParamString	            _InputSondeFile{ this, "Imput file for Sondes", "iSonde_uAr", "" };
     CParamBool       _PrRecurDir    {this, "Recursively add all probe seq-files from all dir", "ProbRecDir", false} ;
     CParamBool       _PrDirStrOnly  {this, "Reproduce only the dir struct in probe"          , "ProbDirStr", true } ;
