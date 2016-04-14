@@ -133,9 +133,10 @@ int main(int argc, char *argv[])
                           ).show (  ) ;
 		    save_defPr() ; 					                
         }
-		this->_uArr._probesMS->CreateNonDegSetRec();
-		this->_TmCal._probesMS->CreateNonDegSetRec();
-		this->_mPCR._probesMS->CreateNonDegSetRec();
+
+		//this->_uArr._probesMS->CreateNonDegSetRec();
+		//this->_TmCal._probesMS->CreateNonDegSetRec();
+		//this->_mPCR._probesMS->CreateNonDegSetRec();
         mExpl_.InitTree();
 
 

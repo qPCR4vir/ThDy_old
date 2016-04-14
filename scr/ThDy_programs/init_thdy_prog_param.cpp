@@ -61,6 +61,7 @@ CMultSec* ThDyCommProgParam::AddSeqFromFile( CMultSec           *parentGr,
 							        parentGr->_SecLim ,
                                     parentGr->_SecLenLim, 
                                    !onlyStructure);
+				  sG->CreateNonDegSetRec();
 				  break;
 		    }
 		}
