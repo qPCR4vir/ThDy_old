@@ -81,7 +81,8 @@ CSec::CSec (    const std::string&  sec,
                   orig_pos    = 0;   
                   
             // fltr - filtred seq, or what will be the resulting seq   (index in _c[1], _b[1], etc. becouse [0] is ? )
-        LonSecPos fltr_pos =1;  
+		LonSecPos fltr_pos =0 ,
+			      fltr_len =0;  
 				/* fb, */           
                 /* fe, */     
 			
@@ -109,9 +110,11 @@ CSec::CSec (    const std::string&  sec,
 		do
 		{
 			c = base(sec[sec_pos]);
-			if (is_degbase[c] && c != gap) // a nt, n gap - count it
+			if (is_degbase[c])
+			{
+				if (c != gap) fltr_len++;           //  filtre gaps !!
 				if (++orig_pos >= orig_end) break;  // we find no nt, but we reach the desired end of the gene
-
+			}
 			if (sec_pos == sec_Len - 1) break; // this was the last char in sec
 			++sec_pos;
 		} while ( true );
@@ -136,19 +139,19 @@ CSec::CSec (    const std::string&  sec,
             _aln_fragment->sq.SetMax(orig_end);
         }
 
-        LonSecPos len = orig_end-orig_beging+1;   /// _len is the numer of "bases" to be readed (posible including gaps and deg-bases, but not external gaps)
+        //LonSecPos len = orig_end-orig_beging+1;   /// _len is the numer of "bases" to be readed (posible including gaps and deg-bases, but not external gaps)
 			              /// as in:" TGCA$" . Dont count the 2 '$' - principio y fin de Kadelari and the final '\0'
-        if (len < 2 )  return;  /// return if only 0 or 1 base to analize
+        if (fltr_len < 2 )  return;  /// return if only 0 or 1 base to analize
            
-		_c  .reserve(len+2)   ;
-		_b  .reserve(len+2)   ;
-		_SdS.reserve(len+1)   ;
-		_SdH.reserve(len+1)   ;	
+		_c  .reserve(fltr_len +2)   ;  // ++1 ?
+		_b  .reserve(fltr_len +2)   ;
+		_SdS.reserve(fltr_len +1)   ;
+		_SdH.reserve(fltr_len +1)   ;
 
 		register Base a_1, a;
 		for (a=0; a<n_dgba; a++)	_Count[a]=0 ;
 
-		//_c  .push_back( basek[n_basek-1] ); // '$' principio y fin de Kadelari.=" TGCA$"   in fltr_pos=0
+		//_c  .push_back( basek[n_basek-1] ); // '$' principio y fin de Kadelari.=" TGCA$"   in fltr_pos=0   ??
 		//_b  .push_back( n_basek-1) ; 	  	
 		//_SdS.push_back( _NNpar->GetInitialEntropy()); // Solo dep de las conc, no de la sec. Ajustar primero la conc del target, y despues volverla a poner,?? 
 		//_SdH.push_back(  0 );						  // y comprobar que se hacen los calculos necesarios
@@ -161,11 +164,11 @@ CSec::CSec (    const std::string&  sec,
 		_c.push_back( a_1  );
 		_b.push_back( a_1 =bk2nu[is_base[a_1]]) ;						// que hacer si en la sec hay bases deg que Kadelari no considera?
 
-		for (sec_pos=sec_beging+1, fltr_pos= 2; fltr_pos <= len && sec_pos <= sec_end  ; ++sec_pos)		// suficiente  fltr_pos <= len   ???
+		for (sec_pos=sec_beging+1, fltr_pos= 2; fltr_pos <= fltr_len /*&& sec_pos <= sec_end*/  ; ++sec_pos)		// suficiente  fltr_pos <= len   ???
 			if ( a=is_degbase	[ base(sec[sec_pos] )] ) 	
 			{	
-                if(sec[sec_pos]==gap)   // ignore gaps !!!!
-                    continue;
+                if(sec[sec_pos]==gap)   continue; // ignore gaps if bef!!!!
+                   
                 fltr_pos++ ;  
 				_GCp	+= is_GC		[a] ;						// 1-G or C, 0-lo demas.      Y que con las bases deg ??????????????????
 				_GrDeg	*= grad_deg		[a] ;
@@ -179,7 +182,7 @@ CSec::CSec (    const std::string&  sec,
 			}	
 		_c.push_back( basek[n_basek-1] ); // '$' principio y fin de Kadelari.=" TGCA$", + '\0'
 		_b.push_back(       n_basek-1  ); 	  	
-		_GCp	= _GCp*100/len ;	
+		_GCp	= _GCp*100/this->Len() ;	
 		_Tm.Set( NNpar->CalcTM( _SdS.back(), _SdH.back()) ) ;      //_maxTm = _minTm =
 }
 
