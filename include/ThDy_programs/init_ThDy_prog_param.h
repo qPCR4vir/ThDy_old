@@ -1,5 +1,7 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2015
@@ -92,7 +94,7 @@ class ThDyCommProgParam : public CCommProgParam
     CParamBool       _nTRecurDir      {this, "Recursively add all non-Target seq-files from all dir",   "nTRecurDir",   false} ;
     CParamBool       _nTDirStrOnly    {this, "Reproduce only the dir struct in non-targets"         ,   "nTlyDirStr",   true } ;
 
-   CParamString     _PCRfiltrPrFile   {this, "Imput file with primers for filtering",                        "PCRftrFile", "" } ;
+    CParamString     _PCRfiltrPrFile  {this, "Imput file with primers for filtering",                        "PCRftrFile", "" } ;
     CParamBool       _FiltrRecuDir    {this, "Recursively add all filtre PCR primer seq-files from all dir", "FltrRecDir", false} ;
     CParamBool       _FiltrStrOnly    {this, "Reproduce only the dir struct in filtre PCR primer"     ,        "FltrStrOly", true } ;
    
@@ -136,11 +138,9 @@ class ThDyCommProgParam : public CCommProgParam
 					 st_Exp_sond{this, "Programm option- re-export probes",	     "Exp_probes",   false }, 
 					 st_ExpTarg {this, "Programm option- re-export targets",	 "Exp_target",   false };
 
-	//bool			_loadNNPar {false } ,		_saveNNPar {false }  ;	
-	//bool			_st_savTm, _st_savPos, _st_savG, _st_savAlign, _st_savProj, _st_savG_Plasm, _st_savTm_Plasm, _st_savLog, _st_Exp_sond, _st_ExpTarg ;
-    ///  The roots of the sequences tree
+    
     std::shared_ptr<CSaltCorrNN>  _pSaltCorrNNp{Create_NNpar( )};
-	std::shared_ptr<CMultSec>     _pSeqTree         {CreateRoot() } ;
+	std::shared_ptr<CMultSec>     _pSeqTree         {CreateRoot() } ;  ///<  The root of the sequences tree
 	std::shared_ptr<CMultSec>     _pSeqNoUsed       {AddSeqGroup(_pSeqTree.get(), "Dont use"  ) } ;
 	std::shared_ptr<CMultSec>     _pSeqTargets      {AddSeqGroup(_pSeqTree.get(), "Target seq") } ; 
 	std::shared_ptr<CMultSec>     _pSeqNonTargets   {AddSeqGroup(_pSeqTree.get(), "Non Target seq")  } ; 
@@ -152,13 +152,17 @@ class ThDyCommProgParam : public CCommProgParam
         _pSaltCorrNNp=Create_NNpar ();
 		Actualize_NNp_recur(_pSeqTree.get());
 	}
+	
+	///
 	void Actualize_NNp_recur(CMultSec *ms)
 		{
 			Actualize_NNp(ms);
             for ( ms->goFirstMSec() ;  ms->NotEndMSec() ; ms->goNextMSec() )
                 Actualize_NNp_recur(ms->CurMSec());
 		}
-    void Actualize_NNp(CMultSec*ms)
+    
+	///
+	void Actualize_NNp(CMultSec*ms)
     {
         ms->_NNPar=_pSaltCorrNNp;
 		//for ( ms->goFirstSec() ;  ms->NotEndSec() ; ms->goNextSec() )
@@ -234,6 +238,7 @@ void Check_NNp_Targets (/*ThDyCommProgParam& cp*/)
     CMultSec* CreateRoot	();
 	CMultSec *AddSeqGroup	(CMultSec *parentGr, const std::string&     Name);
 
+	/// take parametrs from the parent if posible
 	CMultSec *AddSeqFromFile    (CMultSec *parentGr, const std::string& FileName, bool recursive=false, bool onlyStructure=false); 
 	CMultSec *CopyStructFromDir	(CMultSec *parentGr, const std::string& FileName )
     {

@@ -862,7 +862,7 @@ void	ThDyAlign::Export_Hits(ofstream &osHits, char *sep)		// mientras estan cone
 /// \todo MEJORAR !!!
 void	CMSecCand::ExportCommonSonden(const std::string &fileName, bool colpased, NumRang<float> ExtrCovPerc, fileFormat format)
 {	
-	NumRang<int> ExtrCov ( ((_NSecCand-1) * ExtrCovPerc.Min()) /100.0  , ((_NSecCand-1) * ExtrCovPerc.Max()) /100.0 ) ;  
+	NumRang<int> ExtrCov ( (double(_NSecCand-1) * ExtrCovPerc.Min()) /100.0  , (double(_NSecCand-1) * ExtrCovPerc.Max()) /100.0 ) ;
     
     bool	f_fas = format & fileFormat::fasta ,
 			f_csv = format & fileFormat::csv   ;

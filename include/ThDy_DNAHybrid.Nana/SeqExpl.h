@@ -1,10 +1,12 @@
 /**
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* Copyright (C) 2009-2016, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
-* @file  ThDySec\include\ThDy_DNAHybrid.Nana\main.Nana.h
+* @file  ThDySec\include\ThDy_DNAHybrid.Nana\SeqExpl.h
 *
-* @brief 
+* @brief GUI to explore sequences
+*
 */
 
 #ifndef SeqExpl_H
@@ -18,26 +20,6 @@
 #include <nana/gui/widgets/listbox.hpp>
 #include <nana/gui/tooltip.hpp>
 
-
-//#include <iostream>    // temp, for debugging
-//#include <fstream>     // temp, for debugging
-//#include <filesystem>
-
-//#include <nana/gui/wvl.hpp>
-//#include <nana/gui/widgets/tabbar.hpp>
-//#include <nana/gui/widgets/checkbox.hpp>
-//#include <nana/gui/widgets/toolbar.hpp>
-//#include <nana/gui/tooltip.hpp>
-//#include <nana/gui/widgets/progress.hpp>
-//#include <nana/gui/widgets/group.hpp>
-
-//#include <../../nana.ext/include/Numer.hpp>
-
-//#include "matrix.h" 
-//#include "common_basics.h" 
-
-
-//using namespace ParamGUIBind;
 
 class ThDyNanaForm ;
  

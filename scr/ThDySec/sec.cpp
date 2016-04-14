@@ -8,7 +8,7 @@
 *
 * @file  ThDySec\scr\ThDySec\sec.cpp
 *
-* @brief 
+* @brief Implement fundamental sequence classes
 *
 */
 
