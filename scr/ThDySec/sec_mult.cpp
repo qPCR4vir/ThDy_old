@@ -405,15 +405,15 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
         if ( secH->_aln_fragment)
         {
             if(secH->_aln_fragment->sq.Max()) 
-                _Hsp_query_to    = _Hsp_query_from + secH->_aln_fragment->sq.Max()  -2;
+                _Hsp_query_to    = _Hsp_query_from + secH->_aln_fragment->sq.Max()  -1;
             else
-                _Hsp_query_to    = _Hsp_query_from + secH->Len() -2;
+                _Hsp_query_to    = _Hsp_query_from + secH->Len() -1;
             _Hsp_query_from  = _Hsp_query_from + secH->_aln_fragment->sq.Min()-1;
         }
         else
         {
             secH->_aln_fragment.reset(new Aligned_fragment);
-            _Hsp_query_to    = _Hsp_query_from + secHitBeg + secH->Len() -2;
+            _Hsp_query_to    = _Hsp_query_from + secHitBeg + secH->Len() -1;
             _Hsp_query_from  = _Hsp_query_from + secHitBeg-1;
         }
 
