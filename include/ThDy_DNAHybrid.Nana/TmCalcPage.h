@@ -1,12 +1,16 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* 2012-2016
+*
 *
 * @file  ThDySec\include\ThDy_DNAHybrid.Nana\TmCalcPage.h
 *
 * @brief 
+*
 */
 
 #ifndef TmCalcPage_H
@@ -18,37 +22,16 @@
 #include <../../nana.ext/include/Numer.hpp>
 #include <nana/gui/widgets/group.hpp>
 #include <nana/gui/widgets/checkbox.hpp>
-//#include <nana/gui/tooltip.hpp>
 //#include <nana/gui/widgets/progress.hpp>
 
-
-
-
-
-//
 //#include <iostream>    // temp, for debugging
 //#include <fstream>     // temp, for debugging
 //#include <filesystem>
 //
-//#include <nana/gui/wvl.hpp>
-//#include <nana/gui/widgets/tabbar.hpp>
-//#include <nana/gui/widgets/treebox.hpp>
-//#include <nana/gui/widgets/listbox.hpp>
-//#include <nana/gui/widgets/toolbar.hpp>
-//
-//
 //#include "matrix.h" 
 //#include "common_basics.h" 
-//
-//
-//using namespace ParamGUIBind;
-//
+
 class ThDyNanaForm ;
-// 
-//using List = nana::listbox;
-
-
-
 
 class TmCalcPage : public CompoWidget
 {
@@ -115,14 +98,14 @@ public:
 	    primers["error"    ]<< error_        ;
 	    primers["rev_compl"]<< chkBx_copy_rev << chkBx_copy_compl ;
 
-	    interaction["Table" ]<< ""          << "   min-" << u8"Tm(°C)"   << "-max" << "   min-"  << "G(kJ)"   << "-max   "
-	                             << "Up"        << Tm_min_Up << Tm_Up        << Tm_max_Up<<G_min_Up   <<  G_Up      <<  G_max_Up   
-	                             << "Down"      << Tm_min_Dw << Tm_Dw        << Tm_max_Dw<<G_min_Dw   <<  G_Dw      <<  G_max_Dw   
-	                             << "Interact"  << Tm_min_In << Tm_In        << Tm_max_In<<G_min_In   <<  G_In      <<  G_max_In  ;
-
+	    interaction["Table" ]<< ""          << "   min-" << u8"Tm(°C)"   << "-max"  << "   min-"  << "G(kJ)"    << "-max   "
+	                         << "Up"        << Tm_min_Up << Tm_Up        << Tm_max_Up<<G_min_Up   <<  G_Up      <<  G_max_Up   
+	                         << "Down"      << Tm_min_Dw << Tm_Dw        << Tm_max_Dw<<G_min_Dw   <<  G_Dw      <<  G_max_Dw   
+	                         << "Interact"  << Tm_min_In << Tm_In        << Tm_max_In<<G_min_In   <<  G_In      <<  G_max_In  ;
 
         align["ResAlign" ]  << txtBx_ResultSec << txtBx_ResultSec2Align ;
     }
+
     void Run()
     {
 		try

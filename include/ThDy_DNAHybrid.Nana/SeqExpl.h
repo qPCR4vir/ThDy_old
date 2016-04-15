@@ -3,6 +3,9 @@
 *  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
 *  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
+* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2016
+*
 * @file  ThDySec\include\ThDy_DNAHybrid.Nana\SeqExpl.h
 *
 * @brief GUI to explore sequences

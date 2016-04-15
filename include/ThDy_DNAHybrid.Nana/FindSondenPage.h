@@ -1,8 +1,10 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* 2012-2016
 *
 * @file  ThDySec\include\ThDy_DNAHybrid.Nana\FindSondenPage.h
 *
@@ -19,38 +21,8 @@
 #include <nana/gui/tooltip.hpp>
 #include <nana/gui/widgets/checkbox.hpp>
 #include <nana/gui/widgets/group.hpp>
-//#include <../../nana.ext/include/Numer.hpp>
-//#include <nana/gui/tooltip.hpp>
-
-
-
-
-
-//#include <iostream>    // temp, for debugging
-//#include <fstream>     // temp, for debugging
-//#include <filesystem>
-//
-//#include <nana/gui/wvl.hpp>
-//#include <nana/gui/widgets/tabbar.hpp>
-//#include <nana/gui/widgets/treebox.hpp>
-//#include <nana/gui/widgets/listbox.hpp>
-//#include <nana/gui/widgets/toolbar.hpp>
-//
-//#include <nana/gui/widgets/progress.hpp>
-//
-//
-//#include "matrix.h" 
-//#include "common_basics.h" 
-//
-//
-
-//
+ 
 class ThDyNanaForm ;
-// 
-//using List = nana::listbox;
-
-
-
 
 class FindSondenPage : public CompoWidget
 {    
@@ -63,16 +35,17 @@ class FindSondenPage : public CompoWidget
                         _gr_find_prb{*this, (           " Find Probes "         ), true},
                         _gr_probself{*this, ("<bold=true> Probe-self: </>"      ), true};
 
-    nana::NumUnitUpDown _Gmin     {_gr_probes, ("G : "    ), -5, -10 , 10,"kcal/mol"},   _Gmax   {_gr_probes, (""), -1, -10, 10, "kcal/mol"}, 
-                        _Tmmin    {_gr_probes, ("Tm : "   ), 57,  40 , 60,u8"°C"      },  _Tmmax   {_gr_probes, (""), 63,  45, 75, u8"°C"      },
-                        _Lengthmin{_gr_probes, ("Length: "), 20,  15 , 35,"nt"      }, _Lengthmax{_gr_probes, (""), 35,  15, 40, "nt"      },
-                        _MaxG     {_gr_prob_tg, ("Max G: " ), 10, -10, 30, "kcal/mol" },  _MinTm   {_gr_prob_tg, ("Tm: "  ), 30,  10 , 60,u8"°C"},
-                        _MinG     {_gr_prob_ntg, ("Min G: " ), 15, -10 , 30,"kcal/mol" }, _MaxTm   {_gr_prob_ntg, ("Max Tm: "), 10, -10, 75, u8"°C"},
-                        _MinSelfG {_gr_probself, ("Min G: " ), 10, -10 , 30,"kcal/mol" }, _MaxSelfTm{_gr_probself, ("Max Tm: "), 10, -10, 75, u8"°C"},
+    nana::NumUnitUpDown _Gmin     {_gr_probes, ("G : "    ), -5, -10 , 10, "kcal/mol"},   _Gmax   {_gr_probes,  (""), -1, -10, 10,   "kcal/mol"}, 
+                        _Tmmin    {_gr_probes, ("Tm : "   ), 57,  40 , 60,  u8"°C"   },  _Tmmax   {_gr_probes,  (""), 63,  45, 75,   u8"°C"    },
+                        _Lengthmin{_gr_probes, ("Length: "), 20,  15 , 35,  "nt"     }, _Lengthmax{_gr_probes,  (""), 35,  15, 40,   "nt"      },
+                        _MaxG     {_gr_prob_tg, ("Max G: " ), 10, -10, 30, "kcal/mol"},  _MinTm   {_gr_prob_tg, ("Tm: "  ), 30,  10 , 60,  u8"°C"},
+                        _MinG     {_gr_prob_ntg,("Min G: " ), 15, -10 , 30,"kcal/mol"},  _MaxTm   {_gr_prob_ntg,("Max Tm: "), 10, -10, 75, u8"°C"},
+                        _MinSelfG {_gr_probself,("Min G: " ), 10, -10 , 30,"kcal/mol"}, _MaxSelfTm{_gr_probself,("Max Tm: "), 10, -10, 75, u8"°C"},
                         numUpDw_MinTargCov{ _gr_find_prb, ("max."),   0.0, 0.0 , 100.0,"%" }, 
                         numUpDw_MaxTargCov{ _gr_find_prb, ("min."), 100.0, 0.0 , 100.0,"%" } ;
 
-    nana::tooltip _Gmintt     {_Gmin, ("Only probes with stronger interaction with target (smaller G by selected Ta) will be included"    ) }/*,   _Gmax   {*this, (""), -1, -10, 10, "kcal/mol"}, 
+    nana::tooltip _Gmintt     {_Gmin, ("Only probes with stronger interaction with target (smaller G by selected Ta) will be included"    ) }
+		               /*,   _Gmax   {*this, (""), -1, -10, 10, "kcal/mol"}, 
                              _Tmmin    {*this, ("Tm :"   ), 57,  40 , 60,u8"°C"      },  _Tmmax   {*this, (""), 63,  45, 75, u8"°C"      }, 
                              _Lengthmin{*this, ("Length:"), 20,  15 , 35,"nt"      }, _Lengthmax{*this, (""), 35,  15, 40, "nt"      },
                              _MaxG     {*this, ("Max G" ), 10, -10, 30, "kcal/mol" },  _MinTm   {*this, ("Tm :"  ), 30,  10 , 60,u8"°C"}, 

@@ -18,11 +18,6 @@
 #include "TmCalcPage.h"
 
 #include "thdy_programs\init_thdy_prog_param.h"
-//#include "matrix.h" 
-//#include "common_basics.h" 
-
-//#include <../../nana.ext/include/EditableForm.hpp>
-//#include <../../nana.ext/include/Numer.hpp>
 
 #include <nana/gui/widgets/tabbar.hpp>
 //#include <nana/gui/tooltip.hpp>
@@ -31,10 +26,7 @@
 //#include <nana/gui/widgets/group.hpp>
 
 
-
 #include <nana/gui/wvl.hpp>
-
-
 
 class ThDyNanaForm : public nana::form, public EditableForm , public ThDyProject
 {

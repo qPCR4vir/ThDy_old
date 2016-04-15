@@ -4,11 +4,12 @@
 *  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* 2012-2016
 *
 * @file  ThDySec\scr\ThDy_DNAHybrid.Nana\SeqExpl.cpp
 *
 * @brief 
+*
 */
 
 #include "ThDy_DNAHybrid.Nana\SeqExpl.h"
@@ -77,52 +78,55 @@
 	}
 
 SeqExpl::Node SeqExpl::Replace      (Tree::item_proxy& tn, CMultSec *ms, const std::string& Path, bool all_in_dir)
-    {        
-    try{ 
-         Tree::item_proxy   own = tn->owner();
-         CMultSec          *pms = ms->_parentMS;  
+{        
+try{ 
+        Tree::item_proxy   own = tn->owner();
+        CMultSec          *pms = ms->_parentMS;  
 
-		 CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(Path), all_in_dir	);
+		CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(Path), all_in_dir	);
 
-         _Pr._cp._pSeqNoUsed->AddMultiSec(ms); 
-         _tree.erase(tn);
-         populate(_tree.find( nana::charset(_Pr._cp._pSeqNoUsed->_name)));
-         return appendNewNode(own, newms).expand(true).select(true) ;
-		}
-		catch ( std::exception& e)
-		{ 
-			(nana::msgbox ( ("Error replacing sequences: " ) ).icon(nana::msgbox::icon_error)
-               << "into gruop:    "  << nana::charset(tn.key())                                 
-               << "\n from " << (all_in_dir?"directory: " : "file: ") << Path     <<"\n"<< e.what()
-            ).show() ;
- 		}		
-		catch(...)
-		{
-             (nana::msgbox(("An uncaptured exception during replacing sequences: "))
-                    .icon(nana::msgbox::icon_error) 
-               << "into "<< nana::charset(tn.key())                                 
-               << "from " << (all_in_dir?"directory ":"file ") << Path    
-             ).show();
-	    }
-        return tn;
-    }
-    void SeqExpl::ShowFindedProbes_in_mPCR(bool show_/*=true*/)
-    {
-        auto idp = _Pr._cp.MaxTgId.get();
-        _Pr._cp.MaxTgId.set(100);
-        CMultSec *ms= _Pr._cp.AddSeqFromFile	(_Pr._mPCR._probesMS.get() , _Pr._cp._OutputFile.get() + ".sonden.fasta", false	);
-        _Pr._cp.MaxTgId.set(idp);
+        _Pr._cp._pSeqNoUsed->AddMultiSec(ms); 
+        _tree.erase(tn);
+        populate(_tree.find( nana::charset(_Pr._cp._pSeqNoUsed->_name)));
+        return appendNewNode(own, newms).expand(true).select(true) ;
+	}
+	catch ( std::exception& e)
+	{ 
+		(nana::msgbox ( ("Error replacing sequences: " ) ).icon(nana::msgbox::icon_error)
+            << "into gruop:    "  << nana::charset(tn.key())                                 
+            << "\n from " << (all_in_dir?"directory: " : "file: ") << Path     <<"\n"<< e.what()
+        ).show() ;
+ 	}		
+	catch(...)
+	{
+            (nana::msgbox(("An uncaptured exception during replacing sequences: "))
+                .icon(nana::msgbox::icon_error) 
+            << "into "<< nana::charset(tn.key())                                 
+            << "from " << (all_in_dir?"directory ":"file ") << Path    
+            ).show();
+	}
+    return tn;
+}
 
-        RefreshProbes_mPCR( show_ );
-    }
-    void SeqExpl::RefreshProbes_mPCR(bool show_/*=true*/)
-    {
-        auto probNode = _tree.find(nana::charset(_Pr._mPCR._probesMS->_name));
-        Refresh(probNode).expand(true).select(true);
-        if (show_) 
-            _Pr.ShowExpl();
-    }
-    void SeqExpl::AddMenuItems(nana::menu& menu)
+void SeqExpl::ShowFindedProbes_in_mPCR(bool show_/*=true*/)
+{
+    auto idp = _Pr._cp.MaxTgId.get();
+    _Pr._cp.MaxTgId.set(100);
+    CMultSec *ms= _Pr._cp.AddSeqFromFile	(_Pr._mPCR._probesMS.get() , _Pr._cp._OutputFile.get() + ".sonden.fasta", false	);
+    _Pr._cp.MaxTgId.set(idp);
+
+    RefreshProbes_mPCR( show_ );
+}
+
+void SeqExpl::RefreshProbes_mPCR(bool show_/*=true*/)
+{
+    auto probNode = _tree.find(nana::charset(_Pr._mPCR._probesMS->_name));
+    Refresh(probNode).expand(true).select(true);
+    if (show_) 
+        _Pr.ShowExpl();
+}
+
+void SeqExpl::AddMenuItems(nana::menu& menu)
     {
         menu.append_splitter();
 
@@ -228,6 +232,7 @@ SeqExpl::Node SeqExpl::Replace      (Tree::item_proxy& tn, CMultSec *ms, const s
         menuFASTA.append(("All sequences"              ),[&](nana::menu::item_proxy& ip)            { _Pr._cp._pSeqTargets->Export_as("export.fasta", false)  ;  });
 
     }
+
     void SeqExpl::MakeResponive()
     {
 		_tree.events().selected ( [&]( const nana::arg_treebox &tbox_arg_info ) { if (tbox_arg_info.operated) RefreshList(tbox_arg_info.item); });
@@ -412,7 +417,7 @@ SeqExpl::Node SeqExpl::Replace      (Tree::item_proxy& tn, CMultSec *ms, const s
 
     }
 
-    List::oresolver& operator<<(List::oresolver & ores, CSec * const sec )
+List::oresolver& operator<<(List::oresolver & ores, CSec * const sec )
 {
     static const long    blen{ 50 }, slen{ 1000 };
     char val[blen];
