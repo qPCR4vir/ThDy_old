@@ -154,11 +154,15 @@ class TableRes  : public nana::form, public EditableForm
                             nana::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
                             EditableForm    (nullptr, *this, nana::charset( table->TitTable() ), ("TableTm.lay.txt")) 
    {
-        //nana::API::zoom_window(*this, true);
         caption( std::string(("Table Tm: ")) +  _Titel);
-        //_tbar.append(("Tm"));
-        //_tbar.append(("G"));
-        //_tbar.append(("Pos"));
+
+		auto& sch = _list.scheme();
+		sch.header_height = 20;
+		sch.ext_w         = 2;
+		sch.item_height_ex= 1;  ///< Set !=0 !!!!  def=6. item_height = text_height + item_height_ex
+		sch.item_height   = sch.text_height + sch.item_height_ex;
+		sch.header_mouse_spliter_area_before = 4;
+		sch.header_mouse_spliter_area_after = 4 ; 
 
         InitMyLayout();
         SelectClickableWidget( _list);
