@@ -3,8 +3,8 @@
 *  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
 *  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* @author Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2016
 *
 * @file  ThDySec\include\ThDySec\sec.h
 *
@@ -24,7 +24,7 @@
 #include <memory>
 #include <vector>
 #include <filesystem>
-namespace filesystem = std::experimental::filesystem; //    ::tr2::sys; //std::experimental::filesystem
+namespace filesystem = std::experimental::filesystem; /// \todo use nana filesystem selector    ::tr2::sys; //std::experimental::filesystem
 
 
 #include "sec_basic.h" 
@@ -32,17 +32,23 @@ namespace filesystem = std::experimental::filesystem; //    ::tr2::sys; //std::e
 #include "common.h" 
 
  
-// anadir funcion de compactar cod (eliminar los gap y bases deg?). SdH y S se recalculan.
-// anadir funcion para regenerar cod no compactado, recordar estado comp/no comp
-// crear (adaptar) clase primer derivada de CSec, con pos y Tm en cada sec Target
+///\todo anadir funcion de compactar cod (eliminar los gap y bases deg?). SdH y S se recalculan.
+///\todo anadir funcion para regenerar cod no compactado, recordar estado comp/no comp
+///\todo crear (adaptar) clase primer derivada de CSec, con pos y Tm en cada sec Target
  
 class CMultSec	;
 
                    // ---------------------------------------   CSec	---------------------------------------------------
 
-/// Fundamental class to manipulate sec.
+/// Fundamental class to manipulate DNA sequences.
 
-/// 
+/// Adapted exclusively to DNA and specifically for thermodynamic calculations.
+/// Have the sequence in "letter" or nt format, AND in "code" format to avoid millions of repeated conversions. 
+/// Remember most characteristics for fast retrieval: length, CG%, degeneracy, etc.
+/// Importantly have a sequence of the values of dH and dS from the beginning to each position,
+/// which make trivial and fast to find accumulated dH and dS and Tm of any fragment by a simple difference calculation.
+/// When degenerated it can have a NonDegSet with all the CSec with degeneracy 1 - each of the variants in the original
+/// It track some group to which it belongs.
 class CSec : public CLink, public CSecBasInfo	
 {public:
 	    int                     x;				///<  ????
@@ -64,7 +70,7 @@ class CSec : public CLink, public CSecBasInfo
             const std::string&  clas="" , 
             float               conc=-1         );
 
-    /// Dummi sequence withow actual sequence, but with NNpar and reserved space
+    /// Dummy sequence without actual sequence, but with NNpar and reserved space
 	CSec ( long l, std::shared_ptr<CSaltCorrNN>  NNpar) ;
 
 
@@ -87,12 +93,12 @@ class CSec : public CLink, public CSecBasInfo
                               return Selected(); 
                            } 			//< make protected: ?????????????????????????????????????????????????
 	Base		operator()		(int i)const{return _b[i];}
-	Temperature	Tm	(long pi, long pf	)const;				        ///< Tm de la sonda con sec desde pi hasta pf, inclusive ambas!! 
+	Temperature	Tm	(long pi, long pf	)const;				                ///< Tm de la sonda con sec desde pi hasta pf, inclusive ambas!! 
 	Temperature	Tm	(long pi			)const	{return Tm(pi,Len())   ;}   ///< Tm de la sonda con sec desde pi hasta el final, inclusive ambos!!
-	Energy		G	(long pi, long pf, float Ta)const;				///< G de la sonda con sec desde pi hasta pf, inclusive ambas!! 
+	Energy		G	(long pi, long pf, float Ta)const;				        ///< G de la sonda con sec desde pi hasta pf, inclusive ambas!! 
 	Energy		G	(long pi, float Ta	)const	{return G(pi,Len(), Ta);}   ///< G de la sonda con sec desde pi hasta el final, inclusive ambos!!
 	Energy		G	(float Ta			)const	{return G(1 ,Len(), Ta);}   ///< G de la sonda con sec desde inicio hasta el final, inclusive ambos!!
-	Energy		G	(long pi, long pf	)const;				///< G de la sonda con sec desde pi hasta pf, inclusive ambas!! 
+	Energy		G	(long pi, long pf	)const;				                ///< G de la sonda con sec desde pi hasta pf, inclusive ambas!! 
 	Energy		G	(long pi			)const	{return G(pi,Len())    ;}   ///< G de la sonda con sec desde pi hasta el final, inclusive ambos!!
 	Energy		G	(					)const	{return G(1,Len())     ;}   ///< G de la sonda con sec desde inicio hasta el final, inclusive ambos!!
 
@@ -117,6 +123,7 @@ class CSec : public CLink, public CSecBasInfo
       //<Hsp_qseq>TACAACATGATGGGAAAGAGAGAGAAGAAGCCTGGAGAGTTCGGCAAGGCTAAAGGCAGCAGAGCCATCTGGTTCATGTGGCTGGGGGCTCGCTTCCTGGAGTTTGAAGCTCTCGGATTCCTCAATGAAGACCACTGGCTGGGTAGGAAGAACTCAGGAGGAGGAGTAGAAGGCTTAGGACTGCAGAAGCTTGGGTACATCTTGAAGGAAGTTGGGACAAAGCCTGGAGGAAAGATTTACGCTGATGATACCGCAGGCTGGGACACA</Hsp_qseq>
       //<Hsp_hseq>TACAACATGATGGGAAAGAGAGAGAAGAAGCCTGGAGAGTTCGGCAAGGCTAAAGGCAGCAGAGCCATCTGGTTCATGTGGCTGGGGGCTCGCTTCCTGGAGTTTGAAGCTCTCGGATTCCTCAATGAAGACCACTGGCTGGGTAGGAAGAACTCAGGAGGAGGAGTAGAAGGCTTAGGACTGCAGAAGCTTGGGTACATCTTGAAGGAAGTTGGGACAAAGCCTGGAGGAAAGATTTACGCTGATGATACCGCAGGCTGGGACACA</Hsp_hseq>
       //<>
+
 class CSecBLASTHit : public CSec // ---------------------------------------   CSecBLASTHit	------------------------------------------------
 {public:
 	CSecBLASTHit(	unsigned int	BlastOutput_query_len ,

@@ -1,13 +1,15 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* @author Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2016
 *
 * @file  C:\Prog\ThDySec\include\ThDySec\common.h
 *
-* @brief Definiciones y declaraciones basicas. 
-* A usar por todos, user interface and programs. Primaria?, no depende? de nadie?.
+* @brief Basic definitions and declarations. 
+* Commonly used by all: user interface and programs. Almost primary, only depends on ProgParam\include\common_basics.h for NumRang<>.
 */
 
 #ifndef _COMMON_H
@@ -29,7 +31,7 @@ inline bool IsEq (Num f1, Num f2, float prec= 0.01f )	// ; bool	IsEq (float f1, 
 	return abs(float(f1-f2)) / fm  < prec 	;
 }
 
-using Energy        = float	  ;	// ------------  typedef : 	Energy	--	Entropy	--	Temperature	--	SecPos --	LonSecPos and Rangs
+using Energy        = float	  ;	// ------------   	Energy	--	Entropy	--	Temperature	--	SecPos --	LonSecPos and Rang s
 using Entropy       = Energy  ;
 using Temperature   = float	  ;
 using SecPos        = int	  ;
@@ -45,15 +47,15 @@ using  LonSecPosRang    = NumRang<LonSecPos>	;
 
 
 extern char sep[];
-enum SaltCorrection {NoSelect  =-1 , StLucia  =0 , Owczarzy  =1 }; // ya se puede usar StLucia inicializando todo en el constructor. Parcialmente implementado cambio de Conc
-enum SaltCorrecP	{NoSMSelect=-1 , SMStLucia=0 , SMOwczarzy=1 }; // Unificar !!
+enum SaltCorrection {NoSelect  =-1 , StLucia  =0 , Owczarzy  =1 }; ///< ya se puede usar StLucia inicializando todo en el constructor. Parcialmente implementado cambio de Conc
+enum SaltCorrecP	{NoSMSelect=-1 , SMStLucia=0 , SMOwczarzy=1 }; ///< \todo Unificar !!
 
 enum AlignMeth		{TAMeth_Tm =0  , TAMeth_G    , TAMeth_Fract };
 
 enum class	 DNAstrand		{plus	, minus, direct	, rev	, compl, rev_compl	} ;
 extern char *DNAstrandName[];//	{""		, "(c)", ""		, "(r)"	, "(i)", "(c)"		} ; //defined in : sec.cpp: 
 
-enum  fileFormat   {fasta =1 , csv =1<<1, f2 =1<<2, f3 =1<<3} ; // se pueden "OR" los formatos : OUTPUT !!!!!!
+enum  fileFormat   {fasta =1 , csv =1<<1, f2 =1<<2, f3 =1<<3} ; ///< for OUTPUT !!!! they can be combined with "OR" 
 
 
 struct TmGPos 

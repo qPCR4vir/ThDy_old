@@ -1,8 +1,10 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* @author Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2016
 *
 * @file  ThDySec\include\ThDySec\sec_rang.h
 *
@@ -20,11 +22,15 @@
 #include "link.h"
 #include "common.h" 
 
-template <class SQ>
+/// pretend to define a fragment from another sequence.
+
+/// less than experimental - it is exploratory.
+template <class SEQ>
 struct fragment:  NumRang<LonSecPos>
 {
-    SQ *sq{};
-    fragment (SQ &s, LonSecPos beg = 0, LonSecPos end = 0)
+    SEQ *sq{};
+
+    fragment (SEQ &s, LonSecPos beg = 0, LonSecPos end = 0)
         : NumRang<LonSecPos>(beg, end),
         sq{&s}
     { }
@@ -47,13 +53,13 @@ struct fragment:  NumRang<LonSecPos>
         return 0;
     }
 
-    void set (SQ &s, LonSecPos beg = 0, LonSecPos end = 0)
+    void set (SEQ &s, LonSecPos beg = 0, LonSecPos end = 0)
     { 
         Set(beg, end);
         sq=&s;
     }
 
-    bool is_comparable_to(const fragment<SQ> &r)  const /// \todo experiment with this !!
+    bool is_comparable_to(const fragment<SEQ> &r)  const /// \todo experiment with this !!
     {
         return  sq == r.sq  &&  ( sq ||              // ref to the same sec
                             ( lenght() && r.lenght()) ); // or at to any but both set "abstract" ranges    
@@ -62,15 +68,16 @@ struct fragment:  NumRang<LonSecPos>
 
 class CSecBasInfo;
 class CMultSec;
-/// to at least aproximately compare positions
+
+/// to at least approximately compare positions
 struct Aligned_fragment
 {
-    fragment<CSecBasInfo> sq,    ///< from self: fragment of the original (posible partial) seq, probably not available 
-                         bio,    ///< from self, but relatively to the presumible complete genome
-                      sq_ref,    ///< 3-from some reference: (posible partial) seq, maybe the first seq of an alignment
-                     bio_ref,    ///< 3-from some reference, but relatively to the presumible complete genome 
-                   consensus;    ///< 2-from a reference sequence from the aligment: a consensus
-    fragment<CMultSec>   aln;    ///< 1-from self: fragment of the original (posible partial) seq, probably not available 
+    fragment<CSecBasInfo> sq,    ///< from self: fragment of the original (possible partial) seq, probably not available 
+                         bio,    ///< from self, but relatively to the presumable complete genome
+                      sq_ref,    ///< 3-from some reference: (possible partial) seq, maybe the first seq of an alignment
+                     bio_ref,    ///< 3-from some reference, but relatively to the presumable complete genome 
+                   consensus;    ///< 2-from a reference sequence from the alignment: a consensus
+    fragment<CMultSec>   aln;    ///< 1-from self: fragment of the original (possible partial) seq, probably not available 
     long lenght()
     {
         long len ;

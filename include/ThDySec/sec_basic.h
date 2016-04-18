@@ -1,8 +1,10 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* @author Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2016
 *
 * @file  ThDySec\include\ThDySec\sec_basic.h
 *
@@ -14,20 +16,16 @@
 
 #pragma unmanaged	
 
-
 #include <fstream>
-//#include <cassert>
 #include <string>
 #include <memory>
 
-
 #include "cod_deg.h"
 #include "sec_rang.h"
-//#include "th_dy_param.h"   // crear un nuevo par de fuente cpp con las cosas que nec los dos .h + sec.h
 #include "common.h" 
 
-
 class CMultSec	;
+
 class ISec				// Pure virtual class ?
 {public:			
 	using sequence = std::basic_string<DegCod::Base> ;
@@ -46,11 +44,10 @@ class ISec				// Pure virtual class ?
                                             long  EndBase, 
                                      DNAstrand   strnd = DNAstrand::direct)	    const=0  ;
 
-	virtual				~ISec			()
-      
- { }
+	virtual				~ISec			() { }
 };
-/// Have a letter sequence but no code sequence and no thermodyinamics - abstract because of clone ?!-fix?
+
+/// Have a letter sequence but no code sequence and no thermodynamics - abstract because of clone ?!-fix?
 class CSecBasInfo : public ISec
 { protected:	
 	bool			_selected{true}, _filtered{false};
