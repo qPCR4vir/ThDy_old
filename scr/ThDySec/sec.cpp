@@ -74,8 +74,13 @@ CSec::CSec (    const std::string&  sec,
                   sec_end    =sec_Len,    
                   sec_pos    =0;   
 
-            // orig_X - original "abstract" seq for which sec intent to be the representation, for example some gene: is the only intersting for a "biologist"
-		    // index orig gene[1] 
+		    // normally we have just some "experimental" fragment from we take our working fragment, and we 
+		    // want to track the begin of the working fragment in relation to the "experimental" (the given sequence)
+		LonSecPos exp_beging = 0,
+                  exp_end    =sec_Len;
+
+            // orig_X - original "abstract" seq for which sec intent to be the representation, for example some gene: is the only interesting for a "biologist"
+		    // index orig gene[1].  
 		LonSecPos orig_beging = 0,  // secBeg,
                   orig_end    =  orig_max_L ? origBeg + orig_max_L -1 : origBeg + sec_Len -1,
                   orig_pos    = 0;   
@@ -97,6 +102,7 @@ CSec::CSec (    const std::string&  sec,
 			{
 				if (orig_beging+1 >= origBeg) break;  // we find no nt, but we reach the desired end of the gene
 				++orig_beging;
+				if (c != gap && !exp_beging) exp_beging = orig_beging;
 			}
 			++sec_beging;
 		} while ( true );
@@ -115,10 +121,12 @@ CSec::CSec (    const std::string&  sec,
 			++sec_beging;
 		} while ( true );
 
-		orig_pos = orig_beging-1 ; /// where in alignment really beging the nts of this sequence, after all gaps
-		sec_pos  = sec_beging ;  /// Now we are at the position were we beging to read the bases of the sequence
+		if (exp_beging) exp_beging = orig_beging-exp_beging;
+		exp_beging++;       /// lets begin at 1
+		orig_pos = orig_beging-1 ; /// where in the alignment begin the nts of this sequence, after secBeg pos and all gaps
+		sec_pos  = sec_beging ;  /// Now we are at the position were we begin to read the bases of the sequence
 
-        /// first we want to know how many bases are there making a pre - read.
+        /// first we want to know how many nt (not gaps) are there making a pre - read.
 		do
 		{
 			c = base(sec[sec_pos]);
