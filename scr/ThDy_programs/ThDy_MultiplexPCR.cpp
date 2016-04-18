@@ -1,12 +1,15 @@
 /**
-* Copyright (C) 2009-2015, Ariel Vina Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+* Copyright (C) 2009-2016, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* @author Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2016
 *
 * @file ThDySec\scr\ThDy_programs\ThDy_MultiplexPCR.cpp
 *
 * @brief
+*
 */
 
 //#include "StdAfx.h"
@@ -44,7 +47,8 @@ void CreateComplProbes(	CMultSec		&pr	)
 
 		//int t=MultiplexPCRProg ( IPrgPar_Calc, primers		)  ;
 
-	int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr, CMultSec		&pr)  
+/// main function
+int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr, CMultSec		&pr)  
 {
 	time_t t_0 = time(nullptr);
     IPrgPar_uArr->_cp.Check_NNp_Targets ();

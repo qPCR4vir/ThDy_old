@@ -3,12 +3,13 @@
 *  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
 *  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* @author Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2016
 *
 * @file  ThDySec\scr\ThDy_DNAHybrid.Nana\uArray.cpp
 *
 * @brief 
+*
 */
 
 
@@ -17,8 +18,8 @@
 #include "ThDy_DNAHybrid.Nana\main.Nana.h"
 
 
-MplexPCR::MplexPCR            (ThDyNanaForm& tdForm) try
-        : _Pr             (tdForm), 
+MplexPCR::MplexPCR            (ThDyNanaForm& tdForm) 
+try     : _Pr             (tdForm), 
           CompoWidget     (tdForm, ("MplexPCR"), ("MplexPCR.lay.txt"))
     {
 
@@ -36,33 +37,33 @@ catch (...)
 	throw std::runtime_error(std::string("An unknonw error ocurred during initialization of the MplexPCR page window"));
 }
 
-     void MplexPCR::buttPCR_Click()  //	  Run      _IPrgPar_mPCR
-	{	 			
-	 try{                                   
-		  _Pr._mPCR._cp.Actualice_NNp();  
- 		  _Pr.Run(_Pr._mPCR);	
+void MplexPCR::buttPCR_Click()  //	  Run      _IPrgPar_mPCR
+{	 			
+	try{                                   
+		_Pr._mPCR._cp.Actualice_NNp();  
+ 		_Pr.Run(_Pr._mPCR);	
 
-          _Pr.mExpl_.RefreshProbes_mPCR(/*false*/); 
+        _Pr.mExpl_.RefreshProbes_mPCR(/*false*/); 
 
-          _Pr._results.emplace_back(new TableRes(_Pr._mPCR._rtbl));
-          _Pr._results.back()->show();
-          _Pr._results.emplace_back(new TableRes(_Pr._mPCR._rtbl_self));
-          _Pr._results.back()->show();
-		}
-	catch ( std::exception& e)
-		{ 
-			std::cerr<< e.what()    ;
-          (nana::msgbox(*this,("Error during multiplex PCR analysis !"), 
-                                                nana::msgbox::button_t::ok)   <<e.what()) (  ) ;
-		  return;
-		}
-        //ShowResTbl(_Pr._mPCR._rtbl );
-        //_Pr._uArr._rtbl = nullptr;
-
-        //ShowResTbl(_Pr._mPCR._rtbl_self );
-        //_Pr._mPCR._rtbl_self = nullptr;
-
+        _Pr._results.emplace_back(new TableRes(_Pr._mPCR._rtbl));
+        _Pr._results.back()->show();
+        _Pr._results.emplace_back(new TableRes(_Pr._mPCR._rtbl_self));
+        _Pr._results.back()->show();
 	}
+catch ( std::exception& e)
+	{ 
+		std::cerr<< e.what()    ;
+        (nana::msgbox(*this,("Error during multiplex PCR analysis !"), 
+                                            nana::msgbox::button_t::ok)   <<e.what()) (  ) ;
+		return;
+	}
+    //ShowResTbl(_Pr._mPCR._rtbl );
+    //_Pr._uArr._rtbl = nullptr;
+
+    //ShowResTbl(_Pr._mPCR._rtbl_self );
+    //_Pr._mPCR._rtbl_self = nullptr;
+
+}
 
    uArray::uArray            (ThDyNanaForm& tdForm) try
         : _Pr             (tdForm), 

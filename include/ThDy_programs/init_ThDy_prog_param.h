@@ -4,11 +4,12 @@
 *  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* 2012-2016
 *
 * @file  ThDySec\include\ThDy_programs\init_ThDy_prog_param.h
 *
 * @brief 
+*
 */
 
 #ifndef _INIT_ThDy_PROG_PARAM_H
@@ -82,53 +83,54 @@ class CParamSondeLimits: public IBParam  /// \todo Use delegating constructor to
 
 class CMultSec;
 class CSaltCorrNN;
+
 /// concreta los parametros comunes. Mantiene lista de los prog Espec que los usan
 class ThDyCommProgParam : public CCommProgParam 
 {public:	
     CParamString     _OutputFile      {this, "Results output file",                                  "OutputFile",     "" } ;///\todo make it a std::path
 
-    CParamString     _InputTargetFile {this, "Imput file for Targets",				                 "TargetFile",     "" } ;
+    CParamString     _InputTargetFile {this, "Input file for Targets",				                 "TargetFile",     "" } ;
     CParamBool       _TRecurDir       {this, "Recursively add all Target seq-files from all dir",    "TRecursDir",    false} ;
     CParamBool       _TDirStrOnly     {this, "Reproduce only the dir struct in targets"         ,    "TOlyDirStr",    true } ;
 
-    CParamString     _NonTargetFile   {this, "Imput file for non-Targets",			                  "NonTargetF",    "" } ;
+    CParamString     _NonTargetFile   {this, "Input file for non-Targets",			                  "NonTargetF",    "" } ;
     CParamBool       _nTRecurDir      {this, "Recursively add all non-Target seq-files from all dir",   "nTRecurDir",   false} ;
     CParamBool       _nTDirStrOnly    {this, "Reproduce only the dir struct in non-targets"         ,   "nTlyDirStr",   true } ;
 
-    CParamString     _PCRfiltrPrFile  {this, "Imput file with primers for filtering",                        "PCRftrFile", "" } ;
-    CParamBool       _FiltrRecuDir    {this, "Recursively add all filtre PCR primer seq-files from all dir", "FltrRecDir", false} ;
-    CParamBool       _FiltrStrOnly    {this, "Reproduce only the dir struct in filtre PCR primer"     ,        "FltrStrOly", true } ;
+    CParamString     _PCRfiltrPrFile  {this, "Input file with primers for filtering",                        "PCRftrFile", "" } ;
+    CParamBool       _FiltrRecuDir    {this, "Recursively add all filter PCR primer seq-files from all dir", "FltrRecDir", false} ;
+    CParamBool       _FiltrStrOnly    {this, "Reproduce only the dir struct in filter PCR primer"     ,        "FltrStrOly", true } ;
    
-    CParamString     _InputNNFile     {this, "Imput file with NN parametrs",		                       "iNNParFile",   ""	 } ;
+    CParamString     _InputNNFile     {this, "Input file with NN parameters",		                       "iNNParFile",   ""	 } ;
 
 	SaltCorrection                 _SaltCorr {StLucia }  ;			
-    CParamEnumRange<SaltCorrection>	SaltCorr {this, "Salt correction methode",		  "SaltCorrMt", _SaltCorr, StLucia, StLucia, StLucia }  ;
+    CParamEnumRange<SaltCorrection>	SaltCorr {this, "Salt correction method",		  "SaltCorrMt", _SaltCorr, StLucia, StLucia, StLucia }  ;
 
 	float					_ConcSd,	_ConcTg,	_ConcSalt ;
-	CParamNumRange<float>	 ConcSd  {this,    "Conc of the sondes" ,				"ConcSonden", _ConcSd,  0.0f,50e-3f,  0.8e-6f ,"M" } ,	 
-                             ConcTg  {this,    "Conc of the targets",				"ConcTarget", _ConcTg,  0.0f,50e-3f,  1e-9f ,"M" } ,	 
-                             ConcSalt{this,    "Conc of salt",						"ConcenSalt", _ConcSalt,0.0f,1.0f,    50e-3f ,"M" } ;
+	CParamNumRange<float>	 ConcSd  {this,    "Concentration of the probes" ,				"ConcSonden", _ConcSd,  0.0f,50e-3f,  0.8e-6f,"M" } ,	 
+                             ConcTg  {this,    "Concentration of the targets",				"ConcTarget", _ConcTg,  0.0f,50e-3f,  1e-9f  ,"M" } ,	 
+                             ConcSalt{this,    "Concentration of salt",						"ConcenSalt", _ConcSalt,0.0f,1.0f,    50e-3f ,"M" } ;
 
 	Temperature		               _Ta  {55.0f }  ;				
-    CParamNumRange <Temperature>	Ta  {this, "Temp anneling expected in exp",		"TempAnnelg", _Ta,  20.0f, 90.0f, 55.0f, u8"°C"  }  ;
+    CParamNumRange <Temperature>	Ta  {this, "Temp annealing expected in exp",		"TempAnnelg", _Ta,  20.0f, 90.0f, 55.0f, u8"°C"  }  ;
 	AlignMeth		           _TAMeth  {TAMeth_Tm }  ;			
-    CParamEnumRange<AlignMeth>	TAMeth  {this, "Optimized parametr during DynProg",	"AlignMethd", _TAMeth, TAMeth_Tm, TAMeth_Fract, TAMeth_Tm }  ;	
+    CParamEnumRange<AlignMeth>	TAMeth  {this, "Optimized parameter during DynProg",	"AlignMethd", _TAMeth, TAMeth_Tm, TAMeth_Fract, TAMeth_Tm }  ;	
 
     ///  Sequence import filtres
 	float			           _MaxTgId {99.0f }  ;			
-    CParamNumRange <float>	    MaxTgId {this, "Filtre Seq Target with more %id"  ,	"MaxTgIdent",  _MaxTgId,  0.0f,100.0f,  99.0f  ,"%" }  ;	
+    CParamNumRange <float>	    MaxTgId {this, "Filter Seq Target with more %id"  ,	"MaxTgIdent",  _MaxTgId,  0.0f,100.0f,  99.0f  ,"%" }  ;	
 	LonSecPosRang	           _SecLim  {1, 0 } ;			
     CParamNumMinMax<LonSecPos>  SecLim {this, "Fragments of seq. to use",	_SecLim, 
-													"Beginng",						"SecBeginng", 1, std::numeric_limits<LonSecPos>::max(), 1 ,
+													"Begin",						"SecBeginng", 1, std::numeric_limits<LonSecPos>::max(), 1 ,
 													"End",							"SecuencEnd", 0, std::numeric_limits<LonSecPos>::max(), 0 ,		"nt" } ;	
 	SecPosRang			       _SecLenLim {1,0 } ;			
     CParamNumMinMax<SecPos>     SecLenLim {this, "Limits of the length of the seq. to be useful",_SecLenLim ,
 													"Minimal length",				"MinSecuLen", 15, MAX_SEQ_LEN_ALIGN, 20 ,
 													"Maximal length",				"MaxSecuLen", 15, MAX_SEQ_LEN_ALIGN, MAX_SEQ_LEN_ALIGN ,		"nt" } ;	
-	///  Programm setup bool parametrs
-    CParamBool       loadNNPar  {this, "Programm option- Load NN parametr",		"LoadNNPara",    false } ,	     
-                     saveNNPar  {this, "Programm option- save NN parametr",		"SaveNNPara",    false }  ; 
-	CParamBool		 st_savTm   {this, "Programm option- Save Tm Table",		"SavTmTable",    true  }, 
+	///  Program setup bool parameters
+    CParamBool       loadNNPar  {this, "Programs option- Load NN parametr",		"LoadNNPara",    false } ,	     
+                     saveNNPar  {this, "Programs option- save NN parametr",		"SaveNNPara",    false }  ; 
+	CParamBool		 st_savTm   {this, "Programs option- Save Tm Table",		"SavTmTable",    true  }, 
 		             st_savPos  {this, "Programm option- Save Posicion Table",	"SavPosTabl",    true  }, 
 					 st_savG    {this, "Programm option- Save free Enrgie Table","SaveGTable",   true  }, 
 					 st_savAlign{this,"Programm option- Save Table of aligns",   "SavAlignTb",   true  }, 

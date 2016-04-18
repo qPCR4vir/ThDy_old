@@ -63,13 +63,13 @@ CSec::CSec (    const std::string&  sec,
 	_Conc	    ( conc )
 {		
 		if (origBeg<1) 
-              origBeg=1; // from the very begginig
+              origBeg=1; // from the very beginning
 
-            //      Y_beg ,  Y_end,  Y_pos (current position) are coordenates in Y. This coordenates will be adjusted in the first (pre)read
+            //      Y_beg ,  Y_end,  Y_pos (current position) are coordinates in Y. This coordinates will be adjusted in the first (pre)read
 
             // sec_X - string seq. Original string TEXT of the seq.  (index in sec[0])     
         const LonSecPos sec_Len=static_cast<LonSecPos>( sec .length());
-		if (sec_Len < 2)  return;  /// return if only 0 or 1 base to analize
+		if (sec_Len < 2)  return;  /// return if only 0 or 1 base to analyze
         LonSecPos sec_beging =0,     
                   sec_end    =sec_Len,    
                   sec_pos    =0;   
@@ -80,7 +80,7 @@ CSec::CSec (    const std::string&  sec,
                   orig_end    =  orig_max_L ? origBeg + orig_max_L -1 : origBeg + sec_Len -1,
                   orig_pos    = 0;   
                   
-            // fltr - filtred seq, or what will be the resulting seq   (index in _c[1], _b[1], etc. becouse [0] is ? )
+            // fltr - filtered seq, or what will be the resulting seq   (index in _c[1], _b[1], etc. because [0] is ? )
 		LonSecPos fltr_pos =0 ,
 			      fltr_len =0;  
 				/* fb, */           
@@ -91,7 +91,7 @@ CSec::CSec (    const std::string&  sec,
 		// skip  non base and first secBeg bases or gaps in sec and set it in orig
 		do
 		{
-			if (sec_beging >= sec_Len - 1) return;    // the sec had only one more nt, but we dont reach the desired beg in the gene
+			if (sec_beging >= sec_Len - 1) return;    // the sec had only one more nt, but we don t reach the desired beg in the gene
 			c = base(sec[sec_beging]);
 			if (is_degbase[c])      // for orig skip no-bases but not gaps "-"
 			{
@@ -124,7 +124,7 @@ CSec::CSec (    const std::string&  sec,
 			c = base(sec[sec_pos]);
 			if (is_degbase[c])
 			{
-				if (c != gap) fltr_len++;           //  filtre gaps !!
+				if (c != gap) fltr_len++;           //  filter gaps !!
 				if (++orig_pos >= orig_end) break;  //  we reach the desired end of the gene
 			}
 			if (sec_pos >= sec_Len - 1) break; // this was the last char in sec
@@ -143,7 +143,7 @@ CSec::CSec (    const std::string&  sec,
 			if ( sec_beging >= --sec_end) return;    // the sec had no nt
 		}
 
-        if (orig_beging > 1 || orig_pos > orig_end)    // there  are initial or terminal ----, posible the sec not beg at the beg of the aln
+        if (orig_beging > 1 || orig_pos > orig_end)    // there  are initial or terminal ----, possible the sec not beg at the beg of the aln
         {
             if (! _aln_fragment)
                 _aln_fragment.reset(new Aligned_fragment);

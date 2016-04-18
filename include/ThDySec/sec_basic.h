@@ -31,10 +31,10 @@ class ISec				// Pure virtual class ?
 	using sequence = std::basic_string<DegCod::Base> ;
 
 	const char*          charSequence()	const 
-       {return (char*) (  Sequence().c_str()  );} 
+       {return reinterpret_cast<const char*>(Sequence().c_str()  );} 
 
 	virtual const sequence& Sequence(							  )	const=0 ;
-	virtual ISec        *Clone   	(DNAstrand   strnd = DNAstrand::direct )	const=0 ; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+	virtual ISec        *Clone   	(DNAstrand   strnd = DNAstrand::direct )	const=0 ; ///< unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 	
     virtual std::string& Copy_Seq   (std::string     &SecHier, 
                                      DNAstrand   strnd = DNAstrand::direct)	    const=0  ;

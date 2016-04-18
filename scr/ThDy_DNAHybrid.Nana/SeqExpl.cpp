@@ -93,7 +93,7 @@ try{
 	catch ( std::exception& e)
 	{ 
 		(nana::msgbox ( ("Error replacing sequences: " ) ).icon(nana::msgbox::icon_error)
-            << "into gruop:    "  << nana::charset(tn.key())                                 
+            << "into group:    "  << nana::charset(tn.key())                                 
             << "\n from " << (all_in_dir?"directory: " : "file: ") << Path     <<"\n"<< e.what()
         ).show() ;
  	}		
@@ -120,7 +120,7 @@ void SeqExpl::ShowFindedProbes_in_mPCR(bool show_/*=true*/)
 
 void SeqExpl::RefreshProbes_mPCR(bool show_/*=true*/)
 {
-    auto probNode = _tree.find(nana::charset(_Pr._mPCR._probesMS->_name));
+    auto probNode = _tree.find(_Pr._mPCR._probesMS->_name);
     Refresh(probNode).expand(true).select(true);
     if (show_) 
         _Pr.ShowExpl();
