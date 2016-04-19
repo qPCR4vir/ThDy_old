@@ -29,6 +29,9 @@
 		sch.header_mouse_spliter_area_before = 4;
 		sch.header_mouse_spliter_area_after = 4 ; 
 
+		auto& tree_sch = _list.scheme();
+		tree_sch.item_height_ex = 1;  ///< Set !=0 !!!!  def=6. item_height = text_height + item_height_ex
+		tree_sch.item_height = tree_sch.text_height + tree_sch.item_height_ex;
 		
 		InitMyLayout();
         SelectClickableWidget( _tree);
@@ -110,10 +113,10 @@ try{
 
 void SeqExpl::ShowFindedProbes_in_mPCR(bool show_/*=true*/)
 {
-    auto idp = _Pr._cp.MaxTgId.get();
-    _Pr._cp.MaxTgId.set(100);
-    CMultSec *ms= _Pr._cp.AddSeqFromFile	(_Pr._mPCR._probesMS.get() , _Pr._cp._OutputFile.get() + ".sonden.fasta", false	);
-    _Pr._cp.MaxTgId.set(idp);
+    //auto idp = _Pr._cp.MaxTgId.get();
+    //_Pr._cp.MaxTgId.set(100);
+    //CMultSec *ms= _Pr._cp.AddSeqFromFile	(_Pr._mPCR._probesMS.get() , _Pr._cp._OutputFile.get() + ".sonden.fasta", false	);
+    //_Pr._cp.MaxTgId.set(idp);
 
     RefreshProbes_mPCR( show_ );
 }
@@ -424,8 +427,8 @@ List::oresolver& operator<<(List::oresolver & ores, CSec * const sec )
 
     snprintf(val,blen,     ("%*d")  , 6,           sec->Len()       );
 
-    ores <<  sec->Name()                    // col 0: name  
-         <<  val  ;                         // col 1: len
+    ores <<  sec->Name()                                         // col 0: name  
+         <<  val  ;                                              // col 1: len
 
 	Temperature t=KtoC( sec->NonDegSet() ? sec->NonDegSet()->_Local._Tm.Ave() : sec->_Tm.Ave());
 	snprintf(val,blen, (u8"% *.*f °C"), 6, 1,   t );
@@ -434,7 +437,7 @@ List::oresolver& operator<<(List::oresolver & ores, CSec * const sec )
     nana::color tc{static_cast<nana::color_rgb>(0xFFFFFFFF)} , 
                 bc = nana::color(nana::colors::red).blend( nana::colors::blue, fade_rate); 
 
-    ores <<  List::cell {val, bc , tc};    //case 2: Tm 
+    ores <<  List::cell {val, bc , tc};                             //case 2: Tm 
 
     snprintf(val,blen,     ("%*d")  , 5,           sec->Degeneracy());
 
@@ -442,21 +445,29 @@ List::oresolver& operator<<(List::oresolver & ores, CSec * const sec )
 	std::string desc = sec->Description();
 	if (nana::review_utf8(desc))
 		sec->Description(desc);
-    ores <<  val                           // case 3: deg    
-         <<  desc   ;                      // case 4: descr  
+    ores <<  val                                                     // case 3: deg    
+         <<  desc   ;                                                // case 4: descr  
 
     
-    if( sec->_aln_fragment && sec->_aln_fragment->aln.lenght())
+         if( sec->_aln_fragment && sec->_aln_fragment->aln.lenght())
     {
         snprintf(val,blen,     ("%*d")  , 6,           sec->_aln_fragment ->aln.Min()       );
-        ores <<  val                       ;    // case 5: beg in aln   
+        ores <<  val                       ;                                                    // case 5: beg in aln   
         snprintf(val,blen,     ("%*d")  , 6,           sec->_aln_fragment ->aln.Max()       );
-        ores <<  val                       ;    // case 6: end in aln    
+        ores <<  val                       ;                                                    // case 6: end in aln    
     }
-    else
-        ores  << " - "      << " - "        ;    // no pos in aln 
+	else if (sec->_aln_fragment && sec->_aln_fragment->sq.lenght())
+	{
+		snprintf(val, blen, ("%*d"), 6, sec->_aln_fragment->sq.Min());
+		ores << val;                                                                            // case 5: beg in aln   
+		snprintf(val, blen, ("%*d"), 6, sec->_aln_fragment->sq.Max());
+		ores << val;                                                                            // case 6: end in aln    
+	}
+	else
 
-    ores <<  (char *)(  sec->Sequence().substr (1, std::min( sec->Len(), slen)).c_str()    );      // sec                                                     
+        ores  << " - "      << " - "        ;                                                   // no pos in aln 
+
+    ores <<  (char *)(  sec->Sequence().substr (1, std::min( sec->Len(), slen)).c_str()    );   // sec                                                     
 
     return ores;
 }

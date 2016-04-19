@@ -27,16 +27,21 @@ int microArrayProg ( CProgParam_microArray *IPrgPar_uArr,
 void CreateComplProbes(	CMultSec		&pr	)
 {
 	CMultSec *cms{nullptr};
-    for (  pr.goFirstMSec(); pr.NotEndMSec()   ;   pr.goNextMSec())    // usar solo selected   !!!
-        if     ( pr.CurMSec()->_name == "compl")
-        {    
-            cms=pr.CurMSec();
-            cms->Destroy();
-        }
-        else if( pr.CurMSec()->Selected())
-                CreateComplProbes( *pr.CurMSec() );
+
+	for (pr.goFirstMSec(); pr.NotEndMSec(); pr.goNextMSec())    ///\todo recursive ?! use only selected   ?!!!
+	{
+		if (pr.CurMSec()->_name == "compl")        // if there was already one compl group
+		{
+			cms = pr.CurMSec();
+			cms->Destroy();                        // destroy to reuse  !!
+		}
+		else if (pr.CurMSec()->Selected())         // recursively CreateComplProbes for all the other groups
+			CreateComplProbes(*pr.CurMSec());
+	}
+
 	if(!cms) 
         cms=pr.AddMultiSec("compl");
+
 	for (  pr.goFirstSec()   ; pr.NotEndSec()   ;   pr.goNextSec() )				// recorre todos las sondas
 	{	CSec &s = *pr.CurSec() ;
 		if( s.Selected())

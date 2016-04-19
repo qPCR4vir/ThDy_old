@@ -464,6 +464,22 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
                       }
 	/// results
 	CMultSec *probes{};
+
+	struct targets_comp
+	{
+		static std::vector<std::string> headers;
+		long         iteration_num, target_num ;
+		std::string  target_1_name,  target_2_name;
+
+		struct comp
+		{
+			long         t_n_pos, t_n_cand;
+			long         target_1_n_cand_pos, target_1_n_cand;
+			long         target_2_n_cand_pos, target_2_n_cand;
+		} before, after;
+	};
+
+	std::vector<targets_comp> targets_comparitions;
 };
 
 

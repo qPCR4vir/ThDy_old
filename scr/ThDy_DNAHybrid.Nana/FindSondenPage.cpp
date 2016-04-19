@@ -52,8 +52,9 @@ void FindSondenPage::Run_Design(bool design)
     _Pr._SdDes._design	 = design ;		
 		 
 	try{                                   
-		    _Pr._SdDes._cp.Actualice_NNp();  
-            _Pr.Run(_Pr._SdDes);	 //     _Pr._SdDes.Run ();	
+			_Pr._SdDes.probes=  _Pr._mPCR._probesMS.get();  /// \todo review - temp solution
+
+            _Pr.Run(_Pr._SdDes);	            //     _Pr._SdDes.Run ();	
 
                 if (chkBx_showFindedProbes.checked()) 
                 ( dynamic_cast<ThDyNanaForm&>(_Pr)).mExpl_.ShowFindedProbes_in_mPCR();
