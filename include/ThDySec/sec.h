@@ -49,13 +49,29 @@ class CMultSec	;
 /// which make trivial and fast to find accumulated dH and dS and Tm of any fragment by a simple difference calculation.
 /// When degenerated it can have a NonDegSet with all the CSec with degeneracy 1 - each of the variants in the original
 /// It track some group to which it belongs.
+///
+/// Some variables have index base [1] while others have [0] in sec. 
+///
+///      sec_begin                                                                             
+///      0                                                                                     sec_end
+///      |    1        exp_begin                        exp_end                                |       ---> sq
+///      |    |        |                                |                                      |   
+///     Z-----ATCGCGTAGCTAGCTAGCTAGCTGACTTGTCTGGTAGCT--GCTATCTAATGCTGATGCTAGTCGATCGTAGCTGC-x----ZX x?
+///      |             |                                |
+///      1             orig_beging                      orig_end                                       ---> aln
+///                    |                                |
+///                    1 -fltr_beging                   fltr_end - not counting internal gaps
+///     
+/// set sq.sq to some original "experimental" CSec if any
+/// set aln.sq to the parent CMultSec*
+///
 class CSec : public CLink, public CSecBasInfo	
 {public:
 	    int                     x;				///<  ????
 		TemperatureRang	        _Tm ;			// float		_Tm, _minTm, _maxTm ;			
 		std::shared_ptr<CSaltCorrNN>  _NNpar ;
 		float			        _Conc ;			///< concentration of this molecule. If equal to all others is set to -1 and NNParam is used instead
-        std::vector<Code>	    _b=   std::vector<Code>{n_basek-1};			///< codified sequence, initialy? basek
+        std::vector<Code>	    _b=   std::vector<Code>{n_basek-1};			///< codified sequence, initially? basek
         std::vector<Entropy>    _SdS= std::vector<Entropy>{ _NNpar->GetInitialEntropy()};		///< dS acumulada. Calcular Delta S sera solo restar la final menos la inicial	
         std::vector<Energy>		_SdH= std::vector<Energy> {  Energy{} };			// 
 		CMultSec	           *_parentMS{nullptr}	;   //std::weak_ptr<CMultSec> _parentMS	;
@@ -76,12 +92,11 @@ class CSec : public CLink, public CSecBasInfo
 
 	//long		Len			()const		{return _SdS.size();} //
 	void		 CorrectSaltOwczarzy    () ;
-	CMultSec	*CreateNonDegSet		()			;   ///< crea todo el set si no existia, solo si existen bases deg: _NDB>0
-	CMultSec	*ForceNonDegSet			();				///< lo crea siempre, incluso para =1??
-	CSec		*GenerateNonDegVariant	(CSec *s, long pos, Base ndb)   ; //< recursiva
+	CMultSec	*CreateNonDegSet		() ;              ///< crea todo el set si no existia, solo si existen bases deg: _NDB>0
+	CMultSec	*ForceNonDegSet			();			      ///< lo crea siempre, incluso para =1??
+	CSec		*GenerateNonDegVariant	(CSec *s, long pos, Base ndb)   ; ///< recursiva
 	CSec		*CopyFirstBases			(long pos)	;			///< copia parcialmente hasta la pos
 	void		 CorrectSalt			() { if ( _NNpar->UseOwczarzy () ) CorrectSaltOwczarzy();};
-	CSec		*Clone   	(DNAstrand strnd=DNAstrand::direct	 ) const override; /// unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 
 	//virtual CSec*CreateCopy		(DNAstrand strnd=direct) override;//< crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 	//const char	*Get_charSec			()const{return (const char*)_c.c_str();}  ///   ???????????

@@ -3,28 +3,29 @@
 *  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
 *  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 
+* @author Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2016
+*
 * @file  ThDySec\include\ThDySec\th_dy_align.h
 *
 * @brief  Thermodynamic Alignment Algorithm
 *
 * This representation is based on the ideas and code of Kaderali (http://bioinformatics.oxfordjournals.org/content/21/10/2375.abstract)
-* but with many modifications, so that the original authors have no responsability on the many erros,
+* but with many modifications, so that the original authors have no responsibility on the many errors,
 * simplifications or inconsistencies I have introduced (most files and class names were changed to avoid confusion with originals).
 *
 * Some additions/modifications are:
 *
 * - Integrate different variants of the algorithm into a (virtual) class hierarchy
 * - use the code (Base) from CSec instead of char* as input sequences
-* - open the dynamicprogramm (DP) black-box to output any hit passing a cutoff
+* - open the dynamic program (DP) black-box to output any hit passing a cutoff
 * - class CHit to managed hits
-* - split each of the two DP matrix into three, becouse the 0,1,2 index was not used as variable, but as a name
+* - split each of the two DP matrix into three, because the 0,1,2 index was not used as variable, but as a name
 * - introduce a step matrix to go back in the DP matrix with minimal calculation
 * - use a shared_ptr<CSaltCorrNN> member
 * - idiomatic typedefs: Energy, Entropy, Temperature, etc. 
 * - the initial maxlen of probes and targets are only a hint, and the DPT is resized as need. \todo implement as std::vector
-* - ThDyAlign_TmCand -designed specially to find probes that hybridice in both sequences and in others targets too.
+* - ThDyAlign_TmCand -designed specially to find probes that hybridize in both sequences and in others targets too.
 * -
 * -
 *
@@ -73,7 +74,7 @@
 *     // #$
 *     //=============================================================================
 *
-* Which are accesible under GNU GPL at: http://dna.engr.uconn.edu/?page_id=85
+* Which are accessible under GNU GPL at: http://dna.engr.uconn.edu/?page_id=85
 *
 */
 
@@ -93,17 +94,17 @@ class CHitAligned ;
 
 //  ------------------------------------------------------   ThDyAlign  ----------------------------------
 
-/// base for thermodynamic dynamicprogramm alignment calculation classes
+/// base for thermodynamic dynamic program alignment calculation classes
 
 /// "hybrid" the first sequence (the sonde) as simple-strand onto the 
 ///  complementary (by default) strand of the double-stranded second sequence (the target). 
 /// It uses the code (Base) from CSec as input sequence 
 /// Construct once, and reuse for each new paar sonde/target, and after each use of Align()
 /// use the "OUTPUT" functions to return results
-/// The "OUTPUT" functions Get_X(i,j)- return parametr x at (i,j) (dynamic-table-coordinates-position in sequences) for maximized algorithm parametr
+/// The "OUTPUT" functions Get_X(i,j)- return parameter x at (i,j) (dynamic-table-coordinates-position in sequences) for maximized algorithm parametr
 /// while the other "OUTPUT" x() functions return parametr x for maximized algorithm parametr
-/// \todo: make clase abstr?   do what ThDyAlign_Tm do... simplify?
-/// \todo: make hibridization on both strand simulstaneulsly
+/// \todo: make abstract class ?   do what ThDyAlign_Tm do... simplify?
+/// \todo: make hybridization on both strand simultaneously
 class ThDyAlign												
 {
  public:		
@@ -128,14 +129,14 @@ class ThDyAlign
 		return T;
 	}
 
-	  /// return setted Ta "seteada", which will be used in the next "experiment"   \todo: review all around Ta 	
+	  /// return settled Ta, which will be used in the next "experiment"   \todo: review all around Ta 	
 	Temperature	     Ta		()const							
 	{  return _Ta; } 
 
 	void			SetSig	(Temperature Tm_sig, Energy G_sig)	///< Tm and G cut off values
 	{ _Tm_sig=Tm_sig;	_G_sig=G_sig ;}	
 
-	       /// main trigger of alignment calculation of the sonde on the camplementary strand of the target \todo: use const references
+	       /// main trigger of alignment calculation of the sonde on the complementary strand of the target \todo: use const references
 	virtual void	Align	( CSec *sonde,  CSec *target)		
 	{	ClearHits();
 		Use	(sonde, target);	//	InitBorder	();
@@ -176,7 +177,7 @@ public:
 			// "OUTPUT" functions to return results. Use only after Align()  !!!
 
 protected:						
-	         // --------- Get_X(i,j)	---------- return parametr at (i,j) for maximized algorithm parametr !!!!    ?????????
+	         // --------- Get_X(i,j)	---------- return parameter at (i,j) for maximized algorithm parameter !!!!    ?????????
 
 	Energy		 Get_H_max_para	(LonSecPos i, LonSecPos j)const;	///< "OUTPUT" function
 	Entropy		 Get_S_max_para	(LonSecPos i, LonSecPos j)const;	///< "OUTPUT" function
@@ -228,26 +229,26 @@ public:
 	std::shared_ptr<CSaltCorrNN>  _NNpar ;
 	CSec				*_sd , *_tg ;        
 	long				_THits,     ///< total number of hits 
-		                _HitsOK ;   ///< total of Ok hits: which are shraed with all the the other aligments. \todo: make interface?
+		                _HitsOK ;   ///< total of Ok hits: which are shared with all the the other alignments. \todo: make interface?
 	LonSecPos			_maxgloi, _maxgloj	;	///< coordenates of the global max in DP matrix	/*, _maxglot*/ 
 
 protected:	
-	Temperature			_Tm_sig,    ///< "significative", cut-off Tm
+	Temperature			_Tm_sig,    ///< "significant", cut-off Tm
 		                _minTm, 
 		                _Ta,
 		                _Ta_lastCalc;
-	Energy				_G_sig ;    ///< "significative", cut-off G		// _Tm_min, _Tm_max ; // _Tm_min, _Tm_max ; aqui se usan????????????????
+	Energy				_G_sig ;    ///< "significant", cut-off G		// _Tm_min, _Tm_max ; // _Tm_min, _Tm_max ; aqui se usan????????????????
 
 	LonSecPos			_LenSond, _LenTarg,  _LenSondPlus1 ;
 	long				_TableSize;
 
 	               // Dynamic Programming (DP) Tables for Entropy and Enthalpy
-	Energy				*_dH0, ///< Enthalpy DP matrix for Enthalpy - for steps that will align x(i+1) with y(j+1) - diagonal, match, unmatch
+	Energy				*_dH0, ///< Enthalpy DP matrix for Enthalpy - for steps that will align x(i+1) with y(j+1) - diagonal, match, mismatch
 		                *_dH1, ///< Enthalpy DP matrix for Enthalpy - for steps that will align x(i+1) with a gap in the target  
 		                *_dH2; ///< Enthalpy DP matrix for Enthalpy - for steps that will align y(i+1) with a gap in the sonde            
 	Entropy				*_dS0, *_dS1, *_dS2;         
 
-	float		_InitMax, _maxglo, _max ;   ///< max of rector parametr  :  like G o Tm
+	float		_InitMax, _maxglo, _max ;   ///< max of rector parameter  :  like G o Tm
 
 	Entropy		_optS;           ///< optimal value
 	Energy		_optH, _optG;    ///< optimal value
@@ -276,7 +277,7 @@ protected:
 //Energy		 Getmaxglo_G()				const		{return Get_G (_maxgloi,_maxgloj);}			// a la Ta en que se calculo
 //Energy		 Getmaxglo_G(Temperature Ta)const		{return Get_G (_maxgloi,_maxgloj,Ta);}		// eliges a que Ta
 
-/// Hits "inside" of the dynamic programming Matriz, when the algorithm parametr pass the X_sig cut off. \todo: no CLink
+/// Hits "inside" of the dynamic programming Matrix, when the algorithm parameter pass the X_sig cut off. \todo: no CLink
 class CHit : public CLink 
 {	
 public: 	
@@ -331,7 +332,7 @@ class AlignedSecPar : public CHitAligned
 //	return stream;
 //}
 
-/// the rector parametr for DP is Tm (simplistically) = H / S  (G=H-ST, Tm is T for which G=0)
+/// the rector parameter for DP is Tm (simplistically) = H / S  (G=H-ST, Tm is T for which G=0)
 class ThDyAlign_Tm			: public ThDyAlign  // -----------------------------Tm--------------------ThDyAlign_Tm------
 {public:	
 	ThDyAlign_Tm ( long MaxLenSond, 
@@ -361,9 +362,9 @@ class ThDyAlign_TmHits			: public ThDyAlign_Tm  // -----------------------------
 	Temperature  _Tm_min, _Tm_max ; //aqui se usan????????????????
 };
 
-/// Designed specially to find probes that hybridice in both sequences and in others targets too.
+/// Designed specially to find probes that hybridize in both sequences and in others targets too.
 
-/// Take CSecCand instead of CSec, the rector parametr for DP is Tm 
+/// Take CSecCand instead of CSec, the rector parameter for DP is Tm 
 class ThDyAlign_TmCand			: public ThDyAlign_Tm  // -----------------------------Tm-----------------ThDyAlign_TmCand---------
 {public:	
 	ThDyAlign_TmCand ( long                      MaxLenSec, 
@@ -381,7 +382,7 @@ class ThDyAlign_TmCand			: public ThDyAlign_Tm  // -----------------------------
 	//float  _Tm_min, _Tm_max ; //aqui se usan????????????????
 };
 
-/// grapper for CSec adding Rangs of hit in each position to track existing thermodynamic hits with the other sequences
+/// wrapper for CSec adding Rangs of hit in each position to track existing thermodynamic hits with the other sequences
 class CMSecCand : public CLink		//--------------------------------Tm------ CMSecCand --------------------------------
 {public:
 	CMSecCand(	SondeLimits sL ,
@@ -429,7 +430,7 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 	CList	_LSecCand, _LMSecCand;
 };
 
-///  the rector parametr for DP is G
+///  the rector parameter for DP is G
 class ThDyAlign_G			: public ThDyAlign	// ------------------------------G-------------------------
 {public:
 	ThDyAlign_G(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar, Temperature Tm)
@@ -448,7 +449,7 @@ class ThDyAlign_G			: public ThDyAlign	// ------------------------------G-------
 class FracTDAlign	: public ThDyAlign			// --------------------------Frac-----------------------------
 {	bool	_finisch ;
 	int		_iterations, _maxNumIt, _fixedNumIter; //, _totalIterations 
-	Energy	_maxG_der ;  // epsilum 
+	Energy	_maxG_der ;  // epsilon 
  public:
 	 std::string AlignMeth()  override {return "FractG";}
 	 FracTDAlign(LonSecPos MaxLenSond, LonSecPos MaxLenTarg, std::shared_ptr<CSaltCorrNN>  NNpar)  
