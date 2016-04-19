@@ -3,7 +3,7 @@
 *  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
 *  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* @author Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2016
 *
 * @file  ThDySec\include\ThDy_programs\init_ThDy_prog_param.h
@@ -128,23 +128,23 @@ class ThDyCommProgParam : public CCommProgParam
 													"Minimal length",				"MinSecuLen", 15, MAX_SEQ_LEN_ALIGN, 20 ,
 													"Maximal length",				"MaxSecuLen", 15, MAX_SEQ_LEN_ALIGN, MAX_SEQ_LEN_ALIGN ,		"nt" } ;	
 	///  Program setup bool parameters
-    CParamBool       loadNNPar  {this, "Programs option- Load NN parametr",		"LoadNNPara",    false } ,	     
-                     saveNNPar  {this, "Programs option- save NN parametr",		"SaveNNPara",    false }  ; 
-	CParamBool		 st_savTm   {this, "Programs option- Save Tm Table",		"SavTmTable",    true  }, 
-		             st_savPos  {this, "Programm option- Save Posicion Table",	"SavPosTabl",    true  }, 
-					 st_savG    {this, "Programm option- Save free Enrgie Table","SaveGTable",   true  }, 
-					 st_savAlign{this,"Programm option- Save Table of aligns",   "SavAlignTb",   true  }, 
-					 st_savProj {this,"Programm option- Save Project file",      "SavProject",   true  }, 
-					 st_savG_Plasm{this, "Programm option- Gtable for Plasmid",  "SavG_Plasm",   false }, 
-					 st_savTm_Plasm{this,"Programm option- Tm table for Plasmid","SavTmPlasm",   false }, 
-					 st_savLog  {this, "Programm option- save a log",			 "Save_Logfi",   false }, 
-					 st_Exp_sond{this, "Programm option- re-export probes",	     "Exp_probes",   false }, 
-					 st_ExpTarg {this, "Programm option- re-export targets",	 "Exp_target",   false };
+    CParamBool       loadNNPar  {this, "Programs option- Load NN parameter",		"LoadNNPara",    false } ,	     
+                     saveNNPar  {this, "Programs option- save NN parameter",		"SaveNNPara",    false }  ; 
+	CParamBool		 st_savTm   {this, "Programs option- Save Tm Table",		"SavTmTable",    false },
+		             st_savPos  {this, "Program option- Save Position Table",	"SavPosTabl",    false },
+					 st_savG    {this, "Program option- Save free Energy Table","SaveGTable",   false },
+					 st_savAlign{this,"Program option- Save Table of aligns",   "SavAlignTb",   false },
+					 st_savProj {this,"Program option- Save Project file",      "SavProject",   true  }, 
+					 st_savG_Plasm{this, "Program option- Gtable for Plasmid",  "SavG_Plasm",   false }, 
+					 st_savTm_Plasm{this,"Program option- Tm table for Plasmid","SavTmPlasm",   false }, 
+					 st_savLog  {this, "Program option- save a log",			 "Save_Logfi",   false }, 
+					 st_Exp_sond{this, "Program option- re-export probes",	     "Exp_probes",   false }, 
+					 st_ExpTarg {this, "Program option- re-export targets",	 "Exp_target",   false };
 
    	std::set<CMultSec*>           _primersGr  ;
     std::shared_ptr<CSaltCorrNN>  _pSaltCorrNNp{Create_NNpar( )};
 	std::shared_ptr<CMultSec>     _pSeqTree         {CreateRoot() } ;  ///<  The root of the sequences tree
-	std::shared_ptr<CMultSec>     _pSeqNoUsed       {AddSeqGroup(_pSeqTree.get(), "Dont use"  ) } ;
+	std::shared_ptr<CMultSec>     _pSeqNoUsed       {AddSeqGroup(_pSeqTree.get(), "Don t use"  ) } ;
 	std::shared_ptr<CMultSec>     _pSeqTargets      {AddSeqGroup(_pSeqTree.get(), "Target seq") } ; 
 	std::shared_ptr<CMultSec>     _pSeqNonTargets   {AddSeqGroup(_pSeqTree.get(), "Non Target seq")  } ; 
 	std::shared_ptr<CMultSec>     _pPCRfiltrePrimers{ AddPrimerGroup(_pSeqTree.get(), "PCR Primers to <filtre> sequences")  } ;
@@ -186,8 +186,9 @@ class ThDyCommProgParam : public CCommProgParam
 			SaltCorr.AddStrValues("StLucia",	StLucia);
 			SaltCorr.AddStrValues("Owczarzy",	Owczarzy);
 		} 
-	
-std::unique_ptr<CSaltCorrNN> Create_NNpar        ( )   //< Create a new set of NeirN parametrs based on current concentr. and Ta set in com-par.
+
+	///< Create a new set of NeirN parameters based on current concentration. and Ta set in com-par.
+std::unique_ptr<CSaltCorrNN> Create_NNpar        ( )   
 {
 	std::unique_ptr<CSaltCorrNN> NNpar ( new  	CSaltCorrNN	(	 _ConcSd,  _ConcTg,  _ConcSalt, _SaltCorr, loadNNPar.get()?_InputNNFile.get():"")); 
 	//auto NNpar = std::make_unique<CSaltCorrNN>();
@@ -250,7 +251,7 @@ void Check_NNp_Targets (/*ThDyCommProgParam& cp*/)
 	}
 
 
-	/// take parametrs from the parent if posible
+	/// take parameters from the parent if possible
 	CMultSec *AddSeqFromFile    (CMultSec *parentGr, const std::string& FileName, bool recursive=false, bool onlyStructure=false); 
 	CMultSec *CopyStructFromDir	(CMultSec *parentGr, const std::string& FileName )
     {
@@ -294,12 +295,11 @@ void Check_NNp_Targets (/*ThDyCommProgParam& cp*/)
     }
 };
 
-
 class CProgParam_microArray ;
-//int microArrayProg	( char *InputPrimer, char *InputTarget, char *OutputTm)  ;
 int microArrayProg   ( CProgParam_microArray   *IPrgPar_uArr )  ;
 
 template <typename Num> class CTable ;          //typedef uArr_RT CTable<TmGPos> ;
+
 class CEspThDyProgParam : public CEspProg
 {public:
 	ThDyCommProgParam& _cp;
@@ -314,7 +314,7 @@ class CEspThDyProgParam : public CEspProg
 class CProgParam_microArray : public CEspThDyProgParam
 {public:	
     std::shared_ptr<CMultSec>   _probesMS      { _cp.AddPrimerGroup(_cp._pSeqTree.get(), "Probes of Virtual uArr")};
-    CParamString	            _InputSondeFile{ this, "Imput file for Sondes", "iSonde_uAr", "" };
+    CParamString	            _InputSondeFile{ this, "Input file for probes", "iSonde_uAr", "" };
     CParamBool       _PrRecurDir    {this, "Recursively add all probe seq-files from all dir", "ProbRecDir", false} ;
     CParamBool       _PrDirStrOnly  {this, "Reproduce only the dir struct in probe"          , "ProbDirStr", true } ;
       
@@ -346,7 +346,7 @@ class CProgParam_microArray : public CEspThDyProgParam
     void Check_NNp_Targets_probes      (CMultSec *probes) 
 {
 	_cp.Check_NNp_Targets ();
-    assert(("Traing to load sonden seq into inexisten MultiSec", probes));
+    assert(("Trying to load probe seq into inexistent MultiSec", probes));
     if (! probes->_Global._NSec)
 	 if (!_InputSondeFile.get().empty())
 		probes->AddFromFile ( _InputSondeFile.get() );	
@@ -392,6 +392,7 @@ class CProgParam_microArray : public CEspThDyProgParam
 
 class CProgParam_MultiplexPCR ;
 int MultiplexPCRProg ( CProgParam_MultiplexPCR *IPrgPar_uArr )  ;
+
 class CProgParam_MultiplexPCR : public CProgParam_microArray
 {public:
 	CProgParam_MultiplexPCR(const std::string& titel, ThDyCommProgParam &commThDyParam) ;
@@ -403,6 +404,7 @@ class CProgParam_MultiplexPCR : public CProgParam_microArray
 
 class CProgParam_SondeDesign ;
 int SondeDesignProg  ( CProgParam_SondeDesign  *IPrgPar_SdDes)  ;
+
 class CProgParam_SondeDesign : public CEspThDyProgParam			//  .------------------------	CProgParam_SondeDesign	----------------
 {public:
 
@@ -413,7 +415,7 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 		_design (true), design(this, "Make only design or full comp",	        "DesigVsCmp", _design,  true),
 		                unique(this, "Find probes unique for a few sequences",	"FindUnique",           true),
 		                common(this, "Find probes common for most sequences",	"FindCommon",           true),
-        sL(this, "Sondes to design limits", _sL,							 
+        sL(this, "Probe design limits", _sL,							 
 		        "MinSonde_G",  -100.0f,   100.0f,  -5.0f,
 		        "MaxSonde_G",  -100.0f,   100.0f,  -1.0f,
 		        "MinSondeTm",  -270.0f,    90.0f,	57.0f,
@@ -422,15 +424,15 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 		        "MaxSondeLn",  4,         200,		35,
                 /*UnitG=*/"kcal/mol",  /*UnitT=*/u8"°C",  /*UnitL=*/"nt"
 		   ),
-		_G_sig (10),		  G_sig  (this, "Significative G probe-target",		"MaxSd_Tg_G",    _G_sig,  -15.0f, 30.0f,	10.0f, "kcal/mol" ),	
-		_Tm_sig (30)	, 	  Tm_sig (this, "Significative Tm probe-target",	"MinSd_TgTm",    _Tm_sig, -0.0f,  80.0f,	30.0f, u8"°C" ),
+		_G_sig (10),		  G_sig  (this, "Significant G probe-target",		"MaxSd_Tg_G",    _G_sig,  -15.0f, 30.0f,	10.0f, "kcal/mol" ),	
+		_Tm_sig (30)	, 	  Tm_sig (this, "Significant Tm probe-target",	"MinSd_TgTm",    _Tm_sig, -0.0f,  80.0f,	30.0f, u8"°C" ),
 
-		_MinSd_nTgG (15) , MinSd_nTgG(this, "Significative G probe-nontarget",	"MinSdnTg_G", _MinSd_nTgG,  0.0f, 30.0f,	15.0f, "kcal/mol" ),		
-		_MaxSd_nTgTm (10),MaxSd_nTgTm(this, "Significative Tm probe-nontarget",	"MaxSdnTgTm",_MaxSd_nTgTm, -0.0f,  70.0f,	10.0f, u8"°C" ),
+		_MinSd_nTgG (15) , MinSd_nTgG(this, "Significant G probe-non target",	"MinSdnTg_G", _MinSd_nTgG,  0.0f, 30.0f,	15.0f, "kcal/mol" ),		
+		_MaxSd_nTgTm (10),MaxSd_nTgTm(this, "Significant Tm probe-non target",	"MaxSdnTgTm",_MaxSd_nTgTm, -0.0f,  70.0f,	10.0f, u8"°C" ),
 
-		_MinSelfG (10),		 MinSelfG(this, "Significative selfprobe G",		"MinSdSlf_G", _MinSelfG,  0.0f, 30.0f,		10.0f, "kcal/mol" ),		
-		_MaxSelfTm (10),    MaxSelfTm(this, "Significative selfprobe Tm",		"MaxSdSlfTm",_MaxSelfTm, -0.0f,  70.0f,		10.0f, u8"°C" )
-		//_MinTgCov (100),	MinTgCov (this, "Find sondes with more % coverage",	"Min_Tg_Cov",  _MinTgCov,  0.0f,100.0f,		99.0f  ,"%")							
+		_MinSelfG (10),		 MinSelfG(this, "Significant self probe G",		"MinSdSlf_G", _MinSelfG,  0.0f, 30.0f,		10.0f, "kcal/mol" ),		
+		_MaxSelfTm (10),    MaxSelfTm(this, "Significant self probe Tm",		"MaxSdSlfTm",_MaxSelfTm, -0.0f,  70.0f,		10.0f, u8"°C" )
+		//_MinTgCov (100),	MinTgCov (this, "Find probes with more % coverage",	"Min_Tg_Cov",  _MinTgCov,  0.0f,100.0f,		99.0f  ,"%")							
         {
 	    }  // revisar cuales deben ser estos valores !!!!	
 
@@ -450,7 +452,7 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
 	//float		           _MinTgCov ;
 	//CParamNumRange<float>	MinTgCov ;
 
-    CParamNumMinMax<float> Coverage {this, "Find sondes with % of target coverage",  
+    CParamNumMinMax<float> Coverage {this, "Find probes with % of target coverage",  
 											" less than of the others (unique probes)", "PercUnique",  0.0f,  100.0f,   0.0f, 
 											" at last of the others (common probes)"  , "PercCommon",  0.0f,  100.0f, 100.0f, 
 											"%"}; 
@@ -460,6 +462,8 @@ class CProgParam_SondeDesign : public CEspThDyProgParam			//  .-----------------
                         //Check_NNp_Targets (/*IPrgPar_SdDes->*/_cp);
                         return  SondeDesignProg( this )  ;
                       }
+	/// results
+	CMultSec *probes{};
 };
 
 
@@ -513,10 +517,10 @@ class CProgParam_TmCalc : public CProgParam_MultiplexPCR
 
 class ThDyProject : public CProject /// Permite manejar todo el projecto: con un miembro para los parametros comunes y otro para los de cada programa
 {public:
-		ThDyCommProgParam		_cp   {"Common parametrs for all functions",this}  ;
+		ThDyCommProgParam		_cp   {"Common parameters for all functions",this}  ;
 		CProgParam_microArray   _uArr {"Virtual microarray experiment"     ,_cp }  ;
 		CProgParam_MultiplexPCR _mPCR {"Check multiplex PCR"               ,_cp }  ;
-		CProgParam_SondeDesign	_SdDes{"Find sondes"                       ,_cp }  ;
+		CProgParam_SondeDesign	_SdDes{"Find probes"                       ,_cp }  ;
 		CProgParam_TmCalc		_TmCal{"Tm calculator"                     ,_cp }  ;
 
         //void   CopyStructFromDir()

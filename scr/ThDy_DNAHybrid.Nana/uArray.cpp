@@ -30,11 +30,11 @@ try     : _Pr             (tdForm),
     }
 catch (std::exception & e)
 {
-	throw std::runtime_error(std::string("An error ocurred during initialization of the MplexPCR page window:\n") + e.what());
+	throw std::runtime_error(std::string("An error occurred during initialization of the MplexPCR page window:\n") + e.what());
 }
 catch (...)
 {
-	throw std::runtime_error(std::string("An unknonw error ocurred during initialization of the MplexPCR page window"));
+	throw std::runtime_error(std::string("An unknown error occurred during initialization of the MplexPCR page window"));
 }
 
 void MplexPCR::buttPCR_Click()  //	  Run      _IPrgPar_mPCR
@@ -77,11 +77,11 @@ catch ( std::exception& e)
     }
    catch (std::exception & e)
    {
-	   throw std::runtime_error(std::string("An error ocurred during initialization of the uArray page window:\n") + e.what());
+	   throw std::runtime_error(std::string("An error occurred during initialization of the uArray page window:\n") + e.what());
    }
    catch (...)
    {
-	   throw std::runtime_error(std::string("An unknonw error ocurred during initialization of the uArray page window"));
+	   throw std::runtime_error(std::string("An unknown error occurred during initialization of the uArray page window"));
    }
 
 
@@ -97,7 +97,7 @@ catch ( std::exception& e)
 	catch ( std::exception& e)
 		{ 
           std::cerr<< e.what()    ;
-          (nana::msgbox(*this,("Error during uArr analis !"), 
+          (nana::msgbox(*this,("Error during uArr analysis !"), 
                                                 nana::msgbox::button_t::ok)   <<e.what()) (  ) ;
 		  return;
 		}

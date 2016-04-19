@@ -3,7 +3,7 @@
 *  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
 *  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* @author Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2016
 *
 * @file  ThDySec\scr\ThDy_DNAHybrid.Nana\FindSondenPage.cpp
@@ -18,7 +18,7 @@ FindSondenPage::FindSondenPage(ThDyNanaForm& tdForm)    try
         : _Pr        (tdForm), 
           CompoWidget(tdForm, "Find probes", "FindSonden.lay.txt")
 	{
-		bgcolor (static_cast<nana::color_rgb>(0xAAAAAA));  ///\todo: use codigo
+		bgcolor (static_cast<nana::color_rgb>(0xAAAAAA));  ///\todo: use code
 
 		chkBx_showFindedProbes.check(true);
 		InitMyLayout();
@@ -38,11 +38,11 @@ FindSondenPage::FindSondenPage(ThDyNanaForm& tdForm)    try
 	}
 catch (std::exception & e)
 {
-	throw std::runtime_error(std::string("An error ocurred during initialization of the Find probes page window:\n") + e.what());
+	throw std::runtime_error(std::string("An error occurred during initialization of the Find probes page window:\n") + e.what());
 }
 catch (...)
 {
-	throw std::runtime_error(std::string("An unknonw error ocurred during initialization of the Find probes page window"));
+	throw std::runtime_error(std::string("An unknown error occurred during initialization of the Find probes page window"));
 }
 
 
@@ -60,7 +60,7 @@ void FindSondenPage::Run_Design(bool design)
  	}
 	catch ( std::exception& e)
 	{ 
-        (nana::msgbox(*this,"Error during Sonde Design !", nana::msgbox::button_t::ok)<<e.what()) (  ) ;
+        (nana::msgbox(*this,"Error during probe Design !", nana::msgbox::button_t::ok)<<e.what()) (  ) ;
 		return;
 	}	 	        		 
 }   
