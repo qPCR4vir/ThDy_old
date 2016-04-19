@@ -97,6 +97,10 @@ class CSec : public CLink, public CSecBasInfo
 	CSec		*GenerateNonDegVariant	(CSec *s, long pos, Base ndb)   ; ///< recursiva
 	CSec		*CopyFirstBases			(long pos)	;			///< copia parcialmente hasta la pos
 	void		 CorrectSalt			() { if ( _NNpar->UseOwczarzy () ) CorrectSaltOwczarzy();};
+	CSec *Clone(DNAstrand strnd=DNAstrand::direct	 ) const override; /// unique_ptr<ISec> crea una copia muy simple. \todo CUIDADO con copias de CSecBLASTHit y otros derivados
+	CSec *Clone( long  InicBase,
+                                 long  EndBase, 
+                                 DNAstrand   strnd = DNAstrand::direct) const override;
 
 	//virtual CSec*CreateCopy		(DNAstrand strnd=direct) override;//< crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 	//const char	*Get_charSec			()const{return (const char*)_c.c_str();}  ///   ???????????

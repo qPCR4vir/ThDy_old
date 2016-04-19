@@ -49,7 +49,23 @@ bool		CSec::Selected(		) const //< User-editable  ??
 }					 
 
 /// Fundamental class to manipulate sec.
+
 /// Some variables have index base [1] while others have [0] in sec. 
+///
+///      sec_begin                                                                             
+///      0                                                                                     sec_end
+///      |    1        exp_begin                        exp_end                                |       ---> sq
+///      |    |        |                                |                                      |   
+///     Z-----ATCGCGTAGCTAGCTAGCTAGCTGACTTGTCTGGTAGCT--GCTATCTAATGCTGATGCTAGTCGATCGTAGCTGC-x----ZX x?
+///      |             |                                |
+///      1             orig_beging                      orig_end                                       ---> aln
+///                    |                                |
+///                    1 -fltr_beging                   fltr_end - not counting internal gaps
+///     
+/// set sq.sq to some original "experimental" CSec if any
+/// set aln.sq to the parent CMultSec*
+///
+/////////////////////////////////////////////////////////////////
 CSec::CSec (    const std::string&  sec, 
                 int                 id, 
                 const std::string&  nam, 
@@ -151,13 +167,24 @@ CSec::CSec (    const std::string&  sec,
 			if ( sec_beging >= --sec_end) return;    // the sec had no nt
 		}
 
+		exp_end = orig_end - (orig_beging-exp_beging);
         if (orig_beging > 1 || orig_pos > orig_end)    // there  are initial or terminal ----, possible the sec not beg at the beg of the aln
         {
-            if (! _aln_fragment)
+            if (! _aln_fragment)    // ??
                 _aln_fragment.reset(new Aligned_fragment);
-            _aln_fragment->sq.SetMin(orig_beging);
-            _aln_fragment->sq.SetMax(orig_end);
+            _aln_fragment-> sq.Set(exp_beging, exp_end );  ///\todo set sq.sq to some original CSec if any
+			_aln_fragment->aln.Set(orig_beging, orig_end); ///\todo set aln.sq to the parent CMultSec*
+
         }
+
+
+/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+std::cout << "\n -CSeq: " << nam << " - " << origBeg << ", " << orig_max_L;
+if ( _aln_fragment)    // ??
+		    std::cout << toString_Range(_aln_fragment->aln) << toString_Range(_aln_fragment->sq);
+/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
         //LonSecPos len = orig_end-orig_beging+1;   /// _len is the numer of "bases" to be readed (posible including gaps and deg-bases, but not external gaps)
 			              /// as in:" TGCA$" . Dont count the 2 '$' - principio y fin de Kadelari and the final '\0'
@@ -206,28 +233,10 @@ CSec::CSec (    const std::string&  sec,
 		_Tm.Set( NNpar->CalcTM( _SdS.back(), _SdH.back()) ) ;      //_maxTm = _minTm =
 }
 
-//CSec  * CSec::CreateCopy(DNAstrand strnd) // strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
-//{	Base *s=GetCopy_charSec(strnd); 
-//	//char *n; 
-//	CSec *newS=new CSec( (char*)s, 
-//						NewS_ID(),				
-//						_name + DNAstrandName[strnd],
-//						_NNpar	,
-//						0,1,
-//						_Clas,
-//						_Conc
-//						);
-//	newS->Selected(Selected());
-//	newS->Filtered(Filtered());
-//	delete []s;/*delete []n;*/
-//	return newS;
-//}
-    
-CSec* CSec::Clone   	(DNAstrand strnd 	 ) const  /// unique_ptr<ISec>   strnd=direct...crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
+CSec *CSec::Clone   	(DNAstrand strnd 	 ) const   // std::unique_ptr<ISec> ?
 {	
-	
 	string s; 
-	unique_ptr<CSec> newS {new CSec( Copy_Seq(s,strnd), 
+	unique_ptr<CSec> newS {new CSec( Copy_Seq(s, strnd), 
 						             NewS_ID(),				
 									_name + DNAstrandName[(int)strnd],
 									_NNpar	,
@@ -238,7 +247,57 @@ CSec* CSec::Clone   	(DNAstrand strnd 	 ) const  /// unique_ptr<ISec>   strnd=di
 	                       };
 	newS->Selected(Selected());
 	newS->Filtered(Filtered());
- 	return newS.release();
+	return newS.release();   	//return std::make_unique<ISec>(newS);
+}
+
+CSec *CSec::Clone( long        InicBase,
+                                   long        EndBase, 
+                                   DNAstrand   strnd/* = DNAstrand::direct*/) const    
+{
+	string s; 
+	unique_ptr<CSec> newS{ new CSec(    Copy_Seq (s, InicBase, EndBase, strnd),
+										NewS_ID(),
+										_name + DNAstrandName[(int)strnd],
+										_NNpar	,
+										0,1,          //\todo try to use this inside the CSec constructor
+										_Clas,
+										_Conc
+									)
+									};
+	newS->Selected(Selected());
+	newS->Filtered(Filtered());
+
+	if (!newS->_aln_fragment)    // \todo sure !
+	{
+		newS->_aln_fragment.reset(new Aligned_fragment);      
+	}
+
+	EndBase = std::min(EndBase, Len() + InicBase -1);
+
+	newS->_aln_fragment->sq_ref.Set(InicBase, EndBase);    
+
+	if (_aln_fragment)    // ??
+	{
+		newS->_aln_fragment->sq.Min()   = _aln_fragment->sq.Min() + InicBase - 1;
+		newS->_aln_fragment->sq.Max()   = _aln_fragment->sq.Min() + EndBase  - 1;    // \todo internal gaps???
+
+		newS->_aln_fragment->aln.Min()   = _aln_fragment->aln.Min() + InicBase - 1;
+		newS->_aln_fragment->aln.Max()   = _aln_fragment->aln.Min() + EndBase  - 1;    // \todo internal gaps???
+	}else
+	{
+		newS->_aln_fragment->sq.Set(InicBase, EndBase);          ///\todo set sq.sq to some original CSec if any. weak ptr ???!!!!!
+		newS->_aln_fragment->aln.Set(InicBase, EndBase);          ///\todo set aln.sq to the parent CMultSec*.     weak ptr ???!!!!!
+	}
+
+	/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	std::cout << "\n clon: " << newS->Name() << " - " << InicBase << ", "<< EndBase << ", " << Len();
+	std::cout << toString_Range(newS->_aln_fragment->aln) << toString_Range(newS->_aln_fragment->sq);
+	if (_aln_fragment)    // ??
+		std::cout << toString_Range(_aln_fragment->aln) << toString_Range(_aln_fragment->sq);
+	/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+	return newS.release();
 }
 
 

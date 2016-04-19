@@ -28,7 +28,7 @@
 template <class SEQ>
 struct fragment:  NumRang<LonSecPos>
 {
-    SEQ *sq{};
+    SEQ *sq{};  ///\todo weak ptr?
 
     fragment (SEQ &s, LonSecPos beg = 0, LonSecPos end = 0)
         : NumRang<LonSecPos>(beg, end),

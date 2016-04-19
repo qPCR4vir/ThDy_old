@@ -38,6 +38,9 @@ class ISec				// Pure virtual class ?
 	// std::unique_ptr<ISec> ?
 	virtual ISec *Clone   	(DNAstrand   strnd = DNAstrand::direct )	const=0 ; ///< unique_ptr<ISec> crea una copia muy simple. CUIDADO con copias de CSecBLASTHit y otros derivados
 	
+	virtual ISec *Clone    ( long  InicBase,
+										 	 long  EndBase, 
+										 	 DNAstrand   strnd = DNAstrand::direct)	    const=0  ;
 
 	/// \deprecate after implement the other
 	virtual std::string& Copy_Seq(std::string &SecHier,

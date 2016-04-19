@@ -241,9 +241,9 @@ int		CMultSec::AddFromFileFASTA (ifstream &ifile)  // -------------------    Add
 		if ( sec->Len() < lmin  )	
             continue; 
 
-        if ( sec->_aln_fragment)
-            sec->_aln_fragment->aln.set(*this, sec->_aln_fragment->sq.Min(),
-                                               sec->_aln_fragment->sq.Max());
+        //if ( sec->_aln_fragment)
+        //    sec->_aln_fragment->aln.set(*this, sec->_aln_fragment->sq.Min(),
+        //                                       sec->_aln_fragment->sq.Max());
 
 		sec->Description(trim_string(Descriptor));
 
@@ -402,7 +402,7 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
 	    if ( secH->Len() < lmin  )	
             continue;
 
-        if ( secH->_aln_fragment)
+        if ( secH->_aln_fragment)   ///\todo review  ACTUALIZE !!!!!!!!!!!!!!!!!!!!
         {
             if(secH->_aln_fragment->sq.Max()) 
                 _Hsp_query_to    = _Hsp_query_from + secH->_aln_fragment->sq.Max()  -1;
@@ -412,12 +412,12 @@ int		CMultSec::AddFromFileBLAST (ifstream &fi) // ----------------  CMultSec::  
         }
         else
         {
-            secH->_aln_fragment.reset(new Aligned_fragment);
+            secH->_aln_fragment.reset(new Aligned_fragment);      ///\todo review  ACTUALIZE !!!!!!!!!!!!!!!!!!!!
             _Hsp_query_to    = _Hsp_query_from + secHitBeg + secH->Len() -1;
             _Hsp_query_from  = _Hsp_query_from + secHitBeg-1;
         }
 
-        secH->_aln_fragment->sq_ref.Set(       _Hsp_query_from, _Hsp_query_to);
+        secH->_aln_fragment->sq_ref.Set(       _Hsp_query_from, _Hsp_query_to);    ///\todo review  ACTUALIZE !!!!!!!!!!!!!!!!!!!!
         secH->_aln_fragment->aln   .set(*this, _Hsp_query_from, _Hsp_query_to);
         secH->_aln_fragment->sq    .Set(       _Hsp_hit_from,   _Hsp_hit_to  );
 
