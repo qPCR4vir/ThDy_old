@@ -407,10 +407,25 @@ class CMSecCand : public CLink		//--------------------------------Tm------ CMSec
 	void		FindCommon	(CSecCand  &cand1, CSecCand &cand2, bool design=true)	;
 	CSecCand	*CompNext	();
 
-	void		ExportCommonSonden(const std::string &fileName, bool colpased, NumRang<float> ExtrCovPerc, fileFormat format);
+	/// Return probes with a percent of other-target coverage with is not intern to the range ExtrCovPerc.
+
+	/// That is: probes which hybrid in one target but in not than more than in ExtrCovPerc.Min % of the others, 
+	/// and additionally, probes with hybrid in one target and at last in ExtrCovPerc.Max % of the others.
+	void		ExportCommonSonden( bool               colpased, 
+		                            NumRang<float>     ExtrCovPerc, 
+		                            CMultSec           *res = {},    /// nullptr or a valid sequence group to collect the probe candidates
+		                            const std::string  &outpup_fileName ="", 
+		                            fileFormat         format =fileFormat::fasta
+	                             );
+
+    void write_probes(	CMultSec           *res     ,
+		    			const std::string &fileName , 
+			    		fileFormat         format   = fileFormat::fasta);
+	
 	virtual ~CMSecCand(){	 
 							_LSecCand.Destroy() ; 
-							_LMSecCand.Destroy() ; }
+							_LMSecCand.Destroy() ; 
+	                     }
 	SondeLimits _sL ;
 
 	float	_Tm_sig, _G_sig ;				// sonde  - target

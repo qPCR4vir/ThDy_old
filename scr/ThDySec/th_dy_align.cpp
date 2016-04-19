@@ -600,6 +600,7 @@ bool		CMSecCand::NotFinisch()
 
 CSecCand	*CMSecCand::CompNext() {return (CSecCand *)_LSecCand.goNext() 	;}
 
+
 void   CMSecCand::FindCommon	(CSecCand  &newtg, CSecCand &curtg, bool design)	
 {	long 	dec_NumCand		= newtg._NumCand	+ curtg._NumCand ; 
 	long 	dec_NumPosCand	= newtg._NumPosCand + curtg._NumPosCand ; 
@@ -859,17 +860,21 @@ void	ThDyAlign::Export_Hits(ofstream &osHits, char *sep)		// mientras estan cone
 				else											osHits	<<   KtoC(_tg->Tm(h->_j0+1 -2, h->_j -2 )) ;				 
 	}
 }
-/// \todo MEJORAR !!!
-void	CMSecCand::ExportCommonSonden(const std::string &fileName, bool colpased, NumRang<float> ExtrCovPerc, fileFormat format)
-{	
-	NumRang<int> ExtrCov ( (double(_NSecCand-1.0) * ExtrCovPerc.Min()) /100.0  , (double(_NSecCand-1.0) * ExtrCovPerc.Max()) /100.0 ) ;
-    
+
+
+void CMSecCand::write_probes(	CMultSec         *res       ,
+					const std::string &fileName , 
+					fileFormat         format   /* = fileFormat::fasta*/)
+{
     bool	f_fas = format & fileFormat::fasta ,
 			f_csv = format & fileFormat::csv   ;
+
 	ofstream	osFasta, osCSV;
 	char sep[]=";";							// cambiar a global sep
+
 	if (f_fas)
 		osFasta.open(fileName + ".sonden.fasta");
+
 	if (f_csv)
 	{	 
 		osCSV.open(fileName + ".sonden.csv");
@@ -877,47 +882,84 @@ void	CMSecCand::ExportCommonSonden(const std::string &fileName, bool colpased, N
 				<< sep <<"H"<< sep <<"S"<< sep <<"G(Ta=" << KtoC(_TDATmC->Ta()) << " gr)" << sep << "No.matchs";
 	}
 
+	//if (f_csv)
+	//	osCSV << endl << Num << sep << s._Sec.Name() << '.' << pi << '.' << fi << sep << pi << sep << fi << sep << fi - pi + 1 << sep
+	//	<< KtoC(s._Sec.Tm(pi, fi)) << sep << cur_s
+	//	<< sep << cand._SdH[cand.Len() - 1] << sep << cand._SdS[cand.Len() - 1] << sep << cand.G() << sep << matchs + 1;
+
+	//if (f_fas)
+	//	osFasta << endl << '>' << s._Sec.Name() << '.' << pi << '.' << fi << "  ; Tm=" << KtoC(s._Sec.Tm(pi, fi))
+	//	<< endl << cur_s;
+
+
+}
+
+void	CMSecCand::ExportCommonSonden(  bool             colpased,
+										NumRang<float>   ExtrCovPerc, 
+										CMultSec         *res       /*= {}*/,
+										const std::string &fileName /*= ""*/, 
+										fileFormat         format   /* = fileFormat::fasta*/)
+{	
+
+	if (!res) return; ///\todo temp !
+
+	auto n = static_cast<double>(_NSecCand - 1);
+	NumRang<int> ExtrCov (static_cast<int>((n * ExtrCovPerc.Min()) /100.0)  , static_cast<int>((n * ExtrCovPerc.Max()) /100.0 )) ;
+    
+
 	string cur_s,  cur_cs ; 
 	cur_s .reserve( _sL._L.Max() );
 	cur_cs.reserve( _sL._L.Max() );
-	set <string> SondeList;
+	set <string> CandSet;   //  grant no sequence repetition
 
-	//for (auto x : SondeList);
+	//  perform self alignment to filter possible dimers 
 	FracTDAlign fAl( _sL._L.Max() + 1 ,  _sL._L.Max() + 1, _TDATmC->_NNpar);
     fAl.SetTa ( _TDATmC->Ta () );
     long Num{0};
+	std::unique_ptr<CSec> cand, c_cand;
 
-	for ( _LSecCand.goBeging() ;  _LSecCand.NotEnd() ;  _LSecCand.goNext()   )	
+/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+std::cout << "\n EXPORTING...";
+/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	for ( _LSecCand.goBeging() ;  _LSecCand.NotEnd() ;  _LSecCand.goNext()   )	// all targets
 	{	
 		CSecCand &s=*((CSecCand *)_LSecCand.Cur());
 		long l= s._Sec.Len() ;
-		for (long fi=1 ; fi<=l;fi++)
-		{	auto &r=s._rg[fi] ;/// \todo revisar !!!
+		for (long fi=1 ; fi<=l;fi++)           // for each position in the target (were the probe candidate end in each rang)
+		{	
+			auto &r=s._rg[fi] ;                /// take the rang of survived probe candidates in this position   \todo review !!!
 			if (! r) continue;   
-			for (long pi=r->Min(); pi <=r->Max();pi++)
-			{	assert(pi<l);
-				s._Sec.Copy_Seq(cur_s, pi, fi) ; 
+			for (long pi=r->Min(); pi <=r->Max();pi++)    // for each candidate initial position in the rang
+			{	
+				assert(pi<l);
+				s._Sec.Copy_Seq(cur_s, pi, fi) ;        // extract the sequence
 			    int matchs=r->matchs[pi- r->Min()];
 
-				if ( (colpased || !ExtrCov.isIntern (matchs) ) && SondeList.insert(cur_s).second )
+				if ( (colpased || !ExtrCov.isIntern (matchs) ) && CandSet.insert(cur_s).second )
 				{	
-					CSec cand  (cur_s  , 1,"s", _TDATmC->_NNpar);     
+					cand  .reset(s._Sec.Clone(pi, fi, DNAstrand::direct)); // (cur_s  , 1,"s", _TDATmC->_NNpar);     
+					c_cand.reset(s._Sec.Clone(pi, fi, DNAstrand::compl ));   
 					
-					cand.Copy_Seq(cur_cs, DNAstrand::rev_compl);
-					CSec c_cand(cur_cs , 1,"c", _TDATmC->_NNpar);
-
-					fAl.Align(&cand,&c_cand);
+					fAl.Align(cand.get(), c_cand.get() );
                     ++Num;
 					if (fAl.Tm() < _MaxSelfTm && fAl.G(_TDATmC->Ta()) > _MinSelfG)
 					{
 					// anadir otras comprobaciones: estruct secund (self-align-compl)
-					if (f_csv)	
-						osCSV <<endl<<     Num<<sep<<    s._Sec.Name()<<'.'<<pi<<'.'<<fi<<sep<<    pi<<sep<<     fi<<sep<<    fi-pi+1<<sep
-							  << KtoC(s._Sec.Tm(pi,fi)) <<sep<< cur_s 
-							  << sep <<cand._SdH[cand.Len ()-1] << sep <<cand._SdS[cand.Len ()-1]<< sep <<cand.G() << sep << matchs+1; 
-					if (f_fas)
-						osFasta	<<endl << '>' << s._Sec.Name()<<'.'<<pi<<'.'<<fi	<<"  ; Tm="<< KtoC(s._Sec.Tm(pi,fi))  
-								<<endl<< cur_s  ; 
+
+					/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+						std::cout<< "\nSeq: "<<res->AddSec(cand.release())->Name();
+
+
+
+					//if (f_csv)	
+					//	osCSV <<endl<<     Num<<sep<<    s._Sec.Name()<<'.'<<pi<<'.'<<fi<<sep<<    pi<<sep<<     fi<<sep<<    fi-pi+1<<sep
+					//		  << KtoC(s._Sec.Tm(pi,fi)) <<sep<< cur_s 
+					//		  << sep <<cand._SdH[cand.Len ()-1] << sep <<cand._SdS[cand.Len ()-1]<< sep <<cand.G() << sep << matchs+1; 
+					//if (f_fas)
+					//	osFasta	<<endl << '>' << s._Sec.Name()<<'.'<<pi<<'.'<<fi	<<"  ; Tm="<< KtoC(s._Sec.Tm(pi,fi))  
+					//			<<endl<< cur_s  ; 
+
 					}
 				}
 			}
