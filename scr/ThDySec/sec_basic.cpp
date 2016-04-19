@@ -45,12 +45,12 @@ CSecBasInfo::~CSecBasInfo()
 	 
 std::string& CSecBasInfo::Copy_Seq  	(std::string &SecHier,  long InicBase, long EndBase, DNAstrand strnd) const
 {	
+	SecHier.clear();
 	if ( EndBase< 1 || Len() <EndBase ) EndBase= Len(); 
 	long l=EndBase-InicBase+1 ;  
 	if (l>=0) 	//assert(l>=0);
 	{
-		SecHier.clear();
-		SecHier.reserve(l);
+		SecHier.reserve(l); /// \todo resize ?? and use [] directly instead of push_back 
 		switch (strnd)
 		{	case DNAstrand::plus :
 			case DNAstrand::direct:		for(long p=InicBase;  p<=EndBase;    p++) 	SecHier.push_back ( _c[p] );  				    break;
