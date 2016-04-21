@@ -30,7 +30,7 @@
 using List = nana::listbox;
 
 
-class TableRes  : public nana::form, public EditableForm
+class TableHybRes  : public nana::form, public EditableForm
 {   
     using Table = CTable<TmGPos> ;
     using index = Table::index;
@@ -148,7 +148,7 @@ class TableRes  : public nana::form, public EditableForm
  	    _place.field("_list"         ) <<_list;
      }
  public:
-     TableRes    (std::shared_ptr<CTable<TmGPos>> table)  : 
+     TableHybRes    (std::shared_ptr<CTable<TmGPos>> table)  : 
                             _table(table), 
                             _Tm{*table.get()}, _G{*table.get()}, _Pos{*table.get()},  
                             nana::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
@@ -245,10 +245,10 @@ class TableRes  : public nana::form, public EditableForm
 
     struct Index
     {
-        TableRes* table;
+        TableHybRes* table;
         index       row;
 
-        friend List::oresolver& operator<<(List::oresolver& ores, const TableRes::Index& i)
+        friend List::oresolver& operator<<(List::oresolver& ores, const TableHybRes::Index& i)
         {
             auto &t = *i.table->_table.get();
             auto &v = *i.table->val;
@@ -266,7 +266,7 @@ class TableRes  : public nana::form, public EditableForm
             return ores;
         }
     };
-    friend List::oresolver& operator<<(List::oresolver& ores, const TableRes::Index& i);
+    friend List::oresolver& operator<<(List::oresolver& ores, const TableHybRes::Index& i);
 
 };
 

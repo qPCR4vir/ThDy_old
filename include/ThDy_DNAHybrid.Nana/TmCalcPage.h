@@ -19,7 +19,7 @@
 #include "thdy_programs\init_thdy_prog_param.h"
 #include "../../nana.ext/include/nanaBind.hpp"
 #include <../../nana.ext/include/EditableForm.hpp>
-#include <../../nana.ext/include/Numer.hpp>
+#include <../../nana.ext/include/number.hpp>
 #include <nana/gui/widgets/group.hpp>
 #include <nana/gui/widgets/checkbox.hpp>
 //#include <nana/gui/widgets/progress.hpp>

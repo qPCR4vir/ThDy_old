@@ -49,9 +49,9 @@ void MplexPCR::buttPCR_Click()  //	  Run      _IPrgPar_mPCR
 
         _Pr.mExpl_.RefreshProbes_mPCR(/*false*/); 
 
-        _Pr._results.emplace_back(new TableRes(_Pr._mPCR._rtbl));
+        _Pr._results.emplace_back(new TableHybRes(_Pr._mPCR._rtbl));
         _Pr._results.back()->show();
-        _Pr._results.emplace_back(new TableRes(_Pr._mPCR._rtbl_self));
+        _Pr._results.emplace_back(new TableHybRes(_Pr._mPCR._rtbl_self));
         _Pr._results.back()->show();
 	}
 catch ( std::exception& e)
@@ -95,7 +95,7 @@ catch ( std::exception& e)
 		  _Pr._uArr ._cp.Actualice_NNp();  
  		  _Pr.Run(_Pr._uArr);	
 
-          _Pr._results.emplace_back(new TableRes(_Pr._uArr._rtbl));
+          _Pr._results.emplace_back(new TableHybRes(_Pr._uArr._rtbl));
           _Pr._results.back()->show();
 		}
 	catch ( std::exception& e)

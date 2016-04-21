@@ -20,7 +20,7 @@
 //#include "common_basics.h" 
 
 #include <../../nana.ext/include/EditableForm.hpp>
-#include <../../nana.ext/include/Numer.hpp>
+#include <../../nana.ext/include/number.hpp>
 #include "../../nana.ext/include/nanaBind.hpp"
 
 #include <nana/gui/widgets/group.hpp>
