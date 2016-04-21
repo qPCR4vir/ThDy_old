@@ -55,8 +55,11 @@ class TableHybRes  : public nana::form, public EditableForm
         }
 
         virtual bool         return_bg(){return false;}
-        virtual nana::color bg_color(index row,  index col)
-        {return List::scheme_type().header_bgcolor.get_color(); }
+        virtual nana::color bg_color(index row,  index col, List &lst)
+		{
+			return lst.bgcolor(); 
+			//return List::scheme_type().header_bgcolor.get_color();
+		}
     }   ;
     struct Tm : value
     {
@@ -66,7 +69,7 @@ class TableHybRes  : public nana::form, public EditableForm
         }
         Tm(Table &t) :value {t}{};
         bool return_bg() override {return true;}
-        nana::color bg_color(index row,  index col) override 
+        nana::color bg_color(index row,  index col, List &lst) override
         {
             Temperature t=val(row,col);
 
@@ -82,8 +85,23 @@ class TableHybRes  : public nana::form, public EditableForm
         {
             return table->at(row,col )._G;
         }
+
         G(Table &t) :value {t}{};
-    };
+
+		bool return_bg() override { return true; }
+
+		nana::color bg_color(index row, index col, List &lst) override
+		{
+			Energy e = val(row, col);
+
+			Energy min = -15.0, max = +15.0;
+			double fade_rate = e<min ? 0.0 : e>max ? 1.0 : (e - min) / (max - min);
+			nana::color bgc(nana::colors::red);
+			return bgc.blend(nana::colors::blue, fade_rate);
+		}
+
+	
+	};
     struct Pos : value
     {
         float val(index row,  index col)const override
@@ -252,12 +270,13 @@ class TableHybRes  : public nana::form, public EditableForm
         {
             auto &t = *i.table->_table.get();
             auto &v = *i.table->val;
+			auto &l = i.table->_list ;
             ores<< t.TitRow(i.row)   ;
                 
             if  (v.return_bg() )
                 for (int col=0; col< t.totalCol() ; ++col)
                     ores<< List::cell{ v.str     (i.row, col),
-                                       v.bg_color(i.row, col),
+                                       v.bg_color(i.row, col, l),
                                        nana::colors::white};
             else 
                 for (int col=0; col< t.totalCol() ; ++col)
