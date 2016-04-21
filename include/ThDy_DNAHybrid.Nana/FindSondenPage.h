@@ -59,10 +59,10 @@ class FindSondenPage : public CompoWidget
 
     nana::checkbox      chkBx_unique{_gr_find_prb, ("Unique, with target coverage ")}, 
                         chkBx_common{_gr_find_prb, ("Common, with target coverage ")}, 
-                        chkBx_showFindedProbes{*this, ("Show Finded Probes")};
+                        chkBx_showFindedProbes{*this, ("Show found probes")};
 
 	nana::tooltip       chkBx_uniqueTT{chkBx_unique, ("For each target seq, probes with hybrid on it, AND maximum on a given percent of the OTHER targets will be reported")};
-	nana::tooltip       chkBx_commonTT{chkBx_common, ("All probes with hybrid on at laest the given percent of targets will be reported")};
+	nana::tooltip       chkBx_commonTT{chkBx_common, ("All probes with hybrid on at least the given percent of targets will be reported")};
 public: 
     FindSondenPage(ThDyNanaForm& tdForm);
     void SetDefLayout   () override

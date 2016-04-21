@@ -18,6 +18,10 @@
 #include "ThDy_DNAHybrid.Nana\main.Nana.h"
 
 
+
+
+
+
 MplexPCR::MplexPCR            (ThDyNanaForm& tdForm) 
 try     : _Pr             (tdForm), 
           CompoWidget     (tdForm, ("MplexPCR"), ("MplexPCR.lay.txt"))

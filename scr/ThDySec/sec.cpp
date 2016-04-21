@@ -79,29 +79,29 @@ CSec::CSec (    const std::string&  sec,
 	_Conc	    ( conc )
 {		
 		if (origBeg<1) 
-              origBeg=1; // from the very beginning
+              origBeg=1; /// By invalid origBeg we begin from the very beginning of the sec
 
-            //      Y_beg ,  Y_end,  Y_pos (current position) are coordinates in Y. This coordinates will be adjusted in the first (pre)read
+            ///      Y_beg ,  Y_end,  Y_pos (current position) are coordinates in Y. This coordinates will be adjusted in the first (pre)read
 
-            // sec_X - string seq. Original string TEXT of the seq.  (index in sec[0])     
+            ///  - sec_X - string seq. Original string TEXT of the seq.  (index in sec[0])     
         const LonSecPos sec_Len=static_cast<LonSecPos>( sec .length());
-		if (sec_Len < 2)  return;  /// return if only 0 or 1 base to analyze
+		if (sec_Len < 2)  return;  ///    we return if we have only 0 or 1 base to analyze
         LonSecPos sec_beging =0,     
                   sec_end    =sec_Len,    
                   sec_pos    =0;   
 
-		    // normally we have just some "experimental" fragment from we take our working fragment, and we 
-		    // want to track the begin of the working fragment in relation to the "experimental" (the given sequence)
+		    /// - exp_X - "Normally" we have just some "experimental" fragment from we take our working fragment, and we 
+		    ///   want to track the begin of the working fragment in relation to the "experimental" (the given sequence)
 		LonSecPos exp_beging = 0,
                   exp_end    =sec_Len;
 
-            // orig_X - original "abstract" seq for which sec intent to be the representation, for example some gene: is the only interesting for a "biologist"
-		    // index orig gene[1].  
+            /// - orig_X - original "abstract" seq for which sec intent to be the representation, for example some gene: is the only interesting for a "biologist"
+		    ///   index orig gene[1].  
 		LonSecPos orig_beging = 0,  // secBeg,
                   orig_end    =  orig_max_L ? origBeg + orig_max_L -1 : origBeg + sec_Len -1,
                   orig_pos    = 0;   
                   
-            // fltr - filtered seq, or what will be the resulting seq   (index in _c[1], _b[1], etc. because [0] is ? )
+            /// - fltr_X - filtered seq, or what will be the resulting seq   (index in _c[1], _b[1], etc. because [0] is ? )
 		LonSecPos fltr_pos =0 ,
 			      fltr_len =0;  
 				/* fb, */           
@@ -109,37 +109,37 @@ CSec::CSec (    const std::string&  sec,
 
         Base c, gap=basek[0];  // "-"
 			
-		// skip  non base and first secBeg bases or gaps in sec and set it in orig
+		/// Skip non bases and the first origBeg bases or gaps in sec and record position in orig_beging
 		do
 		{
-			if (sec_beging >= sec_Len - 1) return;    // the sec had only one more nt, but we don t reach the desired beg in the gene
+			if (sec_beging >= sec_Len - 1) return;    /// return if the sec had only one more nt, but we don t reach the desired beg in the gene
 			c = base(sec[sec_beging]);
-			if (is_degbase[c])      // for orig skip no-bases but not gaps "-"
+			if (is_degbase[c])      /// for orig_X position (coordinates) skip no-bases but not gaps "-"
 			{
-				if (orig_beging+1 >= origBeg) break;  // we find no nt, but we reach the desired end of the gene
+				if (orig_beging+1 >= origBeg) break;  /// Done - we are at position origBeg of the gene
 				++orig_beging;
 				if (c != gap && !exp_beging) exp_beging = orig_beging;
 			}
 			++sec_beging;
 		} while ( true );
 
-		// skip any further non base or gaps, and set orig beg to the first actual non gap nt in sec
+		/// skip any further non base or gaps, and set orig_beging to the first actual non gap nt in gene
 		do
 		{
-			if (sec_beging >= sec_Len - 1) return;    // the sec had only one more nt
+			if (sec_beging >= sec_Len - 1) return;    /// return if the sec had only one more nt
 			c = base(sec[sec_beging]);
-			if (is_degbase[c])      // for orig skip no-bases but not gaps "-"
+			if (is_degbase[c])      /// for orig skip no-bases but not gaps "-"
 			{
 				++orig_beging;
-				if (c != gap) break;
-				if (orig_beging >= orig_end) return;  // we find max one nt, but we reach the desired end of the gene
+				if (c != gap) break;   /// Done - find the first nt
+				if (orig_beging >= orig_end) return;  // return if we find max one nt, but we reach the desired end of the gene
 			}
 			++sec_beging;
 		} while ( true );
 
 		if (exp_beging) exp_beging = orig_beging-exp_beging;
 		exp_beging++;       /// lets begin at 1
-		orig_pos = orig_beging-1 ; /// where in the alignment begin the nts of this sequence, after secBeg pos and all gaps
+		orig_pos = orig_beging-1 ; /// orig_pos : where in the alignment begin the nts of this sequence, after secBeg pos and all gaps
 		sec_pos  = sec_beging ;  /// Now we are at the position were we begin to read the bases of the sequence
 
         /// first we want to know how many nt (not gaps) are there making a pre - read.
@@ -148,10 +148,10 @@ CSec::CSec (    const std::string&  sec,
 			c = base(sec[sec_pos]);
 			if (is_degbase[c])
 			{
-				if (c != gap) fltr_len++;           //  filter gaps !!
-				if (++orig_pos >= orig_end) break;  //  we reach the desired end of the gene
+				if (c != gap) fltr_len++;           ///  filter gaps !!
+				if (++orig_pos >= orig_end) break;  ///  Done - we reach the desired end of the gene
 			}
-			if (sec_pos >= sec_Len - 1) break; // this was the last char in sec
+			if (sec_pos >= sec_Len - 1) break; /// or Done -  this was the last char in sec
 			++sec_pos;
 		} while ( true );
 
@@ -178,11 +178,11 @@ CSec::CSec (    const std::string&  sec,
         }
 
 
-/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::cout << "\n -CSeq: " << nam << " - " << origBeg << ", " << orig_max_L;
-if ( _aln_fragment)    // ??
-		    std::cout << toString_Range(_aln_fragment->aln) << toString_Range(_aln_fragment->sq);
-/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//std::cout << "\n -CSeq: " << nam << " - " << origBeg << ", " << orig_max_L;
+//if ( _aln_fragment)    // ??
+//		    std::cout << toString_Range(_aln_fragment->aln) << toString_Range(_aln_fragment->sq);
+///// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -290,10 +290,10 @@ CSec *CSec::Clone( long        InicBase,
 	}
 
 	/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	std::cout << "\n clon: " << newS->Name() << " - " << InicBase << ", "<< EndBase << ", " << Len();
-	std::cout << toString_Range(newS->_aln_fragment->aln) << toString_Range(newS->_aln_fragment->sq);
-	if (_aln_fragment)    // ??
-		std::cout << toString_Range(_aln_fragment->aln) << toString_Range(_aln_fragment->sq);
+	//std::cout << "\n clon: " << newS->Name() << " - " << InicBase << ", "<< EndBase << ", " << Len();
+	//std::cout << toString_Range(newS->_aln_fragment->aln) << toString_Range(newS->_aln_fragment->sq);
+	//if (_aln_fragment)    // ??
+	//	std::cout << toString_Range(_aln_fragment->aln) << toString_Range(_aln_fragment->sq);
 	/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

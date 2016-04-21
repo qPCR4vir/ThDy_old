@@ -99,7 +99,7 @@ class TableRes  : public nana::form, public EditableForm
     nana::button           _bTm  {*this,("Tm" )},       //nana::toolbar     _tbar { *this };
                            _bG   {*this,("G"  )},   
                            _bPos {*this,("Pos")},
-                           _mix  {*this, ("Consolide")}; 
+                           _mix  {*this, ("Consolidate")}; 
 
     Tm                     _Tm;
     G                      _G;

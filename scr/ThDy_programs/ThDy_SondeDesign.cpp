@@ -30,7 +30,9 @@ void FindSonden( CMultSec *tg, /*int& tgN,*/ int& compN, CMSecCand& msCand, CPro
 
 		res.target_1_name = nt.Name();
 
-		std::cout<<"\n"<<nt.Name();
+		/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// std::cout<<"\n"<<nt.Name();
+		/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		for(CSecCand &newtg =msCand.AddBeging(nt)	;msCand.NotFinisch() ; msCand.CompNext())  // anade el curr tg y lo comp con todos los anteriormente anadidos
 		{	CSecCand &curtg =msCand.curTg();
@@ -99,8 +101,11 @@ int SondeDesignProg ( CProgParam_SondeDesign *IPrgPar_SdDes)
 	IPrgPar_SdDes->_cp.Actualice_NNp();  /// \todo review
 	IPrgPar_SdDes->probes = IPrgPar_SdDes->_cp.AddSeqGroup(IPrgPar_SdDes->probes, IPrgPar_SdDes->_cp._OutputFile.get());
 
-	std::cout << "Num" << sep << "SecName" << sep << "Inic" << sep << "Fin" << sep << "Len" << sep << "Tm" << sep << "Sec"
-		<< sep << "H" << sep << "S" << sep << "G(Ta=" << KtoC(IPrgPar_SdDes->_cp.Ta.get()) << " gr)" << sep << "No.matchs";
+
+	/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//std::cout << "Num" << sep << "SecName" << sep << "Inic" << sep << "Fin" << sep << "Len" << sep << "Tm" << sep << "Sec"
+	//	<< sep << "H" << sep << "S" << sep << "G(Ta=" << KtoC(IPrgPar_SdDes->_cp.Ta.get()) << " gr)" << sep << "No.matchs";
+	/// \debug   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 	time_t t_sec = time(nullptr);

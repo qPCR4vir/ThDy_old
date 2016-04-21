@@ -8,7 +8,10 @@
 *
 * @file  ThDySec\include\ThDySec\sec.h
 *
-* @brief 
+* @brief To manipulate DNA sequences for simple thermodynamic modeling of hybridization.
+*
+* Classes to manipulate DNA sequences. Adapted exclusively to DNA and specifically for thermodynamic calculations.
+*
 *
 */
 
@@ -28,21 +31,18 @@ namespace filesystem = std::experimental::filesystem; /// \todo use nana filesys
 
 
 #include "sec_basic.h" 
-#include "th_dy_param.h"   ///\todo crear un nuevo par de fuente cpp con las cosas que nec los dos .h + sec.h ?
+#include "th_dy_param.h"   
 #include "common.h" 
-
  
-///\todo anadir funcion de compactar cod (eliminar los gap y bases deg?). SdH y S se recalculan.
-///\todo anadir funcion para regenerar cod no compactado, recordar estado comp/no comp
 ///\todo crear (adaptar) clase primer derivada de CSec, con pos y Tm en cada sec Target
  
 class CMultSec	;
 
                    // ---------------------------------------   CSec	---------------------------------------------------
 
-/// Fundamental class to manipulate DNA sequences.
+/// To manipulate DNA sequences for simple thermodynamic modeling of hybridization.
 
-/// Adapted exclusively to DNA and specifically for thermodynamic calculations.
+/// Fundamental class to manipulate DNA sequences. Adapted exclusively to DNA and specifically for thermodynamic calculations.
 /// Have the sequence in "letter" or nt format, AND in "code" format to avoid millions of repeated conversions. 
 /// Remember most characteristics for fast retrieval: length, CG%, degeneracy, etc.
 /// Importantly have a sequence of the values of dH and dS from the beginning to each position,
@@ -63,6 +63,7 @@ class CMultSec	;
 ///                    1 -fltr_beging                   fltr_end - not counting internal gaps
 ///     
 /// set sq.sq to some original "experimental" CSec if any
+///
 /// set aln.sq to the parent CMultSec*
 ///
 class CSec : public CLink, public CSecBasInfo	
@@ -315,3 +316,6 @@ class CSecLink   : public CLink    // NO es dueno de la sec, no la borra, no del
 //char *AttachToCharStr       (const char *CharStr, const char *Attach)	;
 //char *ChangeCharStrAttaching(char *&CharStrToChange, const char *Attach); // CharStrToChange : debe ser una cadena que se creo con new, 
 //char *ChangeCharStrAttaching(char *&CharStrToChange, const int Attach);// y que sera borrada y vuelta a crear !!!
+
+///\todo ?? anadir funcion de compactar cod (eliminar los gap y bases deg?). SdH y S se recalculan.
+///\todo ?? anadir funcion para regenerar cod no compactado, recordar estado comp/no comp
