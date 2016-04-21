@@ -50,6 +50,9 @@ void FindSonden( CMultSec *tg, /*int& tgN,*/ int& compN, CMSecCand& msCand, CPro
 				                 , newtg._NumPosCand,  newtg._NumCand
 				                 , curtg._NumPosCand,  curtg._NumCand };
 
+			res.THits         =   msCand._TDATmC->_THits ;
+			res.HitsOK        =	  msCand._TDATmC->_HitsOK  ;
+
 			IPrgPar_SdDes->targets_comparitions.push_back( res  )	;	
 		}
 	}
@@ -59,11 +62,30 @@ void FindSonden( CMultSec *tg, /*int& tgN,*/ int& compN, CMSecCand& msCand, CPro
 	}
 }
 std::vector<std::string> CProgParam_SondeDesign::targets_comp::headers
-  {"Num T Pos", "Num T Cand", "Targ Num", "Iterat#", 
-	"Targ name", "Num Pos", "Num Cand", 
-	"Targ name", "Num Pos", "Num Cand", "Num T Hits", "Num Hits OK", 
-	"Targ name", "Num Pos", "Num Cand", 
-	"Targ name", "Num Pos", "Num Cand", "Num T Pos", "Num T Cand" };
+  { 
+	   "Num T Pos", 
+	   "Num T Cand", 
+	     
+	   "Num Pos", 
+	   "Num Cand", 
+	   "Targ Num", 
+	   "Targ name", 
+	   "Num Cand", 
+	   "Num Pos", 
+	     
+	   "Num T Hits", 
+	   "Num Hits OK", 
+	     
+	   "Num Pos", 
+	   "Num Cand", 
+	   "Iterat#", 
+	   "Targ name", 
+	   "Num Cand", 
+	   "Num Pos", 
+	     
+	   "Num T Pos", 
+	   "Num T Cand" 
+};
 
 
 void write_results(CProgParam_SondeDesign *IPrgPar_SdDes)

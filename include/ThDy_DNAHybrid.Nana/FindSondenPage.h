@@ -26,7 +26,7 @@ class ThDyNanaForm ;
 
 class FindSondenPage : public CompoWidget
 {    
-    ThDyProject &_Pr;
+	ThDyNanaForm &_Pr;
     ParamGUIBind::BindGroup   _findSond;
 
     nana::group         _gr_probes  {*this, ("<bold=true> Probes: </>"          ), true},
@@ -110,46 +110,7 @@ public:
         numUpDw_MinTargCov.ResetLayout (30,40,40 );  
         numUpDw_MaxTargCov.ResetLayout (30,40,40 );  
     }
-    void AsignWidgetToFields() override
-    {
-        using ParamGUIBind::link;
-
-        _findSond << link (   _Pr._SdDes.G_sig ,            _MaxG     )    
-                  << link (   _Pr._SdDes.Tm_sig ,           _MinTm    )
-                  << link (   _Pr._SdDes.MinSd_nTgG,        _MinG     )
-                  << link (   _Pr._SdDes.MaxSd_nTgTm,       _MaxTm    )
-                  << link (   _Pr._SdDes.MinSelfG,          _MinSelfG )
-                  << link (   _Pr._SdDes.MaxSelfTm,         _MaxSelfTm)
-                  << link (   _Pr._SdDes.sL.G,        _Gmin,_Gmax     )
-                  << link (   _Pr._SdDes.sL.T,       _Tmmin,_Tmmax    )
-                  << link (  _Pr._SdDes.sL.L,    _Lengthmin,_Lengthmax)
-                  << link (  _Pr._SdDes.common,           chkBx_common)
-                  << link (  _Pr._SdDes.unique,           chkBx_unique)
-                  << link ( _Pr._SdDes.Coverage,  numUpDw_MinTargCov,  numUpDw_MaxTargCov)	
-
-            ;
-        
-        /// Use room (wd,w,h) in combination with a <Table grid=[W,H]>
-	            _place["Sonde"]    << _gr_probes ;
-                _place["TargCov"]  << _gr_find_prb ;     
-        _place.field("Run"     )   << _design	<< _compare	;
-	    _place.field ("options" )  << _gr_prob_tg <<  _gr_prob_ntg     << _gr_probself;
-        _place.field("Output"  )   << chkBx_showFindedProbes;
-
-          _gr_probes["Sonde"]  << ("                               Min." )<< ("           Max."  ) 
-                                   <<   _Gmin     <<   _Gmax  
-                                   <<   _Tmmin    <<   _Tmmax  
-                                   << _Lengthmin  <<   _Lengthmax  ; 
-
-        _gr_find_prb["TargCov"]<< chkBx_unique << numUpDw_MinTargCov       
-                                   << chkBx_common << numUpDw_MaxTargCov     	;
-                 
-	    _gr_prob_tg ["options"] <<   _MaxG     << _MinTm;
-        _gr_prob_ntg["options"] <<   _MinG     << _MaxTm;
-        _gr_probself["options"] <<   _MinSelfG << _MaxSelfTm    ;
-
-
-    }
+    void AsignWidgetToFields() override;
 
     void Run_Design(bool design);
 };
