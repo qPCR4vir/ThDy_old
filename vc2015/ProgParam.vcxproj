@@ -51,9 +51,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\ProgParam\scr\init_prog_param.cpp" />
-    <ClCompile Include="..\..\ProgParam\scr\ParamGUIBind.cpp" />
-    <ClCompile Include="..\..\ProgParam\scr\Units.cpp" />
+    <ClCompile Include="..\..\ProgParam\src\init_prog_param.cpp" />
+    <ClCompile Include="..\..\ProgParam\src\ParamGUIBind.cpp" />
+    <ClCompile Include="..\..\ProgParam\src\Units.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ProgParam\include\common_basics.h" />

@@ -51,23 +51,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\scr\ThDy_DNAHybrid.Nana\ico.rc" />
+    <ResourceCompile Include="..\src\ThDy_DNAHybrid.Nana\ico.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ExtLib\nana.ext\src\CompoWidget.cpp" />
     <ClCompile Include="..\..\ExtLib\nana.ext\src\EditableForm.cpp" />
     <ClCompile Include="..\..\ExtLib\nana.ext\src\number.cpp" />
     <ClCompile Include="..\..\ExtLib\nana.ext\src\vplace.cpp" />
-    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\FindSondenPage.cpp" />
-    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\main.Nana.cpp" />
-    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\SeqExpl.cpp" />
-    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\SetupPage.cpp" />
-    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\TableResults.cpp" />
-    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\TmCalcPage.cpp" />
-    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\uArray.cpp" />
+    <ClCompile Include="..\src\ThDy_DNAHybrid.Nana\FindSondenPage.cpp" />
+    <ClCompile Include="..\src\ThDy_DNAHybrid.Nana\main.Nana.cpp" />
+    <ClCompile Include="..\src\ThDy_DNAHybrid.Nana\SeqExpl.cpp" />
+    <ClCompile Include="..\src\ThDy_DNAHybrid.Nana\SetupPage.cpp" />
+    <ClCompile Include="..\src\ThDy_DNAHybrid.Nana\TableResults.cpp" />
+    <ClCompile Include="..\src\ThDy_DNAHybrid.Nana\TmCalcPage.cpp" />
+    <ClCompile Include="..\src\ThDy_DNAHybrid.Nana\uArray.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\scr\ThDy_DNAHybrid.Nana\ThDy.ico" />
+    <Image Include="..\src\ThDy_DNAHybrid.Nana\ThDy.ico" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ExtLib\nana.ext\include\EditableForm.hpp" />

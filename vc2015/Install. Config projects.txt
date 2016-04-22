@@ -57,7 +57,7 @@ Lib dir:
 ..\..\lib\VC$(PlatformToolset);$(LibraryPath)
 
 Source Dir:
-..\..\scr\ThDySec;..\..\scr\ThDy_programs;$(SourcePath)   		// example for ThDySec
+..\..\src\ThDySec;..\..\src\ThDy_programs;$(SourcePath)   		// example for ThDySec
 
 
 

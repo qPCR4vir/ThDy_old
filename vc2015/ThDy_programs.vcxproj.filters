@@ -17,22 +17,22 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\scr\ThDy_programs\init_thdy_prog_param.cpp">
+    <ClCompile Include="..\src\ThDy_programs\init_thdy_prog_param.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDy_programs\prog_comm_functions.cpp">
+    <ClCompile Include="..\src\ThDy_programs\prog_comm_functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDy_programs\ThDy_DegTmCalc.cpp">
+    <ClCompile Include="..\src\ThDy_programs\ThDy_DegTmCalc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDy_programs\ThDy_microArray.cpp">
+    <ClCompile Include="..\src\ThDy_programs\ThDy_microArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDy_programs\ThDy_MultiplexPCR.cpp">
+    <ClCompile Include="..\src\ThDy_programs\ThDy_MultiplexPCR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDy_programs\ThDy_SondeDesign.cpp">
+    <ClCompile Include="..\src\ThDy_programs\ThDy_SondeDesign.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

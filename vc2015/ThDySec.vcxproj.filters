@@ -12,25 +12,25 @@
     <ClCompile Include="..\scr\ThDySec\cod_deg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDySec\link.cpp">
+    <ClCompile Include="..\src\ThDySec\link.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDySec\sec.cpp">
+    <ClCompile Include="..\src\ThDySec\sec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDySec\th_dy_align.cpp">
+    <ClCompile Include="..\src\ThDySec\th_dy_align.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDySec\th_dy_param.cpp">
+    <ClCompile Include="..\src\ThDySec\th_dy_param.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDySec\sec_mult.cpp">
+    <ClCompile Include="..\src\ThDySec\sec_mult.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDySec\sec_basic.cpp">
+    <ClCompile Include="..\src\ThDySec\sec_basic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDySec\sec_rang.cpp">
+    <ClCompile Include="..\src\ThDySec\sec_rang.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

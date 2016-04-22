@@ -51,14 +51,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\scr\ThDySec\cod_deg.cpp" />
-    <ClCompile Include="..\scr\ThDySec\link.cpp" />
-    <ClCompile Include="..\scr\ThDySec\sec.cpp" />
-    <ClCompile Include="..\scr\ThDySec\sec_basic.cpp" />
-    <ClCompile Include="..\scr\ThDySec\sec_mult.cpp" />
-    <ClCompile Include="..\scr\ThDySec\sec_rang.cpp" />
-    <ClCompile Include="..\scr\ThDySec\th_dy_align.cpp" />
-    <ClCompile Include="..\scr\ThDySec\th_dy_param.cpp" />
+    <ClCompile Include="..\src\ThDySec\cod_deg.cpp" />
+    <ClCompile Include="..\src\ThDySec\link.cpp" />
+    <ClCompile Include="..\src\ThDySec\sec.cpp" />
+    <ClCompile Include="..\src\ThDySec\sec_basic.cpp" />
+    <ClCompile Include="..\src\ThDySec\sec_mult.cpp" />
+    <ClCompile Include="..\src\ThDySec\sec_rang.cpp" />
+    <ClCompile Include="..\src\ThDySec\th_dy_align.cpp" />
+    <ClCompile Include="..\src\ThDySec\th_dy_param.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\ThDySec\cod_deg.h" />

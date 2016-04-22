@@ -18,7 +18,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\main.Nana.cpp">
+    <ClCompile Include="..\src\ThDy_DNAHybrid.Nana\main.Nana.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ExtLib\nana.ext\src\CompoWidget.cpp">
@@ -30,22 +30,22 @@
     <ClCompile Include="..\..\ExtLib\nana.ext\src\vplace.cpp">
       <Filter>Source Files\nana.ext</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\SetupPage.cpp">
+    <ClCompile Include="..\src\ThDy_DNAHybrid.Nana\SetupPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\SeqExpl.cpp">
+    <ClCompile Include="..\src\ThDy_DNAHybrid.Nana\SeqExpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\FindSondenPage.cpp">
+    <ClCompile Include="..\src\ThDy_DNAHybrid.Nana\FindSondenPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\uArray.cpp">
+    <ClCompile Include="..\src\ThDy_DNAHybrid.Nana\uArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\TmCalcPage.cpp">
+    <ClCompile Include="..\src\ThDy_DNAHybrid.Nana\TmCalcPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\scr\ThDy_DNAHybrid.Nana\TableResults.cpp">
+    <ClCompile Include="..\src\ThDy_DNAHybrid.Nana\TableResults.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ExtLib\nana.ext\src\number.cpp">
@@ -53,12 +53,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\scr\ThDy_DNAHybrid.Nana\ico.rc">
+    <ResourceCompile Include="..\src\ThDy_DNAHybrid.Nana\ico.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\scr\ThDy_DNAHybrid.Nana\ThDy.ico">
+    <Image Include="..\src\ThDy_DNAHybrid.Nana\ThDy.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
