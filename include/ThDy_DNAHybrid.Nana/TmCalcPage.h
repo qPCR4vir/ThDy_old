@@ -68,24 +68,27 @@ public:
         _DefLayout= 	
 	"vertical      gap=8  min=150    margin=5                              		\n\t"
 	"		       < weight=95  primers  >                                               		\n\t"
-	"		        < weight=95  gap=2  <weight=120 vertical gap=2  margin=[15,45,0,15]   Left  >              	\n\t"
+	"		       < weight=95  gap=2  <weight=120 vertical gap=2  margin=[15,45,0,15]   Left  >              	\n\t"
 	"                                                                       <weight=320   Table     >  >           		\n\t"
 	"		        < weight=70 vertical  ResAlign>    		\n\t"
+		           "<>"
+		           "< weight = 21 < > <Firma weight = 180> <weight = 3 > >       \n\t  "
 	"		\n\t"
             ;
 
-         primers.div("vert <weight=50  margin=[0,5,0,5] <min=100 vertical gap=2 InputSec>                            "  
-                        "                                       <weight=50 gap=1 CopyBut grid=[2,2]  collapse(0,0,1,2)> > \n\t "
+      primers.div("vert <weight=50  margin=[0,5,0,5] <min=100 vertical gap=2 InputSec>                            "  
+                        "                            <weight=50 gap=1 CopyBut grid=[2,2]  collapse(0,0,1,2)> > \n\t "
                         "<weight=23   <weight=20>"
                         "                       <min=50    error     > "
-                        "                       <weight=80 rev_compl >     >         \n\t  ");
+                        "                       <weight=80 rev_compl >     >         \n\t  "
+		  );
+
 
          interaction.div("vert <min=280    margin=[0,5,5,5] Table    grid=[7,4]    >                "  );
 
          align.div("vert < weight=50 vertical margin=[0,5,0,5]  ResAlign  >                            " );
-
-
     }
+
     void AsignWidgetToFields() override
     {
 	    _place.field("primers"  )<< primers    ;
@@ -97,6 +100,8 @@ public:
 	    primers["CopyBut"  ]<<  copy_f_s_2   << copy_s      << copy_s_a ;
 	    primers["error"    ]<< error_        ;
 	    primers["rev_compl"]<< chkBx_copy_rev << chkBx_copy_compl ;
+		_place.field("Firma") << " ArielVina.Rodriguez@fli.bund.de";
+
 
 	    interaction["Table" ]<< ""          << "   min-" << u8"Tm(°C)"   << "-max"  << "   min-"  << "G(kJ)"    << "-max   "
 	                         << "Up"        << Tm_min_Up << Tm_Up        << Tm_max_Up<<G_min_Up   <<  G_Up      <<  G_max_Up   

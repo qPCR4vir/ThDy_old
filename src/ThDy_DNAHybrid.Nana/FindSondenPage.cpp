@@ -196,6 +196,56 @@ catch (...)
 	throw std::runtime_error(std::string("An unknown error occurred during initialization of the Find probes page window"));
 }
 
+void FindSondenPage::SetDefLayout()
+{
+	_DefLayout = 
+
+R"( 
+	vertical   gap=2    margin=5               
+			<weight=10     >       			 
+	 	    <weight=260 gap=8 <weight=5> <weight=388 vertical   		                       
+		                                                   <weight=115 <weight=388 Sonde  > >		  
+	 		                                               <weight=10>			 
+	 			                                           <weight=72 TargCov        >    		 
+	 		                                               <weight=10> 			 
+	 			                                           <weight=40 <   <> <weight=300   gap=20 Run>  <>     > >    			 
+	 			                                           <weight=10>                                 			 
+	 			                         >   <> <weight=230 gap=1 vertical  options> <weight=5>      
+	 	    >   			 
+	 		<weight=23   <weight=140> <Output>   <> >       		          
+	        <>				
+   		    < weight=21 <><Firma weight=180> <weight=3 > >                   		 
+ )";
+
+
+	_gr_probes.div("vert < Sonde  margin=2 gap= 2 grid=[2,4]  	    \n\t"
+		"					                                    		\n\t"
+		"						                                  >	\n\t");
+
+	_gr_prob_tg.div("<  margin=2 gap= 2 vertical   options>");
+	_gr_prob_ntg.div("<  margin=2 gap= 2 vertical   options>");
+	_gr_probself.div("<  margin=2 gap= 2 vertical   options>");
+	_gr_find_prb.div("<  margin=5 gap= 2 TargCov grid=[2,2]>");
+
+	_Gmin.ResetLayout(45, 40, 55);   _Gmax.ResetLayout(1, 40, 75);
+	_Tmmin.ResetLayout(45, 40, 55);  _Tmmax.ResetLayout(1, 40, 75);
+	_Lengthmin.ResetLayout(45, 40, 55);  _Lengthmax.ResetLayout(1, 40, 75);
+
+	_MaxG.ResetLayout(110, 45, 50);
+	_MinTm.ResetLayout(110, 45, 50);
+
+	_MinG.ResetLayout(110, 45, 50);
+	_MaxTm.ResetLayout(110, 45, 50);
+
+	_MinSelfG.ResetLayout(110, 45, 50);
+	_MaxSelfTm.ResetLayout(110, 45, 50);
+
+	numUpDw_MinTargCov.ResetLayout(30, 40, 40);
+	numUpDw_MaxTargCov.ResetLayout(30, 40, 40);
+}
+
+
+
 
 
 void FindSondenPage::AsignWidgetToFields()
@@ -235,6 +285,9 @@ void FindSondenPage::AsignWidgetToFields()
 	_gr_prob_tg["options"] << _MaxG << _MinTm;
 	_gr_prob_ntg["options"] << _MinG << _MaxTm;
 	_gr_probself["options"] << _MinSelfG << _MaxSelfTm;
+
+	_place.field("Firma") << " ArielVina.Rodriguez@fli.bund.de";
+
 }
 
 void FindSondenPage::Run_Design(bool design)

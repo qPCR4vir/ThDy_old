@@ -53,33 +53,21 @@ class SeqExpl : public CompoWidget
                     _show_locals_s{*this,("local"  )},
                     _show_filt_s  {*this,("filter" )}
                     ; 
+
+	ParamGUIBind::BindGroup    _commPP;
+	nana::NumUnitUpDown numUpDwMaxTgId  {*this, "Max. ident.:"        , 99,  50 , 100 ,   "%"}, 
+                        numUpDw_TgBeg   {*this, "Beg.:"               ,  0,   0 , 100000,"nt"},    /// rev !!
+                        numUpDw_TgEnd   {*this, "End.:"               ,  0,   0 , 100000,"nt"},    /// rev !!	
+                        numUpDw_SLenMin {*this, "Min.Len.:"           ,  0,   0 , 100000,"nt"},
+                        numUpDw_SLenMax {*this, "Max.Len.:"           ,  0,   0 , 100000,"nt"};
+
     nana::tooltip    _loadFileTT {_loadFile,("File load: Add a group of sequences from a file")},
                           _re_loadFileTT ;  
 	nana::label     _statusbar    { *this };
 
     using pSec = CSec*;
-    void SetDefLayout() override
-    {
-        _DefLayout = 
-	                "vertical                                                 \n\t"
-	                "		  <weight=23 <toolbar weight=680 margin=2 ><>>    \n\t"
-	                "		  <      <Tree  > |75% <List >   >      		  \n\t"
-	                "		  <weight=21 <statusbar margin=2             >    \n\t"
-	                "				                                          \n\t"
-	                "		                                                  \n\t"
-	                "	                                                      \n\t"
-            ;
-    }
-    void AsignWidgetToFields() override
-    {
- 	    _place["toolbar"] <<  "   Files:"  << _loadFile << _re_loadFile  << _paste           
-                          <<  "      Dir:" << _loadDir  << _re_loadDir   << _scanDir << _cut      << _del      
-                          <<  "      Seq:" << _show_locals_s  << _show_filt_s   << _cutSec   << _delSec
-                                ;
-        _place[ "Tree"  ]    << _tree;
-        _place[ "List"  ]    << _list;
-        _place[ "statusbar"] << _statusbar;
-    }
+    void SetDefLayout() override;
+    void AsignWidgetToFields() override;
     void MakeResponive();
 
     Node &Refresh(Tree::item_proxy& node)
@@ -199,24 +187,7 @@ class SeqExpl : public CompoWidget
             populate_list_recur(_tree.selected());
         _list.auto_draw(true);
     }
-	void RefreshStatusInfo(CMultSec *ms)
-	{
-		_statusbar.caption(     "  <bold>Local</> (sq: "   + std::to_string( ms->_Local._NSec     )   
-			                   +    ", gr: "     + std::to_string( ms->_Local._NMSec    )  +"),"
-	  + (ms->_Local._NSec ? "    Length ["  + std::to_string( ms->_Local._Len.Min())
-		                      + "-"             + std::to_string( ms->_Local._Len.Max()) + "]"
-				           + ",    Tm [ "  + temperature_to_string( ms->_Local._Tm.Min() ) + "-"
-		                                         + temperature_to_string( ms->_Local._Tm.Max() ) + "]  "
-				          :      "" )
-		                  + ".        <bold>Global</> (sq: "  + std::to_string( ms->_Global._NSec     )             
-			              +         ", gr: "  + std::to_string( ms->_Global._NMSec    )             +"),"                             
-	  + (ms->_Global._NSec ? "    Length ["     + std::to_string( ms->_Global._Len.Min())
-		                       + "-"               + std::to_string( ms->_Global._Len.Max()) + "]"
-				               + ", Tm [ "  + temperature_to_string(ms->_Global._Tm.Min() ) + "-"
-		                                          + temperature_to_string(ms->_Global._Tm.Max() ) + " ]  "
-				          :      "" )
-		                 );
-	}
+	void RefreshStatusInfo(CMultSec *ms);
 	std::string temperature_to_string(Temperature t)
 	{
 		int w = 10;  // -250,0 °C
@@ -269,18 +240,15 @@ class RenameFrom : public nana::form, public EditableForm
     std::string Name(){return _name;}
     void SetDefLayout   () override
     {
-        _DefLayout= "vertical gap=2 <Edit weight=24> <weight=24 <free_left><Buttons gap=10>>                   \n\t ";
-    }
+		_DefLayout = R"( vertical gap=2 
+			                 <weight = 24 Edit > 
+                             <weight = 24     < free_left >     <Buttons gap = 10>      >
+                       )";  
+	}
     void AsignWidgetToFields() override
     {
-        //_commPP  << link( _cp.MaxTgId                 ,       numUpDwMaxTgId  )
-        //         << link( _cp.SecLim         , numUpDw_TgBeg,  numUpDw_TgEnd  )
-        //         << link( _cp.SecLenLim   ,  numUpDw_SLenMin, numUpDw_SLenMax )
-        //    ;
- 
-	    _place.field("Edit")     << edit  ;
-	    _place.field("Buttons" ) << OK <<   Cancel  ;
-                               
+	    _place["Edit"    ] << edit  ;
+	    _place["Buttons" ] << OK <<   Cancel  ;
     }                                        
 
 };

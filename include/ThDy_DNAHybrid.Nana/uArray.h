@@ -44,15 +44,18 @@ class uArray : public CompoWidget
 
     void SetDefLayout   () override
     {
-        _DefLayout= "vertical      gap=2             \n\t"
-	        "  < weight=23>       \n\t "
-            "  <<><_do_uArray  vertical min=50 max=200><> weight=50>       \n\t "
-
+        _DefLayout= "vertical      gap=2                                                \n\t"
+	        "  < weight=23>                                                             \n\t "
+            "  <<><_do_uArray  vertical min=50 max=200><> weight=50>                    \n\t "
+			"             <>                                                            \n\t "
+			"             < weight = 21 < > <Firma weight = 180> <weight = 3 > >        \n\t "
             ;
     }
+
     void AsignWidgetToFields() override
     {
 	    _place.field("_do_uArray"         )<<_do_uArray;
+		_place.field("Firma") << " ArielVina.Rodriguez@fli.bund.de";
     }
 
   private: void buttuArray_Click(); //	  Run      _IPrgPar_mPCR
@@ -69,22 +72,18 @@ class MplexPCR : public CompoWidget
 
     void SetDefLayout   () override
     {
-        _DefLayout= "vertical      gap=2             \n\t"
-	        "  <_PrimersFilePCR weight=23>       \n\t "
-            "  <<><_do_mPCR  vertical min=50 max=200><> weight=50>       \n\t "
-            //"  <wieght=300 <vertical min=50 max=200 buttons> <> <weight=80 checks>>   \n\t"
-
+        _DefLayout= "vertical      gap=2                                                \n\t"
+	        "             <  weight=23>                                   \n\t "
+            "             < <><_do_mPCR  vertical min=50 max=200> <> weight=50 >        \n\t "
+			"             <>                                                            \n\t "
+			"             < weight = 21 < > <Firma weight = 180> <weight = 3 > >        \n\t "
             ;
     }
     void AsignWidgetToFields() override
     {
-       //_mPCR<< /*link(   _Pr._mPCR._InputSondeFile , _PrimersFilePCR)*/
-
-       //     ;
-
-	    _place.field("_do_mPCR"         )<<_do_mPCR;
-	    //_place.field("checks"          )<<"save result";
-    }
+	    _place.field("_do_mPCR" ) << _do_mPCR;
+		_place.field("Firma"    ) << " ArielVina.Rodriguez@fli.bund.de";
+	}
 
   private: void buttPCR_Click(); //	  Run      _IPrgPar_mPCR
 };

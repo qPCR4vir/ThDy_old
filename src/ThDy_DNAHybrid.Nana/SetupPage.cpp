@@ -30,6 +30,92 @@
 
 using namespace ParamGUIBind;
 
+void   SetupPage::SetDefLayout()
+{
+	_DefLayout =
+R"(
+	vertical      gap=3    margin=10    			
+	    <min=465  gap=5    <weight=5>   <min=450   vertical   gap=5 	    	 
+	                                                   <weight=26  Project       >       	 
+	    	                                           <weight=400 dir>       	 
+	    	                                           <weight=30   <weight=20>   <min=280 max=700  gap=5 buttons>   <>>	  
+	                                      >   <weight=5>   <weight=120 vertical   
+                                                                         <weight=235  checks > 
+                                                                         <>  
+                                                           >    		 
+	    
+	    >			                                 
+	    < weight=70  salt    >   
+	    <>				
+   		< weight=21 <><Firma weight=180> <weight=3 > >                   		 
+
+ )";
+
+	_results.ResetLayout(70);
+	_targets.ResetLayout(70);
+	_nTsec.ResetLayout(70);
+	_PCRfiltre.ResetLayout(70);
+	_PrimersFilePCR.ResetLayout(70);
+	_Prob_uArr.ResetLayout(70);
+	_NNParamFile.ResetLayout(70);
+
+	numUpDowSdConc.ResetLayout(80);
+	numUpDowTa.ResetLayout(90);
+	numUpDowTgConc.ResetLayout(80);
+	numUpDowSalConc.ResetLayout(110);
+
+	_gr_dir.div(" vert "
+		"  <weight=26  Results  >       \n\t"
+		"  <min=280 margin=5 seq>    	    \n\t"
+		"  <weight=26  <NN_param><weight=80 ckBx_loadNNParam> >       \n\t");
+
+	_gr_seq.div(" vert "
+		"  <weight=62  margin=[0,5,0,5] _targets       >    		         \n\t"
+		"  <weight=62  margin=[0,5,0,5] _nTsec         >    		         \n\t"
+		"  <weight=50  margin=[0,5,0,5] _PCRfiltre     >    		         \n\t"
+		"  <weight=62  margin=[0,5,0,5] _PrimersFilePCR>    		         \n\t"
+		"  <weight=67  margin=[0,5,5,5] _Prob_uArr     >    		         \n\t");
+
+	_gr_targ.div(" vert "
+		"<weight=22 dir>                                           \n\t"
+		"<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
+		"<>                                                        \n\t");
+
+	_gr_ntarg.div(" vert "
+		"<weight=22 dir>                                           \n\t"
+		"<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
+		"<>                                                        \n\t");
+
+	_gr_PCRfiltre.div(" vert "
+		"<weight=22 dir>                                           \n\t"
+		"<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
+		"<>                                                        \n\t");
+
+	_gr_PrimersFilePCR.div(" vert "
+		"<weight=22 dir>                                           \n\t"
+		"<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
+		"<>                                                        \n\t");
+
+	_gr_uArr.div(" vert "
+		"<weight=22 dir>                                           \n\t"
+		"<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
+		"<>                                                        \n\t");
+
+	_gr_checks.div(" <vertical weight=210 checks>     				\n\t");
+
+	_gr_salt.div(
+		"     < <> 		                                    \n\t"
+		"                 <weight=200 vertical ConcST        gap=2>     \n\t"
+		"                 <> 		                                    \n\t"
+		"		          <weight=230 vertical ConcSaltTa    gap=2>     \n\t"
+		"                 <> 		                                    \n\t"
+		"		          <weight=250 vertical gap=5  <weight=23 SMeth >        	\n\t"
+		"				                              <weight=23 AMeth >  >       \n\t"
+		"                 <>  		 >                                  \n\t");
+
+
+}
+
 void  SetupPage::AsignWidgetToFields ()  
     {
       _setup<< link( _Pr._cp._OutputFile      ,       _results  )
@@ -106,6 +192,9 @@ void  SetupPage::AsignWidgetToFields ()
 	    _gr_salt["ConcSaltTa" ]   << numUpDowSalConc      << numUpDowTa ;
 	    _gr_salt["SMeth"      ]   << " Salt Correct. Method:"	   <<  comBoxSalMeth;
 	    _gr_salt["AMeth"      ]   << " ThDy Align. Method"       <<  comBoxTAMeth ;
+
+		_place.field("Firma") << " ArielVina.Rodriguez@fli.bund.de";
+
     }
 void  SetupPage::MakeResponive()
     {
@@ -213,8 +302,8 @@ void  SetupPage::AddMenuItems(nana::menu& menu)
         //SaveProj() ;  
     } );
     menu.append_splitter();
-    menu.append(("Set as deffault") , [&](nana::menu::item_proxy& ip)  {;  });
-    menu.append(("Restore deffault"), [&](nana::menu::item_proxy& ip)  {;  });
+    menu.append(("Set as default") , [&](nana::menu::item_proxy& ip)  {;  });
+    menu.append(("Restore default"), [&](nana::menu::item_proxy& ip)  {;  });
     menu.append_splitter();
     menu.append(("Exit"    )  , [&](nana::menu::item_proxy& ip)  {  _Pr.close();  } );
 
@@ -238,7 +327,7 @@ void  SetupPage::LoadProject(std::string file)
 							+  "Use the Default project?"   + "\n\n"
 							+ "\tYes:  The default project file will be loaded. " + "\n"
 							+ "\tNo:  Select a project file to be loaded. " + "\n"
-							+ "\tCancel: Use the values correctly loaded mixed with the\t\t\t previus existing. "
+							+ "\tCancel: Use the values correctly loaded mixed with the\t\t\t previous existing. "
 							;
 			switch ( (nana::msgbox(  *this, nana::charset (caption) , nana::msgbox::yes_no_cancel )
                             <<  message
@@ -270,11 +359,11 @@ SetupPage::SetupPage          (ThDyNanaForm& tdForm) try
     }
    catch (std::exception & e)
    {
-	   throw std::runtime_error(std::string("An error ocurred during initialization of the Setup page window:\n") + e.what());
+	   throw std::runtime_error(std::string("An error occurred during initialization of the Setup page window:\n") + e.what());
    }
    catch (...)
    {
-	   throw std::runtime_error(std::string("An unknonw error ocurred during initialization of the Setup page window"));
+	   throw std::runtime_error(std::string("An unknown error occurred during initialization of the Setup page window"));
    }
 
 
@@ -288,90 +377,6 @@ FilePickBox::filtres SetupPage::FastaFiltre( )
                                             {("All sequences"), ("*.fas;*.fasta;*.txt;*-Alignment.xml;*.gb;*-sequence.xml")},
                                             {("All files" )  , ("*.*"               ) }
                                           } ;
-    }
-void   SetupPage::SetDefLayout   () 
-    {
-        _DefLayout =
-	"vertical      gap=3    margin=10    				\n\t"
-	"	  < min=465      gap=5   				\n\t"
-	"	                   <weight=5>   		                		\n\t"
-	"	                  <min=450   vertical   gap=5 	    	\n\t"
-	"			                      <weight=26  Project       >       	\n\t"
-	"				                  <weight=400 dir>       	\n\t"
-	"				                  <weight=30   	            	\n\t"
-	"				                            <weight=20>             	    	\n\t"
-	"				                            <min=280 max=700  gap=5 buttons>   	\n\t"
-	"				                            <>       	                    	\n\t"
-	"			                             >	   	\n\t"
-	"		                         >                                      	\n\t"
-	"	                  <weight=5>   		                		\n\t"
-	"		               <weight=120 vertical   <weight=235  checks > <>  >    		\n\t"
-	"		              >			                                	\n\t"
-	"	  < weight=70  salt    >      		\n\t"
-	"     <>				\n\t"
-	"		\n\t" ;
-
-        _results      .ResetLayout (70);
-        _targets      .ResetLayout (70);
-        _nTsec        .ResetLayout (70);
-        _PCRfiltre    .ResetLayout (70 );
-        _PrimersFilePCR.ResetLayout(70 );
-        _Prob_uArr    .ResetLayout (70 );
-        _NNParamFile  .ResetLayout (70 );
-
-        numUpDowSdConc.ResetLayout (80 );  
-        numUpDowTa.    ResetLayout (90 );  
-        numUpDowTgConc.ResetLayout (80 );
-        numUpDowSalConc.ResetLayout (110 );
-
-        _gr_dir .div(" vert "
-                         "  <weight=26  Results  >       \n\t"
-				         "  <min=280 margin=5 seq>    	    \n\t"
-	 		             "  <weight=26  <NN_param><weight=80 ckBx_loadNNParam> >       \n\t" );
-
-        _gr_seq .div(" vert "
-                         "  <weight=62  margin=[0,5,0,5] _targets       >    		         \n\t"
-				         "  <weight=62  margin=[0,5,0,5] _nTsec         >    		         \n\t"
-				         "  <weight=50  margin=[0,5,0,5] _PCRfiltre     >    		         \n\t"
-				         "  <weight=62  margin=[0,5,0,5] _PrimersFilePCR>    		         \n\t"
-				         "  <weight=67  margin=[0,5,5,5] _Prob_uArr     >    		         \n\t");
-
-        _gr_targ .div(" vert "
-                          "<weight=22 dir>                                           \n\t"
-                          "<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
-                          "<>                                                        \n\t");
-
-        _gr_ntarg .div( " vert "
-                            "<weight=22 dir>                                           \n\t"
-                            "<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
-                            "<>                                                        \n\t");
-
-        _gr_PCRfiltre .div(" vert "
-                               "<weight=22 dir>                                           \n\t"
-                               "<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
-                               "<>                                                        \n\t");
-
-        _gr_PrimersFilePCR .div(" vert "
-                                    "<weight=22 dir>                                           \n\t"
-                                    "<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
-                                    "<>                                                        \n\t");
-
-        _gr_uArr .div(" vert "
-                          "<weight=22 dir>                                           \n\t"
-                          "<weight=23 gap=10 <weight=10%>< Opt ><weight=10%>    >   \n\t"
-                          "<>                                                        \n\t");
-
-        _gr_checks .div(	" <vertical weight=210 checks>     				\n\t");
-
-        _gr_salt .div(  
-            "     < <> 		                                    \n\t" 
-	        "                 <weight=200 vertical ConcST        gap=2>     \n\t"
-	        "                 <> 		                                    \n\t" 
-	        "		          <weight=230 vertical ConcSaltTa    gap=2>     \n\t"
-	        "                 <> 		                                    \n\t" 
-            "		          <weight=250 vertical gap=5  <weight=23 SMeth >        	\n\t"
-            "				                              <weight=23 AMeth >  >       \n\t"
-	        "                 <>  		 >                                  \n\t");
     }
 
 

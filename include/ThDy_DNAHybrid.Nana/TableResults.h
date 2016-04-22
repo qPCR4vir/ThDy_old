@@ -164,6 +164,8 @@ class TableHybRes  : public nana::form, public EditableForm
     {
  	    _place.field("toolbar"       ) <<_bTm << _bG << _bPos ;
  	    _place.field("_list"         ) <<_list;
+		_place.field("Firma") << " ArielVina.Rodriguez@fli.bund.de";
+
      }
  public:
      TableHybRes    (std::shared_ptr<CTable<TmGPos>> table)  : 

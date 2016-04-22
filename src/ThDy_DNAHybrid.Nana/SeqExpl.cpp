@@ -33,7 +33,7 @@
 		tree_sch.item_height_ex = 1;  ///< Set !=0 !!!!  def=6. item_height = text_height + item_height_ex
 		tree_sch.item_height = tree_sch.text_height + tree_sch.item_height_ex;
 
-		_statusbar.format(true);
+		_statusbar.format(true).bgcolor(nana::colors::turquoise );
 		
 		InitMyLayout();
         SelectClickableWidget( _tree);
@@ -81,55 +81,6 @@
             return _tree.selected();
  		}		 
 	}
-
-SeqExpl::Node SeqExpl::Replace      (Tree::item_proxy& tn, CMultSec *ms, const std::string& Path, bool all_in_dir)
-{        
-try{ 
-        Tree::item_proxy   own = tn->owner();
-        CMultSec          *pms = ms->_parentMS;  
-
-		CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, Path, all_in_dir	);
-
-        _Pr._cp._pSeqNoUsed->AddMultiSec(ms); 
-        _tree.erase(tn);
-        populate(_tree.find( _Pr._cp._pSeqNoUsed->_name));
-        return appendNewNode(own, newms).expand(true).select(true) ;
-	}
-	catch ( std::exception& e)
-	{ 
-		(nana::msgbox ( ("Error replacing sequences: " ) ).icon(nana::msgbox::icon_error)
-            << "into group:    "  << tn.key()                                 
-            << "\n from " << (all_in_dir?"directory: " : "file: ") << Path     <<"\n"<< e.what()
-        ).show() ;
- 	}		
-	catch(...)
-	{
-            (nana::msgbox(("An uncaptured exception during replacing sequences: "))
-                .icon(nana::msgbox::icon_error) 
-            << "into "<< tn.key()                                
-            << "from "<< (all_in_dir?"directory ":"file ") << Path    
-            ).show();
-	}
-    return tn;
-}
-
-void SeqExpl::ShowFindedProbes_in_mPCR(bool show_/*=true*/)
-{
-    //auto idp = _Pr._cp.MaxTgId.get();
-    //_Pr._cp.MaxTgId.set(100);
-    //CMultSec *ms= _Pr._cp.AddSeqFromFile	(_Pr._mPCR._probesMS.get() , _Pr._cp._OutputFile.get() + ".sonden.fasta", false	);
-    //_Pr._cp.MaxTgId.set(idp);
-
-    RefreshProbes_mPCR( show_ );
-}
-
-void SeqExpl::RefreshProbes_mPCR(bool show_/*=true*/)
-{
-    auto probNode = _tree.find(_Pr._mPCR._probesMS->_name);
-    Refresh(probNode).expand(true).select(true);
-    if (show_) 
-        _Pr.ShowExpl();
-}
 
 void SeqExpl::AddMenuItems(nana::menu& menu)
     {
@@ -181,7 +132,7 @@ void SeqExpl::AddMenuItems(nana::menu& menu)
 
             CMultSec *ms = tn.value<CMultSec*>();
             CMultSec *pms = ms->_parentMS; // tn->owner.value<CMultSec*>();
-            ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// \todo: higth level MoveMSec !! (actualize globals)
+            ms->MoveBefore(_Pr._cp._pSeqNoUsed->goFirstMSec() );  /// \todo: hight level MoveMSec !! (actualize globals)
             auto own = tn->owner();
 
             _tree.auto_draw(false);
@@ -238,7 +189,7 @@ void SeqExpl::AddMenuItems(nana::menu& menu)
 
     }
 
-    void SeqExpl::MakeResponive()
+void SeqExpl::MakeResponive()
     {
 		_tree.events().selected ( [&]( const nana::arg_treebox &tbox_arg_info ) { if (tbox_arg_info.operated) RefreshList(tbox_arg_info.item); });
         _tree.events().checked  ( [&]( const nana::arg_treebox &tbox_arg_info )
@@ -408,7 +359,122 @@ void SeqExpl::AddMenuItems(nana::menu& menu)
                     .tooltip(("Show filtered sequences too"))   
                     .events().click([this]() { ShowFiltered( _show_filt_s.pushed());  });
     }
-    void SeqExpl::InitTree()
+
+SeqExpl::Node SeqExpl::Replace      (Tree::item_proxy& tn, CMultSec *ms, const std::string& Path, bool all_in_dir)
+{        
+try{ 
+        Tree::item_proxy   own = tn->owner();
+        CMultSec          *pms = ms->_parentMS;  
+
+		CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, Path, all_in_dir	);
+
+        _Pr._cp._pSeqNoUsed->AddMultiSec(ms); 
+        _tree.erase(tn);
+        populate(_tree.find( _Pr._cp._pSeqNoUsed->_name));
+        return appendNewNode(own, newms).expand(true).select(true) ;
+	}
+	catch ( std::exception& e)
+	{ 
+		(nana::msgbox ( ("Error replacing sequences: " ) ).icon(nana::msgbox::icon_error)
+            << "into group:    "  << tn.key()                                 
+            << "\n from " << (all_in_dir?"directory: " : "file: ") << Path     <<"\n"<< e.what()
+        ).show() ;
+ 	}		
+	catch(...)
+	{
+            (nana::msgbox(("An uncaptured exception during replacing sequences: "))
+                .icon(nana::msgbox::icon_error) 
+            << "into "<< tn.key()                                
+            << "from "<< (all_in_dir?"directory ":"file ") << Path    
+            ).show();
+	}
+    return tn;
+}
+
+void SeqExpl::ShowFindedProbes_in_mPCR(bool show_/*=true*/)
+{
+    //auto idp = _Pr._cp.MaxTgId.get();
+    //_Pr._cp.MaxTgId.set(100);
+    //CMultSec *ms= _Pr._cp.AddSeqFromFile	(_Pr._mPCR._probesMS.get() , _Pr._cp._OutputFile.get() + ".sonden.fasta", false	);
+    //_Pr._cp.MaxTgId.set(idp);
+
+    RefreshProbes_mPCR( show_ );
+}
+
+void SeqExpl::RefreshProbes_mPCR(bool show_/*=true*/)
+{
+    auto probNode = _tree.find(_Pr._mPCR._probesMS->_name);
+    Refresh(probNode).expand(true).select(true);
+    if (show_) 
+        _Pr.ShowExpl();
+}
+
+
+void SeqExpl::SetDefLayout()
+{
+	_DefLayout =
+		"vertical                                                 \n\t"
+		"		  <weight=23 <toolbar weight=680 margin=2 ><>>    \n\t"
+		"		  <      <Tree  > |75% <List >   >      		  \n\t"
+
+		"	      <weight=21 <weight=5> <weight=80 tflab> <min=640 max=1000  TargetsOptions   >  <weight=5>>  \n\t"
+		"		  <weight=20 <statusbar margin=1  min=700 > <Firma max=180> <weight=3 > >   \n\t"
+		;
+
+	numUpDwMaxTgId.ResetLayout(60, 40, 30);
+	numUpDw_TgBeg.ResetLayout(35, 40, 30);
+	numUpDw_TgEnd.ResetLayout(35, 40, 30);
+	numUpDw_SLenMin.ResetLayout(60, 40, 30);
+	numUpDw_SLenMax.ResetLayout(60, 70, 30);
+}
+
+void SeqExpl::AsignWidgetToFields()
+	{
+		using ParamGUIBind::link;
+
+		_commPP << link(_Pr._cp.MaxTgId, numUpDwMaxTgId)
+			<< link(_Pr._cp.SecLim, numUpDw_TgBeg, numUpDw_TgEnd)
+			<< link(_Pr._cp.SecLenLim, numUpDw_SLenMin, numUpDw_SLenMax)
+			;
+
+
+		_place["toolbar"] << "   Files:" << _loadFile << _re_loadFile << _paste
+			<< "      Dir:" << _loadDir << _re_loadDir << _scanDir << _cut << _del
+			<< "      Seq:" << _show_locals_s << _show_filt_s << _cutSec << _delSec
+			;
+		_place["Tree"  ] << _tree;
+		_place["List"  ] << _list;
+		_place["tflab"] << "Targets filters: ";
+		_place["TargetsOptions"]	<< numUpDwMaxTgId
+									<< numUpDw_TgBeg << numUpDw_TgEnd
+									<< numUpDw_SLenMin << numUpDw_SLenMax;
+
+		_place["statusbar"] << _statusbar;
+		_place.field("Firma") << " ArielVina.Rodriguez@fli.bund.de";
+
+	}
+
+void SeqExpl::RefreshStatusInfo(CMultSec *ms)
+{
+	_statusbar.caption("  <bold>Local</> (sq: " + std::to_string(ms->_Local._NSec)
+		+ ", gr: " + std::to_string(ms->_Local._NMSec) + "),"
+		+ (ms->_Local._NSec ? "    Length[" + std::to_string(ms->_Local._Len.Min())
+			+ "-" + std::to_string(ms->_Local._Len.Max()) + "]"
+			+ ", Tm[ " + temperature_to_string(ms->_Local._Tm.Min()) + "-"
+			+ temperature_to_string(ms->_Local._Tm.Max()) + "]  "
+			: "")
+		+ ".        <bold>Global</> (sq: " + std::to_string(ms->_Global._NSec)
+		+ ", gr: " + std::to_string(ms->_Global._NMSec) + "),"
+		+ (ms->_Global._NSec ? "    Length[" + std::to_string(ms->_Global._Len.Min())
+			+ "-" + std::to_string(ms->_Global._Len.Max()) + "]"
+			+ ", Tm[ " + temperature_to_string(ms->_Global._Tm.Min()) + "-"
+			+ temperature_to_string(ms->_Global._Tm.Max()) + " ]  "
+			: "")
+	);
+}
+
+
+void SeqExpl::InitTree()
     {
         _list.auto_draw(false);
         _tree.auto_draw(false);
