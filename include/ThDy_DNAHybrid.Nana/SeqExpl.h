@@ -64,10 +64,10 @@ class SeqExpl : public CompoWidget
 	                "vertical                                                 \n\t"
 	                "		  <weight=23 <toolbar weight=680 margin=2 ><>>    \n\t"
 	                "		  <      <Tree  > |75% <List >   >      		  \n\t"
+	                "		  <weight=21 <statusbar margin=2             >    \n\t"
 	                "				                                          \n\t"
 	                "		                                                  \n\t"
 	                "	                                                      \n\t"
-
             ;
     }
     void AsignWidgetToFields() override
@@ -76,8 +76,9 @@ class SeqExpl : public CompoWidget
                           <<  "      Dir:" << _loadDir  << _re_loadDir   << _scanDir << _cut      << _del      
                           <<  "      Seq:" << _show_locals_s  << _show_filt_s   << _cutSec   << _delSec
                                 ;
-        _place[ "Tree"  ] << _tree;
-        _place[ "List"  ] << _list;
+        _place[ "Tree"  ]    << _tree;
+        _place[ "List"  ]    << _list;
+        _place[ "statusbar"] << _statusbar;
     }
     void MakeResponive();
 
@@ -102,6 +103,7 @@ class SeqExpl : public CompoWidget
             populate_list_recur(ms);
 
             _list.auto_draw(true);
+			RefreshStatusInfo(ms);
     }
     void populate_list_recur(Tree::item_proxy& node)
     {
@@ -197,6 +199,33 @@ class SeqExpl : public CompoWidget
             populate_list_recur(_tree.selected());
         _list.auto_draw(true);
     }
+	void RefreshStatusInfo(CMultSec *ms)
+	{
+		_statusbar.caption(     "  <bold>Local</> (sq: "   + std::to_string( ms->_Local._NSec     )   
+			                   +    ", gr: "     + std::to_string( ms->_Local._NMSec    )  +"),"
+	  + (ms->_Local._NSec ? "    Length ["  + std::to_string( ms->_Local._Len.Min())
+		                      + "-"             + std::to_string( ms->_Local._Len.Max()) + "]"
+				           + ",    Tm [ "  + temperature_to_string( ms->_Local._Tm.Min() ) + "-"
+		                                         + temperature_to_string( ms->_Local._Tm.Max() ) + "]  "
+				          :      "" )
+		                  + ".        <bold>Global</> (sq: "  + std::to_string( ms->_Global._NSec     )             
+			              +         ", gr: "  + std::to_string( ms->_Global._NMSec    )             +"),"                             
+	  + (ms->_Global._NSec ? "    Length ["     + std::to_string( ms->_Global._Len.Min())
+		                       + "-"               + std::to_string( ms->_Global._Len.Max()) + "]"
+				               + ", Tm [ "  + temperature_to_string(ms->_Global._Tm.Min() ) + "-"
+		                                          + temperature_to_string(ms->_Global._Tm.Max() ) + " ]  "
+				          :      "" )
+		                 );
+	}
+	std::string temperature_to_string(Temperature t)
+	{
+		int w = 10;  // -250,0 °C
+		std::string s(w, 0);
+
+		std::snprintf( &s[0],  w+1, (u8"% *.*f °C"), w-4, 1, KtoC(t) );
+		return s;
+	}
+
 public:
     SeqExpl(ThDyNanaForm& tdForm);
     void ShowFindedProbes_in_mPCR(bool show_=true);
@@ -223,7 +252,8 @@ class RenameFrom : public nana::form, public EditableForm
              nana::form  (nana::rectangle( nana::point(150,500), nana::size(300,50) )),
              EditableForm(owner, *this, ("Rename") )     
         {
-            edit.caption(std::string(nana::charset(_name) ));
+			edit.multi_lines(false);
+			edit.caption(_name);
             InitMyLayout();
             OK.events().click([this]()
             {

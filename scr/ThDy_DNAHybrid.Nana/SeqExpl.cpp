@@ -32,6 +32,8 @@
 		auto& tree_sch = _list.scheme();
 		tree_sch.item_height_ex = 1;  ///< Set !=0 !!!!  def=6. item_height = text_height + item_height_ex
 		tree_sch.item_height = tree_sch.text_height + tree_sch.item_height_ex;
+
+		_statusbar.format(true);
 		
 		InitMyLayout();
         SelectClickableWidget( _tree);
