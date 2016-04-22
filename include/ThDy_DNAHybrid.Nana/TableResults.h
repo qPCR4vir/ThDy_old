@@ -170,7 +170,7 @@ class TableHybRes  : public nana::form, public EditableForm
                             _table(table), 
                             _Tm{*table.get()}, _G{*table.get()}, _Pos{*table.get()},  
                             nana::form (nana::rectangle( nana::point(50,5), nana::size(1000,650) )),
-                            EditableForm    (nullptr, *this, nana::charset( table->TitTable() ), ("TableTm.lay.txt")) 
+                            EditableForm    (nullptr, *this,  table->TitTable(), "TableTm.lay.txt") 
    {
         caption( std::string(("Table Tm: ")) +  _Titel);
 

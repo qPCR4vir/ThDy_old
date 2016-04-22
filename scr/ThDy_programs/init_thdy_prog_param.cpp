@@ -3,7 +3,7 @@
 *
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 *
-* @file  ThDySec\scr\ThDy_programs\init_thdy_prog_param.cpp
+* @file  ThDySec\src\ThDy_programs\init_thdy_prog_param.cpp
 *
 * @brief
 *

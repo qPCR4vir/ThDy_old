@@ -1,6 +1,10 @@
 /**
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
-* 2012-2015
+* Copyright (C) 2009-2016, Ariel Vina-Rodriguez ( ariel.rodriguez@fli.bund.de , arielvina@yahoo.es )
+*  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
+*  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
+*
+* @author Ariel Vina-Rodriguez (qPCR4vir)
+* 2012-2016
 *
 * @file  ThDySec\include\ThDy_DNAHybrid.Nana\main.Nana.h
 *

@@ -6,7 +6,7 @@
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2016
 *
-* @file  ThDySec\scr\ThDySec\cod_deg.cpp
+* @file  ThDySec\src\ThDySec\cod_deg.cpp
 *
 * @brief to avoid billions of repited conversions nucleotide letter - code and make ease find complement, etc.
 */

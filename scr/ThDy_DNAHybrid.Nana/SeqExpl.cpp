@@ -3,10 +3,10 @@
 *  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
 *  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* @author Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2016
 *
-* @file  ThDySec\scr\ThDy_DNAHybrid.Nana\SeqExpl.cpp
+* @file  ThDySec\src\ThDy_DNAHybrid.Nana\SeqExpl.cpp
 *
 * @brief 
 *
@@ -39,7 +39,7 @@
         _tree.checkable(true);
         _list.checkable(true);
         _list.append_header(("Name")  , 120);     // col 0: name  
-        _list.append_header(("Lenght"), 50);      // col 1: len
+        _list.append_header(("Length"), 50);      // col 1: len
         _list.append_header((u8"Tm °C") , 60);      //case 2: Tm 
         _list.append_header(("Deg")   , 50);      // case 3: deg   
         _list.append_header(("Description")   , 220);   // case 4: descr  
@@ -86,17 +86,17 @@ try{
         Tree::item_proxy   own = tn->owner();
         CMultSec          *pms = ms->_parentMS;  
 
-		CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(Path), all_in_dir	);
+		CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, Path, all_in_dir	);
 
         _Pr._cp._pSeqNoUsed->AddMultiSec(ms); 
         _tree.erase(tn);
-        populate(_tree.find( nana::charset(_Pr._cp._pSeqNoUsed->_name)));
+        populate(_tree.find( _Pr._cp._pSeqNoUsed->_name));
         return appendNewNode(own, newms).expand(true).select(true) ;
 	}
 	catch ( std::exception& e)
 	{ 
 		(nana::msgbox ( ("Error replacing sequences: " ) ).icon(nana::msgbox::icon_error)
-            << "into group:    "  << nana::charset(tn.key())                                 
+            << "into group:    "  << tn.key()                                 
             << "\n from " << (all_in_dir?"directory: " : "file: ") << Path     <<"\n"<< e.what()
         ).show() ;
  	}		
@@ -104,8 +104,8 @@ try{
 	{
             (nana::msgbox(("An uncaptured exception during replacing sequences: "))
                 .icon(nana::msgbox::icon_error) 
-            << "into "<< nana::charset(tn.key())                                 
-            << "from " << (all_in_dir?"directory ":"file ") << Path    
+            << "into "<< tn.key()                                
+            << "from "<< (all_in_dir?"directory ":"file ") << Path    
             ).show();
 	}
     return tn;
@@ -158,7 +158,7 @@ void SeqExpl::AddMenuItems(nana::menu& menu)
             CMultSec *ms = tn.value<CMultSec*>();
             CMultSec *pms = ms->_parentMS; // tn->owner.value<CMultSec*>();
             _Pr._cp._pSeqNoUsed->AddMultiSec(ms);
-			_Pr._cp.AddSeqFromFile	( pms, nana::charset(fb.file()), false	);
+			_Pr._cp.AddSeqFromFile	( pms, fb.file(), false	);
             Refresh(tn->owner());
             //_tree.auto_draw(false);
             //_tree.erase(tn);
@@ -185,7 +185,7 @@ void SeqExpl::AddMenuItems(nana::menu& menu)
             _tree.auto_draw(false);
             _list.auto_draw(false);
 
-			CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, nana::charset(fb.file()), true	);
+			CMultSec* newms = _Pr._cp.AddSeqFromFile	( pms, fb.file(), true	);
             _tree.erase(tn);
             populate(appendNewNode  (own, newms) );
             own.expand(true);
@@ -218,9 +218,9 @@ void SeqExpl::AddMenuItems(nana::menu& menu)
         menu.append(("Rename the selected group of sequences"),[&](nana::menu::item_proxy& ip) 
         {
             
-            RenameFrom rnm(_tree, nana::charset(_tree.selected().text()));
+            RenameFrom rnm(_tree, _tree.selected().text());
             nana::API::modal_window( rnm );
-            _tree.selected().text(nana::charset(rnm.Name()));
+            _tree.selected().text(rnm.Name());
             _tree.selected().value<CMultSec*>()->_name = rnm.Name() ;
 
         }).enabled(true);
@@ -260,7 +260,7 @@ void SeqExpl::AddMenuItems(nana::menu& menu)
                                .title      ( ("File load: Add a group of sequences from a file") );
 
                             if (fb()) 
-                               AddMSeqFiles(nana::charset(fb.file()), false);
+                               AddMSeqFiles(fb.file(), false);
                         });
         //_loadFileTT.set(_loadFile,("File load: Add a group of sequences from a file"));
 
@@ -274,7 +274,7 @@ void SeqExpl::AddMenuItems(nana::menu& menu)
                             fb .add_filter ( SetupPage::FastaFiltre( )                   )
                                .title(("Directory load: Add a tree of groups of sequences from a directory"));
                             if (fb()) 
-                                AddMSeqFiles(nana::charset(fb.file()), true);
+                                AddMSeqFiles(fb.file(), true);
                         });
         _re_loadDir .tooltip(("Directory reload: Reload a tree of groups of sequences from a directory,\nposible using new filtres."))
                     . events().click([this]()  {  ReloadDir (_tree.selected());    });
@@ -288,7 +288,7 @@ void SeqExpl::AddMenuItems(nana::menu& menu)
 
                             auto      tn    = _tree.selected();
                             CMultSec* ms    = tn.value<CMultSec*>();
-                            CMultSec* newms = _Pr._cp.CopyStructFromDir	( ms, nana::charset(fb.file())	);
+                            CMultSec* newms = _Pr._cp.CopyStructFromDir	( ms, fb.file()	);
                             _tree.auto_draw(false);
 			                populate(  appendNewNode  (tn, newms) );
                             tn.expand(true);
@@ -312,7 +312,7 @@ void SeqExpl::AddMenuItems(nana::menu& menu)
             _list.auto_draw(false);
 
             populate(tn);
-            populate(_tree.find(("Dont use") ));
+            populate(_tree.find(("Don t use") )); ///\todo better - this is error-prone
             _list.clear();
             populate_list_recur(tn);
             tn.select(true).expand(true);
@@ -343,7 +343,7 @@ void SeqExpl::AddMenuItems(nana::menu& menu)
             _list.auto_draw(false);
 
             _tree.erase(tn);
-            populate(appendNewNode (_tree.find(("Dont use") ), ms ));
+            populate(appendNewNode (_tree.find(("Don t use") ), ms ));
             own.select(true).expand(true);
         });
         _del        .tooltip(("Delete a group of sequences "))
@@ -367,7 +367,7 @@ void SeqExpl::AddMenuItems(nana::menu& menu)
             _list.auto_draw(false);
 
             _tree.erase(tn);
-            populate(appendNewNode (_tree.find(("Dont use") ), ms ));
+            populate(appendNewNode (_tree.find(("Don t use") ), ms ));
 
             own.select(true).expand(true);
 

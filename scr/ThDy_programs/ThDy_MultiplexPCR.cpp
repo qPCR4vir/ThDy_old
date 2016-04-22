@@ -6,7 +6,7 @@
 * @author Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2016
 *
-* @file ThDySec\scr\ThDy_programs\ThDy_MultiplexPCR.cpp
+* @file ThDySec\src\ThDy_programs\ThDy_MultiplexPCR.cpp
 *
 * @brief
 *

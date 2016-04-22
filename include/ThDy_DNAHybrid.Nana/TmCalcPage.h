@@ -118,8 +118,8 @@ public:
             (nana::msgbox(*this,("Error during Tm calculation !"), nana::msgbox::button_t::ok)<<e.what()) (  ) ;
 		    return;
 		}	 	        		 
-        txtBx_ResultSec      .caption (std::string(nana::charset(_Pr._TmCal._AlignedSec )       ));
-        txtBx_ResultSec2Align.caption (std::string(nana::charset(_Pr._TmCal._AlignedSec2Align  )));
+        txtBx_ResultSec      .caption (std::string(_Pr._TmCal._AlignedSec       ));
+        txtBx_ResultSec2Align.caption (std::string(_Pr._TmCal._AlignedSec2Align ));
         Tm_min_Up.Value( _Pr._TmCal._TmS.Min ());
         Tm_Up    .Value( _Pr._TmCal._TmS.Ave ());  
         Tm_max_Up.Value( _Pr._TmCal._TmS.Max ()); 

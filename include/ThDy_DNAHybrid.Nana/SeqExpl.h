@@ -3,7 +3,7 @@
 *  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
 *  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* @author Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2016
 *
 * @file  ThDySec\include\ThDy_DNAHybrid.Nana\SeqExpl.h
@@ -51,11 +51,11 @@ class SeqExpl : public CompoWidget
                     _cutSec       {*this,("Cut"    )},
                     _delSec       {*this,("Del"    )},
                     _show_locals_s{*this,("local"  )},
-                    _show_filt_s  {*this,("filtr"  )}
+                    _show_filt_s  {*this,("filter" )}
                     ; 
     nana::tooltip    _loadFileTT {_loadFile,("File load: Add a group of sequences from a file")},
                           _re_loadFileTT ;  
-;  
+	nana::label     _statusbar    { *this };
 
     using pSec = CSec*;
     void SetDefLayout() override
@@ -126,13 +126,13 @@ class SeqExpl : public CompoWidget
         return _list.at(0).append(s).value  ( s             )
                                     .check  ( s->Selected() )
                                     .fgcolor( static_cast<nana::color_rgb>(
-                                              (s->Filtered()     ?   0xFF00FF   ///\todo: use codigo
+                                              (s->Filtered()     ?   0xFF00FF   ///\todo: use coding
                                                                 :   0x0   )  ));//nana::color::gray_border );
     }
 
     Node AddRoot          (CMultSec*ms)  
     {
-        std::string name = nana::charset(ms->_name);
+        std::string name = ms->_name;
         return _tree.insert(name, name).value(ms).check(ms->Selected());
     }
     bool isRoot(Node &node)
@@ -141,7 +141,7 @@ class SeqExpl : public CompoWidget
     }
  static Node appendNewNode(Node &node, CMultSec*ms) /// Add a new node to the child of node.
     {
-        std::string name = nana::charset(ms->_name);
+        std::string name = ms->_name;
         return node->append(name, name, ms).check(ms->Selected());
     }
     Node &populate     (Node &node)  /// crea y add to the child of node un nodo nuevo por cada seq in ms. Asume el nodo estaba vacio
@@ -227,7 +227,7 @@ class RenameFrom : public nana::form, public EditableForm
             InitMyLayout();
             OK.events().click([this]()
             {
-                std::string  name=nana::charset(edit.caption()); 
+                std::string  name=edit.caption(); 
                 _renamed = (_name!=name);
                 if (_renamed)
                     _name=name;
@@ -252,6 +252,7 @@ class RenameFrom : public nana::form, public EditableForm
 	    _place.field("Buttons" ) << OK <<   Cancel  ;
                                
     }                                        
+
 };
 
 #endif

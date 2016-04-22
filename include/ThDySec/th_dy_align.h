@@ -12,13 +12,13 @@
 *
 * This representation is based on the ideas and code of Kaderali (http://bioinformatics.oxfordjournals.org/content/21/10/2375.abstract)
 * but with many modifications, so that the original authors have no responsibility on the many errors,
-* simplifications or inconsistencies I have introduced (most files and class names were changed to avoid confusion with originals).
+* simplifications or inconsistencies I have introduced (most file and class names were changed to avoid confusion with originals).
 *
 * Some additions/modifications are:
 *
 * - Integrate different variants of the algorithm into a (virtual) class hierarchy
 * - use the code (Base) from CSec instead of char* as input sequences
-* - open the dynamic program (DP) black-box to output any hit passing a cutoff
+* - open the dynamic program (DP) black-box to output all hits passing a cutoff (it originally report only the best hit)
 * - class CHit to managed hits
 * - split each of the two DP matrix into three, because the 0,1,2 index was not used as variable, but as a name
 * - introduce a step matrix to go back in the DP matrix with minimal calculation
@@ -281,7 +281,7 @@ protected:
 class CHit : public CLink 
 {	
 public: 	
-	LonSecPos		_i,_j, _i0, _j0, _l;   ///< begin, end and lenth of the local alignment hit in both strands
+	LonSecPos		_i,_j, _i0, _j0, _l;   ///< begin, end and length of the local alignment hit in both strands
 	DNAstrand		_strnd;                ///< ?
 	ThDyAlign::Step _Step ;                ///< ?
 	Energy			_H,  _G ;
@@ -292,7 +292,7 @@ public:
 	CHit (LonSecPos i, LonSecPos j, Energy H, Entropy S,float max, ThDyAlign::Step st): _i(i), _j(j), _H(H), _S(S), _max(max),_Step(st) {};
 	CHit (LonSecPos i, LonSecPos j, LonSecPos i0, LonSecPos j0, LonSecPos l,Energy H, Entropy S,float max, ThDyAlign::Step st)
 		: _i(i), _j(j),  _i0(i0), _j0(j0), _l(l)      ,_H(H), _S(S), _max(max),_Step(st) {};
-	CHit (ThDyAlign &Al);  ///< save the optimal Hit: recalcule optP of AL at temperatue Ta set in NNpar
+	CHit (ThDyAlign &Al);  ///< save the optimal Hit: recalculate optP of AL at temperature Ta set in NNpar
 	explicit CHit (){}
 };
 
@@ -301,7 +301,7 @@ class CHitAligned  : public CHit
 public:
 	ISec::sequence          _sd, _tg ;  ///< string with the aligned sequences, (including introduced gaps?)
 	std::vector<ThDyAlign::Step> _st ;
-	long                    _mt, _mm, _sgap, _tgap ;    // count sonde and target - matchs , mistmatch, and gaps
+	long                    _mt, _mm, _sgap, _tgap ;    // count sonde and target - matchs , mismatch, and gaps
 	float		            _Hr, _Sr, _Gr, _Tmr ;
 
 	explicit CHitAligned(ThDyAlign &Al) : CHit(Al) {ExtractAligment(Al);}

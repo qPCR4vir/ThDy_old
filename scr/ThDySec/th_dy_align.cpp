@@ -6,7 +6,7 @@
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2016
 *
-* @file  ThDySec\scr\ThDySec\th_dy_align.cpp
+* @file  ThDySec\src\ThDySec\th_dy_align.cpp
 *
 * @brief  Thermodynamic Alignment Algorithm
 *

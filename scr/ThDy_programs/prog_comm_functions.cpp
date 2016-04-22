@@ -6,7 +6,7 @@
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2015
 *
-* @file  ThDySec\scr\ThDy_programs\prog_comm_functions.cpp
+* @file  ThDySec\src\ThDy_programs\prog_comm_functions.cpp
 *
 * @brief A few global functions for hybridization
 *

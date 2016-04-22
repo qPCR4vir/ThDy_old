@@ -4,7 +4,7 @@
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2015
 *
-* @file ThDySec\scr\ThDy_programs\ThDy_DegTmCalc.cpp
+* @file ThDySec\src\ThDy_programs\ThDy_DegTmCalc.cpp
 *
 * @brief
 */

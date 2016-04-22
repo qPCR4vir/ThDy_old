@@ -3,10 +3,10 @@
 *  https://www.fli.de/en/institutes/institut-fuer-neue-und-neuartige-tierseuchenerreger/wissenschaftlerinnen/prof-dr-m-h-groschup/
 *  distributed under the GNU General Public License, see <http://www.gnu.org/licenses/>.
 *
-* @autor Ariel Vina-Rodriguez (qPCR4vir)
+* @author Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2016
 *
-* @file  ThDySec\scr\ThDy_DNAHybrid.Nana\main.Nana.cpp
+* @file  ThDySec\src\ThDy_DNAHybrid.Nana\main.Nana.cpp
 *
 * @brief Entry point (main) for ThDyHybr with Nana GUI
 *
@@ -104,10 +104,10 @@ int main(int argc, char *argv[])
 
     tabbar_.activated (1);
 
-    setup_._proj.FileNameOnly(nana::charset ( ProjetFile()  ));
+    setup_._proj.FileNameOnly( ProjetFile()  );
     try{ 
 			if ( argc > 1 )
-				setup_._proj.FileNameOpen(nana::charset( argv[1]) )   ;
+				setup_._proj.FileNameOpen( argv[1])    ;
 			else
 				load() ;						
 		}

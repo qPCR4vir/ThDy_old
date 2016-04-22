@@ -4,7 +4,7 @@
 * @autor Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2015
 *
-* @file  ThDySec\scr\ThDySec\sec_basic.cpp
+* @file  ThDySec\src\ThDySec\sec_basic.cpp
 *
 * @brief 
 */

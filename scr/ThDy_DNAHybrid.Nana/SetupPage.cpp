@@ -7,7 +7,7 @@
 * 2012-2016
 *
 *
-* @file  ThDySec\scr\ThDy_DNAHybrid.Nana\SetupPage.cpp
+* @file  ThDySec\src\ThDy_DNAHybrid.Nana\SetupPage.cpp
 *
 * @brief 
 *

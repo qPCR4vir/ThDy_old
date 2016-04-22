@@ -6,7 +6,7 @@
 * @author Ariel Vina-Rodriguez (qPCR4vir)
 * 2012-2016
 *
-* @file  ThDySec\scr\ThDy_DNAHybrid.Nana\FindSondenPage.cpp
+* @file  ThDySec\src\ThDy_DNAHybrid.Nana\FindSondenPage.cpp
 *
 * @brief 
 */
