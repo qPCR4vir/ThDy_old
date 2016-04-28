@@ -10,7 +10,7 @@
 *
 * @brief  Thermodynamic Alignment Algorithm
 *
-* This representation is based on the ideas and code of Kaderali (http://bioinformatics.oxfordjournals.org/content/21/10/2375.abstract)
+* This representation is based on the ideas and code of Kaderali et al. (http://bioinformatics.oxfordjournals.org/content/21/10/2375.abstract)
 * but with many modifications, so that the original authors have no responsability on the many erros,
 * simplifications or inconsistencies I have introduced (most files and class names were changed to avoid confusion with originals).
 * 
